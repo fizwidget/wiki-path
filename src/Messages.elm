@@ -1,8 +1,10 @@
 module Messages exposing (Message(..))
 
 import RemoteData exposing (WebData)
-import Model exposing (Article)
+import Model exposing (Article, Url)
 
 
 type Message
-    = OnFetchArticle (WebData Article)
+    = FetchArticleRequest
+    | FetchArticleResult (WebData Article)
+    | ArticleUrlChange Url

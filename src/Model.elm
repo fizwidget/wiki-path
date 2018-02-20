@@ -1,6 +1,10 @@
-module Model exposing (Model, Article, initialModel)
+module Model exposing (Model, Url, Article, initialModel)
 
 import RemoteData exposing (WebData)
+
+
+type alias Url =
+    String
 
 
 type alias Article =
@@ -8,11 +12,11 @@ type alias Article =
 
 
 type alias Model =
-    { articleUrl : String
+    { articleUrl : Url
     , articleContent : WebData Article
     }
 
 
 initialModel : Model
 initialModel =
-    Model "" RemoteData.Loading
+    Model "" RemoteData.NotAsked

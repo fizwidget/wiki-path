@@ -8,6 +8,7 @@ import Update exposing (update)
 import Subscriptions exposing (subscriptions)
 
 
+main : Program Never Model Message
 main =
     program
         { init = init
