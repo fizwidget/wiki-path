@@ -1,5 +1,0 @@
-var _user$project$Model$Model = F2(
-	function (a, b) {
-		return {articleUrl: a, articleContent: b};
-	});
-var _user$project$Model$initialModel = A2(_user$project$Model$Model, '', _krisajenkins$remotedata$RemoteData$NotAsked);
