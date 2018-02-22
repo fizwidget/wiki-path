@@ -1,6 +1,6 @@
 module Commands exposing (fetchArticle)
 
-import Http
+import Jsonp
 import Messages exposing (Message(FetchArticleResult))
 import Model exposing (Url)
 import RemoteData
@@ -8,6 +8,6 @@ import RemoteData
 
 fetchArticle : Url -> Cmd Message
 fetchArticle url =
-    Http.getString url
+    Jsonp.getString url
         |> RemoteData.sendRequest
         |> Cmd.map FetchArticleResult
