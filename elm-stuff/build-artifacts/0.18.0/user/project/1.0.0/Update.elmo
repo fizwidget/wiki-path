@@ -1,0 +1,32 @@
+var _user$project$Update$update = F2(
+	function (message, model) {
+		var _p0 = A2(
+			_elm_lang$core$Debug$log,
+			'message',
+			_elm_lang$core$Basics$toString(message));
+		var _p1 = message;
+		switch (_p1.ctor) {
+			case 'FetchArticleRequest':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Commands$fetchArticle(model.articleUrl)
+				};
+			case 'FetchArticleResult':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{articleContent: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{articleUrl: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});

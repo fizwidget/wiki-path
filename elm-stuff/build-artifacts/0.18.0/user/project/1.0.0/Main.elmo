@@ -1,0 +1,3 @@
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Model$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$main = _elm_lang$html$Html$program(
+	{init: _user$project$Main$init, view: _user$project$View$view, update: _user$project$Update$update, subscriptions: _user$project$Subscriptions$subscriptions})();

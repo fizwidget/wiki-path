@@ -1,0 +1,3 @@
+var _user$project$Message$OnFetchArticle = function (a) {
+	return {ctor: 'OnFetchArticle', _0: a};
+};

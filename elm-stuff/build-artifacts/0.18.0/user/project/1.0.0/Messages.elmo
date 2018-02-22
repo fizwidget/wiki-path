@@ -1,0 +1,7 @@
+var _user$project$Messages$ArticleUrlChange = function (a) {
+	return {ctor: 'ArticleUrlChange', _0: a};
+};
+var _user$project$Messages$FetchArticleResult = function (a) {
+	return {ctor: 'FetchArticleResult', _0: a};
+};
+var _user$project$Messages$FetchArticleRequest = {ctor: 'FetchArticleRequest'};

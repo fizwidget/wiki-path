@@ -1,0 +1,3 @@
+var _user$project$Subscriptions$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};

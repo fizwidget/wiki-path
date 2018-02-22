@@ -1,0 +1,7 @@
+var _user$project$Commands$fetchArticle = function (url) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$Messages$FetchArticleResult,
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			_elm_lang$http$Http$getString(url)));
+};
