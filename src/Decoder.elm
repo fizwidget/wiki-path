@@ -1,7 +1,7 @@
-module Decoder exposing (responseDecoder)
+module Decoder exposing (responseDecoder, responseToArticle)
 
-import Json.Decode exposing (int, string, float, nullable, list, Decoder)
-import Json.Decode.Pipeline exposing (decode, required, requiredAt, optional, hardcoded)
+import Json.Decode exposing (string, list, Decoder)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Model exposing (Article)
 
 
