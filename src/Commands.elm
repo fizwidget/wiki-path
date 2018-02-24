@@ -1,21 +1,27 @@
 module Commands exposing (fetchArticle)
 
-import Jsonp
+import Http
 import RemoteData
+import Json.Decode exposing (Decoder, string)
+import Json.Decode.Pipeline exposing (decode, requiredAt)
 import Messages exposing (Message(FetchArticleResult))
-import Decoder exposing (responseDecoder, responseToArticle)
+import Model exposing (Article)
 
 
 fetchArticle : String -> Cmd Message
 fetchArticle title =
-    title
-        |> buildUrl
-        |> Jsonp.get responseDecoder
-        |> RemoteData.asCmd
-        |> Cmd.map (RemoteData.map responseToArticle)
+    Http.get (getArticleUrl title) articleDecoder
+        |> RemoteData.sendRequest
         |> Cmd.map FetchArticleResult
 
 
-buildUrl : String -> String
-buildUrl title =
-    "https://en.wikipedia.org/w/api.php?action=query&titles=" ++ title ++ "&prop=revisions&rvprop=content&format=json&formatversion=2"
+getArticleUrl : String -> String
+getArticleUrl title =
+    "https://en.wikipedia.org/w/api.php?action=parse&format=json&formatversion=2&origin=*&page=" ++ title
+
+
+articleDecoder : Decoder Article
+articleDecoder =
+    decode Article
+        |> requiredAt [ "parse", "title" ] string
+        |> requiredAt [ "parse", "text" ] string

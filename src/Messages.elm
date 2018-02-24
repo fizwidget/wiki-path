@@ -6,5 +6,5 @@ import Model exposing (Article)
 
 type Message
     = FetchArticleRequest
-    | FetchArticleResult (WebData (Maybe Article))
+    | FetchArticleResult (WebData Article)
     | ArticleTitleChange String

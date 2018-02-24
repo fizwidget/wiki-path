@@ -3,9 +3,9 @@ module View exposing (view)
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_)
 import Html.Events exposing (onInput, onClick)
+import RemoteData exposing (WebData)
 import Model exposing (Model, Article)
 import Messages exposing (Message(..))
-import RemoteData exposing (WebData)
 
 
 view : Model -> Html Message
@@ -27,7 +27,7 @@ fetchArticleButton =
     button [ onClick FetchArticleRequest ] [ text "Request article" ]
 
 
-articleContent : WebData (Maybe Article) -> Html Message
+articleContent : WebData Article -> Html Message
 articleContent article =
     div []
         [ text <|
@@ -38,14 +38,9 @@ articleContent article =
                 RemoteData.Loading ->
                     "Loading..."
 
-                RemoteData.Success value ->
-                    case value of
-                        Just a ->
-                            a.content
-
-                        Nothing ->
-                            "Article has no content? D:"
+                RemoteData.Success article ->
+                    article.content
 
                 RemoteData.Failure error ->
-                    ("Oops, could not load article :(\n" ++ (toString error))
+                    "Oops, couldn't load article:\n" ++ (toString error)
         ]

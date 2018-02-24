@@ -5,7 +5,7 @@ import RemoteData exposing (WebData)
 
 type alias Model =
     { title : String
-    , article : WebData (Maybe Article)
+    , article : WebData Article
     }
 
 
