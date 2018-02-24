@@ -1,10 +1,10 @@
 module Messages exposing (Message(..))
 
 import RemoteData exposing (WebData)
-import Model exposing (Article, Url)
+import Model exposing (Article)
 
 
 type Message
     = FetchArticleRequest
-    | FetchArticleResult (WebData Article)
-    | ArticleUrlChange Url
+    | FetchArticleResult (WebData (Maybe Article))
+    | ArticleTitleChange String

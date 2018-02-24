@@ -3,7 +3,7 @@ module View exposing (view)
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_)
 import Html.Events exposing (onInput, onClick)
-import Model exposing (Model, Url, Article)
+import Model exposing (Model, Article)
 import Messages exposing (Message(..))
 import RemoteData exposing (WebData)
 
@@ -11,15 +11,15 @@ import RemoteData exposing (WebData)
 view : Model -> Html Message
 view model =
     div []
-        [ articleUrlInput model.articleUrl
+        [ articleTitleInput model.title
         , fetchArticleButton
-        , articleContent model.articleContent
+        , articleContent model.article
         ]
 
 
-articleUrlInput : Url -> Html Message
-articleUrlInput url =
-    input [ type_ "text", value url, onInput ArticleUrlChange ] []
+articleTitleInput : String -> Html Message
+articleTitleInput url =
+    input [ type_ "text", value url, onInput ArticleTitleChange ] []
 
 
 fetchArticleButton : Html Message
@@ -27,19 +27,25 @@ fetchArticleButton =
     button [ onClick FetchArticleRequest ] [ text "Request article" ]
 
 
-articleContent : WebData Article -> Html Message
-articleContent content =
+articleContent : WebData (Maybe Article) -> Html Message
+articleContent article =
     div []
-        [ case content of
-            RemoteData.NotAsked ->
-                text ""
+        [ text <|
+            case article of
+                RemoteData.NotAsked ->
+                    ""
 
-            RemoteData.Loading ->
-                text "Loading..."
+                RemoteData.Loading ->
+                    "Loading..."
 
-            RemoteData.Success value ->
-                text value
+                RemoteData.Success value ->
+                    case value of
+                        Just a ->
+                            a.content
 
-            RemoteData.Failure error ->
-                text ("Oops, could not load article :(\n" ++ (toString error))
+                        Nothing ->
+                            "Article has no content? D:"
+
+                RemoteData.Failure error ->
+                    ("Oops, could not load article :(\n" ++ (toString error))
         ]

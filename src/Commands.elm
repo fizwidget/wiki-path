@@ -1,44 +1,104 @@
 module Commands exposing (fetchArticle)
 
 import Jsonp
-import Json.Decode exposing (int, string, float, nullable, Decoder)
-import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
+import Json.Decode exposing (int, string, float, nullable, list, Decoder)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt, optional, hardcoded)
 import Messages exposing (Message(FetchArticleResult))
-import Model exposing (Url)
-import RemoteData
+import RemoteData exposing (WebData)
+import Model exposing (Article)
 
 
 fetchArticle : String -> Cmd Message
-fetchArticle articleTitle =
-    getUrl articleTitle
-        |> Jsonp.get
-        |> RemoteData.sendRequest
+fetchArticle title =
+    title
+        |> buildUrl
+        |> Jsonp.get responseDecoder
+        |> RemoteData.asCmd
+        |> Cmd.map toFetchArticleResult
         |> Cmd.map FetchArticleResult
 
 
-getUrl : String -> String
-getUrl articleTitle =
-    "https://en.wikipedia.org/w/api.php?action=query&titles=" ++ articleTitle ++ "&prop=revisions&rvprop=content&format=json&formatversion=2"
+buildUrl : String -> String
+buildUrl title =
+    "https://en.wikipedia.org/w/api.php?action=query&titles=" ++ title ++ "&prop=revisions&rvprop=content&format=json&formatversion=2"
 
 
-type alias Article =
+toFetchArticleResult : WebData Response -> WebData (Maybe Article)
+toFetchArticleResult =
+    RemoteData.map responseToArticle
+
+
+responseToArticle : Response -> Maybe Article
+responseToArticle response =
+    let
+        page : Maybe Page
+        page =
+            getFirstPage response
+
+        title : Maybe String
+        title =
+            Maybe.map .title page
+
+        revision : Maybe Revision
+        revision =
+            Maybe.andThen getFirstRevision page
+    in
+        Maybe.map2 (\t r -> { title = t, content = r.content }) title revision
+
+
+getFirstPage : Response -> Maybe Page
+getFirstPage response =
+    response
+        |> .query
+        |> List.head
+
+
+getFirstRevision : Page -> Maybe Revision
+getFirstRevision page =
+    page
+        |> .revisions
+        |> List.head
+
+
+type alias Response =
+    { query : List Page }
+
+
+type alias Page =
     { title : String
-    , content : String
+    , revisions : List Revision
     }
 
 
-type alias Pages =
-    { pages : List Article
+type alias Revision =
+    { content : String
     }
 
 
-articleDecoder : Decoder Article
-articleDecoder =
-    decode Article
-        |> required "query" queryDecoder
+responseDecoder : Decoder Response
+responseDecoder =
+    decode Response
+        |> requiredAt [ "query", "pages" ] pagesDecoder
 
 
-queryDecoder : Decoder Pages
-queryDecoder =
-    decode Pages
-        |> required "pages" Pages
+pagesDecoder : Decoder (List Page)
+pagesDecoder =
+    list pageDecoder
+
+
+pageDecoder : Decoder Page
+pageDecoder =
+    decode Page
+        |> required "title" string
+        |> required "revisions" revisionsDecoder
+
+
+revisionsDecoder : Decoder (List Revision)
+revisionsDecoder =
+    list revisionDecoder
+
+
+revisionDecoder : Decoder Revision
+revisionDecoder =
+    decode Revision
+        |> required "content" string

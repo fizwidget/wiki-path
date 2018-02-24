@@ -1,22 +1,22 @@
-module Model exposing (Model, Url, Article, initialModel)
+module Model exposing (Model, Article, initialModel)
 
 import RemoteData exposing (WebData)
 
 
-type alias Url =
-    String
+type alias Model =
+    { title : String
+    , article : WebData (Maybe Article)
+    }
 
 
 type alias Article =
-    String
-
-
-type alias Model =
-    { articleUrl : Url
-    , articleContent : WebData Article
+    { title : String
+    , content : String
     }
 
 
 initialModel : Model
 initialModel =
-    Model "" RemoteData.NotAsked
+    { title = ""
+    , article = RemoteData.NotAsked
+    }
