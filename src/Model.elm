@@ -4,8 +4,10 @@ import RemoteData exposing (WebData)
 
 
 type alias Model =
-    { title : String
-    , article : WebData Article
+    { sourceTitleInput : String
+    , destinationTitleInput : String
+    , sourceArticle : WebData (Maybe Article)
+    , destinationArticle : WebData (Maybe Article)
     }
 
 
@@ -17,6 +19,8 @@ type alias Article =
 
 initialModel : Model
 initialModel =
-    { title = ""
-    , article = RemoteData.NotAsked
+    { sourceTitleInput = ""
+    , destinationTitleInput = ""
+    , sourceArticle = RemoteData.NotAsked
+    , destinationArticle = RemoteData.NotAsked
     }

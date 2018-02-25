@@ -1,18 +1,34 @@
 module Update exposing (update)
 
 import Model exposing (Model)
-import Messages exposing (Message(FetchArticleRequest, FetchArticleResult, ArticleTitleChange))
+import Messages exposing (Message(..))
 import Commands exposing (fetchArticle)
 
 
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
     case message of
-        FetchArticleRequest ->
-            ( model, fetchArticle model.title )
+        FetchArticlesRequest ->
+            ( model
+            , fetchArticles model.sourceTitleInput model.destinationTitleInput
+            )
 
-        FetchArticleResult response ->
-            ( { model | article = response }, Cmd.none )
+        FetchSourceArticleResult article ->
+            ( { model | sourceArticle = article }, Cmd.none )
 
-        ArticleTitleChange title ->
-            ( { model | title = title }, Cmd.none )
+        FetchDestinationArticleResult article ->
+            ( { model | destinationArticle = article }, Cmd.none )
+
+        SourceArticleTitleChange title ->
+            ( { model | sourceTitleInput = title }, Cmd.none )
+
+        DestinationArticleTitleChange title ->
+            ( { model | destinationTitleInput = title }, Cmd.none )
+
+
+fetchArticles : String -> String -> Cmd Message
+fetchArticles sourceTitle destinationTitle =
+    Cmd.batch
+        [ fetchArticle sourceTitle FetchSourceArticleResult
+        , fetchArticle destinationTitle FetchDestinationArticleResult
+        ]

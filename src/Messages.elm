@@ -5,6 +5,8 @@ import Model exposing (Article)
 
 
 type Message
-    = FetchArticleRequest
-    | FetchArticleResult (WebData Article)
-    | ArticleTitleChange String
+    = SourceArticleTitleChange String
+    | DestinationArticleTitleChange String
+    | FetchArticlesRequest
+    | FetchSourceArticleResult (WebData (Maybe Article))
+    | FetchDestinationArticleResult (WebData (Maybe Article))
