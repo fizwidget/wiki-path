@@ -1,17 +1,19 @@
-module Model exposing (Model, RemoteArticle, Article, Error(..), initialModel)
+module Model exposing (Model, RemoteArticle, Article, ArticleResult, ApiError(..), initialModel)
 
-import Http
-import RemoteData exposing (RemoteData)
+import RemoteData exposing (WebData)
 
 
-type Error
-    = HttpError Http.Error
-    | ArticleNotFound
+type ApiError
+    = ArticleNotFound
     | UnknownError String
 
 
+type alias ArticleResult =
+    Result ApiError Article
+
+
 type alias RemoteArticle =
-    RemoteData Error Article
+    WebData ArticleResult
 
 
 type alias Model =

@@ -4,7 +4,7 @@ import Html exposing (Html, div, input, button, text, span, h1, h2)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import RemoteData exposing (WebData)
-import Model exposing (Model, RemoteArticle, Article, Error(..))
+import Model exposing (Model, ArticleResult, RemoteArticle, Article, ApiError(..))
 import Messages exposing (Message(..))
 
 
@@ -140,13 +140,13 @@ loadArticlesButton =
 articlesContent : Model -> Html message
 articlesContent { sourceArticle, destinationArticle } =
     div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
-        [ displayArticle sourceArticle
-        , displayArticle destinationArticle
+        [ displayRemoteArticle sourceArticle
+        , displayRemoteArticle destinationArticle
         ]
 
 
-displayArticle : RemoteArticle -> Html message
-displayArticle article =
+displayRemoteArticle : RemoteArticle -> Html message
+displayRemoteArticle article =
     div [ style [ ( "flex", "1" ), ( "max-width", "50%" ) ] ]
         [ case article of
             RemoteData.NotAsked ->
@@ -155,12 +155,22 @@ displayArticle article =
             RemoteData.Loading ->
                 text "Loading..."
 
-            RemoteData.Success article ->
-                displaySuccess article
+            RemoteData.Success articleResult ->
+                displayArticleResult articleResult
 
             RemoteData.Failure error ->
-                displayError error
+                text (toString error)
         ]
+
+
+displayArticleResult : ArticleResult -> Html message
+displayArticleResult article =
+    case article of
+        Result.Err error ->
+            displayError error
+
+        Result.Ok article ->
+            displaySuccess article
 
 
 displaySuccess : Article -> Html message
@@ -171,12 +181,9 @@ displaySuccess { title, content } =
         ]
 
 
-displayError : Error -> Html message
+displayError : ApiError -> Html message
 displayError error =
     case error of
-        HttpError httpError ->
-            text ("HTTP error when fetching article:\n" ++ (toString HttpError))
-
         ArticleNotFound ->
             text "Article not found"
 
