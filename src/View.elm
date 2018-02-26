@@ -1,6 +1,6 @@
 module View exposing (view)
 
-import Html exposing (Html, div, input, button, text, h1, h2)
+import Html exposing (Html, div, input, button, text, span, h1, h2)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import RemoteData exposing (WebData)
@@ -12,7 +12,8 @@ view : Model -> Html Message
 view model =
     appStyles
         [ centerChildren
-            [ pageHeading
+            [ pageIcon "📖"
+            , pageHeading "Wikipedia Game"
             , titleInputs model
             , fetchArticlesButton
             , articlesContent model
@@ -28,6 +29,7 @@ appStyles children =
             , ( "color", "#f9d094" )
             , ( "background", "#2e2a24" )
             , ( "height", "100vh" )
+            , ( "padding", "20px" )
             ]
         ]
         children
@@ -45,11 +47,29 @@ centerChildren children =
         children
 
 
-pageHeading : Html message
-pageHeading =
+pageIcon : String -> Html Message
+pageIcon icon =
+    span
+        [ style
+            [ ( "font-size", "800%" )
+            , ( "line-height", "1" )
+            , ( "height", "120px" )
+            , ( "margin", "20px 0 10px 0" )
+            ]
+        ]
+        [ text icon ]
+
+
+pageHeading : String -> Html message
+pageHeading heading =
     h1
-        [ style [ ( "font-size", "400%" ), ( "font-weight", "900" ) ] ]
-        [ text "📖 Wikipedia Game 📖" ]
+        [ style
+            [ ( "font-size", "400%" )
+            , ( "font-weight", "900" )
+            , ( "margin-top", "0" )
+            ]
+        ]
+        [ text heading ]
 
 
 titleInputs : Model -> Html Message
@@ -85,6 +105,8 @@ articleTitleInput placeholderText toMessage title =
             , ( "border", "none" )
             , ( "border-radius", "8px" )
             , ( "padding", "8px" )
+            , ( "text-align", "center" )
+            , ( "margin-right", "8px" )
             ]
         ]
         []
@@ -105,7 +127,7 @@ fetchArticlesButton =
                 , ( "color", "#505739" )
                 , ( "font-size", "18px" )
                 , ( "font-weight", "bold" )
-                , ( "padding", "12px 24px" )
+                , ( "padding", "10px 20px" )
                 , ( "text-decoration", "none" )
                 , ( "text-shadow", "0px 1px 0px #ffffff" )
                 , ( "margin-top", "10px" )
