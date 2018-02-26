@@ -4,7 +4,7 @@ import Html exposing (Html, div, input, button, text, span, h1, h2)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import RemoteData exposing (WebData)
-import Model exposing (Model, Article)
+import Model exposing (Model, RemoteArticle, Article, Error(..))
 import Messages exposing (Message(..))
 
 
@@ -15,7 +15,7 @@ view model =
             [ pageIcon "📖"
             , pageHeading "Wikipedia Game"
             , titleInputs model
-            , fetchArticlesButton
+            , loadArticlesButton
             , articlesContent model
             ]
         ]
@@ -112,8 +112,8 @@ articleTitleInput placeholderText toMessage title =
         []
 
 
-fetchArticlesButton : Html Message
-fetchArticlesButton =
+loadArticlesButton : Html Message
+loadArticlesButton =
     div
         [ style [ ( "margin", "10px" ) ] ]
         [ button
@@ -133,7 +133,7 @@ fetchArticlesButton =
                 , ( "margin-top", "10px" )
                 ]
             ]
-            [ text "Fetch articles" ]
+            [ text "Load articles" ]
         ]
 
 
@@ -145,7 +145,7 @@ articlesContent { sourceArticle, destinationArticle } =
         ]
 
 
-displayArticle : WebData (Maybe Article) -> Html message
+displayArticle : RemoteArticle -> Html message
 displayArticle article =
     div [ style [ ( "flex", "1" ), ( "max-width", "50%" ) ] ]
         [ case article of
@@ -156,16 +156,29 @@ displayArticle article =
                 text "Loading..."
 
             RemoteData.Success article ->
-                case article of
-                    Just { title, content } ->
-                        div []
-                            [ h2 [] [ text title ]
-                            , text content
-                            ]
-
-                    Nothing ->
-                        text "Article not found"
+                displaySuccess article
 
             RemoteData.Failure error ->
-                text ("Oops, couldn't load article:\n" ++ (toString error))
+                displayError error
         ]
+
+
+displaySuccess : Article -> Html message
+displaySuccess { title, content } =
+    div []
+        [ h2 [] [ text title ]
+        , text content
+        ]
+
+
+displayError : Error -> Html message
+displayError error =
+    case error of
+        HttpError httpError ->
+            text ("HTTP error when fetching article:\n" ++ (toString HttpError))
+
+        ArticleNotFound ->
+            text "Article not found"
+
+        UnknownError errorCode ->
+            text ("Unknown error: " ++ errorCode)
