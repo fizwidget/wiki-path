@@ -4,7 +4,8 @@
     "repository": "https://github.com/fizwidget/wikipedia-game.git",
     "license": "BSD3",
     "source-directories": [
-        "src"
+        "src",
+        "src/View"
     ],
     "exposed-modules": [],
     "dependencies": {
