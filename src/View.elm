@@ -28,7 +28,7 @@ appStyles children =
             [ ( "font-family", "Helvetica" )
             , ( "color", "#f9d094" )
             , ( "background", "#2e2a24" )
-            , ( "height", "100vh" )
+            , ( "min-height", "100vh" )
             , ( "padding", "20px" )
             ]
         ]
