@@ -1,7 +1,7 @@
 module Commands exposing (fetchArticle)
 
 import Http
-import RemoteData exposing (WebData)
+import RemoteData
 import Model exposing (RemoteArticle)
 import Decoder exposing (remoteArticle)
 import Messages exposing (Message)

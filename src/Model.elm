@@ -3,17 +3,13 @@ module Model exposing (Model, RemoteArticle, Article, ArticleResult, ApiError(..
 import RemoteData exposing (WebData)
 
 
-type ApiError
-    = ArticleNotFound
-    | UnknownError String
-
-
-type alias ArticleResult =
-    Result ApiError Article
-
-
-type alias RemoteArticle =
-    WebData ArticleResult
+initialModel : Model
+initialModel =
+    { sourceTitleInput = ""
+    , destinationTitleInput = ""
+    , sourceArticle = RemoteData.NotAsked
+    , destinationArticle = RemoteData.NotAsked
+    }
 
 
 type alias Model =
@@ -24,16 +20,20 @@ type alias Model =
     }
 
 
+type alias RemoteArticle =
+    WebData ArticleResult
+
+
+type alias ArticleResult =
+    Result ApiError Article
+
+
+type ApiError
+    = ArticleNotFound
+    | UnknownError String
+
+
 type alias Article =
     { title : String
     , content : String
-    }
-
-
-initialModel : Model
-initialModel =
-    { sourceTitleInput = ""
-    , destinationTitleInput = ""
-    , sourceArticle = RemoteData.NotAsked
-    , destinationArticle = RemoteData.NotAsked
     }
