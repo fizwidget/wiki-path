@@ -1,7 +1,7 @@
 module View.Content exposing (articlesContent)
 
 import RemoteData
-import Html exposing (Html, div, text, h2, a)
+import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
 import Model exposing (Model, ArticleResult, RemoteArticle, Article, ApiError(..))
 import LinkExtractor exposing (Link, getLinks)
@@ -46,14 +46,20 @@ displayArticleResult article =
 displaySuccess : Article -> Html message
 displaySuccess { title, content } =
     div []
-        ((h2 [] [ text title ])
-            :: List.map displayLink (getLinks content)
-        )
+        [ h2 [] [ text title ]
+        , displayLinks (getLinks content)
+        ]
+
+
+displayLinks : List Link -> Html message
+displayLinks links =
+    ol []
+        (List.map displayLink links)
 
 
 displayLink : Link -> Html message
 displayLink { name, destination } =
-    div []
+    li []
         [ a
             [ href ("https://en.wikipedia.org" ++ destination)
             , (style [ ( "color", "hotpink" ) ])
