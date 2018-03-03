@@ -3,16 +3,20 @@ module View.Content exposing (articlesContent)
 import RemoteData
 import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
+import Html.Lazy exposing (lazy2)
 import Model exposing (Model, ArticleResult, RemoteArticle, Article, ApiError(..))
 import LinkExtractor exposing (Link, getLinks)
 
 
-articlesContent : Model -> Html message
-articlesContent { sourceArticle, destinationArticle } =
-    div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
-        [ displayRemoteArticle sourceArticle
-        , displayRemoteArticle destinationArticle
-        ]
+articlesContent : RemoteArticle -> RemoteArticle -> Html message
+articlesContent =
+    lazy2
+        (\sourceArticle destinationArticle ->
+            div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
+                [ displayRemoteArticle sourceArticle
+                , displayRemoteArticle destinationArticle
+                ]
+        )
 
 
 displayRemoteArticle : RemoteArticle -> Html message

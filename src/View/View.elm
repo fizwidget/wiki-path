@@ -17,7 +17,7 @@ view model =
             , pageHeading
             , titleInputs model
             , loadArticlesButton
-            , articlesContent model
+            , articlesContent model.sourceArticle model.destinationArticle
             ]
         ]
 
