@@ -2,10 +2,16 @@ module Decoder exposing (remoteArticle)
 
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
-import Model exposing (ArticleResult, Article, ApiError(..))
+import Model.Main exposing (ArticleResult, ApiError(..))
 
 
-remoteArticle : Decoder ArticleResult
+type alias RawArticle =
+    { title : String
+    , description : String
+    }
+
+
+remoteArticle : Decoder (Result ApiError RawArticle)
 remoteArticle =
     oneOf
         [ map Result.Ok article
@@ -13,9 +19,9 @@ remoteArticle =
         ]
 
 
-article : Decoder Article
+article : Decoder RawArticle
 article =
-    decode Article
+    decode RawArticle
         |> requiredAt [ "parse", "title" ] string
         |> requiredAt [ "parse", "text" ] string
 

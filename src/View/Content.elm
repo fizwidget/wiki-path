@@ -4,7 +4,9 @@ import RemoteData
 import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
 import Html.Lazy exposing (lazy2)
-import Model exposing (Model, ArticleResult, RemoteArticle, Article, ApiError(..))
+import Model.Main exposing (Model, ArticleResult, RemoteArticle, ApiError(..))
+import Model.Article exposing (Article)
+import Model.Title as Title exposing (Title)
 import LinkExtractor exposing (Link, getLinks)
 
 
@@ -50,7 +52,8 @@ displayArticleResult article =
 displaySuccess : Article -> Html message
 displaySuccess { title, content } =
     div []
-        [ h2 [] [ text title ]
+        [ h2 []
+            [ text <| Title.value title ]
         , displayLinks (getLinks content)
         ]
 

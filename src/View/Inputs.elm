@@ -3,7 +3,7 @@ module View.Inputs exposing (titleInputs, loadArticlesButton)
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
-import Model exposing (Model)
+import Model.Main exposing (Model)
 import Messages exposing (Message(..))
 
 

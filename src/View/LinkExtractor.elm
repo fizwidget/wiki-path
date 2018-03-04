@@ -2,6 +2,7 @@ module LinkExtractor exposing (Link, getLinks)
 
 import HtmlParser exposing (Node, Attributes, parse)
 import HtmlParser.Util exposing (getElementsByTagName, filterElements, mapElements, getValue, textContent)
+import Model.Content exposing (Content)
 
 
 type alias Link =
@@ -10,9 +11,9 @@ type alias Link =
     }
 
 
-getLinks : String -> List Link
-getLinks html =
-    parse html
+getLinks : Content -> List Link
+getLinks content =
+    content
         |> getElementsByTagName "a"
         |> filterElements isArticleLink
         |> mapElements buildLink

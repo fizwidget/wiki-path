@@ -1,8 +1,8 @@
-module View exposing (view)
+module View.Page exposing (view)
 
 import Html exposing (Html, div)
 import Html.Attributes exposing (style)
-import Model exposing (Model)
+import Model.Main exposing (Model)
 import Messages exposing (Message)
 import View.Content exposing (articlesContent)
 import View.Header exposing (pageIcon, pageHeading)

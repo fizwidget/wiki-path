@@ -1,6 +1,7 @@
-module Model exposing (Model, RemoteArticle, Article, ArticleResult, ApiError(..), initialModel)
+module Model.Main exposing (Model, RemoteArticle, ArticleResult, ApiError(..), initialModel)
 
 import RemoteData exposing (WebData)
+import Model.Article exposing (Article)
 
 
 initialModel : Model
@@ -31,9 +32,3 @@ type alias ArticleResult =
 type ApiError
     = ArticleNotFound
     | UnknownError String
-
-
-type alias Article =
-    { title : String
-    , content : String
-    }

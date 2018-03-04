@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Model exposing (Model)
+import Model.Main exposing (Model)
 import Messages exposing (Message(..))
 import Commands exposing (fetchArticle)
 
