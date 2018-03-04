@@ -14,7 +14,8 @@
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "elm-lang/http": "1.0.0 <= v < 2.0.0",
         "jinjor/elm-html-parser": "1.1.5 <= v < 2.0.0",
-        "krisajenkins/remotedata": "4.3.3 <= v < 5.0.0"
+        "krisajenkins/remotedata": "4.3.3 <= v < 5.0.0",
+        "rhofour/elm-pairing-heap": "1.0.3 <= v < 2.0.0"
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
 }
