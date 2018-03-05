@@ -1,5 +1,6 @@
 module Model exposing (Model, RemoteArticle, Article, ArticleResult, ApiError(..), initialModel)
 
+import HtmlParser exposing (Node)
 import RemoteData exposing (WebData)
 
 
@@ -35,5 +36,5 @@ type ApiError
 
 type alias Article =
     { title : String
-    , content : String
+    , content : List Node
     }

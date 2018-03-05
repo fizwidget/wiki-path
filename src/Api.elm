@@ -2,12 +2,12 @@ module Api exposing (fetchArticle)
 
 import Http exposing (Request)
 import Model exposing (ArticleResult)
-import Decoder exposing (remoteArticle)
+import Decoder exposing (articleResult)
 
 
 fetchArticle : String -> Request ArticleResult
 fetchArticle title =
-    Http.get (buildUrl title) remoteArticle
+    Http.get (buildUrl title) articleResult
 
 
 buildUrl : String -> String

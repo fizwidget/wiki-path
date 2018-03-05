@@ -4,10 +4,10 @@ import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import Model exposing (Model)
-import Messages exposing (Message(..))
+import Messages exposing (Msg(..))
 
 
-titleInputs : Model -> Html Message
+titleInputs : Model -> Html Msg
 titleInputs { sourceTitleInput, destinationTitleInput } =
     div []
         [ sourceArticleTitleInput sourceTitleInput
@@ -15,23 +15,23 @@ titleInputs { sourceTitleInput, destinationTitleInput } =
         ]
 
 
-sourceArticleTitleInput : String -> Html Message
+sourceArticleTitleInput : String -> Html Msg
 sourceArticleTitleInput =
     articleTitleInput "Source article" SourceArticleTitleChange
 
 
-destinationArticleTitleInput : String -> Html Message
+destinationArticleTitleInput : String -> Html Msg
 destinationArticleTitleInput =
     articleTitleInput "Destination article" DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (String -> Message) -> String -> Html Message
-articleTitleInput placeholderText toMessage title =
+articleTitleInput : String -> (String -> Msg) -> String -> Html Msg
+articleTitleInput placeholderText toMsg title =
     input
         [ type_ "text"
         , value title
         , placeholder placeholderText
-        , onInput toMessage
+        , onInput toMsg
         , style
             [ ( "boarder-radius", "10px" )
             , ( "background", "rgba(0, 0, 0, 0.3)" )
@@ -47,7 +47,7 @@ articleTitleInput placeholderText toMessage title =
         []
 
 
-loadArticlesButton : Html Message
+loadArticlesButton : Html Msg
 loadArticlesButton =
     div
         [ style [ ( "margin", "10px" ) ] ]

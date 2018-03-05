@@ -1,13 +1,12 @@
-module Commands exposing (getArticle)
+module Commands exposing (getArticles)
 
-import RemoteData
-import Model exposing (RemoteArticle)
-import Messages exposing (Message)
-import Api exposing (fetchArticle)
+import Messages exposing (Msg(FetchSourceArticleResult, FetchDestinationArticleResult))
+import Service exposing (getArticle)
 
 
-getArticle : String -> (RemoteArticle -> Message) -> Cmd Message
-getArticle title createMessage =
-    fetchArticle title
-        |> RemoteData.sendRequest
-        |> Cmd.map createMessage
+getArticles : String -> String -> Cmd Msg
+getArticles sourceTitle destinationTitle =
+    Cmd.batch
+        [ getArticle sourceTitle FetchSourceArticleResult
+        , getArticle destinationTitle FetchDestinationArticleResult
+        ]

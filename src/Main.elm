@@ -3,12 +3,12 @@ module Main exposing (..)
 import Html exposing (program)
 import Model exposing (Model, initialModel)
 import View exposing (view)
-import Messages exposing (Message)
+import Messages exposing (Msg)
 import Update exposing (update)
 import Subscriptions exposing (subscriptions)
 
 
-main : Program Never Model Message
+main : Program Never Model Msg
 main =
     program
         { init = init
@@ -18,6 +18,6 @@ main =
         }
 
 
-init : ( Model, Cmd Message )
+init : ( Model, Cmd Msg )
 init =
     ( initialModel, Cmd.none )

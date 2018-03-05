@@ -1,9 +1,9 @@
-module Messages exposing (Message(..))
+module Messages exposing (Msg(..))
 
 import Model exposing (RemoteArticle)
 
 
-type Message
+type Msg
     = SourceArticleTitleChange String
     | DestinationArticleTitleChange String
     | FetchArticlesRequest
