@@ -1,19 +1,13 @@
-module Commands exposing (fetchArticle)
+module Commands exposing (getArticle)
 
-import Http
 import RemoteData
 import Model exposing (RemoteArticle)
-import Decoder exposing (remoteArticle)
 import Messages exposing (Message)
+import Api exposing (fetchArticle)
 
 
-fetchArticle : String -> (RemoteArticle -> Message) -> Cmd Message
-fetchArticle title toMessage =
-    Http.get (getArticleUrl title) remoteArticle
+getArticle : String -> (RemoteArticle -> Message) -> Cmd Message
+getArticle title createMessage =
+    fetchArticle title
         |> RemoteData.sendRequest
-        |> Cmd.map toMessage
-
-
-getArticleUrl : String -> String
-getArticleUrl title =
-    "https://en.wikipedia.org/w/api.php?action=parse&format=json&formatversion=2&origin=*&page=" ++ title
+        |> Cmd.map createMessage

@@ -2,7 +2,7 @@ module Update exposing (update)
 
 import Model exposing (Model)
 import Messages exposing (Message(..))
-import Commands exposing (fetchArticle)
+import Commands exposing (getArticle)
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -29,6 +29,6 @@ update message model =
 fetchArticles : String -> String -> Cmd Message
 fetchArticles sourceTitle destinationTitle =
     Cmd.batch
-        [ fetchArticle sourceTitle FetchSourceArticleResult
-        , fetchArticle destinationTitle FetchDestinationArticleResult
+        [ getArticle sourceTitle FetchSourceArticleResult
+        , getArticle destinationTitle FetchDestinationArticleResult
         ]
