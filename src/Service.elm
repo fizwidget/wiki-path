@@ -1,6 +1,5 @@
 module Service exposing (getArticle)
 
-import Http
 import RemoteData exposing (RemoteData, WebData)
 import Model exposing (RemoteArticle, ArticleError(NetworkError), Article)
 import Messages exposing (Msg)
@@ -19,10 +18,5 @@ getArticle title createMsg =
 liftResult : WebData ArticleResult -> RemoteArticle
 liftResult data =
     data
-        |> RemoteData.mapError liftError
-        |> RemoteData.andThen (\result -> RemoteData.fromResult result)
-
-
-liftError : Http.Error -> ArticleError
-liftError httpError =
-    NetworkError httpError
+        |> RemoteData.mapError NetworkError
+        |> RemoteData.andThen RemoteData.fromResult

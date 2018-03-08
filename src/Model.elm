@@ -22,6 +22,13 @@ type alias Model =
     }
 
 
+
+-- type ModelV2
+--     = ChoosingEndpoints
+--     | FindingRoute
+--     | FinishedRouting
+
+
 type alias RemoteArticle =
     RemoteData ArticleError Article
 
