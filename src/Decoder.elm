@@ -1,9 +1,13 @@
-module Decoder exposing (articleResult)
+module Decoder exposing (ArticleResult, articleResult)
 
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
 import HtmlParser exposing (parse)
-import Model exposing (ArticleResult, Article, ApiError(..))
+import Model exposing (Article, ArticleError(ArticleNotFound, UnknownError))
+
+
+type alias ArticleResult =
+    Result ArticleError Article
 
 
 articleResult : Decoder ArticleResult
@@ -28,13 +32,13 @@ buildArticle title content =
     }
 
 
-error : Decoder ApiError
+error : Decoder ArticleError
 error =
     decode toError
         |> requiredAt [ "error", "code" ] string
 
 
-toError : String -> ApiError
+toError : String -> ArticleError
 toError errorCode =
     case errorCode of
         "missingtitle" ->

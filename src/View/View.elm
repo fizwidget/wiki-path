@@ -22,7 +22,7 @@ view model =
         ]
 
 
-appStyles : List (Html message) -> Html message
+appStyles : List (Html msg) -> Html msg
 appStyles children =
     div
         [ style
@@ -36,7 +36,7 @@ appStyles children =
         children
 
 
-centerChildren : List (Html message) -> Html message
+centerChildren : List (Html msg) -> Html msg
 centerChildren children =
     div
         [ style

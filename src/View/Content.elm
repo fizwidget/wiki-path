@@ -3,23 +3,20 @@ module View.Content exposing (articlesContent)
 import RemoteData
 import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
-import Html.Lazy exposing (lazy2)
-import Model exposing (Model, ArticleResult, RemoteArticle, Article, ApiError(..))
+import Html.Lazy exposing (lazy)
+import Model exposing (Model, RemoteArticle, Article, ArticleError(..))
 import LinkExtractor exposing (Link, getLinks)
 
 
-articlesContent : RemoteArticle -> RemoteArticle -> Html message
-articlesContent =
-    lazy2
-        (\sourceArticle destinationArticle ->
-            div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
-                [ displayRemoteArticle sourceArticle
-                , displayRemoteArticle destinationArticle
-                ]
-        )
+articlesContent : RemoteArticle -> RemoteArticle -> Html msg
+articlesContent sourceArticle destinationArticle =
+    div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
+        [ displayRemoteArticle sourceArticle
+        , displayRemoteArticle destinationArticle
+        ]
 
 
-displayRemoteArticle : RemoteArticle -> Html message
+displayRemoteArticle : RemoteArticle -> Html msg
 displayRemoteArticle article =
     div [ style [ ( "flex", "1" ), ( "max-width", "50%" ) ] ]
         [ case article of
@@ -29,39 +26,45 @@ displayRemoteArticle article =
             RemoteData.Loading ->
                 text "Loading..."
 
-            RemoteData.Success articleResult ->
-                displayArticleResult articleResult
+            RemoteData.Success article ->
+                displayArticle article
 
             RemoteData.Failure error ->
-                text (toString error)
+                displayError error
         ]
 
 
-displayArticleResult : ArticleResult -> Html message
-displayArticleResult article =
-    case article of
-        Result.Err error ->
-            displayError error
+displayError : ArticleError -> Html msg
+displayError error =
+    case error of
+        ArticleNotFound ->
+            text "Not found"
 
-        Result.Ok article ->
-            displaySuccess article
+        UnknownError errorCode ->
+            text ("Unknown error: " ++ errorCode)
 
-
-displaySuccess : Article -> Html message
-displaySuccess { title, content } =
-    div []
-        [ h2 [] [ text title ]
-        , displayLinks (getLinks content)
-        ]
+        NetworkError error ->
+            text ("Network error: " ++ toString error)
 
 
-displayLinks : List Link -> Html message
+displayArticle : Article -> Html msg
+displayArticle =
+    lazy
+        (\{ title, content } ->
+            div []
+                [ h2 [] [ text title ]
+                , displayLinks (getLinks content)
+                ]
+        )
+
+
+displayLinks : List Link -> Html msg
 displayLinks links =
     ol []
         (List.map displayLink links)
 
 
-displayLink : Link -> Html message
+displayLink : Link -> Html msg
 displayLink { name, destination } =
     li []
         [ a
@@ -70,13 +73,3 @@ displayLink { name, destination } =
             ]
             [ text name ]
         ]
-
-
-displayError : ApiError -> Html message
-displayError error =
-    case error of
-        ArticleNotFound ->
-            text "Article not found"
-
-        UnknownError errorCode ->
-            text ("Unknown error: " ++ errorCode)

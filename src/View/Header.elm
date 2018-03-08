@@ -4,7 +4,7 @@ import Html exposing (Html, text, span, h1)
 import Html.Attributes exposing (style)
 
 
-pageIcon : Html message
+pageIcon : Html msg
 pageIcon =
     span
         [ style
@@ -17,7 +17,7 @@ pageIcon =
         [ text "📖" ]
 
 
-pageHeading : Html message
+pageHeading : Html msg
 pageHeading =
     h1
         [ style

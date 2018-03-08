@@ -1,7 +1,8 @@
-module Model exposing (Model, RemoteArticle, Article, ArticleResult, ApiError(..), initialModel)
+module Model exposing (Model, RemoteArticle, Article, ArticleError(..), initialModel)
 
+import Http
 import HtmlParser exposing (Node)
-import RemoteData exposing (WebData)
+import RemoteData exposing (RemoteData)
 
 
 initialModel : Model
@@ -22,16 +23,13 @@ type alias Model =
 
 
 type alias RemoteArticle =
-    WebData ArticleResult
+    RemoteData ArticleError Article
 
 
-type alias ArticleResult =
-    Result ApiError Article
-
-
-type ApiError
+type ArticleError
     = ArticleNotFound
     | UnknownError String
+    | NetworkError Http.Error
 
 
 type alias Article =

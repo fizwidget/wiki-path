@@ -1,8 +1,7 @@
 module Api exposing (fetchArticle)
 
 import Http exposing (Request)
-import Model exposing (ArticleResult)
-import Decoder exposing (articleResult)
+import Decoder exposing (ArticleResult, articleResult)
 
 
 fetchArticle : String -> Request ArticleResult
