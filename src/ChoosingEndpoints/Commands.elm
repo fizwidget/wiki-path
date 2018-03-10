@@ -1,7 +1,7 @@
 module ChoosingEndpoints.Commands exposing (getArticles)
 
 import Messages exposing (Msg(FetchSourceArticleResult, FetchDestinationArticleResult))
-import Service exposing (getArticle)
+import Common.Service exposing (getArticle)
 
 
 getArticles : String -> String -> Cmd Msg

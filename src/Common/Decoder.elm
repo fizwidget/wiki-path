@@ -1,4 +1,4 @@
-module Decoder exposing (ArticleResult, articleResult)
+module Common.Decoder exposing (ArticleResult, articleResult)
 
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)

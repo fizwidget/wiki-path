@@ -1,10 +1,10 @@
-module Service exposing (getArticle)
+module Common.Service exposing (getArticle)
 
 import RemoteData exposing (RemoteData, WebData)
 import Common.Model exposing (RemoteArticle, ArticleError(NetworkError), Article)
+import Common.Decoder exposing (ArticleResult)
+import Common.Api exposing (fetchArticle)
 import Messages exposing (Msg)
-import Decoder exposing (ArticleResult)
-import Api exposing (fetchArticle)
 
 
 getArticle : String -> (RemoteArticle -> Msg) -> Cmd Msg

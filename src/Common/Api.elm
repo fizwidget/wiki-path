@@ -1,7 +1,7 @@
-module Api exposing (fetchArticle)
+module Common.Api exposing (fetchArticle)
 
 import Http exposing (Request)
-import Decoder exposing (ArticleResult, articleResult)
+import Common.Decoder exposing (ArticleResult, articleResult)
 
 
 fetchArticle : String -> Request ArticleResult
