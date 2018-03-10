@@ -1,45 +1,29 @@
-module Model exposing (Model, RemoteArticle, Article, ArticleError(..), initialModel)
+module Model exposing (Model(..), initialModel)
 
-import Http
-import HtmlParser exposing (Node)
-import RemoteData exposing (RemoteData)
+import Common.Model exposing (Article)
+import ChoosingEndpoints.Model exposing (ChoosingEndpointsModel, initialChoosingEndpointsModel)
 
 
 initialModel : Model
 initialModel =
-    { sourceTitleInput = ""
-    , destinationTitleInput = ""
-    , sourceArticle = RemoteData.NotAsked
-    , destinationArticle = RemoteData.NotAsked
+    ChoosingEndpoints initialChoosingEndpointsModel
+
+
+type alias FindingRouteModel =
+    { source : Article
+    , destination : Article
     }
 
 
-type alias Model =
-    { sourceTitleInput : String
-    , destinationTitleInput : String
-    , sourceArticle : RemoteArticle
-    , destinationArticle : RemoteArticle
-    }
+type alias Route =
+    List Article
 
 
-
--- type ModelV2
---     = ChoosingEndpoints
---     | FindingRoute
---     | FinishedRouting
+type alias FinishedRoutingModel =
+    Result Route
 
 
-type alias RemoteArticle =
-    RemoteData ArticleError Article
-
-
-type ArticleError
-    = ArticleNotFound
-    | UnknownError String
-    | NetworkError Http.Error
-
-
-type alias Article =
-    { title : String
-    , content : List Node
-    }
+type Model
+    = ChoosingEndpoints ChoosingEndpointsModel
+    | FindingRoute FindingRouteModel
+    | FinishedRouting FinishedRoutingModel

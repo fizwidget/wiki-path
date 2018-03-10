@@ -1,12 +1,11 @@
 module View exposing (view)
 
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
-import Model exposing (Model)
+import Model exposing (Model(..))
 import Messages exposing (Msg)
-import View.Content exposing (articlesContent)
 import View.Header exposing (pageIcon, pageHeading)
-import View.Inputs exposing (titleInputs, loadArticlesButton)
+import ChoosingEndpoints.View exposing (choosingEndpointsView)
 
 
 view : Model -> Html Msg
@@ -15,9 +14,7 @@ view model =
         [ centerChildren
             [ pageIcon
             , pageHeading
-            , titleInputs model
-            , loadArticlesButton
-            , articlesContent model.sourceArticle model.destinationArticle
+            , renderContent model
             ]
         ]
 
@@ -46,3 +43,16 @@ centerChildren children =
             ]
         ]
         children
+
+
+renderContent : Model -> Html Msg
+renderContent model =
+    case model of
+        ChoosingEndpoints model ->
+            choosingEndpointsView model
+
+        FindingRoute model ->
+            text "Not implemented"
+
+        FinishedRouting model ->
+            text "Not implemented"

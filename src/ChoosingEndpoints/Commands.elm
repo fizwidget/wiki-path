@@ -1,4 +1,4 @@
-module Commands exposing (getArticles)
+module ChoosingEndpoints.Commands exposing (getArticles)
 
 import Messages exposing (Msg(FetchSourceArticleResult, FetchDestinationArticleResult))
 import Service exposing (getArticle)

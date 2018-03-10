@@ -1,29 +1,18 @@
 module Update exposing (update)
 
-import Model exposing (Model)
+import Model exposing (Model(..))
 import Messages exposing (Msg(..))
-import Commands exposing (getArticles)
+import ChoosingEndpoints.Update exposing (choosingEndpointsUpdate)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
-    case message of
-        FetchArticlesRequest ->
-            model
-                ! [ getArticles model.sourceTitleInput model.destinationTitleInput ]
+    case model of
+        ChoosingEndpoints innerModel ->
+            choosingEndpointsUpdate message innerModel
 
-        FetchSourceArticleResult article ->
-            { model | sourceArticle = article }
-                ! [ Cmd.none ]
+        FindingRoute innerModel ->
+            Debug.crash ("Implement me!")
 
-        FetchDestinationArticleResult article ->
-            { model | destinationArticle = article }
-                ! [ Cmd.none ]
-
-        SourceArticleTitleChange value ->
-            { model | sourceTitleInput = value }
-                ! [ Cmd.none ]
-
-        DestinationArticleTitleChange value ->
-            { model | destinationTitleInput = value }
-                ! [ Cmd.none ]
+        FinishedRouting innerModel ->
+            Debug.crash ("Implement me!")

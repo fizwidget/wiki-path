@@ -1,7 +1,7 @@
 module Service exposing (getArticle)
 
 import RemoteData exposing (RemoteData, WebData)
-import Model exposing (RemoteArticle, ArticleError(NetworkError), Article)
+import Common.Model exposing (RemoteArticle, ArticleError(NetworkError), Article)
 import Messages exposing (Msg)
 import Decoder exposing (ArticleResult)
 import Api exposing (fetchArticle)

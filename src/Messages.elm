@@ -1,6 +1,6 @@
 module Messages exposing (Msg(..))
 
-import Model exposing (RemoteArticle)
+import Common.Model exposing (RemoteArticle)
 
 
 type Msg

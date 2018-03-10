@@ -1,4 +1,4 @@
-module LinkExtractor exposing (Link, getLinks)
+module ChoosingEndpoints.View.LinkExtractor exposing (Link, getLinks)
 
 import HtmlParser exposing (Node, Attributes)
 import HtmlParser.Util exposing (getElementsByTagName, filterElements, mapElements, getValue, textContent)

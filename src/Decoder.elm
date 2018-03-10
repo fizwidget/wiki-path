@@ -3,7 +3,7 @@ module Decoder exposing (ArticleResult, articleResult)
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
 import HtmlParser exposing (parse)
-import Model exposing (Article, ArticleError(ArticleNotFound, UnknownError))
+import Common.Model exposing (Article, ArticleError(ArticleNotFound, UnknownError))
 
 
 type alias ArticleResult =
