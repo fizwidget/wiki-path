@@ -1,11 +1,11 @@
-module ChoosingEndpoints.View.Content exposing (articlesContent)
+module Setup.View.Content exposing (articlesContent)
 
 import RemoteData
 import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
 import Html.Lazy exposing (lazy)
-import Common.Model exposing (Article, RemoteArticle, ArticleError(..))
-import ChoosingEndpoints.View.LinkExtractor exposing (Link, getLinks)
+import Common.Types exposing (Article, RemoteArticle, ArticleError(..))
+import Setup.View.LinkExtractor exposing (Link, getLinks)
 
 
 articlesContent : RemoteArticle -> RemoteArticle -> Html msg

@@ -2,10 +2,9 @@ module View exposing (view)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
-import Model exposing (Model(..))
-import Messages exposing (Msg)
+import Types exposing (Model(..), Msg(..))
 import View.Header exposing (pageIcon, pageHeading)
-import ChoosingEndpoints.View exposing (choosingEndpointsView)
+import Setup.View
 
 
 view : Model -> Html Msg
@@ -48,11 +47,11 @@ centerChildren children =
 renderContent : Model -> Html Msg
 renderContent model =
     case model of
-        ChoosingEndpoints model ->
-            choosingEndpointsView model
+        Setup model ->
+            Setup.View.view model |> Html.map SetupMsg
 
-        FindingRoute model ->
+        Pathfinding model ->
             text "Not implemented"
 
-        FinishedRouting model ->
+        Finished model ->
             text "Not implemented"

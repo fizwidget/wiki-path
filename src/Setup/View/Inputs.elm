@@ -1,13 +1,12 @@
-module ChoosingEndpoints.View.Inputs exposing (titleInputs, loadArticlesButton)
+module Setup.View.Inputs exposing (titleInputs, loadArticlesButton)
 
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
-import ChoosingEndpoints.Model exposing (ChoosingEndpointsModel)
-import Messages exposing (Msg(..))
+import Setup.Types exposing (Msg(..))
 
 
-titleInputs : ChoosingEndpointsModel -> Html Msg
+titleInputs : Setup.Types.Model -> Html Setup.Types.Msg
 titleInputs { sourceTitleInput, destinationTitleInput } =
     div []
         [ sourceArticleTitleInput sourceTitleInput
@@ -15,17 +14,17 @@ titleInputs { sourceTitleInput, destinationTitleInput } =
         ]
 
 
-sourceArticleTitleInput : String -> Html Msg
+sourceArticleTitleInput : String -> Html Setup.Types.Msg
 sourceArticleTitleInput =
     articleTitleInput "Source article" SourceArticleTitleChange
 
 
-destinationArticleTitleInput : String -> Html Msg
+destinationArticleTitleInput : String -> Html Setup.Types.Msg
 destinationArticleTitleInput =
     articleTitleInput "Destination article" DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (String -> Msg) -> String -> Html Msg
+articleTitleInput : String -> (String -> Setup.Types.Msg) -> String -> Html Setup.Types.Msg
 articleTitleInput placeholderText toMsg title =
     input
         [ type_ "text"
@@ -47,7 +46,7 @@ articleTitleInput placeholderText toMsg title =
         []
 
 
-loadArticlesButton : Html Msg
+loadArticlesButton : Html Setup.Types.Msg
 loadArticlesButton =
     div
         [ style [ ( "margin", "10px" ) ] ]

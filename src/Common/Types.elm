@@ -1,4 +1,4 @@
-module Common.Model exposing (Article, RemoteArticle, ArticleError(..))
+module Common.Types exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
 
 import Http
 import HtmlParser exposing (Node)
@@ -9,6 +9,10 @@ type alias Article =
     { title : String
     , content : List Node
     }
+
+
+type alias ArticleResult =
+    Result ArticleError Article
 
 
 type alias RemoteArticle =

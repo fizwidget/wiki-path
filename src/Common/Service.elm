@@ -1,15 +1,13 @@
-module Common.Service exposing (getArticle)
+module Common.Service exposing (requestArticle)
 
 import RemoteData exposing (RemoteData, WebData)
-import Common.Model exposing (RemoteArticle, ArticleError(NetworkError), Article)
-import Common.Decoder exposing (ArticleResult)
-import Common.Api exposing (fetchArticle)
-import Messages exposing (Msg)
+import Common.Types exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
+import Common.Api
 
 
-getArticle : String -> (RemoteArticle -> Msg) -> Cmd Msg
-getArticle title createMsg =
-    fetchArticle title
+requestArticle : String -> (RemoteArticle -> msg) -> Cmd msg
+requestArticle title createMsg =
+    Common.Api.requestArticle title
         |> RemoteData.sendRequest
         |> Cmd.map liftResult
         |> Cmd.map createMsg

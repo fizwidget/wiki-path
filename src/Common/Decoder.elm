@@ -1,17 +1,13 @@
-module Common.Decoder exposing (ArticleResult, articleResult)
+module Common.Decoder exposing (decodeArticle)
 
+import HtmlParser
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
-import HtmlParser exposing (parse)
-import Common.Model exposing (Article, ArticleError(ArticleNotFound, UnknownError))
+import Common.Types exposing (Article, ArticleResult, ArticleError(ArticleNotFound, UnknownError))
 
 
-type alias ArticleResult =
-    Result ArticleError Article
-
-
-articleResult : Decoder ArticleResult
-articleResult =
+decodeArticle : Decoder ArticleResult
+decodeArticle =
     oneOf
         [ map Result.Ok article
         , map Result.Err error
@@ -28,7 +24,7 @@ article =
 buildArticle : String -> String -> Article
 buildArticle title content =
     { title = title
-    , content = parse content
+    , content = HtmlParser.parse content
     }
 
 

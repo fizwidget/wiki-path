@@ -1,12 +1,13 @@
-module Common.Api exposing (fetchArticle)
+module Common.Api exposing (requestArticle)
 
-import Http exposing (Request)
-import Common.Decoder exposing (ArticleResult, articleResult)
+import Http
+import Common.Types exposing (ArticleResult)
+import Common.Decoder exposing (decodeArticle)
 
 
-fetchArticle : String -> Request ArticleResult
-fetchArticle title =
-    Http.get (buildUrl title) articleResult
+requestArticle : String -> Http.Request ArticleResult
+requestArticle title =
+    Http.get (buildUrl title) decodeArticle
 
 
 buildUrl : String -> String
