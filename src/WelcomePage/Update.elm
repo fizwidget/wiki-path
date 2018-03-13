@@ -11,37 +11,36 @@ import WelcomePage.Model
 
 update : WelcomePage.Messages.Msg -> WelcomePage.Model.Model -> ( Model.Model, Cmd Msg )
 update message model =
-    case message of
-        WelcomePage.Messages.FetchArticlesRequest ->
-            ( Model.WelcomePage model, getArticles model )
+    transitionIfArticlesLoaded <|
+        case message of
+            WelcomePage.Messages.SourceArticleTitleChange value ->
+                ( { model | sourceTitleInput = value }, Cmd.none )
 
-        WelcomePage.Messages.FetchSourceArticleResult article ->
-            ( { model | sourceArticle = article }, Cmd.none )
-                |> transitionIfPossible
+            WelcomePage.Messages.DestinationArticleTitleChange value ->
+                ( { model | destinationTitleInput = value }, Cmd.none )
 
-        WelcomePage.Messages.FetchDestinationArticleResult article ->
-            ( { model | destinationArticle = article }, Cmd.none )
-                |> transitionIfPossible
+            WelcomePage.Messages.FetchArticlesRequest ->
+                ( model, getArticles model )
 
-        WelcomePage.Messages.SourceArticleTitleChange value ->
-            ( Model.WelcomePage { model | sourceTitleInput = value }, Cmd.none )
+            WelcomePage.Messages.FetchSourceArticleResult article ->
+                ( { model | sourceArticle = article }, Cmd.none )
 
-        WelcomePage.Messages.DestinationArticleTitleChange value ->
-            ( Model.WelcomePage { model | destinationTitleInput = value }, Cmd.none )
+            WelcomePage.Messages.FetchDestinationArticleResult article ->
+                ( { model | destinationArticle = article }, Cmd.none )
+
+
+transitionIfArticlesLoaded : ( WelcomePage.Model.Model, Cmd Msg ) -> ( Model.Model, Cmd Msg )
+transitionIfArticlesLoaded ( model, message ) =
+    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
+        |> RemoteData.toMaybe
+        |> Maybe.map PathfindingPage.Init.init
+        |> Maybe.withDefault ( Model.WelcomePage model, message )
 
 
 getArticles : WelcomePage.Model.Model -> Cmd Msg
 getArticles { sourceTitleInput, destinationTitleInput } =
-    Cmd.batch
-        [ requestArticle sourceTitleInput WelcomePage.Messages.FetchSourceArticleResult
-        , requestArticle destinationTitleInput WelcomePage.Messages.FetchDestinationArticleResult
-        ]
-        |> Cmd.map Messages.WelcomePage
-
-
-transitionIfPossible : ( WelcomePage.Model.Model, Cmd Msg ) -> ( Model.Model, Cmd Msg )
-transitionIfPossible ( model, msg ) =
-    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
-        |> RemoteData.toMaybe
-        |> Maybe.map PathfindingPage.Init.init
-        |> Maybe.withDefault ( Model.WelcomePage model, msg )
+    Cmd.map Messages.WelcomePage <|
+        Cmd.batch
+            [ requestArticle sourceTitleInput WelcomePage.Messages.FetchSourceArticleResult
+            , requestArticle destinationTitleInput WelcomePage.Messages.FetchDestinationArticleResult
+            ]
