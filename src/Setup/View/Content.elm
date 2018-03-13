@@ -4,7 +4,7 @@ import RemoteData
 import Html exposing (Html, div, text, h2, a, ol, li)
 import Html.Attributes exposing (style, href)
 import Html.Lazy exposing (lazy)
-import Common.Types exposing (Article, RemoteArticle, ArticleError(..))
+import Common.Model exposing (Article, RemoteArticle, ArticleError(..))
 import Setup.View.LinkExtractor exposing (Link, getLinks)
 
 

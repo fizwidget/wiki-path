@@ -1,12 +1,13 @@
 module Setup.View exposing (view)
 
 import Html exposing (Html, div)
-import Setup.Types
+import Setup.Model
+import Setup.Messages exposing (Msg)
 import Setup.View.Inputs exposing (titleInputs, loadArticlesButton)
 import Setup.View.Content exposing (articlesContent)
 
 
-view : Setup.Types.Model -> Html Setup.Types.Msg
+view : Setup.Model.Model -> Html Msg
 view model =
     div []
         [ titleInputs model

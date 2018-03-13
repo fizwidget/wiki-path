@@ -1,7 +1,7 @@
 module Common.Service exposing (requestArticle)
 
 import RemoteData exposing (RemoteData, WebData)
-import Common.Types exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
+import Common.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
 import Common.Api
 
 

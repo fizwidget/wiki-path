@@ -1,7 +1,7 @@
 module Common.Api exposing (requestArticle)
 
 import Http
-import Common.Types exposing (ArticleResult)
+import Common.Model exposing (ArticleResult)
 import Common.Decoder exposing (decodeArticle)
 
 

@@ -3,33 +3,26 @@ module Common.Decoder exposing (decodeArticle)
 import HtmlParser
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
-import Common.Types exposing (Article, ArticleResult, ArticleError(ArticleNotFound, UnknownError))
+import Common.Model exposing (Article, ArticleResult, ArticleError(ArticleNotFound, UnknownError))
 
 
 decodeArticle : Decoder ArticleResult
 decodeArticle =
     oneOf
-        [ map Result.Ok article
-        , map Result.Err error
+        [ map Result.Ok decodeSuccess
+        , map Result.Err decodeError
         ]
 
 
-article : Decoder Article
-article =
-    decode buildArticle
+decodeSuccess : Decoder Article
+decodeSuccess =
+    decode fromRawContent
         |> requiredAt [ "parse", "title" ] string
         |> requiredAt [ "parse", "text" ] string
 
 
-buildArticle : String -> String -> Article
-buildArticle title content =
-    { title = title
-    , content = HtmlParser.parse content
-    }
-
-
-error : Decoder ArticleError
-error =
+decodeError : Decoder ArticleError
+decodeError =
     decode toError
         |> requiredAt [ "error", "code" ] string
 
@@ -42,3 +35,10 @@ toError errorCode =
 
         _ ->
             UnknownError errorCode
+
+
+fromRawContent : String -> String -> Article
+fromRawContent title content =
+    { title = title
+    , content = HtmlParser.parse content
+    }

@@ -1,4 +1,4 @@
-module Common.Types exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
+module Common.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
 
 import Http
 import HtmlParser exposing (Node)

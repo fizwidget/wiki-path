@@ -3,10 +3,11 @@ module Setup.View.Inputs exposing (titleInputs, loadArticlesButton)
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
-import Setup.Types exposing (Msg(..))
+import Setup.Messages exposing (Msg(..))
+import Setup.Model exposing (Model)
 
 
-titleInputs : Setup.Types.Model -> Html Setup.Types.Msg
+titleInputs : Model -> Html Msg
 titleInputs { sourceTitleInput, destinationTitleInput } =
     div []
         [ sourceArticleTitleInput sourceTitleInput
@@ -14,17 +15,17 @@ titleInputs { sourceTitleInput, destinationTitleInput } =
         ]
 
 
-sourceArticleTitleInput : String -> Html Setup.Types.Msg
+sourceArticleTitleInput : String -> Html Msg
 sourceArticleTitleInput =
     articleTitleInput "Source article" SourceArticleTitleChange
 
 
-destinationArticleTitleInput : String -> Html Setup.Types.Msg
+destinationArticleTitleInput : String -> Html Msg
 destinationArticleTitleInput =
     articleTitleInput "Destination article" DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (String -> Setup.Types.Msg) -> String -> Html Setup.Types.Msg
+articleTitleInput : String -> (String -> Msg) -> String -> Html Msg
 articleTitleInput placeholderText toMsg title =
     input
         [ type_ "text"
@@ -46,7 +47,7 @@ articleTitleInput placeholderText toMsg title =
         []
 
 
-loadArticlesButton : Html Setup.Types.Msg
+loadArticlesButton : Html Msg
 loadArticlesButton =
     div
         [ style [ ( "margin", "10px" ) ] ]

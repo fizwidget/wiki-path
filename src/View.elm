@@ -2,7 +2,8 @@ module View exposing (view)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
-import Types exposing (Model(..), Msg(..))
+import Model exposing (Model(..))
+import Messages exposing (Msg(..))
 import View.Header exposing (pageIcon, pageHeading)
 import Setup.View
 
@@ -51,7 +52,7 @@ renderContent model =
             Setup.View.view model |> Html.map SetupMsg
 
         Pathfinding model ->
-            text "Not implemented"
+            text "Not implemented (pathfinding)"
 
         Finished model ->
-            text "Not implemented"
+            text "Not implemented (finished)"
