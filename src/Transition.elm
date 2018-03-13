@@ -10,7 +10,6 @@ import PathfindingPage.Init
 withTransitions : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 withTransitions ( model, cmd ) =
     getTransition ( model, cmd )
-        |> Maybe.map (includeCommand cmd)
         |> Maybe.withDefault ( model, cmd )
 
 
@@ -21,6 +20,7 @@ getTransition ( model, cmd ) =
             WelcomePage.Transition.transition innerModel
                 |> Maybe.map PathfindingPage.Init.init
                 |> Maybe.map liftPathfindingPage
+                |> Maybe.map (batchCmd cmd)
 
         PathfindingPage innerModel ->
             Nothing
@@ -29,6 +29,6 @@ getTransition ( model, cmd ) =
             Nothing
 
 
-includeCommand : Cmd Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-includeCommand cmd ( model, otherCmd ) =
+batchCmd : Cmd Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+batchCmd cmd ( model, otherCmd ) =
     ( model, Cmd.batch [ cmd, otherCmd ] )
