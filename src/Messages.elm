@@ -8,4 +8,4 @@ import FinishedPage.Messages
 type Msg
     = WelcomePageMsg WelcomePage.Messages.Msg
     | PathfindingPageMsg PathfindingPage.Messages.Msg
-    | FinishedPage FinishedPage.Messages.Msg
+    | FinishedPageMsg FinishedPage.Messages.Msg
