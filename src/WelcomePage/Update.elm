@@ -1,32 +1,32 @@
 module WelcomePage.Update exposing (update)
 
 import Common.Service exposing (requestArticle)
-import WelcomePage.Messages
-import WelcomePage.Model
+import WelcomePage.Messages exposing (Msg(..))
+import WelcomePage.Model exposing (Model)
 
 
-update : WelcomePage.Messages.Msg -> WelcomePage.Model.Model -> ( WelcomePage.Model.Model, Cmd WelcomePage.Messages.Msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        WelcomePage.Messages.SourceArticleTitleChange value ->
+        SourceArticleTitleChange value ->
             ( { model | sourceTitleInput = value }, Cmd.none )
 
-        WelcomePage.Messages.DestinationArticleTitleChange value ->
+        DestinationArticleTitleChange value ->
             ( { model | destinationTitleInput = value }, Cmd.none )
 
-        WelcomePage.Messages.FetchArticlesRequest ->
+        FetchArticlesRequest ->
             ( model, getArticles model )
 
-        WelcomePage.Messages.FetchSourceArticleResult article ->
+        FetchSourceArticleResult article ->
             ( { model | sourceArticle = article }, Cmd.none )
 
-        WelcomePage.Messages.FetchDestinationArticleResult article ->
+        FetchDestinationArticleResult article ->
             ( { model | destinationArticle = article }, Cmd.none )
 
 
-getArticles : WelcomePage.Model.Model -> Cmd WelcomePage.Messages.Msg
+getArticles : Model -> Cmd Msg
 getArticles { sourceTitleInput, destinationTitleInput } =
     Cmd.batch
-        [ requestArticle sourceTitleInput WelcomePage.Messages.FetchSourceArticleResult
-        , requestArticle destinationTitleInput WelcomePage.Messages.FetchDestinationArticleResult
+        [ requestArticle sourceTitleInput FetchSourceArticleResult
+        , requestArticle destinationTitleInput FetchDestinationArticleResult
         ]

@@ -5,12 +5,11 @@ import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import RemoteData
 import Common.Model exposing (RemoteArticle, ArticleError(..))
-import WelcomePage.Model
 import WelcomePage.Messages exposing (Msg(..))
 import WelcomePage.Model exposing (Model)
 
 
-view : WelcomePage.Model.Model -> Html Msg
+view : Model -> Html Msg
 view model =
     div []
         [ titleInputs model

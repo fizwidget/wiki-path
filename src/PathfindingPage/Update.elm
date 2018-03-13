@@ -1,11 +1,11 @@
 module PathfindingPage.Update exposing (update)
 
-import PathfindingPage.Messages
-import PathfindingPage.Model
+import PathfindingPage.Messages exposing (Msg(..))
+import PathfindingPage.Model exposing (Model)
 
 
-update : PathfindingPage.Messages.Msg -> PathfindingPage.Model.Model -> ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        PathfindingPage.Messages.DummyMsg ->
+        DummyMsg ->
             ( model, Cmd.none )

@@ -2,7 +2,7 @@ module WelcomePage.Transition exposing (transition)
 
 import RemoteData
 import Common.Model exposing (Article)
-import WelcomePage.Model
+import WelcomePage.Model exposing (Model)
 
 
 type alias Transition =
@@ -11,7 +11,7 @@ type alias Transition =
     }
 
 
-transition : WelcomePage.Model.Model -> Maybe Transition
+transition : Model -> Maybe Transition
 transition { sourceArticle, destinationArticle } =
     RemoteData.map2 Transition sourceArticle destinationArticle
         |> RemoteData.toMaybe
