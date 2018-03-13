@@ -1,23 +1,27 @@
 module WelcomePage.Update exposing (update)
 
+import RemoteData
 import Common.Service exposing (requestArticle)
+import Model
+import Messages exposing (Msg(..))
+import PathfindingPage.Init
 import WelcomePage.Messages
 import WelcomePage.Model
-import Model exposing (Model)
-import Messages exposing (Msg(..))
 
 
-update : WelcomePage.Messages.Msg -> WelcomePage.Model.Model -> ( Model, Cmd Msg )
+update : WelcomePage.Messages.Msg -> WelcomePage.Model.Model -> ( Model.Model, Cmd Msg )
 update message model =
     case message of
         WelcomePage.Messages.FetchArticlesRequest ->
             ( Model.WelcomePage model, getArticles model )
 
         WelcomePage.Messages.FetchSourceArticleResult article ->
-            ( Model.WelcomePage { model | sourceArticle = article }, Cmd.none )
+            ( { model | sourceArticle = article }, Cmd.none )
+                |> transitionIfPossible
 
         WelcomePage.Messages.FetchDestinationArticleResult article ->
-            ( Model.WelcomePage { model | destinationArticle = article }, Cmd.none )
+            ( { model | destinationArticle = article }, Cmd.none )
+                |> transitionIfPossible
 
         WelcomePage.Messages.SourceArticleTitleChange value ->
             ( Model.WelcomePage { model | sourceTitleInput = value }, Cmd.none )
@@ -33,3 +37,11 @@ getArticles { sourceTitleInput, destinationTitleInput } =
         , requestArticle destinationTitleInput WelcomePage.Messages.FetchDestinationArticleResult
         ]
         |> Cmd.map Messages.WelcomePage
+
+
+transitionIfPossible : ( WelcomePage.Model.Model, Cmd Msg ) -> ( Model.Model, Cmd Msg )
+transitionIfPossible ( model, msg ) =
+    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
+        |> RemoteData.toMaybe
+        |> Maybe.map PathfindingPage.Init.init
+        |> Maybe.withDefault ( Model.WelcomePage model, msg )

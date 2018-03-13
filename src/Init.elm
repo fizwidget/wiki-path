@@ -1,6 +1,6 @@
 module Init exposing (init)
 
-import Model exposing (Model(..))
+import Model exposing (Model(WelcomePage))
 import Messages exposing (Msg)
 import WelcomePage.Init
 

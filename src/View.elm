@@ -5,6 +5,7 @@ import Html.Attributes exposing (style)
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
 import WelcomePage.View
+import PathfindingPage.View
 
 
 view : Model -> Html Msg
@@ -25,7 +26,7 @@ viewModel model =
             WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
 
         Model.PathfindingPage subModel ->
-            text "Not implemented (pathfinding)"
+            PathfindingPage.View.view subModel
 
         Model.FinishedPage subModel ->
             text "Not implemented (finished)"

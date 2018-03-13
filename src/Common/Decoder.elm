@@ -3,7 +3,7 @@ module Common.Decoder exposing (decodeArticle)
 import HtmlParser
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
-import Common.Model exposing (Article, ArticleResult, ArticleError(ArticleNotFound, UnknownError))
+import Common.Model exposing (Article, ArticleResult, ArticleError(..))
 
 
 decodeArticle : Decoder ArticleResult
@@ -32,6 +32,9 @@ toError errorCode =
     case errorCode of
         "missingtitle" ->
             ArticleNotFound
+
+        "invalidtitle" ->
+            InvalidTitle
 
         _ ->
             UnknownError errorCode

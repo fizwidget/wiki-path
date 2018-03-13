@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Model exposing (Model(..))
 
 import WelcomePage.Model
 import PathfindingPage.Model

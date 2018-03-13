@@ -3,6 +3,7 @@ module Update exposing (update)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import WelcomePage.Update
+import PathfindingPage.Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -12,7 +13,7 @@ update message model =
             WelcomePage.Update.update innerMsg innerModel
 
         ( Messages.PathfindingPage innerMsg, Model.PathfindingPage innerModel ) ->
-            Debug.crash ("Implement me!")
+            PathfindingPage.Update.update innerMsg innerModel
 
         ( Messages.FinishedPage innerMsg, Model.FinishedPage innerModel ) ->
             Debug.crash ("Implement me!")

@@ -21,5 +21,6 @@ type alias RemoteArticle =
 
 type ArticleError
     = ArticleNotFound
+    | InvalidTitle
     | UnknownError String
     | NetworkError Http.Error
