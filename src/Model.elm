@@ -8,4 +8,4 @@ import FinishedPage.Model
 type Model
     = WelcomePage WelcomePage.Model.Model
     | PathfindingPage PathfindingPage.Model.Model
-    | Finished FinishedPage.Model.Model
+    | FinishedPage FinishedPage.Model.Model

@@ -1,22 +1,22 @@
 module Update exposing (update)
 
-import Model exposing (Model(WelcomePage, PathfindingPage, Finished))
-import Messages exposing (Msg(WelcomePageMsg, PathfindingPageMsg, FinishedPage))
+import Model exposing (Model)
+import Messages exposing (Msg)
 import WelcomePage.Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
-        ( WelcomePageMsg innerMsg, WelcomePage innerModel ) ->
+        ( Messages.WelcomePage innerMsg, Model.WelcomePage innerModel ) ->
             WelcomePage.Update.update innerMsg innerModel
 
-        ( PathfindingPageMsg innerMsg, PathfindingPage innerModel ) ->
+        ( Messages.PathfindingPage innerMsg, Model.PathfindingPage innerModel ) ->
             Debug.crash ("Implement me!")
 
-        ( FinishedPage innerMsg, Finished innerModel ) ->
+        ( Messages.FinishedPage innerMsg, Model.FinishedPage innerModel ) ->
             Debug.crash ("Implement me!")
 
         ( _, _ ) ->
-            -- Ignore messages from other pages
+            -- Ignore messages that didn't originate from the current page
             ( model, Cmd.none )

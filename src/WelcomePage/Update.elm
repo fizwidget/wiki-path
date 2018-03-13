@@ -32,4 +32,4 @@ getArticles { sourceTitleInput, destinationTitleInput } =
         [ requestArticle sourceTitleInput WelcomePage.Messages.FetchSourceArticleResult
         , requestArticle destinationTitleInput WelcomePage.Messages.FetchDestinationArticleResult
         ]
-        |> Cmd.map Messages.WelcomePageMsg
+        |> Cmd.map Messages.WelcomePage

@@ -21,13 +21,13 @@ view model =
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
-        WelcomePage subModel ->
-            WelcomePage.View.view subModel |> Html.map WelcomePageMsg
+        Model.WelcomePage subModel ->
+            WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
 
-        PathfindingPage subModel ->
+        Model.PathfindingPage subModel ->
             text "Not implemented (pathfinding)"
 
-        Finished subModel ->
+        Model.FinishedPage subModel ->
             text "Not implemented (finished)"
 
 

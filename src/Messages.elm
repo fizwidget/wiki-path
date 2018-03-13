@@ -6,6 +6,6 @@ import FinishedPage.Messages
 
 
 type Msg
-    = WelcomePageMsg WelcomePage.Messages.Msg
-    | PathfindingPageMsg PathfindingPage.Messages.Msg
-    | FinishedPageMsg FinishedPage.Messages.Msg
+    = WelcomePage WelcomePage.Messages.Msg
+    | PathfindingPage PathfindingPage.Messages.Msg
+    | FinishedPage FinishedPage.Messages.Msg
