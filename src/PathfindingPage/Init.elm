@@ -1,10 +1,16 @@
 module PathfindingPage.Init exposing (init)
 
 import Common.Model exposing (Article)
-import Model exposing (Model)
-import Messages exposing (Msg)
+import PathfindingPage.Model
+import PathfindingPage.Messages exposing (Msg)
 
 
-init : ( Article, Article ) -> ( Model, Cmd Msg )
-init ( source, destination ) =
-    ( Model.PathfindingPage { source = source, destination = destination }, Cmd.none )
+type alias InitArgs =
+    { source : Article
+    , destination : Article
+    }
+
+
+init : InitArgs -> ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg )
+init { source, destination } =
+    ( { source = source, destination = destination }, Cmd.none )
