@@ -1,4 +1,4 @@
-module Setup.View.LinkExtractor exposing (Link, getLinks)
+module WelcomePage.View.LinkExtractor exposing (Link, getLinks)
 
 import HtmlParser exposing (Node, Attributes)
 import HtmlParser.Util exposing (getElementsByTagName, filterElements, mapElements, getValue, textContent)

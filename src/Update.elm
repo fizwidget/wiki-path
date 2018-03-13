@@ -1,20 +1,20 @@
 module Update exposing (update)
 
-import Model exposing (Model(..))
-import Messages exposing (Msg(..))
-import Setup.Update
+import Model exposing (Model(WelcomePage, PathfindingPage, Finished))
+import Messages exposing (Msg(WelcomePageMsg, PathfindingPageMsg, FinishedPage))
+import WelcomePage.Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
-        ( SetupMsg innerMsg, Setup innerModel ) ->
-            Setup.Update.update innerMsg innerModel
+        ( WelcomePageMsg innerMsg, WelcomePage innerModel ) ->
+            WelcomePage.Update.update innerMsg innerModel
 
-        ( PathfindingMsg innerMsg, Pathfinding innerModel ) ->
+        ( PathfindingPageMsg innerMsg, PathfindingPage innerModel ) ->
             Debug.crash ("Implement me!")
 
-        ( FinishedMsg innerMsg, Finished innerModel ) ->
+        ( FinishedPage innerMsg, Finished innerModel ) ->
             Debug.crash ("Implement me!")
 
         ( _, _ ) ->

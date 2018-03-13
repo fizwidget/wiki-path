@@ -1,11 +1,11 @@
 module Messages exposing (..)
 
-import Setup.Messages
-import Pathfinding.Messages
-import Finished.Messages
+import WelcomePage.Messages
+import PathfindingPage.Messages
+import FinishedPage.Messages
 
 
 type Msg
-    = SetupMsg Setup.Messages.Msg
-    | PathfindingMsg Pathfinding.Messages.Msg
-    | FinishedMsg Finished.Messages.Msg
+    = WelcomePageMsg WelcomePage.Messages.Msg
+    | PathfindingPageMsg PathfindingPage.Messages.Msg
+    | FinishedPage FinishedPage.Messages.Msg

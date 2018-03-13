@@ -1,10 +1,10 @@
-module Setup.View.Inputs exposing (titleInputs, loadArticlesButton)
+module WelcomePage.View.Inputs exposing (titleInputs, loadArticlesButton)
 
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
-import Setup.Messages exposing (Msg(..))
-import Setup.Model exposing (Model)
+import WelcomePage.Messages exposing (Msg(..))
+import WelcomePage.Model exposing (Model)
 
 
 titleInputs : Model -> Html Msg

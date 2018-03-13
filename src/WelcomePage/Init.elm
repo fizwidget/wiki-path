@@ -1,7 +1,7 @@
-module Setup.Init exposing (initialModel)
+module WelcomePage.Init exposing (initialModel)
 
 import RemoteData
-import Setup.Model exposing (Model)
+import WelcomePage.Model exposing (Model)
 
 
 initialModel : Model

@@ -2,7 +2,7 @@ module Init exposing (init)
 
 import Model exposing (Model(..))
 import Messages exposing (Msg)
-import Setup.Init
+import WelcomePage.Init
 
 
 init : ( Model, Cmd Msg )
@@ -12,4 +12,4 @@ init =
 
 initialModel : Model
 initialModel =
-    Setup Setup.Init.initialModel
+    WelcomePage WelcomePage.Init.initialModel

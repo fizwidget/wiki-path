@@ -1,11 +1,10 @@
 module View exposing (view)
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, div, span, h1, text)
 import Html.Attributes exposing (style)
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
-import View.Header exposing (pageIcon, pageHeading)
-import Setup.View
+import WelcomePage.View
 
 
 view : Model -> Html Msg
@@ -14,9 +13,22 @@ view model =
         [ centerChildren
             [ pageIcon
             , pageHeading
-            , renderContent model
+            , viewModel model
             ]
         ]
+
+
+viewModel : Model -> Html Msg
+viewModel model =
+    case model of
+        WelcomePage subModel ->
+            WelcomePage.View.view subModel |> Html.map WelcomePageMsg
+
+        PathfindingPage subModel ->
+            text "Not implemented (pathfinding)"
+
+        Finished subModel ->
+            text "Not implemented (finished)"
 
 
 appStyles : List (Html msg) -> Html msg
@@ -45,14 +57,26 @@ centerChildren children =
         children
 
 
-renderContent : Model -> Html Msg
-renderContent model =
-    case model of
-        Setup model ->
-            Setup.View.view model |> Html.map SetupMsg
+pageIcon : Html msg
+pageIcon =
+    span
+        [ style
+            [ ( "font-size", "800%" )
+            , ( "line-height", "1" )
+            , ( "height", "120px" )
+            , ( "margin", "20px 0 10px 0" )
+            ]
+        ]
+        [ text "📖" ]
 
-        Pathfinding model ->
-            text "Not implemented (pathfinding)"
 
-        Finished model ->
-            text "Not implemented (finished)"
+pageHeading : Html msg
+pageHeading =
+    h1
+        [ style
+            [ ( "font-size", "400%" )
+            , ( "font-weight", "900" )
+            , ( "margin-top", "0" )
+            ]
+        ]
+        [ text "Wikipedia Game" ]

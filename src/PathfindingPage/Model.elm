@@ -1,4 +1,4 @@
-module Pathfinding.Model exposing (..)
+module PathfindingPage.Model exposing (..)
 
 import Common.Model exposing (Article)
 

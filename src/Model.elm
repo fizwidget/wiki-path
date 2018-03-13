@@ -1,11 +1,11 @@
 module Model exposing (..)
 
-import Setup.Model
-import Pathfinding.Model
-import Finished.Model
+import WelcomePage.Model
+import PathfindingPage.Model
+import FinishedPage.Model
 
 
 type Model
-    = Setup Setup.Model.Model
-    | Pathfinding Pathfinding.Model.Model
-    | Finished Finished.Model.Model
+    = WelcomePage WelcomePage.Model.Model
+    | PathfindingPage PathfindingPage.Model.Model
+    | Finished FinishedPage.Model.Model
