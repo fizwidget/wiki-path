@@ -26,7 +26,7 @@ viewModel model =
             WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
 
         Model.PathfindingPage subModel ->
-            PathfindingPage.View.view subModel
+            PathfindingPage.View.view subModel |> Html.map Messages.PathfindingPage
 
         Model.FinishedPage subModel ->
             text "Not implemented (finished)"
