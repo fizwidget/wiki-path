@@ -1,6 +1,6 @@
 module Transition exposing (withTransitions)
 
-import Util exposing (liftWelcomePage, liftPathfindingPage)
+import Util exposing (inWelcomePage, liftPathfindingPage)
 import Model exposing (Model(..))
 import Messages exposing (Msg)
 import WelcomePage.Transition
