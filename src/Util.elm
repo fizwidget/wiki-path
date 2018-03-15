@@ -1,4 +1,4 @@
-module Util exposing (inWelcomePage, liftPathfindingPage)
+module Util exposing (inWelcomePage, inPathfindingPage)
 
 import Model exposing (Model)
 import Messages exposing (Msg)
@@ -13,6 +13,6 @@ inWelcomePage ( innerModel, innerCmd ) =
     ( Model.WelcomePage innerModel, Cmd.map Messages.WelcomePage innerCmd )
 
 
-liftPathfindingPage : ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg ) -> ( Model, Cmd Msg )
-liftPathfindingPage ( innerModel, innerCmd ) =
+inPathfindingPage : ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg ) -> ( Model, Cmd Msg )
+inPathfindingPage ( innerModel, innerCmd ) =
     ( Model.PathfindingPage innerModel, Cmd.map Messages.PathfindingPage innerCmd )

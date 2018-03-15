@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Util exposing (inWelcomePage, liftPathfindingPage)
+import Util exposing (inWelcomePage, inPathfindingPage)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Transition exposing (withTransitions)
@@ -13,12 +13,10 @@ update message model =
     withTransitions <|
         case ( message, model ) of
             ( Messages.WelcomePage innerMsg, Model.WelcomePage innerModel ) ->
-                WelcomePage.Update.update innerMsg innerModel
-                    |> inWelcomePage
+                inWelcomePage <| WelcomePage.Update.update innerMsg innerModel
 
             ( Messages.PathfindingPage innerMsg, Model.PathfindingPage innerModel ) ->
-                PathfindingPage.Update.update innerMsg innerModel
-                    |> liftPathfindingPage
+                inPathfindingPage <| PathfindingPage.Update.update innerMsg innerModel
 
             ( Messages.FinishedPage innerMsg, Model.FinishedPage innerModel ) ->
                 Debug.crash ("Implement me!")
