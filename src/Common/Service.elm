@@ -5,8 +5,8 @@ import Common.Model exposing (Article, ArticleResult, RemoteArticle, ArticleErro
 import Common.Api
 
 
-requestArticle : String -> (RemoteArticle -> msg) -> Cmd msg
-requestArticle title createMsg =
+requestArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+requestArticle createMsg title =
     Common.Api.requestArticle title
         |> RemoteData.sendRequest
         |> Cmd.map liftResult

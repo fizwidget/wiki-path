@@ -1,13 +1,29 @@
-module PathfindingPage.View.LinkExtractor exposing (Link, getLinks)
+module PathfindingPage.Util exposing (getCandidate)
 
 import HtmlParser exposing (Node, Attributes)
 import HtmlParser.Util exposing (getElementsByTagName, filterElements, mapElements, getValue, textContent)
+import Common.Model exposing (Article)
 
 
 type alias Link =
     { name : String
-    , destination : String
+    , destinationTitle : String
     }
+
+
+getCandidate : Article -> Article -> (String -> Bool) -> Maybe String
+getCandidate current destination hasVisited =
+    let
+        items =
+            current.content
+                |> getLinks
+                |> List.map .name
+                |> List.filter (\x -> not (hasVisited x))
+
+        midIndex =
+            List.length items // 2
+    in
+        List.drop midIndex items |> List.head
 
 
 getLinks : List Node -> List Link

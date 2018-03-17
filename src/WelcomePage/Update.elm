@@ -27,6 +27,6 @@ update message model =
 getArticles : Model -> Cmd Msg
 getArticles { sourceTitleInput, destinationTitleInput } =
     Cmd.batch
-        [ requestArticle sourceTitleInput FetchSourceArticleResult
-        , requestArticle destinationTitleInput FetchDestinationArticleResult
+        [ requestArticle FetchSourceArticleResult sourceTitleInput
+        , requestArticle FetchDestinationArticleResult destinationTitleInput
         ]
