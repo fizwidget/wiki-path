@@ -1,6 +1,6 @@
 module Transition exposing (withTransitions)
 
-import Util exposing (inWelcomePage, inPathfindingPage)
+import Util exposing (tagWelcomePage, tagPathfindingPage)
 import Model exposing (Model(..))
 import Messages exposing (Msg)
 import WelcomePage.Transition
@@ -18,7 +18,7 @@ getTransition ( model, cmd ) =
     case model of
         WelcomePage innerModel ->
             WelcomePage.Transition.transition innerModel
-                |> Maybe.map (PathfindingPage.Init.init >> inPathfindingPage)
+                |> Maybe.map (PathfindingPage.Init.init >> tagPathfindingPage)
                 |> Maybe.map (batchCmd cmd)
 
         PathfindingPage innerModel ->
