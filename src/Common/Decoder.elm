@@ -3,7 +3,7 @@ module Common.Decoder exposing (decodeArticle)
 import HtmlParser
 import Json.Decode exposing (Decoder, map, string, oneOf)
 import Json.Decode.Pipeline exposing (decode, requiredAt)
-import Common.Model exposing (Article, ArticleResult, ArticleError(..))
+import Common.Model exposing (Title(Title), Article, ArticleResult, ArticleError(..))
 
 
 decodeArticle : Decoder ArticleResult
@@ -42,6 +42,6 @@ toError errorCode =
 
 fromRawContent : String -> String -> Article
 fromRawContent title content =
-    { title = title
+    { title = Title title
     , content = HtmlParser.parse content
     }

@@ -1,12 +1,23 @@
-module Common.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
+module Common.Model exposing (Title(..), Article, ArticleResult, RemoteArticle, ArticleError(..), getTitle)
 
 import Http
 import HtmlParser exposing (Node)
 import RemoteData exposing (RemoteData)
 
 
+type Title
+    = Title String
+
+
+getTitle : Article -> String
+getTitle article =
+    case article.title of
+        Title title ->
+            title
+
+
 type alias Article =
-    { title : String
+    { title : Title
     , content : List Node
     }
 

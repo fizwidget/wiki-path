@@ -1,42 +1,91 @@
-module PathfindingPage.Util exposing (getCandidate)
+module PathfindingPage.Util exposing (getNextCandidate)
 
 import HtmlParser exposing (Node, Attributes)
-import HtmlParser.Util exposing (getElementsByTagName, filterElements, mapElements, getValue, textContent)
-import Common.Model exposing (Article)
+import HtmlParser.Util exposing (getElementsByTagName, mapElements, getValue)
+import Common.Model exposing (Title(..), Article)
 
 
-type alias Link =
-    { name : String
-    , destinationTitle : String
-    }
+getNextCandidate : Article -> Article -> List Title -> Maybe Title
+getNextCandidate current destination visited =
+    getCandidates current destination visited
+        |> calculateBestCandidate destination
 
 
-getCandidate : Article -> Article -> (String -> Bool) -> Maybe String
-getCandidate current destination hasVisited =
+getCandidates : Article -> Article -> List Title -> List Title
+getCandidates current destination visited =
+    current.content
+        |> extractLinks
+        |> List.filterMap toArticleTitle
+        |> List.filter (isUnvisited visited)
+
+
+isUnvisited : List Title -> Title -> Bool
+isUnvisited visited title =
+    not <| List.member title visited
+
+
+toArticleTitle : Link -> Maybe Title
+toArticleTitle link =
     let
-        items =
-            current.content
-                |> getLinks
-                |> List.map .name
-                |> List.filter (\x -> not (hasVisited x))
+        isInternalLink =
+            String.startsWith "/wiki" link.href
 
-        midIndex =
-            List.length items // 2
+        isNotCategory =
+            not <| String.startsWith "Category:" link.title
+
+        isNotTemplate =
+            not <| String.startsWith "Template:" link.title
+
+        isNotDoc =
+            not <| String.startsWith "Wikipedia:" link.title
+
+        isNotHelp =
+            not <| String.startsWith "Help:" link.title
+
+        isNotIsbn =
+            link.title /= "ISBN"
+
+        isNotDoi =
+            link.title /= "Digital object identifier"
+
+        isNotSpecial =
+            not <| String.startsWith "Special:" link.title
     in
-        List.drop midIndex items |> List.head
+        if
+            isInternalLink
+                && isNotCategory
+                && isNotTemplate
+                && isNotDoc
+                && isNotHelp
+                && isNotIsbn
+                && isNotDoi
+                && isNotSpecial
+        then
+            Just <| Title link.title
+        else
+            Nothing
 
 
-getLinks : List Node -> List Link
-getLinks nodes =
+calculateBestCandidate : Article -> List Title -> Maybe Title
+calculateBestCandidate destination candidateTitles =
+    let
+        quarterIndex =
+            List.length candidateTitles // 4
+    in
+        List.drop quarterIndex candidateTitles
+            |> List.head
+
+
+extractLinks : List Node -> List Link
+extractLinks nodes =
     nodes
         |> getElementsByTagName "a"
-        |> filterElements isArticleLink
-        |> mapElements buildLink
+        |> mapElements toLink
         |> List.filterMap identity
 
 
-buildLink : String -> Attributes -> List Node -> Maybe Link
-buildLink tagName attributes children =
+toLink : String -> Attributes -> List Node -> Maybe Link
+toLink tagName attributes children =
     let
         getAttribute name =
             getValue name attributes
@@ -50,11 +99,7 @@ buildLink tagName attributes children =
         Maybe.map2 Link title href
 
 
-isArticleLink : String -> Attributes -> List Node -> Bool
-isArticleLink tagName attributes children =
-    case getValue "href" attributes of
-        Just href ->
-            String.startsWith "/wiki" href
-
-        Nothing ->
-            False
+type alias Link =
+    { title : String
+    , href : String
+    }

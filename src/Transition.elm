@@ -4,6 +4,7 @@ import Util exposing (inWelcomePage, inPathfindingPage)
 import Model exposing (Model(..))
 import Messages exposing (Msg)
 import WelcomePage.Transition
+import PathfindingPage.Transition
 import PathfindingPage.Init
 
 
@@ -21,8 +22,10 @@ getTransition ( model, cmd ) =
                 |> Maybe.map (PathfindingPage.Init.init >> inPathfindingPage)
                 |> Maybe.map (batchCmd cmd)
 
+        -- TODO: Implement properly
         PathfindingPage innerModel ->
-            Nothing
+            PathfindingPage.Transition.transition innerModel
+                |> always Nothing
 
         FinishedPage innerModel ->
             Nothing
