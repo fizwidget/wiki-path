@@ -2,34 +2,23 @@ module View exposing (view)
 
 import Html exposing (Html, div, span, h1, text)
 import Html.Attributes exposing (style)
+import Common.View exposing (centerChildren)
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
 import WelcomePage.View
 import PathfindingPage.View
+import FinishedPage.View
 
 
 view : Model -> Html Msg
 view model =
     appStyles
         [ centerChildren
-            [ pageIcon
-            , pageHeading
-            , viewModel model
+            [ iconView
+            , headingView
+            , modelView model
             ]
         ]
-
-
-viewModel : Model -> Html Msg
-viewModel model =
-    case model of
-        Model.WelcomePage subModel ->
-            WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
-
-        Model.PathfindingPage subModel ->
-            PathfindingPage.View.view subModel |> Html.map Messages.PathfindingPage
-
-        Model.FinishedPage subModel ->
-            text "Not implemented (finished)"
 
 
 appStyles : List (Html msg) -> Html msg
@@ -46,20 +35,20 @@ appStyles children =
         children
 
 
-centerChildren : List (Html msg) -> Html msg
-centerChildren children =
-    div
+headingView : Html msg
+headingView =
+    h1
         [ style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "align-items", "center" )
+            [ ( "font-size", "400%" )
+            , ( "font-weight", "900" )
+            , ( "margin-top", "0" )
             ]
         ]
-        children
+        [ text "Wikipedia Game" ]
 
 
-pageIcon : Html msg
-pageIcon =
+iconView : Html msg
+iconView =
     span
         [ style
             [ ( "font-size", "800%" )
@@ -71,13 +60,14 @@ pageIcon =
         [ text "📖" ]
 
 
-pageHeading : Html msg
-pageHeading =
-    h1
-        [ style
-            [ ( "font-size", "400%" )
-            , ( "font-weight", "900" )
-            , ( "margin-top", "0" )
-            ]
-        ]
-        [ text "Wikipedia Game" ]
+modelView : Model -> Html Msg
+modelView model =
+    case model of
+        Model.WelcomePage subModel ->
+            WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
+
+        Model.PathfindingPage subModel ->
+            PathfindingPage.View.view subModel |> Html.map Messages.PathfindingPage
+
+        Model.FinishedPage subModel ->
+            FinishedPage.View.view subModel |> Html.map Messages.FinishedPage

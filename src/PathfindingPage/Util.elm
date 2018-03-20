@@ -50,6 +50,9 @@ toArticleTitle link =
 
         isNotSpecial =
             not <| String.startsWith "Special:" link.title
+
+        isNotTemplateTalk =
+            not <| String.startsWith "Template talk:" link.title
     in
         if
             isInternalLink
@@ -60,6 +63,7 @@ toArticleTitle link =
                 && isNotIsbn
                 && isNotDoi
                 && isNotSpecial
+                && isNotTemplateTalk
         then
             Just <| Title link.title
         else

@@ -26,8 +26,16 @@ transition { source, destination, current, visited } =
             Nothing
 
         RemoteData.Success article ->
-            Just
-                (Result.Ok { source = source, destination = destination, path = visited })
+            if article.title == destination.title then
+                Just
+                    (Result.Ok
+                        { source = source
+                        , destination = destination
+                        , path = visited
+                        }
+                    )
+            else
+                Nothing
 
         RemoteData.Failure error ->
             Just

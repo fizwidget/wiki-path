@@ -5,13 +5,14 @@ import Html.Attributes exposing (value, type_, style, placeholder)
 import Html.Events exposing (onInput, onClick)
 import RemoteData
 import Common.Model exposing (RemoteArticle, ArticleError(..))
+import Common.View exposing (centerChildren)
 import WelcomePage.Messages exposing (Msg(..))
 import WelcomePage.Model exposing (Model)
 
 
 view : Model -> Html Msg
 view model =
-    div []
+    centerChildren
         [ titleInputs model
         , loadArticlesButton
         , articlesContent model.sourceArticle model.destinationArticle

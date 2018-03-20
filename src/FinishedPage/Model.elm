@@ -1,15 +1,14 @@
 module FinishedPage.Model exposing (..)
 
-import Common.Model exposing (Article)
+import Common.Model exposing (Title, Article)
 
 
-type Msg
-    = DummyMessage
+type alias Path =
+    { source : Article
+    , destination : Article
+    , path : List Title
+    }
 
 
 type alias Model =
-    Result String Route
-
-
-type alias Route =
-    List Article
+    Result String Path
