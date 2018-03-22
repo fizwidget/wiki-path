@@ -4,8 +4,8 @@ import Common.Model exposing (Article, RemoteArticle)
 
 
 type alias Model =
-    { sourceTitleInput : String
-    , destinationTitleInput : String
-    , sourceArticle : RemoteArticle
-    , destinationArticle : RemoteArticle
+    { startTitleInput : String
+    , endTitleInput : String
+    , startArticle : RemoteArticle
+    , endArticle : RemoteArticle
     }

@@ -8,25 +8,25 @@ import WelcomePage.Model exposing (Model)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        SourceArticleTitleChange value ->
-            ( { model | sourceTitleInput = value }, Cmd.none )
+        StartArticleTitleChange value ->
+            ( { model | startTitleInput = value }, Cmd.none )
 
-        DestinationArticleTitleChange value ->
-            ( { model | destinationTitleInput = value }, Cmd.none )
+        EndArticleTitleChange value ->
+            ( { model | endTitleInput = value }, Cmd.none )
 
         FetchArticlesRequest ->
             ( model, getArticles model )
 
-        FetchSourceArticleResult article ->
-            ( { model | sourceArticle = article }, Cmd.none )
+        FetchStartArticleResult article ->
+            ( { model | startArticle = article }, Cmd.none )
 
-        FetchDestinationArticleResult article ->
-            ( { model | destinationArticle = article }, Cmd.none )
+        FetchEndArticleResult article ->
+            ( { model | endArticle = article }, Cmd.none )
 
 
 getArticles : Model -> Cmd Msg
-getArticles { sourceTitleInput, destinationTitleInput } =
+getArticles { startTitleInput, endTitleInput } =
     Cmd.batch
-        [ requestArticle FetchSourceArticleResult sourceTitleInput
-        , requestArticle FetchDestinationArticleResult destinationTitleInput
+        [ requestArticle FetchStartArticleResult startTitleInput
+        , requestArticle FetchEndArticleResult endTitleInput
         ]

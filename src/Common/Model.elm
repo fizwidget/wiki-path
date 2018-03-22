@@ -1,4 +1,13 @@
-module Common.Model exposing (Title(..), Article, ArticleResult, RemoteArticle, ArticleError(..), getTitle)
+module Common.Model
+    exposing
+        ( Title(..)
+        , Article
+        , ArticleResult
+        , RemoteArticle
+        , ArticleError(..)
+        , getTitle
+        , unbox
+        )
 
 import Http
 import HtmlParser exposing (Node)
@@ -7,6 +16,11 @@ import RemoteData exposing (RemoteData)
 
 type Title
     = Title String
+
+
+unbox : Title -> String
+unbox (Title title) =
+    title
 
 
 getTitle : Article -> String

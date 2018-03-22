@@ -1,12 +1,12 @@
 module FinishedPage.Model exposing (..)
 
-import Common.Model exposing (Title, Article)
+import Common.Model exposing (Title)
 
 
 type alias Path =
-    { source : Article
-    , destination : Article
-    , path : List Title
+    { start : Title
+    , end : Title
+    , stops : List Title
     }
 
 

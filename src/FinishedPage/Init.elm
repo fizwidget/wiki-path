@@ -4,10 +4,6 @@ import FinishedPage.Model exposing (Model)
 import FinishedPage.Messages exposing (Msg(..))
 
 
-type alias InitArgs =
-    Model
-
-
-init : InitArgs -> ( Model, Cmd Msg )
-init initArgs =
-    ( initArgs, Cmd.none )
+init : Model -> ( Model, Cmd Msg )
+init model =
+    ( model, Cmd.none )

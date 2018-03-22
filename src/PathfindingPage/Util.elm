@@ -3,25 +3,28 @@ module PathfindingPage.Util exposing (getNextCandidate)
 import HtmlParser exposing (Node, Attributes)
 import HtmlParser.Util exposing (getElementsByTagName, mapElements, getValue)
 import Common.Model exposing (Title(..), Article)
+import PathfindingPage.Model exposing (Model)
 
 
-getNextCandidate : Article -> Article -> List Title -> Maybe Title
-getNextCandidate current destination visited =
-    getCandidates current destination visited
-        |> calculateBestCandidate destination
+getNextCandidate : Article -> Model -> Maybe Title
+getNextCandidate current model =
+    getCandidates current model
+        |> calculateBestCandidate model.end
 
 
-getCandidates : Article -> Article -> List Title -> List Title
-getCandidates current destination visited =
+getCandidates : Article -> Model -> List Title
+getCandidates current model =
     current.content
         |> extractLinks
         |> List.filterMap toArticleTitle
-        |> List.filter (isUnvisited visited)
+        |> List.filter (isUnvisited model)
 
 
-isUnvisited : List Title -> Title -> Bool
-isUnvisited visited title =
-    not <| List.member title visited
+isUnvisited : Model -> Title -> Bool
+isUnvisited model title =
+    (title /= model.start.title)
+        && (title /= model.end.title)
+        && (not <| List.member title model.stops)
 
 
 toArticleTitle : Link -> Maybe Title
@@ -71,7 +74,7 @@ toArticleTitle link =
 
 
 calculateBestCandidate : Article -> List Title -> Maybe Title
-calculateBestCandidate destination candidateTitles =
+calculateBestCandidate end candidateTitles =
     let
         quarterIndex =
             List.length candidateTitles // 4

@@ -7,30 +7,30 @@ import PathfindingPage.Model exposing (Model)
 
 
 view : Model -> Html Msg
-view { source, destination, current, visited } =
+view { start, end, stops } =
     div []
-        [ heading source destination
-        , visitedArticles visited
+        [ heading start end
+        , stopsArticles stops
         ]
 
 
 heading : Article -> Article -> Html msg
-heading source destination =
+heading start end =
     let
-        sourceTitle =
-            getTitle source
+        startTitle =
+            getTitle start
 
-        destinationTitle =
-            getTitle destination
+        endTitle =
+            getTitle end
     in
-        h3 [] [ text <| "Finding path from " ++ sourceTitle ++ " to " ++ destinationTitle ++ "..." ]
+        h3 [] [ text <| "Finding path from " ++ startTitle ++ " to " ++ endTitle ++ "..." ]
 
 
-visitedArticles : List Title -> Html msg
-visitedArticles visited =
-    ol [] <| List.map visitedArticle visited
+stopsArticles : List Title -> Html msg
+stopsArticles stops =
+    ol [] <| List.map stopsArticle stops
 
 
-visitedArticle : Title -> Html msg
-visitedArticle (Title title) =
+stopsArticle : Title -> Html msg
+stopsArticle (Title title) =
     li [] [ text title ]

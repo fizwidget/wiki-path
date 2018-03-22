@@ -6,12 +6,12 @@ import WelcomePage.Model exposing (Model)
 
 
 type alias Transition =
-    { source : Article
-    , destination : Article
+    { start : Article
+    , end : Article
     }
 
 
 transition : Model -> Maybe Transition
-transition { sourceArticle, destinationArticle } =
-    RemoteData.map2 Transition sourceArticle destinationArticle
+transition { startArticle, endArticle } =
+    RemoteData.map2 Transition startArticle endArticle
         |> RemoteData.toMaybe

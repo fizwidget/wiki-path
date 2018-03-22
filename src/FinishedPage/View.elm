@@ -1,7 +1,7 @@
 module FinishedPage.View exposing (view)
 
 import Html exposing (Html, div, h3, h4, text)
-import Common.Model exposing (Title(Title), Article, getTitle)
+import Common.Model exposing (Title(Title), Article, getTitle, unbox)
 import FinishedPage.Model exposing (Model, Path)
 import FinishedPage.Messages exposing (Msg)
 
@@ -17,11 +17,11 @@ view model =
 
 
 successView : Path -> Html msg
-successView { source, destination, path } =
+successView { start, end, stops } =
     div []
         [ headingView
-        , subHeadingView source destination
-        , pathView path
+        , subHeadingView start end
+        , stopsView stops
         ]
 
 
@@ -35,16 +35,16 @@ headingView =
     h3 [] [ text "Success!" ]
 
 
-subHeadingView : Article -> Article -> Html msg
-subHeadingView source destination =
+subHeadingView : Title -> Title -> Html msg
+subHeadingView startTitle endTitle =
     h4 []
-        [ text <| "Path from " ++ (getTitle source) ++ " to " ++ (getTitle destination) ++ "  was..." ]
+        [ text <| "Path from " ++ (unbox startTitle) ++ " to " ++ (unbox endTitle) ++ "  was..." ]
 
 
-pathView : List Title -> Html msg
-pathView path =
-    path
+stopsView : List Title -> Html msg
+stopsView stops =
+    stops
         |> List.reverse
-        |> List.map (\(Title title) -> title)
+        |> List.map unbox
         |> String.join " → "
         |> text

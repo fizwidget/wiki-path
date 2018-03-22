@@ -4,8 +4,8 @@ import Common.Model exposing (RemoteArticle)
 
 
 type Msg
-    = SourceArticleTitleChange String
-    | DestinationArticleTitleChange String
+    = StartArticleTitleChange String
+    | EndArticleTitleChange String
     | FetchArticlesRequest
-    | FetchSourceArticleResult RemoteArticle
-    | FetchDestinationArticleResult RemoteArticle
+    | FetchStartArticleResult RemoteArticle
+    | FetchEndArticleResult RemoteArticle

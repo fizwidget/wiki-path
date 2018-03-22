@@ -1,7 +1,6 @@
 module PathfindingPage.Init exposing (init)
 
-import RemoteData
-import Common.Model exposing (Title(Title), Article)
+import Common.Model exposing (Title(Title), Article, unbox)
 import Common.Service exposing (requestArticle)
 import PathfindingPage.Model exposing (Model)
 import PathfindingPage.Messages exposing (Msg(..))
@@ -9,24 +8,24 @@ import PathfindingPage.Util exposing (getNextCandidate)
 
 
 type alias InitArgs =
-    { source : Article
-    , destination : Article
+    { start : Article
+    , end : Article
     }
 
 
 init : InitArgs -> ( Model, Cmd Msg )
-init { source, destination } =
+init { start, end } =
     let
         initialModel =
-            { source = source
-            , destination = destination
-            , current = RemoteData.Success source
-            , visited = [ source.title ]
+            { start = start
+            , end = end
+            , stops = []
             }
 
         initialCmd =
-            getNextCandidate source destination initialModel.visited
-                |> Maybe.map (\(Title title) -> requestArticle ArticleReceived title)
+            getNextCandidate start initialModel
+                |> Maybe.map unbox
+                |> Maybe.map (requestArticle ArticleReceived)
                 |> Maybe.withDefault Cmd.none
     in
         ( initialModel, initialCmd )

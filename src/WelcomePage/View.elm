@@ -18,26 +18,26 @@ view model =
     Form.form []
         [ titleInputs model
         , loadArticlesButton
-        , articlesContent model.sourceArticle model.destinationArticle
+        , articlesContent model.startArticle model.endArticle
         ]
 
 
 titleInputs : Model -> Html Msg
-titleInputs { sourceTitleInput, destinationTitleInput } =
+titleInputs { startTitleInput, endTitleInput } =
     Form.row []
-        [ Form.col [] [ sourceArticleTitleInput sourceTitleInput ]
-        , Form.col [] [ destinationArticleTitleInput destinationTitleInput ]
+        [ Form.col [] [ startArticleTitleInput startTitleInput ]
+        , Form.col [] [ endArticleTitleInput endTitleInput ]
         ]
 
 
-sourceArticleTitleInput : String -> Html Msg
-sourceArticleTitleInput =
-    articleTitleInput "From..." SourceArticleTitleChange
+startArticleTitleInput : String -> Html Msg
+startArticleTitleInput =
+    articleTitleInput "From..." StartArticleTitleChange
 
 
-destinationArticleTitleInput : String -> Html Msg
-destinationArticleTitleInput =
-    articleTitleInput "To..." DestinationArticleTitleChange
+endArticleTitleInput : String -> Html Msg
+endArticleTitleInput =
+    articleTitleInput "To..." EndArticleTitleChange
 
 
 articleTitleInput : String -> (String -> Msg) -> String -> Html Msg
@@ -61,10 +61,10 @@ loadArticlesButton =
 
 
 articlesContent : RemoteArticle -> RemoteArticle -> Html msg
-articlesContent sourceArticle destinationArticle =
+articlesContent startArticle endArticle =
     div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
-        [ displayRemoteArticle sourceArticle
-        , displayRemoteArticle destinationArticle
+        [ displayRemoteArticle startArticle
+        , displayRemoteArticle endArticle
         ]
 
 

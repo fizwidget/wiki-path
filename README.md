@@ -6,6 +6,7 @@ Still very much a work in progress, I'm learning Elm as I go (•\_•) ( •\_�
 
 TODOs:
 * Migrate away from the 'transition' pattern, just return another argument from update.
+  * Look at the duplication in Finished page Transition/Update.
 * Implement a spinner on the welcome page.
 * Improve performance:
   * Use the `links` section in the returned JSON, avoid parsing the HTML!!!

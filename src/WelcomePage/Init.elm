@@ -12,8 +12,8 @@ init =
 
 initialModel : Model
 initialModel =
-    { sourceTitleInput = ""
-    , destinationTitleInput = ""
-    , sourceArticle = RemoteData.NotAsked
-    , destinationArticle = RemoteData.NotAsked
+    { startTitleInput = ""
+    , endTitleInput = ""
+    , startArticle = RemoteData.NotAsked
+    , endArticle = RemoteData.NotAsked
     }

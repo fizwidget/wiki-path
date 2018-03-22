@@ -3,7 +3,7 @@ module Update exposing (update)
 import Util exposing (inWelcomePage, inPathfindingPage, inFinishedPage)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Transition exposing (withTransitions)
+import Transition exposing (withTransition)
 import WelcomePage.Update
 import PathfindingPage.Update
 import FinishedPage.Update
@@ -11,7 +11,7 @@ import FinishedPage.Update
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
-    withTransitions <|
+    withTransition message <|
         case ( message, model ) of
             ( Messages.WelcomePage innerMsg, Model.WelcomePage innerModel ) ->
                 inWelcomePage <| WelcomePage.Update.update innerMsg innerModel
