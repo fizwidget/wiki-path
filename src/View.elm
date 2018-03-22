@@ -1,8 +1,9 @@
 module View exposing (view)
 
-import Html exposing (Html, div, span, h1, text)
+import Html exposing (Html, h1, text)
 import Html.Attributes exposing (style)
-import Common.View exposing (centerChildren)
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
 import WelcomePage.View
@@ -12,27 +13,11 @@ import FinishedPage.View
 
 view : Model -> Html Msg
 view model =
-    appStyles
-        [ centerChildren
-            [ iconView
-            , headingView
-            , modelView model
-            ]
+    Grid.container [ style [ ( "max-width", "600px" ) ] ]
+        [ CDN.stylesheet
+        , Grid.row [] [ Grid.col [] [ headingView ] ]
+        , Grid.row [] [ Grid.col [] [ modelView model ] ]
         ]
-
-
-appStyles : List (Html msg) -> Html msg
-appStyles children =
-    div
-        [ style
-            [ ( "font-family", "Helvetica" )
-            , ( "color", "#f9d094" )
-            , ( "background", "#2e2a24" )
-            , ( "min-height", "100vh" )
-            , ( "padding", "20px" )
-            ]
-        ]
-        children
 
 
 headingView : Html msg
@@ -41,23 +26,12 @@ headingView =
         [ style
             [ ( "font-size", "400%" )
             , ( "font-weight", "900" )
-            , ( "margin-top", "0" )
+            , ( "text-align", "center" )
+            , ( "margin-top", "50px" )
+            , ( "margin-bottom", "30px" )
             ]
         ]
         [ text "Wikipedia Game" ]
-
-
-iconView : Html msg
-iconView =
-    span
-        [ style
-            [ ( "font-size", "800%" )
-            , ( "line-height", "1" )
-            , ( "height", "120px" )
-            , ( "margin", "20px 0 10px 0" )
-            ]
-        ]
-        [ text "📖" ]
 
 
 modelView : Model -> Html Msg
