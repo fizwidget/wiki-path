@@ -20,7 +20,7 @@ init { source, destination } =
         initialModel =
             { source = source
             , destination = destination
-            , current = RemoteData.NotAsked
+            , current = RemoteData.Success source
             , visited = [ source.title ]
             }
 
