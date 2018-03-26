@@ -6,15 +6,15 @@ import Common.Api
 
 
 requestArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-requestArticle createMsg title =
+requestArticle tagger title =
     Common.Api.requestArticle title
         |> RemoteData.sendRequest
-        |> Cmd.map liftResult
-        |> Cmd.map createMsg
+        |> Cmd.map toRemoteArticle
+        |> Cmd.map tagger
 
 
-liftResult : WebData ArticleResult -> RemoteArticle
-liftResult data =
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle data =
     data
         |> RemoteData.mapError NetworkError
         |> RemoteData.andThen RemoteData.fromResult

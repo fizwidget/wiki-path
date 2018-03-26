@@ -2,10 +2,10 @@ module PathfindingPage.Update exposing (update)
 
 import RemoteData
 import Common.Service exposing (requestArticle)
-import Common.Model exposing (Title(Title), Article, unbox)
+import Common.Model exposing (Title(Title), Article, stringValue)
 import PathfindingPage.Util exposing (getNextCandidate)
 import PathfindingPage.Messages exposing (Msg(..))
-import PathfindingPage.Model exposing (Model)
+import PathfindingPage.Model exposing (Model, Error(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -33,10 +33,15 @@ onArticleReceived article model =
         nextModel =
             { model | stops = article.title :: model.stops }
 
-        nextCmd =
+        nextCandidate =
             getNextCandidate article model
-                |> Maybe.map unbox
+
+        nextCmd =
+            nextCandidate
+                |> Maybe.map stringValue
                 |> Maybe.map (requestArticle ArticleReceived)
                 |> Maybe.withDefault Cmd.none
     in
-        ( nextModel, nextCmd )
+        nextCandidate
+            |> Maybe.map (always ( nextModel, nextCmd ))
+            |> Maybe.withDefault ( { nextModel | error = Just PathNotFound }, Cmd.none )

@@ -11,4 +11,4 @@ type alias Path =
 
 
 type alias Model =
-    Result String Path
+    Path

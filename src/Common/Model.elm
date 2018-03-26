@@ -1,13 +1,4 @@
-module Common.Model
-    exposing
-        ( Title(..)
-        , Article
-        , ArticleResult
-        , RemoteArticle
-        , ArticleError(..)
-        , getTitle
-        , unbox
-        )
+module Common.Model exposing (Title(..), Article, ArticleResult, RemoteArticle, ArticleError(..), getTitle, stringValue)
 
 import Http
 import RemoteData exposing (RemoteData)
@@ -17,8 +8,8 @@ type Title
     = Title String
 
 
-unbox : Title -> String
-unbox (Title title) =
+stringValue : Title -> String
+stringValue (Title title) =
     title
 
 
@@ -31,8 +22,8 @@ getTitle article =
 
 type alias Article =
     { title : Title
-    , content : String
     , links : List Title
+    , content : String
     }
 
 

@@ -1,7 +1,14 @@
-module PathfindingPage.Util exposing (getNextCandidate)
+module PathfindingPage.Util exposing (getNextCandidate, hasFinished)
 
 import Common.Model exposing (Title(..), Article)
 import PathfindingPage.Model exposing (Model)
+
+
+hasFinished : Model -> Bool
+hasFinished { stops, end } =
+    List.head stops
+        |> Maybe.map (\stop -> stop == end.title)
+        |> Maybe.withDefault False
 
 
 getNextCandidate : Article -> Model -> Maybe Title

@@ -1,6 +1,6 @@
 module Common.Decoder exposing (decodeArticle)
 
-import Json.Decode exposing (Decoder, map, string, list, oneOf)
+import Json.Decode exposing (Decoder, map, string, list, bool, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Common.Model exposing (Title(Title), Article, ArticleResult, ArticleError(..))
 
@@ -15,21 +15,45 @@ decodeArticle =
 
 decodeSuccess : Decoder Article
 decodeSuccess =
-    decode fromRawContent
-        |> requiredAt [ "parse", "title" ] string
-        |> requiredAt [ "parse", "text" ] string
+    decode Article
+        |> requiredAt [ "parse", "title" ] decodeTitle
         |> requiredAt [ "parse", "links" ] decodeLinks
+        |> requiredAt [ "parse", "text" ] string
+
+
+decodeTitle : Decoder Title
+decodeTitle =
+    Json.Decode.map Title string
 
 
 decodeLinks : Decoder (List Title)
 decodeLinks =
-    list decodeLink
+    Json.Decode.map (List.filterMap identity) (list decodeExistingLink)
 
 
-decodeLink : Decoder Title
+decodeExistingLink : Decoder (Maybe Title)
+decodeExistingLink =
+    Json.Decode.map
+        (\link ->
+            if link.exists then
+                Just link.title
+            else
+                Nothing
+        )
+        decodeLink
+
+
+type alias Link =
+    { title : Title
+    , exists : Bool
+    }
+
+
+decodeLink : Decoder Link
 decodeLink =
-    decode Title
-        |> required "title" string
+    decode Link
+        |> required "title" decodeTitle
+        |> required "exists" bool
 
 
 decodeError : Decoder ArticleError
@@ -49,11 +73,3 @@ toError errorCode =
 
         _ ->
             UnknownError errorCode
-
-
-fromRawContent : String -> String -> List Title -> Article
-fromRawContent title content links =
-    { title = Title title
-    , content = content
-    , links = links
-    }

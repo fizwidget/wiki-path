@@ -1,6 +1,6 @@
 module PathfindingPage.Init exposing (init)
 
-import Common.Model exposing (Title(Title), Article, unbox)
+import Common.Model exposing (Title(Title), Article, stringValue)
 import Common.Service exposing (requestArticle)
 import PathfindingPage.Model exposing (Model)
 import PathfindingPage.Messages exposing (Msg(..))
@@ -20,11 +20,13 @@ init { start, end } =
             { start = start
             , end = end
             , stops = []
+            , error = Nothing
             }
 
+        -- TODO: Set error here
         initialCmd =
             getNextCandidate start initialModel
-                |> Maybe.map unbox
+                |> Maybe.map stringValue
                 |> Maybe.map (requestArticle ArticleReceived)
                 |> Maybe.withDefault Cmd.none
     in
