@@ -10,14 +10,14 @@ import FinishedPage.Messages
 import FinishedPage.Model
 
 
-inWelcomePage : ( WelcomePage.Model.Model, Cmd WelcomePage.Messages.Msg ) -> ( Model, Cmd Msg )
-inWelcomePage ( innerModel, innerCmd ) =
-    ( Model.WelcomePage innerModel, Cmd.map Messages.WelcomePage innerCmd )
+inWelcomePage : ( WelcomePage.Model.Model, Cmd WelcomePage.Messages.Msg, transition ) -> ( Model, Cmd Msg, transition )
+inWelcomePage ( innerModel, innerCmd, transition ) =
+    ( Model.WelcomePage innerModel, Cmd.map Messages.WelcomePage innerCmd, transition )
 
 
-inPathfindingPage : ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg ) -> ( Model, Cmd Msg )
-inPathfindingPage ( innerModel, innerCmd ) =
-    ( Model.PathfindingPage innerModel, Cmd.map Messages.PathfindingPage innerCmd )
+inPathfindingPage : ( PathfindingPage.Model.Model, Cmd PathfindingPage.Messages.Msg, transition ) -> ( Model, Cmd Msg, transition )
+inPathfindingPage ( innerModel, innerCmd, transition ) =
+    ( Model.PathfindingPage innerModel, Cmd.map Messages.PathfindingPage innerCmd, transition )
 
 
 inFinishedPage : ( FinishedPage.Model.Model, Cmd FinishedPage.Messages.Msg ) -> ( Model, Cmd Msg )
