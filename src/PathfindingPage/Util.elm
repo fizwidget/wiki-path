@@ -1,7 +1,5 @@
 module PathfindingPage.Util exposing (getNextCandidate)
 
-import HtmlParser exposing (Node, Attributes)
-import HtmlParser.Util exposing (getElementsByTagName, mapElements, getValue)
 import Common.Model exposing (Title(..), Article)
 import PathfindingPage.Model exposing (Model)
 
@@ -14,10 +12,8 @@ getNextCandidate current model =
 
 getCandidates : Article -> Model -> List Title
 getCandidates current model =
-    current.content
-        |> extractLinks
+    current.links
         |> List.filterMap toArticleTitle
-        |> List.filter (isUnvisited model)
 
 
 isUnvisited : Model -> Title -> Bool
@@ -27,39 +23,35 @@ isUnvisited model title =
         && (not <| List.member title model.stops)
 
 
-toArticleTitle : Link -> Maybe Title
-toArticleTitle link =
+toArticleTitle : Title -> Maybe Title
+toArticleTitle (Title link) =
     let
-        isInternalLink =
-            String.startsWith "/wiki" link.href
-
         isNotCategory =
-            not <| String.startsWith "Category:" link.title
+            not <| String.startsWith "Category:" link
 
         isNotTemplate =
-            not <| String.startsWith "Template:" link.title
+            not <| String.startsWith "Template:" link
 
         isNotDoc =
-            not <| String.startsWith "Wikipedia:" link.title
+            not <| String.startsWith "Wikipedia:" link
 
         isNotHelp =
-            not <| String.startsWith "Help:" link.title
+            not <| String.startsWith "Help:" link
 
         isNotIsbn =
-            link.title /= "ISBN"
+            link /= "ISBN"
 
         isNotDoi =
-            link.title /= "Digital object identifier"
+            link /= "Digital object identifier"
 
         isNotSpecial =
-            not <| String.startsWith "Special:" link.title
+            not <| String.startsWith "Special:" link
 
         isNotTemplateTalk =
-            not <| String.startsWith "Template talk:" link.title
+            not <| String.startsWith "Template talk:" link
     in
         if
-            isInternalLink
-                && isNotCategory
+            isNotCategory
                 && isNotTemplate
                 && isNotDoc
                 && isNotHelp
@@ -68,7 +60,7 @@ toArticleTitle link =
                 && isNotSpecial
                 && isNotTemplateTalk
         then
-            Just <| Title link.title
+            Just <| Title link
         else
             Nothing
 
@@ -81,29 +73,6 @@ calculateBestCandidate end candidateTitles =
     in
         List.drop quarterIndex candidateTitles
             |> List.head
-
-
-extractLinks : List Node -> List Link
-extractLinks nodes =
-    nodes
-        |> getElementsByTagName "a"
-        |> mapElements toLink
-        |> List.filterMap identity
-
-
-toLink : String -> Attributes -> List Node -> Maybe Link
-toLink tagName attributes children =
-    let
-        getAttribute name =
-            getValue name attributes
-
-        title =
-            getAttribute "title"
-
-        href =
-            getAttribute "href"
-    in
-        Maybe.map2 Link title href
 
 
 type alias Link =

@@ -10,7 +10,6 @@ module Common.Model
         )
 
 import Http
-import HtmlParser exposing (Node)
 import RemoteData exposing (RemoteData)
 
 
@@ -32,7 +31,8 @@ getTitle article =
 
 type alias Article =
     { title : Title
-    , content : List Node
+    , content : String
+    , links : List Title
     }
 
 

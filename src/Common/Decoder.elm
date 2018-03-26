@@ -1,8 +1,7 @@
 module Common.Decoder exposing (decodeArticle)
 
-import HtmlParser
-import Json.Decode exposing (Decoder, map, string, oneOf)
-import Json.Decode.Pipeline exposing (decode, requiredAt)
+import Json.Decode exposing (Decoder, map, string, list, oneOf)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Common.Model exposing (Title(Title), Article, ArticleResult, ArticleError(..))
 
 
@@ -19,6 +18,18 @@ decodeSuccess =
     decode fromRawContent
         |> requiredAt [ "parse", "title" ] string
         |> requiredAt [ "parse", "text" ] string
+        |> requiredAt [ "parse", "links" ] decodeLinks
+
+
+decodeLinks : Decoder (List Title)
+decodeLinks =
+    list decodeLink
+
+
+decodeLink : Decoder Title
+decodeLink =
+    decode Title
+        |> required "title" string
 
 
 decodeError : Decoder ArticleError
@@ -40,8 +51,9 @@ toError errorCode =
             UnknownError errorCode
 
 
-fromRawContent : String -> String -> Article
-fromRawContent title content =
+fromRawContent : String -> String -> List Title -> Article
+fromRawContent title content links =
     { title = Title title
-    , content = HtmlParser.parse content
+    , content = content
+    , links = links
     }
