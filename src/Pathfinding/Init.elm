@@ -1,11 +1,11 @@
-module PathfindingPage.Init exposing (init)
+module Pathfinding.Init exposing (init)
 
 import Common.Model exposing (Title(Title), Article, stringValue)
 import Common.Service exposing (requestArticle)
-import Model exposing (Model(PathfindingPage))
-import Messages exposing (Msg(PathfindingPage))
-import PathfindingPage.Messages exposing (PathfindingMsg(ArticleReceived))
-import PathfindingPage.Util exposing (getNextCandidate)
+import Model exposing (Model(Pathfinding))
+import Messages exposing (Msg(Pathfinding))
+import Pathfinding.Messages exposing (PathfindingMsg(ArticleReceived))
+import Pathfinding.Util exposing (getNextCandidate)
 
 
 type alias InitArgs =
@@ -31,4 +31,4 @@ init { start, end } =
                 |> Maybe.map (requestArticle ArticleReceived)
                 |> Maybe.withDefault Cmd.none
     in
-        ( Model.PathfindingPage initialModel, Cmd.map Messages.PathfindingPage initialCmd )
+        ( Model.Pathfinding initialModel, Cmd.map Messages.Pathfinding initialCmd )

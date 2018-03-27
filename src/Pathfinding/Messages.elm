@@ -1,4 +1,4 @@
-module PathfindingPage.Messages exposing (PathfindingMsg(..))
+module Pathfinding.Messages exposing (PathfindingMsg(..))
 
 import Common.Model exposing (RemoteArticle)
 

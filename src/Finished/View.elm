@@ -1,10 +1,10 @@
-module FinishedPage.View exposing (view)
+module Finished.View exposing (view)
 
 import Html exposing (Html, div, h3, h4, text)
 import Bootstrap.Button as Button
 import Common.Model exposing (Title(Title), Article, getTitle, stringValue)
-import FinishedPage.Model exposing (FinishedModel)
-import FinishedPage.Messages exposing (FinishedMsg(Restart))
+import Finished.Model exposing (FinishedModel)
+import Finished.Messages exposing (FinishedMsg(Restart))
 
 
 view : FinishedModel -> Html FinishedMsg

@@ -1,4 +1,4 @@
-module WelcomePage.View exposing (view)
+module Welcome.View exposing (view)
 
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
@@ -9,8 +9,8 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Model exposing (RemoteArticle, ArticleError(..))
-import WelcomePage.Messages exposing (WelcomeMsg(..))
-import WelcomePage.Model exposing (WelcomeModel)
+import Welcome.Messages exposing (WelcomeMsg(..))
+import Welcome.Model exposing (WelcomeModel)
 
 
 view : WelcomeModel -> Html WelcomeMsg

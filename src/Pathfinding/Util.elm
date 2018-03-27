@@ -1,7 +1,7 @@
-module PathfindingPage.Util exposing (getNextCandidate, hasFinished)
+module Pathfinding.Util exposing (getNextCandidate, hasFinished)
 
 import Common.Model exposing (Title(..), Article)
-import PathfindingPage.Model exposing (PathfindingModel)
+import Pathfinding.Model exposing (PathfindingModel)
 
 
 hasFinished : PathfindingModel -> Bool

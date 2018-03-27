@@ -6,9 +6,9 @@ import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
-import WelcomePage.View
-import PathfindingPage.View
-import FinishedPage.View
+import Welcome.View
+import Pathfinding.View
+import Finished.View
 
 
 view : Model -> Html Msg
@@ -37,11 +37,11 @@ headingView =
 modelView : Model -> Html Msg
 modelView model =
     case model of
-        Model.WelcomePage subModel ->
-            WelcomePage.View.view subModel |> Html.map Messages.WelcomePage
+        Model.Welcome subModel ->
+            Welcome.View.view subModel |> Html.map Messages.Welcome
 
-        Model.PathfindingPage subModel ->
-            PathfindingPage.View.view subModel |> Html.map Messages.PathfindingPage
+        Model.Pathfinding subModel ->
+            Pathfinding.View.view subModel |> Html.map Messages.Pathfinding
 
-        Model.FinishedPage subModel ->
-            FinishedPage.View.view subModel |> Html.map Messages.FinishedPage
+        Model.Finished subModel ->
+            Finished.View.view subModel |> Html.map Messages.Finished

@@ -1,4 +1,4 @@
-module FinishedPage.Model exposing (FinishedModel)
+module Finished.Model exposing (FinishedModel)
 
 import Common.Model exposing (Title)
 

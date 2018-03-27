@@ -1,14 +1,14 @@
-module WelcomePage.Init exposing (init)
+module Welcome.Init exposing (init)
 
 import RemoteData
-import Model exposing (Model(WelcomePage))
+import Model exposing (Model(Welcome))
 import Messages exposing (Msg)
-import WelcomePage.Model exposing (WelcomeModel)
+import Welcome.Model exposing (WelcomeModel)
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( WelcomePage initialModel, Cmd.none )
+    ( Welcome initialModel, Cmd.none )
 
 
 initialModel : WelcomeModel

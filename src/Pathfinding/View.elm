@@ -1,9 +1,9 @@
-module PathfindingPage.View exposing (view)
+module Pathfinding.View exposing (view)
 
 import Html exposing (Html, text, ol, li, h3, div)
 import Common.Model exposing (Title(Title), Article, RemoteArticle, getTitle)
-import PathfindingPage.Messages exposing (PathfindingMsg)
-import PathfindingPage.Model exposing (PathfindingModel)
+import Pathfinding.Messages exposing (PathfindingMsg)
+import Pathfinding.Model exposing (PathfindingModel)
 
 
 view : PathfindingModel -> Html PathfindingMsg

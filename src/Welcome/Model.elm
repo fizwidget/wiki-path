@@ -1,4 +1,4 @@
-module WelcomePage.Model exposing (WelcomeModel)
+module Welcome.Model exposing (WelcomeModel)
 
 import Common.Model exposing (Article, RemoteArticle)
 

@@ -1,4 +1,4 @@
-module WelcomePage.Messages exposing (WelcomeMsg(..))
+module Welcome.Messages exposing (WelcomeMsg(..))
 
 import Common.Model exposing (RemoteArticle)
 

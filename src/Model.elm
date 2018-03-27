@@ -1,11 +1,11 @@
 module Model exposing (Model(..))
 
-import WelcomePage.Model exposing (WelcomeModel)
-import PathfindingPage.Model exposing (PathfindingModel)
-import FinishedPage.Model exposing (FinishedModel)
+import Welcome.Model exposing (WelcomeModel)
+import Pathfinding.Model exposing (PathfindingModel)
+import Finished.Model exposing (FinishedModel)
 
 
 type Model
-    = WelcomePage WelcomeModel
-    | PathfindingPage PathfindingModel
-    | FinishedPage FinishedModel
+    = Welcome WelcomeModel
+    | Pathfinding PathfindingModel
+    | Finished FinishedModel
