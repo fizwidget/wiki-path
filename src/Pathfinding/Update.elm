@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update)
+module Pathfinding.Update exposing (update, onArticleReceived)
 
 import RemoteData
 import Common.Service exposing (requestArticle)
@@ -36,8 +36,7 @@ onArticleReceived article model =
                 )
             else
                 ( Model.Pathfinding { model | stops = article.title :: model.stops }
-                , requestArticle ArticleReceived (stringValue candidate)
-                    |> Cmd.map Messages.Pathfinding
+                , requestArticle ArticleReceived (stringValue candidate) |> Cmd.map Messages.Pathfinding
                 )
 
         Nothing ->

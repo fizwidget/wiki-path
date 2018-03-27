@@ -1,14 +1,7 @@
-module Pathfinding.Util exposing (getNextCandidate, hasFinished)
+module Pathfinding.Util exposing (getNextCandidate)
 
 import Common.Model exposing (Title(..), Article)
 import Pathfinding.Model exposing (PathfindingModel)
-
-
-hasFinished : PathfindingModel -> Bool
-hasFinished { stops, end } =
-    List.head stops
-        |> Maybe.map (\stop -> stop == end.title)
-        |> Maybe.withDefault False
 
 
 getNextCandidate : Article -> PathfindingModel -> Maybe Title
@@ -21,6 +14,7 @@ getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
         |> List.filterMap toArticleTitle
+        |> List.filter (isUnvisited model) -- O(n^2), can we make this better?
 
 
 isUnvisited : PathfindingModel -> Title -> Bool
