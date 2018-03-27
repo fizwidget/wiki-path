@@ -3,45 +3,44 @@ module PathfindingPage.Update exposing (update)
 import RemoteData
 import Common.Service exposing (requestArticle)
 import Common.Model exposing (Title(Title), Article, stringValue)
+import Model exposing (Model)
+import Messages exposing (Msg(..))
 import PathfindingPage.Util exposing (getNextCandidate)
-import PathfindingPage.Messages exposing (Msg(..))
-import PathfindingPage.Model exposing (Model, Error(..))
+import PathfindingPage.Messages exposing (PathfindingMsg(..))
+import PathfindingPage.Model exposing (PathfindingModel, Error(..))
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update (ArticleReceived remoteArticle) model =
     case remoteArticle of
         RemoteData.NotAsked ->
-            ( model, Cmd.none )
+            ( Model.PathfindingPage model, Cmd.none )
 
         RemoteData.Loading ->
-            ( model, Cmd.none )
+            ( Model.PathfindingPage model, Cmd.none )
 
         RemoteData.Success article ->
-            if article.title == model.end.title then
-                ( model, Cmd.none )
-            else
-                onArticleReceived article model
+            onArticleReceived article model
 
         RemoteData.Failure error ->
-            ( model, Cmd.none )
+            ( Model.PathfindingPage model, Cmd.none )
 
 
-onArticleReceived : Article -> Model -> ( Model, Cmd Msg )
+onArticleReceived : Article -> PathfindingModel -> ( Model, Cmd Msg )
 onArticleReceived article model =
-    let
-        nextModel =
-            { model | stops = article.title :: model.stops }
+    case getNextCandidate article model of
+        Just candidate ->
+            if candidate == model.end.title then
+                ( Model.FinishedPage { start = model.start.title, end = model.end.title, stops = model.stops }
+                , Cmd.none
+                )
+            else
+                ( Model.PathfindingPage { model | stops = article.title :: model.stops }
+                , requestArticle ArticleReceived (stringValue candidate)
+                    |> Cmd.map Messages.PathfindingPage
+                )
 
-        nextCandidate =
-            getNextCandidate article model
-
-        nextCmd =
-            nextCandidate
-                |> Maybe.map stringValue
-                |> Maybe.map (requestArticle ArticleReceived)
-                |> Maybe.withDefault Cmd.none
-    in
-        nextCandidate
-            |> Maybe.map (always ( nextModel, nextCmd ))
-            |> Maybe.withDefault ( { nextModel | error = Just PathNotFound }, Cmd.none )
+        Nothing ->
+            ( Model.PathfindingPage { model | error = Just PathNotFound }
+            , Cmd.none
+            )

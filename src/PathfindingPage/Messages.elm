@@ -1,7 +1,7 @@
-module PathfindingPage.Messages exposing (Msg(..))
+module PathfindingPage.Messages exposing (PathfindingMsg(..))
 
 import Common.Model exposing (RemoteArticle)
 
 
-type Msg
+type PathfindingMsg
     = ArticleReceived RemoteArticle

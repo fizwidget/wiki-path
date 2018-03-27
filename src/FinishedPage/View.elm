@@ -3,11 +3,11 @@ module FinishedPage.View exposing (view)
 import Html exposing (Html, div, h3, h4, text)
 import Bootstrap.Button as Button
 import Common.Model exposing (Title(Title), Article, getTitle, stringValue)
-import FinishedPage.Model exposing (Model, Path)
-import FinishedPage.Messages exposing (Msg(Restart))
+import FinishedPage.Model exposing (FinishedModel)
+import FinishedPage.Messages exposing (FinishedMsg(Restart))
 
 
-view : Model -> Html Msg
+view : FinishedModel -> Html FinishedMsg
 view model =
     div []
         [ modelView model
@@ -15,7 +15,7 @@ view model =
         ]
 
 
-modelView : Path -> Html msg
+modelView : FinishedModel -> Html msg
 modelView { start, end, stops } =
     div []
         [ headingView
@@ -44,7 +44,7 @@ stopsView stops =
         |> text
 
 
-restartButton : Html Msg
+restartButton : Html FinishedMsg
 restartButton =
     Button.button
         [ Button.secondary, Button.onClick Restart ]

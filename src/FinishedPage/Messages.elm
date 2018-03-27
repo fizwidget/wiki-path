@@ -1,5 +1,5 @@
-module FinishedPage.Messages exposing (Msg(..))
+module FinishedPage.Messages exposing (FinishedMsg(..))
 
 
-type Msg
+type FinishedMsg
     = Restart

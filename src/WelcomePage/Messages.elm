@@ -1,9 +1,9 @@
-module WelcomePage.Messages exposing (Msg(..))
+module WelcomePage.Messages exposing (WelcomeMsg(..))
 
 import Common.Model exposing (RemoteArticle)
 
 
-type Msg
+type WelcomeMsg
     = StartArticleTitleChange String
     | EndArticleTitleChange String
     | FetchArticlesRequest

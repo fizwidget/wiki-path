@@ -1,29 +1,29 @@
 module PathfindingPage.Util exposing (getNextCandidate, hasFinished)
 
 import Common.Model exposing (Title(..), Article)
-import PathfindingPage.Model exposing (Model)
+import PathfindingPage.Model exposing (PathfindingModel)
 
 
-hasFinished : Model -> Bool
+hasFinished : PathfindingModel -> Bool
 hasFinished { stops, end } =
     List.head stops
         |> Maybe.map (\stop -> stop == end.title)
         |> Maybe.withDefault False
 
 
-getNextCandidate : Article -> Model -> Maybe Title
+getNextCandidate : Article -> PathfindingModel -> Maybe Title
 getNextCandidate current model =
     getCandidates current model
         |> calculateBestCandidate model.end
 
 
-getCandidates : Article -> Model -> List Title
+getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
         |> List.filterMap toArticleTitle
 
 
-isUnvisited : Model -> Title -> Bool
+isUnvisited : PathfindingModel -> Title -> Bool
 isUnvisited model title =
     (title /= model.start.title)
         && (title /= model.end.title)

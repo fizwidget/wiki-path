@@ -1,9 +1,12 @@
 module FinishedPage.Init exposing (init)
 
-import FinishedPage.Model exposing (Model)
-import FinishedPage.Messages exposing (Msg(..))
+import Common.Model exposing (Title)
+import Model exposing (Model(FinishedPage))
+import Messages exposing (Msg)
 
 
-init : Model -> ( Model, Cmd Msg )
-init model =
-    ( model, Cmd.none )
+init : Title -> Title -> List Title -> ( Model, Cmd Msg )
+init start end stops =
+    ( FinishedPage { start = start, end = end, stops = stops }
+    , Cmd.none
+    )

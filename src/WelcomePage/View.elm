@@ -9,11 +9,11 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Model exposing (RemoteArticle, ArticleError(..))
-import WelcomePage.Messages exposing (Msg(..))
-import WelcomePage.Model exposing (Model)
+import WelcomePage.Messages exposing (WelcomeMsg(..))
+import WelcomePage.Model exposing (WelcomeModel)
 
 
-view : Model -> Html Msg
+view : WelcomeModel -> Html WelcomeMsg
 view model =
     Form.form []
         [ titleInputs model
@@ -22,7 +22,7 @@ view model =
         ]
 
 
-titleInputs : Model -> Html Msg
+titleInputs : WelcomeModel -> Html WelcomeMsg
 titleInputs { startTitleInput, endTitleInput } =
     Form.row []
         [ Form.col [] [ startArticleTitleInput startTitleInput ]
@@ -30,17 +30,17 @@ titleInputs { startTitleInput, endTitleInput } =
         ]
 
 
-startArticleTitleInput : String -> Html Msg
+startArticleTitleInput : String -> Html WelcomeMsg
 startArticleTitleInput =
     articleTitleInput "From..." StartArticleTitleChange
 
 
-endArticleTitleInput : String -> Html Msg
+endArticleTitleInput : String -> Html WelcomeMsg
 endArticleTitleInput =
     articleTitleInput "To..." EndArticleTitleChange
 
 
-articleTitleInput : String -> (String -> Msg) -> String -> Html Msg
+articleTitleInput : String -> (String -> WelcomeMsg) -> String -> Html WelcomeMsg
 articleTitleInput placeholderText toMsg title =
     Input.text
         [ Input.onInput toMsg
@@ -49,7 +49,7 @@ articleTitleInput placeholderText toMsg title =
         ]
 
 
-loadArticlesButton : Html Msg
+loadArticlesButton : Html WelcomeMsg
 loadArticlesButton =
     Form.row [ Row.centerLg ]
         [ Form.col [ Col.lgAuto ]

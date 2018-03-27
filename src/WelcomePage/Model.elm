@@ -1,9 +1,9 @@
-module WelcomePage.Model exposing (Model)
+module WelcomePage.Model exposing (WelcomeModel)
 
 import Common.Model exposing (Article, RemoteArticle)
 
 
-type alias Model =
+type alias WelcomeModel =
     { startTitleInput : String
     , endTitleInput : String
     , startArticle : RemoteArticle

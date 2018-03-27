@@ -2,8 +2,9 @@ module PathfindingPage.Init exposing (init)
 
 import Common.Model exposing (Title(Title), Article, stringValue)
 import Common.Service exposing (requestArticle)
-import PathfindingPage.Model exposing (Model)
-import PathfindingPage.Messages exposing (Msg(..))
+import Model exposing (Model(PathfindingPage))
+import Messages exposing (Msg(PathfindingPage))
+import PathfindingPage.Messages exposing (PathfindingMsg(ArticleReceived))
 import PathfindingPage.Util exposing (getNextCandidate)
 
 
@@ -30,4 +31,4 @@ init { start, end } =
                 |> Maybe.map (requestArticle ArticleReceived)
                 |> Maybe.withDefault Cmd.none
     in
-        ( initialModel, initialCmd )
+        ( Model.PathfindingPage initialModel, Cmd.map Messages.PathfindingPage initialCmd )

@@ -1,9 +1,9 @@
-module PathfindingPage.Model exposing (Model, Error(..))
+module PathfindingPage.Model exposing (PathfindingModel, Error(..))
 
 import Common.Model exposing (Title, Article, RemoteArticle, ArticleError)
 
 
-type alias Model =
+type alias PathfindingModel =
     { start : Article
     , end : Article
     , stops : List Title

@@ -1,14 +1,10 @@
-module FinishedPage.Model exposing (..)
+module FinishedPage.Model exposing (FinishedModel)
 
 import Common.Model exposing (Title)
 
 
-type alias Path =
+type alias FinishedModel =
     { start : Title
     , end : Title
     , stops : List Title
     }
-
-
-type alias Model =
-    Path

@@ -1,9 +1,14 @@
 module FinishedPage.Update exposing (update)
 
-import FinishedPage.Messages exposing (Msg)
-import FinishedPage.Model exposing (Model)
+import WelcomePage.Init
+import Model exposing (Model)
+import Messages exposing (Msg(..))
+import FinishedPage.Messages exposing (FinishedMsg(Restart))
+import FinishedPage.Model exposing (FinishedModel)
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : FinishedMsg -> FinishedModel -> ( Model, Cmd Msg )
 update message model =
-    ( model, Cmd.none )
+    case message of
+        Restart ->
+            WelcomePage.Init.init
