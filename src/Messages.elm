@@ -1,4 +1,4 @@
-module Messages exposing (..)
+module Messages exposing (Msg(..))
 
 import Welcome.Messages exposing (WelcomeMsg)
 import Pathfinding.Messages exposing (PathfindingMsg)
