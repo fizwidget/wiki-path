@@ -1,11 +1,11 @@
-module Pathfinding.Update exposing (update, onArticleReceived)
+module Pathfinding.Update exposing (update, updateWithArticle)
 
 import RemoteData
 import Common.Service exposing (requestArticle)
 import Common.Model exposing (Title(Title), Article, value)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.Util exposing (getNextCandidate)
+import Pathfinding.Util exposing (getNextStop)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 import Finished.Init
@@ -24,7 +24,7 @@ update message model =
                     ( Model.Pathfinding model, Cmd.none )
 
                 RemoteData.Success article ->
-                    onArticleReceived article model
+                    updateWithArticle article model
 
                 RemoteData.Failure error ->
                     ( Model.Pathfinding model, Cmd.none )
@@ -33,15 +33,15 @@ update message model =
             Welcome.Init.init
 
 
-onArticleReceived : Article -> PathfindingModel -> ( Model, Cmd Msg )
-onArticleReceived article model =
-    case getNextCandidate article model of
-        Just candidate ->
-            if candidate == model.end.title then
+updateWithArticle : Article -> PathfindingModel -> ( Model, Cmd Msg )
+updateWithArticle currentArticle model =
+    case getNextStop currentArticle model of
+        Just nextArticleTitle ->
+            if nextArticleTitle == model.end.title then
                 Finished.Init.init model.start.title model.end.title model.stops
             else
-                ( Model.Pathfinding { model | stops = article.title :: model.stops }
-                , requestArticle ArticleReceived (value candidate) |> Cmd.map Messages.Pathfinding
+                ( Model.Pathfinding { model | stops = currentArticle.title :: model.stops }
+                , requestArticle ArticleReceived (value nextArticleTitle) |> Cmd.map Messages.Pathfinding
                 )
 
         Nothing ->

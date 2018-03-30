@@ -1,12 +1,12 @@
-module Pathfinding.Util exposing (getNextCandidate)
+module Pathfinding.Util exposing (getNextStop)
 
 import Regex exposing (regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model exposing (Title(..), Article, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
-getNextCandidate : Article -> PathfindingModel -> Maybe Title
-getNextCandidate current model =
+getNextStop : Article -> PathfindingModel -> Maybe Title
+getNextStop current model =
     getCandidates current model
         |> calculateBestCandidate model.end
 
@@ -14,57 +14,38 @@ getNextCandidate current model =
 getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
-        |> List.filterMap toArticleTitle
+        |> List.filter isValidTitle
         |> List.filter (isUnvisited model)
 
 
 isUnvisited : PathfindingModel -> Title -> Bool
 isUnvisited model title =
     (title /= model.start.title)
-        && (title /= model.end.title)
         && (not <| List.member title model.stops)
 
 
-toArticleTitle : Title -> Maybe Title
-toArticleTitle (Title link) =
+isValidTitle : Title -> Bool
+isValidTitle (Title value) =
     let
-        isNotCategory =
-            not <| String.startsWith "Category:" link
-
-        isNotTemplate =
-            not <| String.startsWith "Template:" link
-
-        isNotDoc =
-            not <| String.startsWith "Wikipedia:" link
-
-        isNotHelp =
-            not <| String.startsWith "Help:" link
-
-        isNotIsbn =
-            link /= "ISBN"
-
-        isNotDoi =
-            link /= "Digital object identifier"
-
-        isNotSpecial =
-            not <| String.startsWith "Special:" link
-
-        isNotTemplateTalk =
-            not <| String.startsWith "Template talk:" link
+        ignorePrefixes =
+            [ "Category:"
+            , "Template:"
+            , "Wikipedia:"
+            , "Help:"
+            , "Special:"
+            , "Template talk:"
+            , "ISBN"
+            , "Digital object identifier"
+            , "Portal:"
+            , "Book:"
+            , "User:"
+            , "Commons"
+            , "Talk:"
+            , "Wikipedia talk:"
+            , "User talk:"
+            ]
     in
-        if
-            isNotCategory
-                && isNotTemplate
-                && isNotDoc
-                && isNotHelp
-                && isNotIsbn
-                && isNotDoi
-                && isNotSpecial
-                && isNotTemplateTalk
-        then
-            Just <| Title link
-        else
-            Nothing
+        not <| List.any (\prefix -> String.startsWith prefix value) ignorePrefixes
 
 
 calculateBestCandidate : Article -> List Title -> Maybe Title
@@ -72,7 +53,8 @@ calculateBestCandidate end candidateTitles =
     candidateTitles
         |> List.map (\title -> ( title, occuranceCount end title ))
         |> List.sortBy (\( title, count ) -> count)
-        |> List.take 5
+        |> List.reverse
+        |> List.take 3
         |> Debug.log "Occurence counts"
         |> List.head
         |> Maybe.map Tuple.first

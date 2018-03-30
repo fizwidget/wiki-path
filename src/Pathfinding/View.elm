@@ -38,12 +38,14 @@ maybeErrorView error =
 
 errorView : Error -> Html PathfindingMsg
 errorView error =
-    case error of
-        PathNotFound ->
-            text "Could not find path :("
+    div []
+        [ case error of
+            PathNotFound ->
+                text "Could not find path :("
 
-        ArticleError articleError ->
-            text ("Error fetching article: " ++ toString articleError)
+            ArticleError articleError ->
+                text ("Error fetching article: " ++ toString articleError)
+        ]
 
 
 backView : Html PathfindingMsg
