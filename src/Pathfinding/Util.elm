@@ -1,6 +1,6 @@
 module Pathfinding.Util exposing (getNextCandidate)
 
-import Regex exposing (regex, find, HowMany(All))
+import Regex exposing (regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model exposing (Title(..), Article, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
@@ -70,14 +70,17 @@ toArticleTitle (Title link) =
 calculateBestCandidate : Article -> List Title -> Maybe Title
 calculateBestCandidate end candidateTitles =
     candidateTitles
-        |> List.sortBy (occuranceCount end)
+        |> List.map (\title -> ( title, occuranceCount end title ))
+        |> List.sortBy (\( title, count ) -> count)
+        |> List.take 5
         |> Debug.log "Occurence counts"
         |> List.head
+        |> Maybe.map Tuple.first
 
 
 occuranceCount : Article -> Title -> Int
 occuranceCount article title =
-    find All (regex <| value title) article.content
+    find All (title |> value |> escape |> regex |> caseInsensitive) article.content
         |> List.length
 
 
