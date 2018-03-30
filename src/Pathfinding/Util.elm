@@ -1,6 +1,7 @@
 module Pathfinding.Util exposing (getNextCandidate)
 
-import Common.Model exposing (Title(..), Article)
+import Regex exposing (regex, find, HowMany(All))
+import Common.Model exposing (Title(..), Article, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
@@ -14,7 +15,7 @@ getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
         |> List.filterMap toArticleTitle
-        |> List.filter (isUnvisited model) -- O(n^2), can we make this better?
+        |> List.filter (isUnvisited model)
 
 
 isUnvisited : PathfindingModel -> Title -> Bool
@@ -68,12 +69,16 @@ toArticleTitle (Title link) =
 
 calculateBestCandidate : Article -> List Title -> Maybe Title
 calculateBestCandidate end candidateTitles =
-    let
-        quarterIndex =
-            List.length candidateTitles // 4
-    in
-        List.drop quarterIndex candidateTitles
-            |> List.head
+    candidateTitles
+        |> List.sortBy (occuranceCount end)
+        |> Debug.log "Occurence counts"
+        |> List.head
+
+
+occuranceCount : Article -> Title -> Int
+occuranceCount article title =
+    find All (regex <| value title) article.content
+        |> List.length
 
 
 type alias Link =

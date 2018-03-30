@@ -1,8 +1,9 @@
 module Pathfinding.View exposing (view)
 
 import Html exposing (Html, text, ol, li, h3, div)
+import Bootstrap.Button as Button
 import Common.Model exposing (Title(Title), Article, RemoteArticle, getTitle)
-import Pathfinding.Messages exposing (PathfindingMsg)
+import Pathfinding.Messages exposing (PathfindingMsg(Back))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 
 
@@ -11,6 +12,7 @@ view { start, end, stops, error } =
     div []
         [ heading start end
         , maybeErrorView error
+        , backView
         , stopsView stops
         ]
 
@@ -42,6 +44,13 @@ errorView error =
 
         ArticleError articleError ->
             text ("Error fetching article: " ++ toString articleError)
+
+
+backView : Html PathfindingMsg
+backView =
+    Button.button
+        [ Button.secondary, Button.onClick Back ]
+        [ text "Back" ]
 
 
 stopsView : List Title -> Html msg
