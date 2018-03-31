@@ -6,3 +6,4 @@ Still very much a work in progress, I'm learning Elm as I go (•\_•) ( •\_�
 
 TODOs:
 * Implement a spinner on the welcome page.
+* R2D2 to Cat doesn't work - problem with redirects?
