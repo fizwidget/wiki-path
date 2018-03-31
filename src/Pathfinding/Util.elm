@@ -1,6 +1,6 @@
 module Pathfinding.Util exposing (getNextStop)
 
-import Regex exposing (regex, find, escape, caseInsensitive, HowMany(All))
+import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model exposing (Title(..), Article, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
@@ -15,6 +15,7 @@ getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
         |> List.filter isValidTitle
+        |> List.filter (\title -> title /= current.title)
         |> List.filter (isUnvisited model)
 
 
@@ -35,6 +36,7 @@ isValidTitle (Title value) =
             , "Special:"
             , "Template talk:"
             , "ISBN"
+            , "International Standard Book Number"
             , "Digital object identifier"
             , "Portal:"
             , "Book:"
@@ -43,6 +45,7 @@ isValidTitle (Title value) =
             , "Talk:"
             , "Wikipedia talk:"
             , "User talk:"
+            , "Module:"
             ]
     in
         not <| List.any (\prefix -> String.startsWith prefix value) ignorePrefixes
@@ -62,8 +65,13 @@ calculateBestCandidate end candidateTitles =
 
 occuranceCount : Article -> Title -> Int
 occuranceCount article title =
-    find All (title |> value |> escape |> regex |> caseInsensitive) article.content
+    find All (title |> value |> escape |> wholeWord |> caseInsensitive) article.content
         |> List.length
+
+
+wholeWord : String -> Regex
+wholeWord target =
+    "(^|\\s+|\")" ++ target ++ "(\\s+|$|\")" |> regex
 
 
 type alias Link =

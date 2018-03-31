@@ -20,7 +20,7 @@ modelView { start, end, stops } =
     div []
         [ headingView
         , subHeadingView start end
-        , stopsView stops
+        , stopsView start end stops
         ]
 
 
@@ -35,13 +35,17 @@ subHeadingView startTitle endTitle =
         [ text <| "Path from " ++ (value startTitle) ++ " to " ++ (value endTitle) ++ "  was..." ]
 
 
-stopsView : List Title -> Html msg
-stopsView stops =
-    stops
-        |> List.reverse
-        |> List.map value
-        |> String.join " → "
-        |> text
+stopsView : Title -> Title -> List Title -> Html msg
+stopsView start end stops =
+    let
+        stopsIncludingEndpoints =
+            [ end ] ++ stops ++ [ start ]
+    in
+        stopsIncludingEndpoints
+            |> List.reverse
+            |> List.map value
+            |> String.join " → "
+            |> text
 
 
 restartButton : Html FinishedMsg

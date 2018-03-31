@@ -38,13 +38,13 @@ updateWithArticle currentArticle model =
     case getNextStop currentArticle model of
         Just nextArticleTitle ->
             if nextArticleTitle == model.end.title then
-                Finished.Init.init model.start.title model.end.title model.stops
+                Finished.Init.init model.start.title model.end.title (nextArticleTitle :: model.stops)
             else
                 ( Model.Pathfinding { model | stops = currentArticle.title :: model.stops }
                 , requestArticle ArticleReceived (value nextArticleTitle) |> Cmd.map Messages.Pathfinding
                 )
 
         Nothing ->
-            ( Model.Pathfinding { model | error = Just PathNotFound }
+            ( Model.Pathfinding { model | error = Just (PathNotFound currentArticle.title) }
             , Cmd.none
             )

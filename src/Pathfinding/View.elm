@@ -40,8 +40,8 @@ errorView : Error -> Html PathfindingMsg
 errorView error =
     div []
         [ case error of
-            PathNotFound ->
-                text "Could not find path :("
+            PathNotFound (Title title) ->
+                text <| "Could not find path, got stuck at: " ++ title
 
             ArticleError articleError ->
                 text ("Error fetching article: " ++ toString articleError)

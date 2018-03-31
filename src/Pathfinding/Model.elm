@@ -12,5 +12,5 @@ type alias PathfindingModel =
 
 
 type Error
-    = PathNotFound
+    = PathNotFound Title
     | ArticleError ArticleError
