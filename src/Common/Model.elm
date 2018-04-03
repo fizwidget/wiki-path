@@ -18,6 +18,11 @@ getTitle article =
     value article.title
 
 
+toLink : Title -> String
+toLink (Title title) =
+    "https://en.wikipedia.org/wiki/" ++ title
+
+
 type alias Article =
     { title : Title
     , links : List Title

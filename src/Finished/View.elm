@@ -37,15 +37,10 @@ subHeadingView startTitle endTitle =
 
 stopsView : Title -> Title -> List Title -> Html msg
 stopsView start end stops =
-    let
-        stopsIncludingEndpoints =
-            [ end ] ++ stops ++ [ start ]
-    in
-        stopsIncludingEndpoints
-            |> List.reverse
-            |> List.map value
-            |> String.join " → "
-            |> text
+    stops
+        |> List.map value
+        |> String.join " → "
+        |> text
 
 
 restartButton : Html FinishedMsg

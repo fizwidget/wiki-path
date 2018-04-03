@@ -1,12 +1,12 @@
-module Pathfinding.Util exposing (getNextStop)
+module Pathfinding.Util exposing (suggestNextArticle)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model exposing (Title(..), Article, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
-getNextStop : Article -> PathfindingModel -> Maybe Title
-getNextStop current model =
+suggestNextArticle : PathfindingModel -> Article -> Maybe Title
+suggestNextArticle model current =
     getCandidates current model
         |> calculateBestCandidate model.end
 
@@ -46,6 +46,7 @@ isValidTitle (Title value) =
             , "Wikipedia talk:"
             , "User talk:"
             , "Module:"
+            , "File:"
             ]
     in
         not <| List.any (\prefix -> String.startsWith prefix value) ignorePrefixes
@@ -54,19 +55,17 @@ isValidTitle (Title value) =
 calculateBestCandidate : Article -> List Title -> Maybe Title
 calculateBestCandidate end candidateTitles =
     candidateTitles
-        |> List.map (\title -> ( title, occuranceCount end title ))
-        |> List.sortBy (\( title, count ) -> count)
-        |> List.reverse
+        |> List.map (\title -> ( title, heuristic end title ))
+        |> List.sortBy (\( title, count ) -> -count)
         |> List.take 3
         |> Debug.log "Occurence counts"
         |> List.head
         |> Maybe.map Tuple.first
 
 
-occuranceCount : Article -> Title -> Int
-occuranceCount article title =
-    find All (title |> value |> escape |> wholeWord |> caseInsensitive) article.content
-        |> List.length
+heuristic : Article -> Title -> Int
+heuristic article title =
+    find All (title |> value |> escape |> wholeWord |> caseInsensitive) article.content |> List.length
 
 
 wholeWord : String -> Regex
