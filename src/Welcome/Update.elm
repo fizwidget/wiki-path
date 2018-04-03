@@ -19,7 +19,9 @@ update message model =
             ( Model.Welcome { model | endTitleInput = value }, Cmd.none )
 
         FetchArticlesRequest ->
-            ( Model.Welcome model, Cmd.map Messages.Welcome (getArticles model) )
+            ( Model.Welcome { model | startArticle = RemoteData.Loading, endArticle = RemoteData.Loading }
+            , Cmd.map Messages.Welcome (getArticles model)
+            )
 
         FetchStartArticleResult article ->
             ( { model | startArticle = article }, Cmd.none )

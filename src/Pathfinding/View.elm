@@ -4,6 +4,7 @@ import Html exposing (Html, text, ol, li, h3, div)
 import Bootstrap.Button as Button
 import Common.Model.Article exposing (Article, RemoteArticle)
 import Common.Model.Title exposing (Title, value)
+import Common.View exposing (viewLink)
 import Pathfinding.Messages exposing (PathfindingMsg(Back))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 
@@ -63,4 +64,4 @@ stopsView stops =
 
 stopView : Title -> Html msg
 stopView title =
-    li [] [ text (value title) ]
+    li [] [ viewLink title ]

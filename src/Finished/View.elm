@@ -3,7 +3,8 @@ module Finished.View exposing (view)
 import Html exposing (Html, div, h3, h4, text, a)
 import Html.Attributes exposing (href)
 import Bootstrap.Button as Button
-import Common.Model.Title exposing (Title, value, toLink)
+import Common.Model.Title exposing (Title, value, toUrl)
+import Common.View exposing (viewLink)
 import Finished.Model exposing (FinishedModel)
 import Finished.Messages exposing (FinishedMsg(Restart))
 
@@ -39,14 +40,9 @@ subHeadingView startTitle endTitle =
 stopsView : Title -> Title -> List Title -> Html msg
 stopsView start end stops =
     stops
-        |> List.map toLinkTag
+        |> List.map viewLink
         |> List.intersperse (text " → ")
         |> div []
-
-
-toLinkTag : Title -> Html msg
-toLinkTag title =
-    a [ href (toLink title) ] [ text (value title) ]
 
 
 restartButton : Html FinishedMsg
