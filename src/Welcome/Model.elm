@@ -1,6 +1,6 @@
 module Welcome.Model exposing (WelcomeModel)
 
-import Common.Model exposing (Article, RemoteArticle)
+import Common.Model.Article exposing (Article, RemoteArticle)
 
 
 type alias WelcomeModel =

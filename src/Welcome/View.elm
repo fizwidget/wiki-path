@@ -8,7 +8,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import RemoteData
-import Common.Model exposing (RemoteArticle, ArticleError(..))
+import Common.Model.Article exposing (RemoteArticle, ArticleError(..))
 import Welcome.Messages exposing (WelcomeMsg(..))
 import Welcome.Model exposing (WelcomeModel)
 

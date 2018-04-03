@@ -1,6 +1,7 @@
 module Pathfinding.Model exposing (PathfindingModel, Error(..))
 
-import Common.Model exposing (Title, Article, RemoteArticle, ArticleError)
+import Common.Model.Title exposing (Title)
+import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
 
 
 type alias PathfindingModel =

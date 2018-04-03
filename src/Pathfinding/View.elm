@@ -2,7 +2,8 @@ module Pathfinding.View exposing (view)
 
 import Html exposing (Html, text, ol, li, h3, div)
 import Bootstrap.Button as Button
-import Common.Model exposing (Title(Title), Article, RemoteArticle, getTitle)
+import Common.Model.Article exposing (Article, RemoteArticle)
+import Common.Model.Title exposing (Title, value)
 import Pathfinding.Messages exposing (PathfindingMsg(Back))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 
@@ -21,10 +22,10 @@ heading : Article -> Article -> Html msg
 heading start end =
     let
         startTitle =
-            getTitle start
+            value start.title
 
         endTitle =
-            getTitle end
+            value end.title
     in
         h3 [] [ text <| "Finding path from " ++ startTitle ++ " to " ++ endTitle ++ "..." ]
 
@@ -40,8 +41,8 @@ errorView : Error -> Html PathfindingMsg
 errorView error =
     div []
         [ case error of
-            PathNotFound (Title title) ->
-                text <| "Could not find path, got stuck at: " ++ title
+            PathNotFound title ->
+                text <| "Could not find path, got stuck at: " ++ (value title)
 
             ArticleError articleError ->
                 text ("Error fetching article: " ++ toString articleError)
@@ -61,5 +62,5 @@ stopsView stops =
 
 
 stopView : Title -> Html msg
-stopView (Title title) =
-    li [] [ text title ]
+stopView title =
+    li [] [ text (value title) ]

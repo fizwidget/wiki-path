@@ -2,7 +2,8 @@ module Pathfinding.Update exposing (update, onArticleSuccess)
 
 import RemoteData
 import Common.Service exposing (requestArticle)
-import Common.Model exposing (Title(Title), Article, ArticleError, value)
+import Common.Model.Article exposing (Article, ArticleError)
+import Common.Model.Title exposing (Title, value)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (suggestNextArticle)
@@ -75,8 +76,8 @@ onDestinationReached { start, end, stops } =
 
 
 getArticle : Title -> Cmd Msg
-getArticle (Title title) =
-    requestArticle ArticleReceived title
+getArticle title =
+    requestArticle ArticleReceived (value title)
         |> Cmd.map Messages.Pathfinding
 
 

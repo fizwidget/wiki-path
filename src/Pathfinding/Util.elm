@@ -1,7 +1,8 @@
 module Pathfinding.Util exposing (suggestNextArticle)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
-import Common.Model exposing (Title(..), Article, value)
+import Common.Model.Article exposing (Article)
+import Common.Model.Title exposing (Title, value)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
@@ -26,7 +27,7 @@ isUnvisited model title =
 
 
 isValidTitle : Title -> Bool
-isValidTitle (Title value) =
+isValidTitle title =
     let
         ignorePrefixes =
             [ "Category:"
@@ -48,9 +49,11 @@ isValidTitle (Title value) =
             , "Module:"
             , "File:"
             , "International Standard Serial Number"
+            , "PubMed"
             ]
     in
-        not <| List.any (\prefix -> String.startsWith prefix value) ignorePrefixes
+        List.any (\prefix -> String.startsWith prefix (value title)) ignorePrefixes
+            |> not
 
 
 calculateBestCandidate : Article -> List Title -> Maybe Title

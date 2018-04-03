@@ -1,6 +1,6 @@
 module Pathfinding.Init exposing (init)
 
-import Common.Model exposing (Title(Title), Article, value)
+import Common.Model.Article exposing (Article)
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
 import Pathfinding.Update exposing (onArticleSuccess)

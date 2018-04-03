@@ -1,6 +1,6 @@
 module Finished.Init exposing (init)
 
-import Common.Model exposing (Title)
+import Common.Model.Title exposing (Title)
 import Model exposing (Model(Finished))
 import Messages exposing (Msg)
 

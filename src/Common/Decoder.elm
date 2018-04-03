@@ -2,7 +2,8 @@ module Common.Decoder exposing (decodeArticle)
 
 import Json.Decode exposing (Decoder, map, string, list, bool, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import Common.Model exposing (Title(Title), Article, ArticleResult, ArticleError(..))
+import Common.Model.Article exposing (Article, ArticleResult, ArticleError(..))
+import Common.Model.Title as Title exposing (Title)
 
 
 decodeArticle : Decoder ArticleResult
@@ -23,7 +24,7 @@ decodeSuccess =
 
 decodeTitle : Decoder Title
 decodeTitle =
-    Json.Decode.map Title string
+    Json.Decode.map Title.from string
 
 
 decodeLinks : Decoder (List Title)
