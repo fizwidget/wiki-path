@@ -1,4 +1,4 @@
-module Common.Model exposing (Title(..), Article, ArticleResult, RemoteArticle, ArticleError(..), getTitle, value)
+module Common.Model exposing (Title(..), Article, ArticleResult, RemoteArticle, ArticleError(..), getTitle, value, toLink)
 
 import Http
 import RemoteData exposing (RemoteData)

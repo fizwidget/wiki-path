@@ -47,6 +47,7 @@ isValidTitle (Title value) =
             , "User talk:"
             , "Module:"
             , "File:"
+            , "International Standard Serial Number"
             ]
     in
         not <| List.any (\prefix -> String.startsWith prefix value) ignorePrefixes
