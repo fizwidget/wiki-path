@@ -1,6 +1,6 @@
 module Welcome.Update exposing (update)
 
-import RemoteData
+import RemoteData exposing (RemoteData(Loading))
 import Common.Service exposing (requestArticle)
 import Model exposing (Model)
 import Messages exposing (Msg)
@@ -19,7 +19,7 @@ update message model =
             ( Model.Welcome { model | endTitleInput = value }, Cmd.none )
 
         FetchArticlesRequest ->
-            ( Model.Welcome { model | startArticle = RemoteData.Loading, endArticle = RemoteData.Loading }
+            ( Model.Welcome { model | startArticle = Loading, endArticle = Loading }
             , Cmd.map Messages.Welcome (getArticles model)
             )
 

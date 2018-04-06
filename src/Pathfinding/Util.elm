@@ -15,7 +15,7 @@ suggestNextArticle model current =
 getCandidates : Article -> PathfindingModel -> List Title
 getCandidates current model =
     current.links
-        |> List.filter isValidTitle
+        |> List.filter isRegularArticle
         |> List.filter (\title -> title /= current.title)
         |> List.filter (isUnvisited model)
 
@@ -26,10 +26,10 @@ isUnvisited model title =
         && (not <| List.member title model.stops)
 
 
-isValidTitle : Title -> Bool
-isValidTitle title =
+isRegularArticle : Title -> Bool
+isRegularArticle title =
     let
-        ignorePrefixes =
+        ignoredPrefixes =
             [ "Category:"
             , "Template:"
             , "Wikipedia:"
@@ -52,7 +52,7 @@ isValidTitle title =
             , "PubMed"
             ]
     in
-        List.any (\prefix -> String.startsWith prefix (value title)) ignorePrefixes
+        List.any (\prefix -> String.startsWith prefix (value title)) ignoredPrefixes
             |> not
 
 
@@ -63,18 +63,19 @@ calculateBestCandidate end candidateTitles =
         |> List.sortBy (\( title, count ) -> -count)
         |> List.take 3
         |> Debug.log "Occurence counts"
+        |> List.map Tuple.first
         |> List.head
-        |> Maybe.map Tuple.first
 
 
 heuristic : Article -> Title -> Int
-heuristic article title =
-    find All (title |> value |> escape |> wholeWord |> caseInsensitive) article.content |> List.length
+heuristic { content } title =
+    find All (title |> value |> matchWord |> caseInsensitive) content
+        |> List.length
 
 
-wholeWord : String -> Regex
-wholeWord target =
-    "(^|\\s+|\")" ++ target ++ "(\\s+|$|\")" |> regex
+matchWord : String -> Regex
+matchWord target =
+    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
 
 
 type alias Link =

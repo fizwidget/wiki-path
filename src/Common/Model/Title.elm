@@ -1,4 +1,4 @@
-module Common.Model.Title exposing (Title, from, value, toUrl)
+module Common.Model.Title exposing (Title, from, value)
 
 
 type Title
@@ -13,8 +13,3 @@ from =
 value : Title -> String
 value (Title title) =
     title
-
-
-toUrl : Title -> String
-toUrl title =
-    "https://en.wikipedia.org/wiki/" ++ (value title)

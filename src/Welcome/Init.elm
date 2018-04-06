@@ -1,6 +1,6 @@
 module Welcome.Init exposing (init)
 
-import RemoteData
+import RemoteData exposing (RemoteData(NotAsked))
 import Model exposing (Model(Welcome))
 import Messages exposing (Msg)
 import Welcome.Model exposing (WelcomeModel)
@@ -15,6 +15,6 @@ initialModel : WelcomeModel
 initialModel =
     { startTitleInput = ""
     , endTitleInput = ""
-    , startArticle = RemoteData.NotAsked
-    , endArticle = RemoteData.NotAsked
+    , startArticle = NotAsked
+    , endArticle = NotAsked
     }
