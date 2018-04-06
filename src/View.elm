@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Html exposing (Html, h1, text)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (style, rel, href)
 import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 import Model exposing (Model(..))
@@ -15,9 +15,15 @@ view : Model -> Html Msg
 view model =
     Grid.container [ style [ ( "max-width", "600px" ) ] ]
         [ CDN.stylesheet
+        , appStyles
         , Grid.row [] [ Grid.col [] [ headingView ] ]
         , Grid.row [] [ Grid.col [] [ modelView model ] ]
         ]
+
+
+appStyles : Html msg
+appStyles =
+    Html.node "link" [ rel "stylesheet", href "Styles.css" ] []
 
 
 headingView : Html msg

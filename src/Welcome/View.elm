@@ -9,6 +9,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Model.Article exposing (RemoteArticle, ArticleError(..))
+import Common.View exposing (viewSpinner)
 import Welcome.Messages exposing (WelcomeMsg(..))
 import Welcome.Model exposing (WelcomeModel)
 
@@ -17,86 +18,123 @@ view : WelcomeModel -> Html WelcomeMsg
 view model =
     Form.form []
         [ titleInputs model
-        , loadArticlesButton
-        , articlesContent model.startArticle model.endArticle
+        , Form.row [ Row.centerLg, Row.middleLg ]
+            [ Form.col [ Col.lgAuto ] [ viewSpinnerIfLoading model.startArticle ]
+            , Form.col [ Col.lgAuto ] [ loadArticlesButton model ]
+            , Form.col [ Col.lgAuto ] [ viewSpinnerIfLoading model.endArticle ]
+            ]
         ]
 
 
 titleInputs : WelcomeModel -> Html WelcomeMsg
-titleInputs { startTitleInput, endTitleInput } =
+titleInputs { startTitleInput, endTitleInput, startArticle, endArticle } =
     Form.row []
-        [ Form.col [] [ startArticleTitleInput startTitleInput ]
-        , Form.col [] [ endArticleTitleInput endTitleInput ]
+        [ Form.col [] [ startArticleTitleInput startTitleInput startArticle ]
+        , Form.col [] [ endArticleTitleInput endTitleInput endArticle ]
         ]
 
 
-startArticleTitleInput : String -> Html WelcomeMsg
+startArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
 startArticleTitleInput =
     articleTitleInput "From..." StartArticleTitleChange
 
 
-endArticleTitleInput : String -> Html WelcomeMsg
+endArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
 endArticleTitleInput =
     articleTitleInput "To..." EndArticleTitleChange
 
 
-articleTitleInput : String -> (String -> WelcomeMsg) -> String -> Html WelcomeMsg
-articleTitleInput placeholderText toMsg title =
-    Input.text
-        [ Input.onInput toMsg
-        , Input.value title
-        , Input.placeholder placeholderText
+articleTitleInput : String -> (String -> WelcomeMsg) -> String -> RemoteArticle -> Html WelcomeMsg
+articleTitleInput placeholderText toMsg title article =
+    Form.group []
+        [ Input.text
+            ([ Input.onInput toMsg
+             , Input.value title
+             , Input.placeholder placeholderText
+             ]
+                ++ (getInputStatus article)
+            )
+        , Form.invalidFeedback [] [ text (getErrorMessage article) ]
+        , Form.validFeedback [] [ text "Got it!" ]
         ]
 
 
-loadArticlesButton : Html WelcomeMsg
-loadArticlesButton =
+getInputStatus : RemoteArticle -> List (Input.Option msg)
+getInputStatus article =
+    case article of
+        RemoteData.NotAsked ->
+            []
+
+        RemoteData.Loading ->
+            []
+
+        RemoteData.Failure _ ->
+            [ Input.danger ]
+
+        RemoteData.Success _ ->
+            [ Input.success ]
+
+
+loadArticlesButton : WelcomeModel -> Html WelcomeMsg
+loadArticlesButton model =
     Form.row [ Row.centerLg ]
         [ Form.col [ Col.lgAuto ]
             [ Button.button
-                [ Button.primary, Button.onClick FetchArticlesRequest ]
+                [ Button.primary
+                , Button.disabled (shouldDisableLoadButton model)
+                , Button.onClick FetchArticlesRequest
+                ]
                 [ text "Find path" ]
             ]
         ]
 
 
+shouldDisableLoadButton : WelcomeModel -> Bool
+shouldDisableLoadButton { startTitleInput, endTitleInput } =
+    let
+        isEmpty =
+            String.trim >> String.isEmpty
+    in
+        isEmpty startTitleInput || isEmpty endTitleInput
+
+
 articlesContent : RemoteArticle -> RemoteArticle -> Html msg
 articlesContent startArticle endArticle =
-    div [ style [ ( "display", "flex" ), ( "align-items", "top" ) ] ]
-        [ displayRemoteArticle startArticle
-        , displayRemoteArticle endArticle
+    div [ style [ ( "display", "flex" ), ( "text-align", "center" ) ] ]
+        [ viewSpinnerIfLoading startArticle
+        , viewSpinnerIfLoading endArticle
         ]
 
 
-displayRemoteArticle : RemoteArticle -> Html msg
-displayRemoteArticle article =
+viewSpinnerIfLoading : RemoteArticle -> Html msg
+viewSpinnerIfLoading article =
     div [ style [ ( "flex", "1" ), ( "max-width", "50%" ) ] ]
-        [ case article of
-            RemoteData.NotAsked ->
-                text ""
-
-            RemoteData.Loading ->
-                text "Loading..."
-
-            RemoteData.Success article ->
-                text "Loaded!"
-
-            RemoteData.Failure error ->
-                displayError error
+        [ if RemoteData.isLoading article then
+            viewSpinner
+          else
+            text ""
         ]
 
 
-displayError : ArticleError -> Html msg
-displayError error =
-    case error of
-        ArticleNotFound ->
-            text "Not found"
+getErrorMessage : RemoteArticle -> String
+getErrorMessage remoteArticle =
+    case remoteArticle of
+        RemoteData.Failure error ->
+            case error of
+                ArticleNotFound ->
+                    "Couldn't find that article :("
 
-        InvalidTitle ->
-            text "Invalid title"
+                InvalidTitle ->
+                    "Not a valid article title :("
 
-        UnknownError errorCode ->
-            text ("Unknown error: " ++ errorCode)
+                UnknownError errorCode ->
+                    ("Unknown error: " ++ errorCode)
 
-        NetworkError error ->
-            text ("Network error: " ++ toString error)
+                NetworkError error ->
+                    ("Network error: " ++ toString error)
+
+        RemoteData.Success article ->
+            "Got it!"
+
+        _ ->
+            ""
