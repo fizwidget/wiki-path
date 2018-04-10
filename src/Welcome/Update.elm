@@ -1,6 +1,6 @@
 module Welcome.Update exposing (update)
 
-import RemoteData exposing (RemoteData(Loading))
+import RemoteData exposing (RemoteData(Loading, NotAsked))
 import Common.Service exposing (requestArticle)
 import Model exposing (Model)
 import Messages exposing (Msg)
@@ -13,10 +13,10 @@ update : WelcomeMsg -> WelcomeModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         StartArticleTitleChange value ->
-            ( Model.Welcome { model | startTitleInput = value }, Cmd.none )
+            ( Model.Welcome { model | startTitleInput = value, startArticle = NotAsked }, Cmd.none )
 
         EndArticleTitleChange value ->
-            ( Model.Welcome { model | endTitleInput = value }, Cmd.none )
+            ( Model.Welcome { model | endTitleInput = value, endArticle = NotAsked }, Cmd.none )
 
         FetchArticlesRequest ->
             ( Model.Welcome { model | startArticle = Loading, endArticle = Loading }

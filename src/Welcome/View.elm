@@ -18,19 +18,19 @@ view : WelcomeModel -> Html WelcomeMsg
 view model =
     Form.form []
         [ titleInputs model
-        , Form.row [ Row.centerLg, Row.middleLg ]
-            [ Form.col [ Col.lgAuto ] [ viewSpinnerIfLoading model.startArticle ]
-            , Form.col [ Col.lgAuto ] [ loadArticlesButton model ]
-            , Form.col [ Col.lgAuto ] [ viewSpinnerIfLoading model.endArticle ]
+        , div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
+            [ viewSpinnerIfLoading model.startArticle
+            , loadArticlesButton model
+            , viewSpinnerIfLoading model.endArticle
             ]
         ]
 
 
 titleInputs : WelcomeModel -> Html WelcomeMsg
 titleInputs { startTitleInput, endTitleInput, startArticle, endArticle } =
-    Form.row []
-        [ Form.col [] [ startArticleTitleInput startTitleInput startArticle ]
-        , Form.col [] [ endArticleTitleInput endTitleInput endArticle ]
+    div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "height", "60px" ) ] ]
+        [ startArticleTitleInput startTitleInput startArticle
+        , endArticleTitleInput endTitleInput endArticle
         ]
 
 
@@ -55,7 +55,7 @@ articleTitleInput placeholderText toMsg title article =
                 ++ (getInputStatus article)
             )
         , Form.invalidFeedback [] [ text (getErrorMessage article) ]
-        , Form.validFeedback [] [ text "Got it!" ]
+        , Form.validFeedback [] []
         ]
 
 
@@ -98,22 +98,9 @@ shouldDisableLoadButton { startTitleInput, endTitleInput } =
         isEmpty startTitleInput || isEmpty endTitleInput
 
 
-articlesContent : RemoteArticle -> RemoteArticle -> Html msg
-articlesContent startArticle endArticle =
-    div [ style [ ( "display", "flex" ), ( "text-align", "center" ) ] ]
-        [ viewSpinnerIfLoading startArticle
-        , viewSpinnerIfLoading endArticle
-        ]
-
-
 viewSpinnerIfLoading : RemoteArticle -> Html msg
 viewSpinnerIfLoading article =
-    div [ style [ ( "flex", "1" ), ( "max-width", "50%" ) ] ]
-        [ if RemoteData.isLoading article then
-            viewSpinner
-          else
-            text ""
-        ]
+    div [] [ viewSpinner <| RemoteData.isLoading article ]
 
 
 getErrorMessage : RemoteArticle -> String
@@ -132,9 +119,6 @@ getErrorMessage remoteArticle =
 
                 NetworkError error ->
                     ("Network error: " ++ toString error)
-
-        RemoteData.Success article ->
-            "Got it!"
 
         _ ->
             ""

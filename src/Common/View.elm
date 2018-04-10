@@ -15,15 +15,22 @@ toUrl title =
     "https://en.wikipedia.org/wiki/" ++ (value title)
 
 
-viewSpinner : Html msg
-viewSpinner =
-    div
-        [ class "lds-ellipsis" ]
-        [ div [] []
-        , div [] []
-        , div [] []
-        , div [] []
-        ]
+viewSpinner : Bool -> Html msg
+viewSpinner isVisible =
+    let
+        visibility =
+            if isVisible then
+                "visible"
+            else
+                "hidden"
+    in
+        div
+            [ class "lds-ellipsis", style [ ( "visibility", visibility ) ] ]
+            [ div [] []
+            , div [] []
+            , div [] []
+            , div [] []
+            ]
 
 
 outerSpinnerStyles : Styles
