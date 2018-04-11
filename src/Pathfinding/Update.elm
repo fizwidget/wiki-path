@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update, onArticleSuccess)
+module Pathfinding.Update exposing (update, onArticleLoaded)
 
 import RemoteData
 import Common.Service exposing (requestArticle)
@@ -25,12 +25,12 @@ update message model =
                     doNothing model
 
                 RemoteData.Success article ->
-                    onArticleSuccess model article
+                    onArticleLoaded model article
 
                 RemoteData.Failure error ->
-                    onArticleError model error
+                    onArticleLoadError model error
 
-        Back ->
+        BackToSetup ->
             Setup.Init.init
 
 
@@ -39,27 +39,24 @@ doNothing model =
     ( Model.Pathfinding model, Cmd.none )
 
 
-onArticleSuccess : PathfindingModel -> Article -> ( Model, Cmd Msg )
-onArticleSuccess model currentArticle =
-    case suggestNextArticle model currentArticle of
-        Just nextArticle ->
-            onNextArticleFound model nextArticle
-
-        Nothing ->
-            onNextArticleError model currentArticle
+onArticleLoaded : PathfindingModel -> Article -> ( Model, Cmd Msg )
+onArticleLoaded model article =
+    suggestNextArticle model article
+        |> Maybe.map (onNextArticleSuggested model)
+        |> Maybe.withDefault (onPathNotFound model article)
 
 
-onArticleError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
-onArticleError model error =
+onArticleLoadError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
+onArticleLoadError model error =
     let
-        nextModel =
+        modelWithError =
             { model | error = Just <| ArticleError error }
     in
-        ( Model.Pathfinding nextModel, Cmd.none )
+        ( Model.Pathfinding modelWithError, Cmd.none )
 
 
-onNextArticleFound : PathfindingModel -> Title -> ( Model, Cmd Msg )
-onNextArticleFound model nextArticle =
+onNextArticleSuggested : PathfindingModel -> Title -> ( Model, Cmd Msg )
+onNextArticleSuggested model nextArticle =
     let
         updatedModel =
             { model | stops = nextArticle :: model.stops }
@@ -88,8 +85,8 @@ hasReachedDestination { stops, destination } =
         |> Maybe.withDefault False
 
 
-onNextArticleError : PathfindingModel -> Article -> ( Model, Cmd Msg )
-onNextArticleError model currentArticle =
+onPathNotFound : PathfindingModel -> Article -> ( Model, Cmd Msg )
+onPathNotFound model currentArticle =
     ( Model.Pathfinding { model | error = Just (PathNotFound currentArticle.title) }
     , Cmd.none
     )

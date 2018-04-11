@@ -5,7 +5,7 @@ import Bootstrap.Button as Button
 import Common.Model.Article exposing (Article, RemoteArticle)
 import Common.Model.Title exposing (Title, value)
 import Common.View exposing (viewLink)
-import Pathfinding.Messages exposing (PathfindingMsg(Back))
+import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 
 
@@ -53,7 +53,7 @@ errorView error =
 backView : Html PathfindingMsg
 backView =
     Button.button
-        [ Button.secondary, Button.onClick Back ]
+        [ Button.secondary, Button.onClick BackToSetup ]
         [ text "Back" ]
 
 

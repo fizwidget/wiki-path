@@ -5,7 +5,7 @@ import Bootstrap.Button as Button
 import Common.Model.Title exposing (Title, value)
 import Common.View exposing (viewLink)
 import Finished.Model exposing (FinishedModel)
-import Finished.Messages exposing (FinishedMsg(Restart))
+import Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 
 view : FinishedModel -> Html FinishedMsg
@@ -47,5 +47,5 @@ stopsView source destination stops =
 restartButton : Html FinishedMsg
 restartButton =
     Button.button
-        [ Button.secondary, Button.onClick Restart ]
+        [ Button.secondary, Button.onClick BackToSetup ]
         [ text "Back" ]

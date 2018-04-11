@@ -5,4 +5,4 @@ import Common.Model.Article exposing (RemoteArticle)
 
 type PathfindingMsg
     = ArticleReceived RemoteArticle
-    | Back
+    | BackToSetup

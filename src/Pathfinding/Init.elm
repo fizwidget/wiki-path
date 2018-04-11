@@ -3,13 +3,13 @@ module Pathfinding.Init exposing (init)
 import Common.Model.Article exposing (Article)
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
-import Pathfinding.Update exposing (onArticleSuccess)
+import Pathfinding.Update exposing (onArticleLoaded)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
 init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
-    onArticleSuccess (initialModel source destination) source
+    onArticleLoaded (initialModel source destination) source
 
 
 initialModel : Article -> Article -> PathfindingModel
