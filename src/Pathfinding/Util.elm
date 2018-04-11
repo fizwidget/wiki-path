@@ -9,7 +9,7 @@ import Pathfinding.Model exposing (PathfindingModel)
 suggestNextArticle : PathfindingModel -> Article -> Maybe Title
 suggestNextArticle model current =
     getCandidates current model
-        |> calculateBestCandidate model.end
+        |> calculateBestCandidate model.destination
 
 
 getCandidates : Article -> PathfindingModel -> List Title
@@ -22,7 +22,7 @@ getCandidates current model =
 
 isUnvisited : PathfindingModel -> Title -> Bool
 isUnvisited model title =
-    (title /= model.start.title)
+    (title /= model.source.title)
         && (not <| List.member title model.stops)
 
 
@@ -57,9 +57,9 @@ isRegularArticle title =
 
 
 calculateBestCandidate : Article -> List Title -> Maybe Title
-calculateBestCandidate end candidateTitles =
+calculateBestCandidate destination candidateTitles =
     candidateTitles
-        |> List.map (\title -> ( title, heuristic end title ))
+        |> List.map (\title -> ( title, heuristic destination title ))
         |> List.sortBy (\( title, count ) -> -count)
         |> List.take 3
         |> Debug.log "Occurence counts"

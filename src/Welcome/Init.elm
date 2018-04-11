@@ -13,8 +13,8 @@ init =
 
 initialModel : WelcomeModel
 initialModel =
-    { startTitleInput = ""
-    , endTitleInput = ""
-    , startArticle = NotAsked
-    , endArticle = NotAsked
+    { sourceTitleInput = ""
+    , destinationTitleInput = ""
+    , sourceArticle = NotAsked
+    , destinationArticle = NotAsked
     }

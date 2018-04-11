@@ -12,37 +12,37 @@ import Pathfinding.Init
 update : WelcomeMsg -> WelcomeModel -> ( Model, Cmd Msg )
 update message model =
     case message of
-        StartArticleTitleChange value ->
-            ( Model.Welcome { model | startTitleInput = value, startArticle = NotAsked }, Cmd.none )
+        SourceArticleTitleChange value ->
+            ( Model.Welcome { model | sourceTitleInput = value, sourceArticle = NotAsked }, Cmd.none )
 
-        EndArticleTitleChange value ->
-            ( Model.Welcome { model | endTitleInput = value, endArticle = NotAsked }, Cmd.none )
+        DestinationArticleTitleChange value ->
+            ( Model.Welcome { model | destinationTitleInput = value, destinationArticle = NotAsked }, Cmd.none )
 
         FetchArticlesRequest ->
-            ( Model.Welcome { model | startArticle = Loading, endArticle = Loading }
+            ( Model.Welcome { model | sourceArticle = Loading, destinationArticle = Loading }
             , Cmd.map Messages.Welcome (getArticles model)
             )
 
-        FetchStartArticleResult article ->
-            ( { model | startArticle = article }, Cmd.none )
+        FetchSourceArticleResult article ->
+            ( { model | sourceArticle = article }, Cmd.none )
                 |> transitionIfDone
 
-        FetchEndArticleResult article ->
-            ( { model | endArticle = article }, Cmd.none )
+        FetchDestinationArticleResult article ->
+            ( { model | destinationArticle = article }, Cmd.none )
                 |> transitionIfDone
 
 
 getArticles : WelcomeModel -> Cmd WelcomeMsg
-getArticles { startTitleInput, endTitleInput } =
+getArticles { sourceTitleInput, destinationTitleInput } =
     Cmd.batch
-        [ requestArticle FetchStartArticleResult startTitleInput
-        , requestArticle FetchEndArticleResult endTitleInput
+        [ requestArticle FetchSourceArticleResult sourceTitleInput
+        , requestArticle FetchDestinationArticleResult destinationTitleInput
         ]
 
 
 transitionIfDone : ( WelcomeModel, Cmd Msg ) -> ( Model, Cmd Msg )
 transitionIfDone ( model, cmd ) =
-    RemoteData.map2 (,) model.startArticle model.endArticle
+    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
         |> RemoteData.toMaybe
-        |> Maybe.map (\( start, end ) -> Pathfinding.Init.init start end)
+        |> Maybe.map (\( source, destination ) -> Pathfinding.Init.init source destination)
         |> Maybe.withDefault ( Model.Welcome model, cmd )

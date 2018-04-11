@@ -8,14 +8,14 @@ import Pathfinding.Model exposing (PathfindingModel)
 
 
 init : Article -> Article -> ( Model, Cmd Msg )
-init start end =
-    onArticleSuccess (initialModel start end) start
+init source destination =
+    onArticleSuccess (initialModel source destination) source
 
 
 initialModel : Article -> Article -> PathfindingModel
-initialModel start end =
-    { start = start
-    , end = end
-    , stops = [ start.title ]
+initialModel source destination =
+    { source = source
+    , destination = destination
+    , stops = [ source.title ]
     , error = Nothing
     }

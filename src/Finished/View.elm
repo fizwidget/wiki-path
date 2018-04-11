@@ -17,11 +17,11 @@ view model =
 
 
 modelView : FinishedModel -> Html msg
-modelView { start, end, stops } =
+modelView { source, destination, stops } =
     div []
         [ headingView
-        , subHeadingView start end
-        , stopsView start end stops
+        , subHeadingView source destination
+        , stopsView source destination stops
         ]
 
 
@@ -31,13 +31,13 @@ headingView =
 
 
 subHeadingView : Title -> Title -> Html msg
-subHeadingView startTitle endTitle =
+subHeadingView sourceTitle destinationTitle =
     h4 []
-        [ text <| "Path from " ++ (value startTitle) ++ " to " ++ (value endTitle) ++ "  was..." ]
+        [ text <| "Path from " ++ (value sourceTitle) ++ " to " ++ (value destinationTitle) ++ "  was..." ]
 
 
 stopsView : Title -> Title -> List Title -> Html msg
-stopsView start end stops =
+stopsView source destination stops =
     stops
         |> List.map viewLink
         |> List.intersperse (text " → ")
@@ -48,4 +48,4 @@ restartButton : Html FinishedMsg
 restartButton =
     Button.button
         [ Button.secondary, Button.onClick Restart ]
-        [ text "Back to start" ]
+        [ text "Back to source" ]

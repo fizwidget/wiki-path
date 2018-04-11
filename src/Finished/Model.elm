@@ -4,7 +4,7 @@ import Common.Model.Title exposing (Title)
 
 
 type alias FinishedModel =
-    { start : Title
-    , end : Title
+    { source : Title
+    , destination : Title
     , stops : List Title
     }

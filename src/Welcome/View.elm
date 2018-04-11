@@ -19,29 +19,29 @@ view model =
     Form.form []
         [ titleInputs model
         , div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
-            [ viewSpinnerIfLoading model.startArticle
+            [ viewSpinnerIfLoading model.sourceArticle
             , loadArticlesButton model
-            , viewSpinnerIfLoading model.endArticle
+            , viewSpinnerIfLoading model.destinationArticle
             ]
         ]
 
 
 titleInputs : WelcomeModel -> Html WelcomeMsg
-titleInputs { startTitleInput, endTitleInput, startArticle, endArticle } =
+titleInputs { sourceTitleInput, destinationTitleInput, sourceArticle, destinationArticle } =
     div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "height", "60px" ) ] ]
-        [ startArticleTitleInput startTitleInput startArticle
-        , endArticleTitleInput endTitleInput endArticle
+        [ sourceArticleTitleInput sourceTitleInput sourceArticle
+        , destinationArticleTitleInput destinationTitleInput destinationArticle
         ]
 
 
-startArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
-startArticleTitleInput =
-    articleTitleInput "From..." StartArticleTitleChange
+sourceArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
+sourceArticleTitleInput =
+    articleTitleInput "From..." SourceArticleTitleChange
 
 
-endArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
-endArticleTitleInput =
-    articleTitleInput "To..." EndArticleTitleChange
+destinationArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
+destinationArticleTitleInput =
+    articleTitleInput "To..." DestinationArticleTitleChange
 
 
 articleTitleInput : String -> (String -> WelcomeMsg) -> String -> RemoteArticle -> Html WelcomeMsg
@@ -90,12 +90,12 @@ loadArticlesButton model =
 
 
 shouldDisableLoadButton : WelcomeModel -> Bool
-shouldDisableLoadButton { startTitleInput, endTitleInput } =
+shouldDisableLoadButton { sourceTitleInput, destinationTitleInput } =
     let
         isEmpty =
             String.trim >> String.isEmpty
     in
-        isEmpty startTitleInput || isEmpty endTitleInput
+        isEmpty sourceTitleInput || isEmpty destinationTitleInput
 
 
 viewSpinnerIfLoading : RemoteArticle -> Html msg

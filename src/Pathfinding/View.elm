@@ -10,9 +10,9 @@ import Pathfinding.Model exposing (PathfindingModel, Error(..))
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { start, end, stops, error } =
+view { source, destination, stops, error } =
     div []
-        [ heading start end
+        [ heading source destination
         , maybeErrorView error
         , backView
         , stopsView stops
@@ -20,15 +20,15 @@ view { start, end, stops, error } =
 
 
 heading : Article -> Article -> Html msg
-heading start end =
+heading source destination =
     let
-        startTitle =
-            value start.title
+        sourceTitle =
+            value source.title
 
-        endTitle =
-            value end.title
+        destinationTitle =
+            value destination.title
     in
-        h3 [] [ text <| "Finding path from " ++ startTitle ++ " to " ++ endTitle ++ "..." ]
+        h3 [] [ text <| "Finding path from " ++ sourceTitle ++ " to " ++ destinationTitle ++ "..." ]
 
 
 maybeErrorView : Maybe Error -> Html PathfindingMsg

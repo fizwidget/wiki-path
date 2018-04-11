@@ -71,8 +71,8 @@ onNextArticleFound model nextArticle =
 
 
 onDestinationReached : PathfindingModel -> ( Model, Cmd Msg )
-onDestinationReached { start, end, stops } =
-    Finished.Init.init start.title end.title (List.reverse stops)
+onDestinationReached { source, destination, stops } =
+    Finished.Init.init source.title destination.title (List.reverse stops)
 
 
 getArticle : Title -> Cmd Msg
@@ -82,9 +82,9 @@ getArticle title =
 
 
 hasReachedDestination : PathfindingModel -> Bool
-hasReachedDestination { stops, end } =
+hasReachedDestination { stops, destination } =
     List.head stops
-        |> Maybe.map ((==) end.title)
+        |> Maybe.map ((==) destination.title)
         |> Maybe.withDefault False
 
 

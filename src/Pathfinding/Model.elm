@@ -5,8 +5,8 @@ import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
 
 
 type alias PathfindingModel =
-    { start : Article
-    , end : Article
+    { source : Article
+    , destination : Article
     , stops : List Title
     , error : Maybe Error
     }
