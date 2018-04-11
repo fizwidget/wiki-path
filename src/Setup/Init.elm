@@ -1,17 +1,17 @@
-module Welcome.Init exposing (init)
+module Setup.Init exposing (init)
 
 import RemoteData exposing (RemoteData(NotAsked))
-import Model exposing (Model(Welcome))
+import Model exposing (Model(Setup))
 import Messages exposing (Msg)
-import Welcome.Model exposing (WelcomeModel)
+import Setup.Model exposing (SetupModel)
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Welcome initialModel, Cmd.none )
+    ( Setup initialModel, Cmd.none )
 
 
-initialModel : WelcomeModel
+initialModel : SetupModel
 initialModel =
     { sourceTitleInput = ""
     , destinationTitleInput = ""

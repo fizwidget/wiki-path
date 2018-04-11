@@ -10,7 +10,7 @@ import Pathfinding.Util exposing (suggestNextArticle)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Error(..))
 import Finished.Init
-import Welcome.Init
+import Setup.Init
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
@@ -31,7 +31,7 @@ update message model =
                     onArticleError model error
 
         Back ->
-            Welcome.Init.init
+            Setup.Init.init
 
 
 doNothing : PathfindingModel -> ( Model, Cmd Msg )

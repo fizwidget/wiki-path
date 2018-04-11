@@ -2,7 +2,7 @@ module Update exposing (update)
 
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Welcome.Update
+import Setup.Update
 import Pathfinding.Update
 import Finished.Update
 
@@ -10,8 +10,8 @@ import Finished.Update
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
-        ( Messages.Welcome innerMsg, Model.Welcome innerModel ) ->
-            Welcome.Update.update innerMsg innerModel
+        ( Messages.Setup innerMsg, Model.Setup innerModel ) ->
+            Setup.Update.update innerMsg innerModel
 
         ( Messages.Pathfinding innerMsg, Model.Pathfinding innerModel ) ->
             Pathfinding.Update.update innerMsg innerModel

@@ -1,4 +1,4 @@
-module Welcome.View exposing (view)
+module Setup.View exposing (view)
 
 import Html exposing (Html, div, input, button, text)
 import Html.Attributes exposing (value, type_, style, placeholder)
@@ -10,11 +10,11 @@ import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Model.Article exposing (RemoteArticle, ArticleError(..))
 import Common.View exposing (viewSpinner)
-import Welcome.Messages exposing (WelcomeMsg(..))
-import Welcome.Model exposing (WelcomeModel)
+import Setup.Messages exposing (SetupMsg(..))
+import Setup.Model exposing (SetupModel)
 
 
-view : WelcomeModel -> Html WelcomeMsg
+view : SetupModel -> Html SetupMsg
 view model =
     Form.form []
         [ titleInputs model
@@ -26,7 +26,7 @@ view model =
         ]
 
 
-titleInputs : WelcomeModel -> Html WelcomeMsg
+titleInputs : SetupModel -> Html SetupMsg
 titleInputs { sourceTitleInput, destinationTitleInput, sourceArticle, destinationArticle } =
     div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "height", "60px" ) ] ]
         [ sourceArticleTitleInput sourceTitleInput sourceArticle
@@ -34,17 +34,17 @@ titleInputs { sourceTitleInput, destinationTitleInput, sourceArticle, destinatio
         ]
 
 
-sourceArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
+sourceArticleTitleInput : String -> RemoteArticle -> Html SetupMsg
 sourceArticleTitleInput =
     articleTitleInput "From..." SourceArticleTitleChange
 
 
-destinationArticleTitleInput : String -> RemoteArticle -> Html WelcomeMsg
+destinationArticleTitleInput : String -> RemoteArticle -> Html SetupMsg
 destinationArticleTitleInput =
     articleTitleInput "To..." DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (String -> WelcomeMsg) -> String -> RemoteArticle -> Html WelcomeMsg
+articleTitleInput : String -> (String -> SetupMsg) -> String -> RemoteArticle -> Html SetupMsg
 articleTitleInput placeholderText toMsg title article =
     Form.group []
         [ Input.text
@@ -75,7 +75,7 @@ getInputStatus article =
             [ Input.success ]
 
 
-loadArticlesButton : WelcomeModel -> Html WelcomeMsg
+loadArticlesButton : SetupModel -> Html SetupMsg
 loadArticlesButton model =
     Form.row [ Row.centerLg ]
         [ Form.col [ Col.lgAuto ]
@@ -89,7 +89,7 @@ loadArticlesButton model =
         ]
 
 
-shouldDisableLoadButton : WelcomeModel -> Bool
+shouldDisableLoadButton : SetupModel -> Bool
 shouldDisableLoadButton { sourceTitleInput, destinationTitleInput } =
     let
         isEmpty =

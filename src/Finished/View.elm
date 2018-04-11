@@ -48,4 +48,4 @@ restartButton : Html FinishedMsg
 restartButton =
     Button.button
         [ Button.secondary, Button.onClick Restart ]
-        [ text "Back to source" ]
+        [ text "Back" ]
