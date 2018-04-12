@@ -42,7 +42,14 @@ getArticles { sourceTitleInput, destinationTitleInput } =
 
 transitionIfDone : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
 transitionIfDone ( model, cmd ) =
-    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
-        |> RemoteData.toMaybe
-        |> Maybe.map (\( source, destination ) -> Pathfinding.Init.init source destination)
-        |> Maybe.withDefault ( Model.Setup model, cmd )
+    let
+        articles =
+            RemoteData.map2 (,) model.sourceArticle model.destinationArticle
+                |> RemoteData.toMaybe
+    in
+        case articles of
+            Just ( source, destination ) ->
+                Pathfinding.Init.init source destination
+
+            Nothing ->
+                ( Model.Setup model, cmd )
