@@ -48,11 +48,9 @@ onArticleLoaded model article =
 
 onArticleLoadError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
 onArticleLoadError model error =
-    let
-        modelWithError =
-            { model | error = Just <| ArticleError error }
-    in
-        ( Model.Pathfinding modelWithError, Cmd.none )
+    ( Model.Pathfinding { model | error = Just <| ArticleError error }
+    , Cmd.none
+    )
 
 
 onNextArticleSuggested : PathfindingModel -> Title -> ( Model, Cmd Msg )
