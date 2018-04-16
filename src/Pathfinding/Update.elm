@@ -1,14 +1,15 @@
 module Pathfinding.Update exposing (update, onArticleLoaded)
 
+import PairingHeap
 import RemoteData
 import Common.Service exposing (requestArticle)
 import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title exposing (Title, value)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.Util exposing (suggestNextArticle)
+import Pathfinding.Util exposing (addNodes)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Exploration(..), Error(..))
 import Finished.Init
 import Setup.Init
 
@@ -16,7 +17,7 @@ import Setup.Init
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
-        ArticleReceived remoteArticle ->
+        ArticleReceived remoteArticle pathTaken ->
             case remoteArticle of
                 RemoteData.NotAsked ->
                     doNothing model
@@ -25,7 +26,7 @@ update message model =
                     doNothing model
 
                 RemoteData.Success article ->
-                    onArticleLoaded model article
+                    onArticleLoaded model pathTaken article
 
                 RemoteData.Failure error ->
                     onArticleLoadError model error
@@ -39,11 +40,27 @@ doNothing model =
     ( Model.Pathfinding model, Cmd.none )
 
 
-onArticleLoaded : PathfindingModel -> Article -> ( Model, Cmd Msg )
-onArticleLoaded model article =
-    suggestNextArticle model article
-        |> Maybe.map (onNextArticleSuggested model)
-        |> Maybe.withDefault (onPathNotFound model article)
+onArticleLoaded : PathfindingModel -> List Title -> Article -> ( Model, Cmd Msg )
+onArticleLoaded model pathTaken article =
+    let
+        modelWithNewNodes =
+            addNodes model pathTaken article
+
+        maybePath =
+            PairingHeap.findMin modelWithNewNodes.priorityQueue
+
+        modelWithVisitedNodeRemoved =
+            { modelWithNewNodes | priorityQueue = PairingHeap.deleteMin modelWithNewNodes.priorityQueue }
+    in
+        case maybePath of
+            Just ( cost, nextTitle :: restOfPath ) ->
+                if hasReachedDestination nextTitle model.destination.title then
+                    onDestinationReached modelWithNewNodes
+                else
+                    ( Model.Pathfinding modelWithVisitedNodeRemoved, getArticle nextTitle (nextTitle :: restOfPath) )
+
+            Nothing ->
+                ( Model.Pathfinding { error = Just <| PathNotFound article.title }, Cmd.none )
 
 
 onArticleLoadError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
@@ -53,34 +70,20 @@ onArticleLoadError model error =
     )
 
 
-onNextArticleSuggested : PathfindingModel -> Title -> ( Model, Cmd Msg )
-onNextArticleSuggested model nextArticle =
-    let
-        updatedModel =
-            { model | stops = nextArticle :: model.stops }
-    in
-        if hasReachedDestination updatedModel then
-            onDestinationReached updatedModel
-        else
-            ( Model.Pathfinding updatedModel, getArticle nextArticle )
-
-
 onDestinationReached : PathfindingModel -> ( Model, Cmd Msg )
 onDestinationReached { source, destination, stops } =
     Finished.Init.init source.title destination.title (List.reverse stops)
 
 
-getArticle : Title -> Cmd Msg
-getArticle title =
-    requestArticle ArticleReceived (value title)
+getArticle : Title -> List Title -> Cmd Msg
+getArticle title pathTaken =
+    requestArticle (\article -> ArticleReceived article pathTaken) (value title)
         |> Cmd.map Messages.Pathfinding
 
 
-hasReachedDestination : PathfindingModel -> Bool
-hasReachedDestination { stops, destination } =
-    List.head stops
-        |> Maybe.map ((==) destination.title)
-        |> Maybe.withDefault False
+hasReachedDestination : Title -> Title -> Bool
+hasReachedDestination current destination =
+    current == destination
 
 
 onPathNotFound : PathfindingModel -> Article -> ( Model, Cmd Msg )
