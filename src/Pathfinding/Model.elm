@@ -1,4 +1,4 @@
-module Pathfinding.Model exposing (PathfindingModel, Path, , Error(..))
+module Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 
 import PairingHeap exposing (PairingHeap)
 import Common.Model.Title exposing (Title)
@@ -10,7 +10,7 @@ type alias Cost =
 
 
 type alias Path =
-    List Title
+    ( Title, List Title )
 
 
 type alias PathfindingModel =

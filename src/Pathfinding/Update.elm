@@ -9,7 +9,7 @@ import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (addNodes)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, Exploration(..), Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Error(..))
 import Finished.Init
 import Setup.Init
 
@@ -60,7 +60,7 @@ onArticleLoaded model pathTaken article =
                     ( Model.Pathfinding modelWithVisitedNodeRemoved, getArticle nextTitle (nextTitle :: restOfPath) )
 
             Nothing ->
-                ( Model.Pathfinding { error = Just <| PathNotFound article.title }, Cmd.none )
+                ( Model.Pathfinding { modelWithNewNodes | error = Just <| PathNotFound article.title }, Cmd.none )
 
 
 onArticleLoadError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )

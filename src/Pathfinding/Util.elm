@@ -4,7 +4,7 @@ import PairingHeap exposing (PairingHeap)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
 import Common.Model.Title exposing (Title, value)
-import Pathfinding.Model exposing (PathfindingModel, Path, Exploration(InProgress))
+import Pathfinding.Model exposing (PathfindingModel, Path)
 
 
 addNodes : PathfindingModel -> List Title -> Article -> PathfindingModel
@@ -20,7 +20,7 @@ addNodes model pathTaken currentArticle =
         insert ( cost, title ) queue =
             PairingHeap.insert
                 ( cost
-                , InProgress (title :: pathTaken)
+                , title :: pathTaken
                 )
                 queue
 
