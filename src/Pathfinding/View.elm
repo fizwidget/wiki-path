@@ -1,21 +1,23 @@
 module Pathfinding.View exposing (view)
 
 import Html exposing (Html, text, ol, li, h3, div)
+import Html.Attributes exposing (style)
+import PairingHeap exposing (PairingHeap)
 import Bootstrap.Button as Button
 import Common.Model.Article exposing (Article, RemoteArticle)
 import Common.Model.Title exposing (Title, value)
 import Common.View exposing (viewLink)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Cost, Path, Error(..))
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, stops, error } =
+view { source, destination, priorityQueue, error } =
     div []
         [ heading source destination
         , maybeErrorView error
         , backView
-        , stopsView stops
+        , priorityQueueView priorityQueue
         ]
 
 
@@ -59,9 +61,20 @@ backView =
 
 stopsView : List Title -> Html msg
 stopsView stops =
-    ol [] <| List.map stopView stops
+    ol [ style [ ( "display", "inline-block" ) ] ] <| List.map stopView stops
 
 
 stopView : Title -> Html msg
 stopView title =
     li [] [ viewLink title ]
+
+
+priorityQueueView : PairingHeap Cost Path -> Html msg
+priorityQueueView queue =
+    PairingHeap.toSortedList queue
+        |> List.head
+        |> Maybe.map Tuple.second
+        |> Maybe.map .visited
+        |> Maybe.map List.reverse
+        |> Maybe.map stopsView
+        |> Maybe.withDefault (text "Uh oh")

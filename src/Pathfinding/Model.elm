@@ -1,16 +1,8 @@
-module Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
+module Pathfinding.Model exposing (PathfindingModel, Path, Cost, Error(..))
 
 import PairingHeap exposing (PairingHeap)
 import Common.Model.Title exposing (Title)
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
-
-
-type alias Cost =
-    Int
-
-
-type alias Path =
-    ( Title, List Title )
 
 
 type alias PathfindingModel =
@@ -18,6 +10,16 @@ type alias PathfindingModel =
     , destination : Article
     , priorityQueue : PairingHeap Cost Path
     , error : Maybe Error
+    }
+
+
+type alias Cost =
+    Int
+
+
+type alias Path =
+    { next : Title
+    , visited : List Title
     }
 
 

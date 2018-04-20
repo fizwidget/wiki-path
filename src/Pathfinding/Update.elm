@@ -4,12 +4,12 @@ import PairingHeap
 import RemoteData
 import Common.Service exposing (requestArticle)
 import Common.Model.Article exposing (Article, ArticleError)
-import Common.Model.Title exposing (Title, value)
+import Common.Model.Title exposing (Title, value, from)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (addNodes)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Finished.Init
 import Setup.Init
 
@@ -29,7 +29,7 @@ update message model =
                     onArticleLoaded model pathTaken article
 
                 RemoteData.Failure error ->
-                    onArticleLoadError model error
+                    onArticleLoadError model pathTaken error
 
         BackToSetup ->
             Setup.Init.init
@@ -43,41 +43,52 @@ doNothing model =
 onArticleLoaded : PathfindingModel -> List Title -> Article -> ( Model, Cmd Msg )
 onArticleLoaded model pathTaken article =
     let
-        modelWithNewNodes =
-            addNodes model pathTaken article
-
-        maybePath =
-            PairingHeap.findMin modelWithNewNodes.priorityQueue
-
-        modelWithVisitedNodeRemoved =
-            { modelWithNewNodes | priorityQueue = PairingHeap.deleteMin modelWithNewNodes.priorityQueue }
+        ( nextModel, lowestCostPath ) =
+            popMin <| addNodes model pathTaken article
     in
-        case maybePath of
-            Just ( cost, nextTitle :: restOfPath ) ->
-                if hasReachedDestination nextTitle model.destination.title then
-                    onDestinationReached modelWithNewNodes
-                else
-                    ( Model.Pathfinding modelWithVisitedNodeRemoved, getArticle nextTitle (nextTitle :: restOfPath) )
-
-            Nothing ->
-                ( Model.Pathfinding { modelWithNewNodes | error = Just <| PathNotFound article.title }, Cmd.none )
+        withLowestCostPath nextModel lowestCostPath
 
 
-onArticleLoadError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
-onArticleLoadError model error =
-    ( Model.Pathfinding { model | error = Just <| ArticleError error }
-    , Cmd.none
+withLowestCostPath : PathfindingModel -> Maybe Path -> ( Model, Cmd Msg )
+withLowestCostPath nextModel lowestCostPath =
+    case lowestCostPath of
+        Just { next, visited } ->
+            if hasReachedDestination next nextModel.destination.title then
+                onDestinationReached nextModel (next :: visited)
+            else
+                ( Model.Pathfinding nextModel
+                , getArticle next visited
+                )
+
+        Nothing ->
+            onPathNotFound nextModel
+
+
+popMin : PathfindingModel -> ( PathfindingModel, Maybe Path )
+popMin model =
+    ( { model | priorityQueue = PairingHeap.deleteMin model.priorityQueue }
+    , PairingHeap.findMin model.priorityQueue
+        |> Maybe.map Tuple.second
     )
 
 
-onDestinationReached : PathfindingModel -> ( Model, Cmd Msg )
-onDestinationReached { source, destination, stops } =
-    Finished.Init.init source.title destination.title (List.reverse stops)
+onArticleLoadError : PathfindingModel -> List Title -> ArticleError -> ( Model, Cmd Msg )
+onArticleLoadError model pathTaken error =
+    let
+        ( nextModel, lowestCostPath ) =
+            popMin model
+    in
+        withLowestCostPath nextModel lowestCostPath
+
+
+onDestinationReached : PathfindingModel -> List Title -> ( Model, Cmd Msg )
+onDestinationReached { source, destination } pathTaken =
+    Finished.Init.init source.title destination.title (List.reverse pathTaken)
 
 
 getArticle : Title -> List Title -> Cmd Msg
 getArticle title pathTaken =
-    requestArticle (\article -> ArticleReceived article pathTaken) (value title)
+    requestArticle (\article -> ArticleReceived article (title :: pathTaken)) (value title)
         |> Cmd.map Messages.Pathfinding
 
 
@@ -86,8 +97,8 @@ hasReachedDestination current destination =
     current == destination
 
 
-onPathNotFound : PathfindingModel -> Article -> ( Model, Cmd Msg )
-onPathNotFound model currentArticle =
-    ( Model.Pathfinding { model | error = Just (PathNotFound currentArticle.title) }
+onPathNotFound : PathfindingModel -> ( Model, Cmd Msg )
+onPathNotFound model =
+    ( Model.Pathfinding { model | error = Just (PathNotFound <| from "Fix this type problem!") }
     , Cmd.none
     )

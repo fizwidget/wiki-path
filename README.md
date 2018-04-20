@@ -9,3 +9,4 @@ TODO:
 * Switch to elm-css.
 * Completely decouple the phases?
 * Improve naming (start/end -> origin/destination?).
+* Dissalow repeat visits?

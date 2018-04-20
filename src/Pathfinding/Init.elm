@@ -10,7 +10,7 @@ import Pathfinding.Model exposing (PathfindingModel)
 
 init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
-    onArticleLoaded (initialModel source destination) source
+    onArticleLoaded (initialModel source destination) [ source.title ] source
 
 
 initialModel : Article -> Article -> PathfindingModel

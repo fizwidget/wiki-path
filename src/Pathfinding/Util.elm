@@ -16,12 +16,12 @@ addNodes model pathTaken currentArticle =
                 |> List.filter (\title -> title /= currentArticle.title)
                 |> List.filter (\title -> not <| List.member title pathTaken)
                 |> List.map (\title -> ( heuristic model.destination title, title ))
+                |> List.sortBy Tuple.first
+                |> List.take 3
 
         insert ( cost, title ) queue =
             PairingHeap.insert
-                ( cost
-                , title :: pathTaken
-                )
+                ( cost, { next = title, visited = pathTaken } )
                 queue
 
         updatedPriorityQueue =
@@ -64,6 +64,7 @@ heuristic : Article -> Title -> Int
 heuristic { content } title =
     find All (title |> value |> matchWord |> caseInsensitive) content
         |> List.length
+        |> (\value -> -value)
 
 
 matchWord : String -> Regex
