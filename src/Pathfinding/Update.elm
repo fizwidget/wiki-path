@@ -29,7 +29,7 @@ update message model =
                     onArticleLoaded model pathTaken article
 
                 RemoteData.Failure error ->
-                    onArticleLoadError model pathTaken error
+                    onArticleLoadError model pathTaken.visited error
 
         BackToSetup ->
             Setup.Init.init
@@ -40,7 +40,7 @@ doNothing model =
     ( Model.Pathfinding model, Cmd.none )
 
 
-onArticleLoaded : PathfindingModel -> List Title -> Article -> ( Model, Cmd Msg )
+onArticleLoaded : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 onArticleLoaded model pathTaken article =
     let
         ( nextModel, lowestCostPath ) =
@@ -52,12 +52,12 @@ onArticleLoaded model pathTaken article =
 withLowestCostPath : PathfindingModel -> Maybe Path -> ( Model, Cmd Msg )
 withLowestCostPath nextModel lowestCostPath =
     case lowestCostPath of
-        Just { next, visited } ->
+        Just ({ cost, next, visited } as path) ->
             if hasReachedDestination next nextModel.destination.title then
                 onDestinationReached nextModel (next :: visited)
             else
                 ( Model.Pathfinding nextModel
-                , getArticle next visited
+                , getArticle path
                 )
 
         Nothing ->
@@ -68,6 +68,7 @@ popMin : PathfindingModel -> ( PathfindingModel, Maybe Path )
 popMin model =
     ( { model | priorityQueue = PairingHeap.deleteMin model.priorityQueue }
     , PairingHeap.findMin model.priorityQueue
+        |> Maybe.map (Debug.log "Min")
         |> Maybe.map Tuple.second
     )
 
@@ -86,9 +87,9 @@ onDestinationReached { source, destination } pathTaken =
     Finished.Init.init source.title destination.title (List.reverse pathTaken)
 
 
-getArticle : Title -> List Title -> Cmd Msg
-getArticle title pathTaken =
-    requestArticle (\article -> ArticleReceived article (title :: pathTaken)) (value title)
+getArticle : Path -> Cmd Msg
+getArticle pathTaken =
+    requestArticle (\article -> ArticleReceived article pathTaken) (value pathTaken.next)
         |> Cmd.map Messages.Pathfinding
 
 

@@ -59,9 +59,12 @@ backView =
         [ text "Back" ]
 
 
-stopsView : List Title -> Html msg
-stopsView stops =
-    ol [ style [ ( "display", "inline-block" ) ] ] <| List.map stopView stops
+stopsView : Path -> Html msg
+stopsView { cost, next, visited } =
+    div [ style [ ( "display", "inline-block" ) ] ]
+        [ text (toString -cost)
+        , ol [] <| List.reverse <| List.map stopView (next :: visited)
+        ]
 
 
 stopView : Title -> Html msg
@@ -72,9 +75,6 @@ stopView title =
 priorityQueueView : PairingHeap Cost Path -> Html msg
 priorityQueueView queue =
     PairingHeap.toSortedList queue
-        |> List.head
-        |> Maybe.map Tuple.second
-        |> Maybe.map .visited
-        |> Maybe.map List.reverse
-        |> Maybe.map stopsView
-        |> Maybe.withDefault (text "Uh oh")
+        |> List.map Tuple.second
+        |> List.map stopsView
+        |> div []

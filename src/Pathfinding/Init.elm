@@ -10,7 +10,10 @@ import Pathfinding.Model exposing (PathfindingModel)
 
 init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
-    onArticleLoaded (initialModel source destination) [ source.title ] source
+    onArticleLoaded
+        (initialModel source destination)
+        { cost = 0, next = source.title, visited = [] }
+        source
 
 
 initialModel : Article -> Article -> PathfindingModel

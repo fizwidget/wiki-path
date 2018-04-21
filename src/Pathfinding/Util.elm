@@ -7,21 +7,27 @@ import Common.Model.Title exposing (Title, value)
 import Pathfinding.Model exposing (PathfindingModel, Path)
 
 
-addNodes : PathfindingModel -> List Title -> Article -> PathfindingModel
+addNodes : PathfindingModel -> Path -> Article -> PathfindingModel
 addNodes model pathTaken currentArticle =
     let
         possibleDestinations =
             currentArticle.links
                 |> List.filter isRegularArticle
                 |> List.filter (\title -> title /= currentArticle.title)
-                |> List.filter (\title -> not <| List.member title pathTaken)
+                |> List.filter (\title -> not <| List.member title pathTaken.visited)
                 |> List.map (\title -> ( heuristic model.destination title, title ))
+                |> List.map (\( cost, title ) -> ( cost + pathTaken.cost * 0.8, title ))
                 |> List.sortBy Tuple.first
-                |> List.take 3
+                |> List.take 2
 
         insert ( cost, title ) queue =
             PairingHeap.insert
-                ( cost, { next = title, visited = pathTaken } )
+                ( cost
+                , { cost = cost
+                  , next = title
+                  , visited = pathTaken.next :: pathTaken.visited
+                  }
+                )
                 queue
 
         updatedPriorityQueue =
@@ -60,11 +66,12 @@ isRegularArticle title =
             |> not
 
 
-heuristic : Article -> Title -> Int
+heuristic : Article -> Title -> Float
 heuristic { content } title =
     find All (title |> value |> matchWord |> caseInsensitive) content
         |> List.length
         |> (\value -> -value)
+        |> toFloat
 
 
 matchWord : String -> Regex
