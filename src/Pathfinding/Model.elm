@@ -14,11 +14,12 @@ type alias PathfindingModel =
 
 
 type alias Cost =
-    Int
+    Float
 
 
 type alias Path =
-    { next : Title
+    { cost : Cost
+    , next : Title
     , visited : List Title
     }
 

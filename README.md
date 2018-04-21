@@ -10,3 +10,34 @@ TODO:
 * Completely decouple the phases?
 * Improve naming (start/end -> origin/destination?).
 * Dissalow repeat visits?
+
+Fairy Wren
+Birds
+Cats
+Lions
+Lion King
+Timone & Pumba
+
+# Problem
+
+If destination is a redirect page, heursitic will have nothing to work with.
+
+Case in point: Hot Dogs -> Weird Twitter
+
+Solution: automatically follow through to "real" page before setting destination.
+
+# Algorithm
+
+Current algorithm finds longer paths in some situations, e.g. Foo -> Bar.
+
+Foo -> Foobar -> Bill Gates -> United States -> Blues -> Nightclub -> Bar.
+
+^ best seen so far.
+
+## Article heuristic
+
+Count the number of occurences of the article title in the destination article's content.
+
+## Path heuristic
+
+Article heuristic + (0.8 * existing path heuristic).

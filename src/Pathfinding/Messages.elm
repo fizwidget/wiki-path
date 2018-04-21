@@ -1,9 +1,9 @@
 module Pathfinding.Messages exposing (PathfindingMsg(..))
 
 import Common.Model.Article exposing (RemoteArticle)
-import Common.Model.Title exposing (Title)
+import Pathfinding.Model exposing (Path)
 
 
 type PathfindingMsg
-    = ArticleReceived RemoteArticle (List Title)
+    = ArticleReceived RemoteArticle Path
     | BackToSetup
