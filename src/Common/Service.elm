@@ -14,20 +14,6 @@ requestRemoteArticle tagger title =
         |> Cmd.map tagger
 
 
-
--- requestRemoteArticleWithRedirectResolution : (RemoteArticle -> msg) -> String -> Cmd msg
--- requestRemoteArticleWithRedirectResolution tagger title =
---     let
---         resolveRedirect =
---             Debug.crash "Uh oh"
---     in
---         Common.Api.requestArticle title
---             |> RemoteData.sendRequest
---             |> RemoteData.andThen resolveRedirect
---             |> Cmd.map toRemoteArticle
---             |> Cmd.map tagger
-
-
 toRemoteArticle : WebData ArticleResult -> RemoteArticle
 toRemoteArticle data =
     data

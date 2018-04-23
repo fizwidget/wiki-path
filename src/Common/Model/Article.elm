@@ -1,4 +1,4 @@
-module Common.Model.Article exposing (Article, ArticleResult, RemoteArticle, ArticleError(..), isRedirect)
+module Common.Model.Article exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
 
 import Http
 import RemoteData exposing (RemoteData)
@@ -29,8 +29,3 @@ type ArticleError
     | InvalidTitle
     | UnknownError String
     | NetworkError Http.Error
-
-
-isRedirect : Article -> Bool
-isRedirect article =
-    article.content == "Redirect"

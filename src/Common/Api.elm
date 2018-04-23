@@ -12,4 +12,4 @@ requestArticle title =
 
 buildUrl : String -> String
 buildUrl title =
-    "https://en.wikipedia.org/w/api.php?action=parse&format=json&formatversion=2&origin=*&page=" ++ title
+    "https://en.wikipedia.org/w/api.php?action=parse&redirects&format=json&formatversion=2&origin=*&page=" ++ title
