@@ -5,9 +5,10 @@ A 100% frontend implementation of the "Wikipedia game". It'll find a path betwee
 https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game
 
 TODO:
+* Perform requests in parallel?
 * Switch to elm-css.
 * Completely decouple the phases?
-* Dissalow repeat visits?
+* Completely disallow repeat visits to nodes?
 
 Fairy Wren
 Birds
