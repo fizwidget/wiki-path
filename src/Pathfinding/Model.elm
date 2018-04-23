@@ -11,6 +11,7 @@ type alias PathfindingModel =
     , priorityQueue : PathPriorityQueue
     , errors : List ArticleError
     , fatalError : Maybe Error
+    , openRequestSlots : Int
     }
 
 

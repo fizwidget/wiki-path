@@ -36,18 +36,37 @@ updateWithArticle model pathTaken article =
             addNodes model.priorityQueue model.destination pathTaken article
 
         updatedModel =
-            { model | priorityQueue = updatedPriorityQueue }
+            { model | priorityQueue = updatedPriorityQueue, openRequestSlots = model.openRequestSlots + 1 }
     in
-        expandLowestCostPath updatedModel
+        expandLowestCostPaths updatedModel
 
 
 updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
 updateWithError model error =
     let
         updatedModel =
-            { model | errors = error :: model.errors }
+            { model | errors = error :: model.errors, openRequestSlots = model.openRequestSlots + 1 }
     in
-        expandLowestCostPath updatedModel
+        expandLowestCostPaths updatedModel
+
+
+expandLowestCostPaths : PathfindingModel -> ( Model, Cmd Msg )
+expandLowestCostPaths model =
+    let
+        update _ ( updatedModel, updatedCmd ) =
+            let
+                ( newModel, newCmd ) =
+                    case updatedModel of
+                        Model.Pathfinding innerModel ->
+                            expandLowestCostPath innerModel
+
+                        _ ->
+                            ( updatedModel, Cmd.none )
+            in
+                ( newModel, Cmd.batch [ updatedCmd, newCmd ] )
+    in
+        List.repeat model.openRequestSlots 1
+            |> List.foldr update ( Model.Pathfinding { model | openRequestSlots = model.openRequestSlots - 1 }, Cmd.none )
 
 
 expandLowestCostPath : PathfindingModel -> ( Model, Cmd Msg )
@@ -67,7 +86,7 @@ expandLowestCostPath model =
     in
         lowestCostPath
             |> Maybe.map withLowestCostPath
-            |> Maybe.withDefault (onPathNotFound updatedModel)
+            |> Maybe.withDefault ( Model.Pathfinding model, Cmd.none )
 
 
 onDestinationReached : PathfindingModel -> List Title -> ( Model, Cmd Msg )
