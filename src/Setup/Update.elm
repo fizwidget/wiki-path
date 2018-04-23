@@ -6,7 +6,7 @@ import Common.Model.Article exposing (RemoteArticle)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.Messages exposing (SetupMsg(..))
-import Setup.Model exposing (SetupModel)
+import Setup.Model exposing (SetupModel, UserInput)
 import Pathfinding.Init
 
 
@@ -14,38 +14,82 @@ update : SetupMsg -> SetupModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         SourceArticleTitleChange value ->
-            ( Model.Setup { model | sourceTitleInput = value, sourceArticle = NotAsked }
-            , Cmd.none
-            )
+            updateSourceTitle model value
 
         DestinationArticleTitleChange value ->
-            ( Model.Setup { model | destinationTitleInput = value, destinationArticle = NotAsked }
-            , Cmd.none
-            )
+            updateDestinationTitle model value
 
         FetchArticlesRequest ->
-            ( Model.Setup { model | sourceArticle = Loading, destinationArticle = Loading }
-            , Cmd.map Messages.Setup (getArticles model)
-            )
+            requestArticles model
 
         FetchSourceArticleResult article ->
-            ( { model | sourceArticle = article }, Cmd.none ) |> transitionIfDone
+            updateSourceArticleResult model article
 
         FetchDestinationArticleResult article ->
-            ( { model | destinationArticle = article }, Cmd.none ) |> transitionIfDone
+            updateDestinationArticleResult model article
 
 
-getArticles : SetupModel -> Cmd SetupMsg
+updateSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
+updateSourceTitle model sourceTitle =
+    ( Model.Setup
+        { model
+            | sourceTitleInput = sourceTitle
+            , source = NotAsked
+        }
+    , Cmd.none
+    )
+
+
+updateDestinationTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
+updateDestinationTitle model destinationTitle =
+    ( Model.Setup
+        { model
+            | destinationTitleInput = destinationTitle
+            , destination = NotAsked
+        }
+    , Cmd.none
+    )
+
+
+requestArticles : SetupModel -> ( Model, Cmd Msg )
+requestArticles model =
+    ( Model.Setup
+        { model
+            | source = Loading
+            , destination = Loading
+        }
+    , getArticles model
+    )
+
+
+updateSourceArticleResult : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+updateSourceArticleResult model source =
+    ( { model | source = source }, Cmd.none )
+        |> transitionIfDone
+
+
+updateDestinationArticleResult : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+updateDestinationArticleResult model destination =
+    ( { model | destination = destination }, Cmd.none )
+        |> transitionIfDone
+
+
+getArticles : SetupModel -> Cmd Msg
 getArticles { sourceTitleInput, destinationTitleInput } =
-    Cmd.batch
-        [ requestRemoteArticle FetchSourceArticleResult sourceTitleInput
-        , requestRemoteArticle FetchDestinationArticleResult destinationTitleInput
-        ]
+    let
+        articleRequests =
+            [ requestRemoteArticle FetchSourceArticleResult sourceTitleInput
+            , requestRemoteArticle FetchDestinationArticleResult destinationTitleInput
+            ]
+    in
+        articleRequests
+            |> Cmd.batch
+            |> Cmd.map Messages.Setup
 
 
 transitionIfDone : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
 transitionIfDone ( model, cmd ) =
-    RemoteData.map2 (,) model.sourceArticle model.destinationArticle
+    RemoteData.map2 (,) model.source model.destination
         |> RemoteData.toMaybe
         |> Maybe.map (\( source, destination ) -> Pathfinding.Init.init source destination)
         |> Maybe.withDefault ( Model.Setup model, cmd )

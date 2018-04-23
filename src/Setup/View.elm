@@ -11,7 +11,7 @@ import RemoteData
 import Common.Model.Article exposing (RemoteArticle, ArticleError(..))
 import Common.View exposing (viewSpinner, viewArticleError)
 import Setup.Messages exposing (SetupMsg(..))
-import Setup.Model exposing (SetupModel)
+import Setup.Model exposing (SetupModel, UserInput)
 
 
 view : SetupModel -> Html SetupMsg
@@ -19,32 +19,32 @@ view model =
     Form.form []
         [ titleInputs model
         , div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
-            [ viewSpinnerIfLoading model.sourceArticle
+            [ viewSpinnerIfLoading model.source
             , loadArticlesButton model
-            , viewSpinnerIfLoading model.destinationArticle
+            , viewSpinnerIfLoading model.destination
             ]
         ]
 
 
 titleInputs : SetupModel -> Html SetupMsg
-titleInputs { sourceTitleInput, destinationTitleInput, sourceArticle, destinationArticle } =
+titleInputs { sourceTitleInput, destinationTitleInput, source, destination } =
     div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "height", "60px" ) ] ]
-        [ sourceArticleTitleInput sourceTitleInput sourceArticle
-        , destinationArticleTitleInput destinationTitleInput destinationArticle
+        [ viewSourceTitleInput sourceTitleInput source
+        , viewDestinationTitleInput destinationTitleInput destination
         ]
 
 
-sourceArticleTitleInput : String -> RemoteArticle -> Html SetupMsg
-sourceArticleTitleInput =
+viewSourceTitleInput : UserInput -> RemoteArticle -> Html SetupMsg
+viewSourceTitleInput =
     articleTitleInput "From..." SourceArticleTitleChange
 
 
-destinationArticleTitleInput : String -> RemoteArticle -> Html SetupMsg
-destinationArticleTitleInput =
+viewDestinationTitleInput : UserInput -> RemoteArticle -> Html SetupMsg
+viewDestinationTitleInput =
     articleTitleInput "To..." DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (String -> SetupMsg) -> String -> RemoteArticle -> Html SetupMsg
+articleTitleInput : String -> (UserInput -> SetupMsg) -> UserInput -> RemoteArticle -> Html SetupMsg
 articleTitleInput placeholderText toMsg title article =
     Form.group []
         [ Input.text

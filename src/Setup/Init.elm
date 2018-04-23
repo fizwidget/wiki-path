@@ -15,6 +15,6 @@ initialModel : SetupModel
 initialModel =
     { sourceTitleInput = ""
     , destinationTitleInput = ""
-    , sourceArticle = NotAsked
-    , destinationArticle = NotAsked
+    , source = NotAsked
+    , destination = NotAsked
     }
