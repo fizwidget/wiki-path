@@ -18,11 +18,7 @@ Timone & Pumba
 
 # Problem
 
-If destination is a redirect page, heursitic will have nothing to work with.
-
-Case in point: Hot Dogs -> Weird Twitter
-
-Solution: automatically follow through to "real" page before setting destination.
+Regex is sub-optional? It won't find occurences that are quoted, have a trailing colon, etc.
 
 # Algorithm
 

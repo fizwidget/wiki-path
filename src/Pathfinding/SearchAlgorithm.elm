@@ -70,11 +70,14 @@ isRegularArticle title =
 
 
 heuristic : Article -> Node -> Float
-heuristic { content } targetNode =
-    find All (targetNode |> value |> matchWord |> caseInsensitive) content
-        |> List.length
-        |> (\value -> -value)
-        |> toFloat
+heuristic { title, content } targetNode =
+    if title == targetNode then
+        -1000
+    else
+        find All (targetNode |> value |> matchWord |> caseInsensitive) content
+            |> List.length
+            |> (\value -> -value)
+            |> toFloat
 
 
 matchWord : String -> Regex
