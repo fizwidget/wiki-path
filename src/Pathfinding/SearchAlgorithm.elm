@@ -3,7 +3,7 @@ module Pathfinding.SearchAlgorithm exposing (addNodes)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
 import Common.Model.Title exposing (Title, value)
-import Pathfinding.Model exposing (PathfindingModel, Node, PathPriorityQueue, Path, Cost)
+import Pathfinding.Model exposing (PathfindingModel, PathPriorityQueue, Path, Cost)
 import Pathfinding.Model.PriorityQueue as PriorityQueue
 
 
@@ -19,7 +19,7 @@ addNodes priorityQueue destination pathTaken currentArticle =
         |> PriorityQueue.insert priorityQueue .cost
 
 
-toPath : Path -> ( Cost, Node ) -> Path
+toPath : Path -> ( Cost, Title ) -> Path
 toPath previousPath ( estimatedTotalCost, title ) =
     { cost = estimatedTotalCost
     , next = title
@@ -27,19 +27,19 @@ toPath previousPath ( estimatedTotalCost, title ) =
     }
 
 
-withEstimatedTotalCost : Article -> Cost -> Node -> ( Cost, Node )
+withEstimatedTotalCost : Article -> Cost -> Title -> ( Cost, Title )
 withEstimatedTotalCost destination costSoFar title =
     heuristic destination title
         |> (\cost -> cost + costSoFar * 0.8)
         |> (\cost -> ( cost, title ))
 
 
-isUnvisited : Path -> Node -> Bool
+isUnvisited : Path -> Title -> Bool
 isUnvisited { next, visited } title =
     (title /= next) && (not <| List.member title visited)
 
 
-isRegularArticle : Node -> Bool
+isRegularArticle : Title -> Bool
 isRegularArticle title =
     let
         ignoredPrefixes =
@@ -70,12 +70,12 @@ isRegularArticle title =
             |> not
 
 
-heuristic : Article -> Node -> Float
-heuristic { title, content } targetNode =
-    if title == targetNode then
+heuristic : Article -> Title -> Float
+heuristic { title, content } destinationTitle =
+    if title == destinationTitle then
         -1000
     else
-        find All (targetNode |> value |> matchWord |> caseInsensitive) content
+        find All (destinationTitle |> value |> matchWord |> caseInsensitive) content
             |> List.length
             |> (\value -> -value)
             |> toFloat

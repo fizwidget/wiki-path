@@ -1,4 +1,4 @@
-module Pathfinding.Model exposing (PathfindingModel, Path, Node, Cost, PathPriorityQueue, Error(..))
+module Pathfinding.Model exposing (PathfindingModel, Path, Cost, PathPriorityQueue, Error(PathNotFound))
 
 import Common.Model.Title exposing (Title)
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
@@ -16,10 +16,6 @@ type alias PathfindingModel =
 
 type alias PathPriorityQueue =
     PriorityQueue Cost Path
-
-
-type alias Node =
-    Title
 
 
 type alias Cost =

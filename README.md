@@ -17,6 +17,8 @@ Lions
 Lion King
 Timone & Pumba
 
+World -> Hello takes a long time.
+
 # Problem
 
 Regex is sub-optional? It won't find occurences that are quoted, have a trailing colon, etc.
