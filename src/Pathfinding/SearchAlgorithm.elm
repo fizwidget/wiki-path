@@ -63,6 +63,7 @@ isRegularArticle title =
             , "File:"
             , "International Standard Serial Number"
             , "PubMed"
+            , "JSTOR"
             ]
     in
         List.any (\prefix -> String.startsWith prefix (value title)) ignoredPrefixes

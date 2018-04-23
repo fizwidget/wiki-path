@@ -37,7 +37,7 @@ headingView =
             , ( "margin-bottom", "30px" )
             ]
         ]
-        [ text "Wikipedia Game" ]
+        [ text "WikiLinks" ]
 
 
 modelView : Model -> Html Msg
