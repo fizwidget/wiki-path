@@ -46,17 +46,19 @@ viewDestinationTitleInput =
 
 articleTitleInput : String -> (UserInput -> SetupMsg) -> UserInput -> RemoteArticle -> Html SetupMsg
 articleTitleInput placeholderText toMsg title article =
-    Form.group []
-        [ Input.text
-            ([ Input.onInput toMsg
-             , Input.value title
-             , Input.placeholder placeholderText
-             ]
-                ++ (getInputStatus article)
-            )
-        , Form.invalidFeedback [] [ getErrorMessage article ]
-        , Form.validFeedback [] []
-        ]
+    let
+        inputOptions =
+            getInputStatus article
+                ++ [ Input.onInput toMsg
+                   , Input.value title
+                   , Input.placeholder placeholderText
+                   ]
+    in
+        Form.group []
+            [ Input.text inputOptions
+            , Form.invalidFeedback [] [ getErrorMessage article ]
+            , Form.validFeedback [] []
+            ]
 
 
 getInputStatus : RemoteArticle -> List (Input.Option msg)
@@ -92,10 +94,10 @@ loadArticlesButton model =
 shouldDisableLoadButton : SetupModel -> Bool
 shouldDisableLoadButton { sourceTitleInput, destinationTitleInput } =
     let
-        isEmpty =
+        isBlank =
             String.trim >> String.isEmpty
     in
-        isEmpty sourceTitleInput || isEmpty destinationTitleInput
+        isBlank sourceTitleInput || isBlank destinationTitleInput
 
 
 viewSpinnerIfLoading : RemoteArticle -> Html msg

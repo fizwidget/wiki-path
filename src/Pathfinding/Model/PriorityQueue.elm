@@ -13,15 +13,15 @@ empty =
 
 
 insert : PriorityQueue comparable a -> (a -> comparable) -> List a -> PriorityQueue comparable a
-insert (PriorityQueue queue) toComparable values =
+insert (PriorityQueue queue) getPriority values =
     let
-        withComparable =
-            \value -> ( toComparable value, value )
+        withPriority =
+            \value -> ( getPriority value, value )
 
-        costValuePairs =
-            List.map withComparable values
+        valuesWithPriorities =
+            List.map withPriority values
     in
-        List.foldl PairingHeap.insert queue costValuePairs |> PriorityQueue
+        List.foldl PairingHeap.insert queue valuesWithPriorities |> PriorityQueue
 
 
 popMin : PriorityQueue comparable a -> ( Maybe a, PriorityQueue comparable a )

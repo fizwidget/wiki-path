@@ -3,10 +3,14 @@ module Common.Url exposing (QueryParam(WithValue, WithNoValue), buildUrl)
 
 buildUrl : BaseUrl -> List QueryParam -> Url
 buildUrl baseUrl queryParams =
-    queryParams
-        |> List.map queryParamToString
-        |> String.join "&"
-        |> String.append (baseUrl ++ "?")
+    let
+        queryParamStrings =
+            List.map queryParamToString queryParams
+
+        joinedQueryParams =
+            String.join "&" queryParamStrings
+    in
+        baseUrl ++ "?" ++ joinedQueryParams
 
 
 queryParamToString : QueryParam -> String

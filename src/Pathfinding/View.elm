@@ -23,33 +23,34 @@ view { source, destination, priorityQueue, errors, fatalError } =
 
 heading : Article -> Article -> Html msg
 heading source destination =
-    let
-        sourceTitle =
-            value source.title
+    h3 []
+        [ text <|
+            "Finding path from "
+                ++ value source.title
+                ++ " to "
+                ++ value destination.title
+                ++ "..."
+        ]
 
-        destinationTitle =
-            value destination.title
-    in
-        h3 [] [ text <| "Finding path from " ++ sourceTitle ++ " to " ++ destinationTitle ++ "..." ]
 
-
-maybeErrorView : List ArticleError -> Maybe Error -> Html PathfindingMsg
+maybeErrorView : List ArticleError -> Maybe Error -> Html msg
 maybeErrorView errors fatalError =
     div []
-        [ Maybe.map fatalErrorView fatalError
-            |> Maybe.withDefault (text "")
+        [ fatalErrorView fatalError
         , errorsView errors
         ]
 
 
-fatalErrorView : Error -> Html PathfindingMsg
-fatalErrorView PathNotFound =
-    text "Path not found :("
+fatalErrorView : Maybe Error -> Html msg
+fatalErrorView error =
+    error
+        |> Maybe.map (\PathNotFound -> text "Path not found :(")
+        |> Maybe.withDefault (text "")
 
 
 errorsView : List ArticleError -> Html msg
 errorsView errors =
-    div [] (List.map viewArticleError errors)
+    div [] <| List.map viewArticleError errors
 
 
 backView : Html PathfindingMsg
@@ -59,21 +60,24 @@ backView =
         [ text "Back" ]
 
 
+priorityQueueView : PriorityQueue Cost Path -> Html msg
+priorityQueueView queue =
+    PriorityQueue.toSortedList queue
+        |> List.map stopsView
+        |> div []
+
+
 stopsView : Path -> Html msg
-stopsView { cost, next, visited } =
+stopsView pathTaken =
     div [ style [ ( "display", "inline-block" ) ] ]
-        [ text (toString -cost)
-        , ol [] <| List.reverse <| List.map stopView (next :: visited)
+        [ text (toString -pathTaken.cost)
+        , (pathTaken.next :: pathTaken.visited)
+            |> List.reverse
+            |> List.map stopView
+            |> ol []
         ]
 
 
 stopView : Title -> Html msg
 stopView title =
     li [] [ viewLink title ]
-
-
-priorityQueueView : PriorityQueue Cost Path -> Html msg
-priorityQueueView queue =
-    PriorityQueue.toSortedList queue
-        |> List.map stopsView
-        |> div []

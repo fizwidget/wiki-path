@@ -20,39 +20,39 @@ update message model =
             updateDestinationTitle model value
 
         FetchArticlesRequest ->
-            requestArticles model
+            fetchArticles model
 
         FetchSourceArticleResult article ->
-            updateSourceArticleResult model article
+            updateSource model article
 
         FetchDestinationArticleResult article ->
-            updateDestinationArticleResult model article
+            updateDestination model article
 
 
 updateSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
-updateSourceTitle model sourceTitle =
+updateSourceTitle model sourceTitleInput =
     ( Model.Setup
         { model
-            | sourceTitleInput = sourceTitle
-            , source = NotAsked
+            | source = NotAsked
+            , sourceTitleInput = sourceTitleInput
         }
     , Cmd.none
     )
 
 
 updateDestinationTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
-updateDestinationTitle model destinationTitle =
+updateDestinationTitle model destinationTitleInput =
     ( Model.Setup
         { model
-            | destinationTitleInput = destinationTitle
-            , destination = NotAsked
+            | destination = NotAsked
+            , destinationTitleInput = destinationTitleInput
         }
     , Cmd.none
     )
 
 
-requestArticles : SetupModel -> ( Model, Cmd Msg )
-requestArticles model =
+fetchArticles : SetupModel -> ( Model, Cmd Msg )
+fetchArticles model =
     ( Model.Setup
         { model
             | source = Loading
@@ -62,14 +62,14 @@ requestArticles model =
     )
 
 
-updateSourceArticleResult : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
-updateSourceArticleResult model source =
+updateSource : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+updateSource model source =
     ( { model | source = source }, Cmd.none )
         |> transitionIfDone
 
 
-updateDestinationArticleResult : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
-updateDestinationArticleResult model destination =
+updateDestination : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+updateDestination model destination =
     ( { model | destination = destination }, Cmd.none )
         |> transitionIfDone
 
@@ -77,12 +77,12 @@ updateDestinationArticleResult model destination =
 getArticles : SetupModel -> Cmd Msg
 getArticles { sourceTitleInput, destinationTitleInput } =
     let
-        articleRequests =
+        requests =
             [ requestRemoteArticle FetchSourceArticleResult sourceTitleInput
             , requestRemoteArticle FetchDestinationArticleResult destinationTitleInput
             ]
     in
-        articleRequests
+        requests
             |> Cmd.batch
             |> Cmd.map Messages.Setup
 

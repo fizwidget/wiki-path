@@ -8,7 +8,5 @@ import Finished.Model exposing (FinishedModel)
 
 
 update : FinishedMsg -> FinishedModel -> ( Model, Cmd Msg )
-update message model =
-    case message of
-        BackToSetup ->
-            Setup.Init.init
+update BackToSetup model =
+    Setup.Init.init
