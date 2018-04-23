@@ -1,15 +1,15 @@
-module Pathfinding.Update exposing (update, onArticleLoaded)
+module Pathfinding.Update exposing (update, updateWithArticle)
 
-import PairingHeap
-import RemoteData
-import Common.Service exposing (requestArticle)
+import Result exposing (Result(Ok, Err))
+import Common.Service exposing (requestArticleResult)
 import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title exposing (Title, value, from)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.Util exposing (addNodes)
+import Pathfinding.SearchAlgorithm exposing (addNodes)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, PathPriorityQueue, Path, Error(..))
+import Pathfinding.Model.PriorityQueue as PriorityQueue
 import Finished.Init
 import Setup.Init
 
@@ -17,69 +17,57 @@ import Setup.Init
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
-        ArticleReceived remoteArticle pathTaken ->
-            case remoteArticle of
-                RemoteData.NotAsked ->
-                    doNothing model
+        FetchArticleResponse pathTaken articleResult ->
+            case articleResult of
+                Ok article ->
+                    updateWithArticle model pathTaken article
 
-                RemoteData.Loading ->
-                    doNothing model
-
-                RemoteData.Success article ->
-                    onArticleLoaded model pathTaken article
-
-                RemoteData.Failure error ->
-                    onArticleLoadError model pathTaken.visited error
+                Err error ->
+                    updateWithError model error
 
         BackToSetup ->
             Setup.Init.init
 
 
-doNothing : PathfindingModel -> ( Model, Cmd Msg )
-doNothing model =
-    ( Model.Pathfinding model, Cmd.none )
-
-
-onArticleLoaded : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
-onArticleLoaded model pathTaken article =
+updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
+updateWithArticle model pathTaken article =
     let
-        ( nextModel, lowestCostPath ) =
-            popMin <| addNodes model pathTaken article
+        updatedPriorityQueue =
+            addNodes model.priorityQueue model.destination pathTaken article
+
+        updatedModel =
+            { model | priorityQueue = updatedPriorityQueue }
     in
-        withLowestCostPath nextModel lowestCostPath
+        expandLowestCostPath updatedModel
 
 
-withLowestCostPath : PathfindingModel -> Maybe Path -> ( Model, Cmd Msg )
-withLowestCostPath nextModel lowestCostPath =
-    case lowestCostPath of
-        Just ({ cost, next, visited } as path) ->
-            if hasReachedDestination next nextModel.destination.title then
-                onDestinationReached nextModel (next :: visited)
+updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
+updateWithError model error =
+    let
+        updatedModel =
+            { model | errors = error :: model.errors }
+    in
+        expandLowestCostPath updatedModel
+
+
+expandLowestCostPath : PathfindingModel -> ( Model, Cmd Msg )
+expandLowestCostPath model =
+    let
+        ( lowestCostPath, updatedPriorityQueue ) =
+            PriorityQueue.popMin model.priorityQueue
+
+        updatedModel =
+            { model | priorityQueue = updatedPriorityQueue }
+
+        withLowestCostPath ({ cost, next, visited } as pathTaken) =
+            if hasReachedDestination next model.destination.title then
+                onDestinationReached model (next :: visited)
             else
-                ( Model.Pathfinding nextModel
-                , getArticle path
-                )
-
-        Nothing ->
-            onPathNotFound nextModel
-
-
-popMin : PathfindingModel -> ( PathfindingModel, Maybe Path )
-popMin model =
-    ( { model | priorityQueue = PairingHeap.deleteMin model.priorityQueue }
-    , PairingHeap.findMin model.priorityQueue
-        |> Maybe.map (Debug.log "Min")
-        |> Maybe.map Tuple.second
-    )
-
-
-onArticleLoadError : PathfindingModel -> List Title -> ArticleError -> ( Model, Cmd Msg )
-onArticleLoadError model pathTaken error =
-    let
-        ( nextModel, lowestCostPath ) =
-            popMin model
+                ( Model.Pathfinding model, getArticle pathTaken )
     in
-        withLowestCostPath nextModel lowestCostPath
+        lowestCostPath
+            |> Maybe.map withLowestCostPath
+            |> Maybe.withDefault (onPathNotFound model)
 
 
 onDestinationReached : PathfindingModel -> List Title -> ( Model, Cmd Msg )
@@ -89,8 +77,14 @@ onDestinationReached { source, destination } pathTaken =
 
 getArticle : Path -> Cmd Msg
 getArticle pathTaken =
-    requestArticle (\article -> ArticleReceived article pathTaken) (value pathTaken.next)
-        |> Cmd.map Messages.Pathfinding
+    let
+        toMsg =
+            FetchArticleResponse pathTaken >> Messages.Pathfinding
+
+        title =
+            value pathTaken.next
+    in
+        requestArticleResult toMsg title
 
 
 hasReachedDestination : Title -> Title -> Bool
@@ -100,6 +94,6 @@ hasReachedDestination current destination =
 
 onPathNotFound : PathfindingModel -> ( Model, Cmd Msg )
 onPathNotFound model =
-    ( Model.Pathfinding { model | error = Just (PathNotFound <| from "Fix this type problem!") }
+    ( Model.Pathfinding { model | fatalError = Just PathNotFound }
     , Cmd.none
     )

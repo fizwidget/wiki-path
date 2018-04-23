@@ -1,16 +1,25 @@
-module Pathfinding.Model exposing (PathfindingModel, Path, Cost, Error(..))
+module Pathfinding.Model exposing (PathfindingModel, Path, Node, Cost, PathPriorityQueue, Error(..))
 
-import PairingHeap exposing (PairingHeap)
 import Common.Model.Title exposing (Title)
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
+import Pathfinding.Model.PriorityQueue exposing (PriorityQueue)
 
 
 type alias PathfindingModel =
     { source : Article
     , destination : Article
-    , priorityQueue : PairingHeap Cost Path
-    , error : Maybe Error
+    , priorityQueue : PathPriorityQueue
+    , errors : List ArticleError
+    , fatalError : Maybe Error
     }
+
+
+type alias PathPriorityQueue =
+    PriorityQueue Cost Path
+
+
+type alias Node =
+    Title
 
 
 type alias Cost =
@@ -25,5 +34,4 @@ type alias Path =
 
 
 type Error
-    = PathNotFound Title
-    | ArticleError ArticleError
+    = PathNotFound

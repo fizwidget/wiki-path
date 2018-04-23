@@ -2,20 +2,20 @@ module Pathfinding.View exposing (view)
 
 import Html exposing (Html, text, ol, li, h3, div)
 import Html.Attributes exposing (style)
-import PairingHeap exposing (PairingHeap)
 import Bootstrap.Button as Button
-import Common.Model.Article exposing (Article, RemoteArticle)
+import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
 import Common.Model.Title exposing (Title, value)
-import Common.View exposing (viewLink)
+import Common.View exposing (viewLink, viewArticleError)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Cost, Path, Error(..))
+import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue)
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, error } =
+view { source, destination, priorityQueue, errors, fatalError } =
     div []
         [ heading source destination
-        , maybeErrorView error
+        , maybeErrorView errors fatalError
         , backView
         , priorityQueueView priorityQueue
         ]
@@ -33,23 +33,23 @@ heading source destination =
         h3 [] [ text <| "Finding path from " ++ sourceTitle ++ " to " ++ destinationTitle ++ "..." ]
 
 
-maybeErrorView : Maybe Error -> Html PathfindingMsg
-maybeErrorView error =
-    error
-        |> Maybe.map errorView
-        |> Maybe.withDefault (text "")
-
-
-errorView : Error -> Html PathfindingMsg
-errorView error =
+maybeErrorView : List ArticleError -> Maybe Error -> Html PathfindingMsg
+maybeErrorView errors fatalError =
     div []
-        [ case error of
-            PathNotFound title ->
-                text <| "Could not find path, got stuck at: " ++ (value title)
-
-            ArticleError articleError ->
-                text ("Error fetching article: " ++ toString articleError)
+        [ Maybe.map fatalErrorView fatalError
+            |> Maybe.withDefault (text "")
+        , errorsView errors
         ]
+
+
+fatalErrorView : Error -> Html PathfindingMsg
+fatalErrorView PathNotFound =
+    text "Path not found :("
+
+
+errorsView : List ArticleError -> Html msg
+errorsView errors =
+    div [] (List.map viewArticleError errors)
 
 
 backView : Html PathfindingMsg
@@ -72,9 +72,8 @@ stopView title =
     li [] [ viewLink title ]
 
 
-priorityQueueView : PairingHeap Cost Path -> Html msg
+priorityQueueView : PriorityQueue Cost Path -> Html msg
 priorityQueueView queue =
-    PairingHeap.toSortedList queue
-        |> List.map Tuple.second
+    PriorityQueue.toSortedList queue
         |> List.map stopsView
         |> div []

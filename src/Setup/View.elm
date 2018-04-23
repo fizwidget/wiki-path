@@ -9,7 +9,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Model.Article exposing (RemoteArticle, ArticleError(..))
-import Common.View exposing (viewSpinner)
+import Common.View exposing (viewSpinner, viewArticleError)
 import Setup.Messages exposing (SetupMsg(..))
 import Setup.Model exposing (SetupModel)
 
@@ -54,7 +54,7 @@ articleTitleInput placeholderText toMsg title article =
              ]
                 ++ (getInputStatus article)
             )
-        , Form.invalidFeedback [] [ text (getErrorMessage article) ]
+        , Form.invalidFeedback [] [ getErrorMessage article ]
         , Form.validFeedback [] []
         ]
 
@@ -103,22 +103,11 @@ viewSpinnerIfLoading article =
     div [] [ viewSpinner <| RemoteData.isLoading article ]
 
 
-getErrorMessage : RemoteArticle -> String
+getErrorMessage : RemoteArticle -> Html msg
 getErrorMessage remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            case error of
-                ArticleNotFound ->
-                    "Couldn't find that article :("
-
-                InvalidTitle ->
-                    "Not a valid article title :("
-
-                UnknownError errorCode ->
-                    ("Unknown error: " ++ errorCode)
-
-                NetworkError error ->
-                    ("Network error: " ++ toString error)
+            viewArticleError error
 
         _ ->
-            ""
+            text ""
