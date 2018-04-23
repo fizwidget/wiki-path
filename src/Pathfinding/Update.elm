@@ -60,14 +60,14 @@ expandLowestCostPath model =
             { model | priorityQueue = updatedPriorityQueue }
 
         withLowestCostPath ({ cost, next, visited } as pathTaken) =
-            if hasReachedDestination next model.destination.title then
-                onDestinationReached model (next :: visited)
+            if hasReachedDestination next updatedModel.destination.title then
+                onDestinationReached updatedModel (next :: visited)
             else
-                ( Model.Pathfinding model, getArticle pathTaken )
+                ( Model.Pathfinding updatedModel, getArticle pathTaken )
     in
         lowestCostPath
             |> Maybe.map withLowestCostPath
-            |> Maybe.withDefault (onPathNotFound model)
+            |> Maybe.withDefault (onPathNotFound updatedModel)
 
 
 onDestinationReached : PathfindingModel -> List Title -> ( Model, Cmd Msg )
