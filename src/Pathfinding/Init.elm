@@ -1,5 +1,6 @@
 module Pathfinding.Init exposing (init)
 
+import Set
 import Common.Model.Article exposing (Article)
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
@@ -21,6 +22,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , priorityQueue = PriorityQueue.empty
+    , visited = Set.empty
     , errors = []
     , fatalError = Nothing
     }

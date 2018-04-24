@@ -7,21 +7,21 @@ import Pathfinding.Model exposing (PathfindingModel, Path)
 import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addNodes : PriorityQueue Path -> Article -> Path -> Article -> PriorityQueue Path
-addNodes priorityQueue destination pathTaken currentArticle =
+addNodes : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
+addNodes priorityQueue destination pathTaken isVisited currentArticle =
     currentArticle.links
         |> List.filter isRegularArticle
-        |> List.filter (isUnvisited pathTaken)
+        |> List.filter (not << isVisited)
         |> List.map (withPriority destination pathTaken.priority)
-        |> List.map (toPath pathTaken)
+        |> List.map (extendPath pathTaken)
         |> List.sortBy .priority
         |> List.reverse
         |> List.take 2
         |> PriorityQueue.insert priorityQueue .priority
 
 
-toPath : Path -> ( Priority, Title ) -> Path
-toPath previousPath ( estimatedTotalPriority, title ) =
+extendPath : Path -> ( Priority, Title ) -> Path
+extendPath previousPath ( estimatedTotalPriority, title ) =
     { priority = estimatedTotalPriority
     , next = title
     , visited = previousPath.next :: previousPath.visited

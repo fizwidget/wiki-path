@@ -1,9 +1,10 @@
 module Pathfinding.Update exposing (update, updateWithArticle)
 
+import Set
 import Result exposing (Result(Ok, Err))
 import Common.Service exposing (requestArticleResult)
 import Common.Model.Article exposing (Article, ArticleError)
-import Common.Model.Title exposing (Title, value, from)
+import Common.Model.Title as Title exposing (Title)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.SearchAlgorithm exposing (addNodes)
@@ -32,8 +33,11 @@ update message model =
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 updateWithArticle model pathTaken article =
     let
+        isVisited title =
+            Set.member (Title.value title) model.visited
+
         updatedPriorityQueue =
-            addNodes model.priorityQueue model.destination pathTaken article
+            addNodes model.priorityQueue model.destination pathTaken isVisited article
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
@@ -59,11 +63,16 @@ expandHighestPriorityPath model =
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
 
+        markVisited title model =
+            { model | visited = Set.insert (Title.value title) model.visited }
+
         explorePath pathTaken =
             if hasReachedDestination pathTaken updatedModel then
                 onDestinationReached updatedModel pathTaken
             else
-                ( Model.Pathfinding updatedModel, followPath pathTaken )
+                ( Model.Pathfinding <| markVisited pathTaken.next updatedModel
+                , followPath pathTaken
+                )
     in
         highestPriorityPath
             |> Maybe.map explorePath
@@ -85,7 +94,7 @@ followPath pathTaken =
             FetchArticleResponse pathTaken >> Messages.Pathfinding
 
         title =
-            value pathTaken.next
+            Title.value pathTaken.next
     in
         requestArticleResult toMsg title
 

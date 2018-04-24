@@ -17,9 +17,6 @@ Lions
 Lion King
 Timone & Pumba
 
-World -> Hello takes a long time.
-
-Possible behavior change in recent commits?
 
 # Problem
 
