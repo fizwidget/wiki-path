@@ -59,24 +59,27 @@ expandHighestPriorityPath model =
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
 
-        withHighestPriorityPath ({ next, visited } as pathTaken) =
-            if hasReachedDestination next updatedModel.destination.title then
-                onDestinationReached updatedModel (next :: visited)
+        explorePath pathTaken =
+            if hasReachedDestination pathTaken updatedModel then
+                onDestinationReached updatedModel pathTaken
             else
-                ( Model.Pathfinding updatedModel, getArticle pathTaken )
+                ( Model.Pathfinding updatedModel, followPath pathTaken )
     in
         highestPriorityPath
-            |> Maybe.map withHighestPriorityPath
+            |> Maybe.map explorePath
             |> Maybe.withDefault (onPathNotFound updatedModel)
 
 
-onDestinationReached : PathfindingModel -> List Title -> ( Model, Cmd Msg )
-onDestinationReached { source, destination } pathTaken =
-    Finished.Init.init source.title destination.title (List.reverse pathTaken)
+onDestinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
+onDestinationReached { source, destination } destinationToSource =
+    Finished.Init.init
+        source.title
+        destination.title
+        (List.reverse <| destinationToSource.next :: destinationToSource.visited)
 
 
-getArticle : Path -> Cmd Msg
-getArticle pathTaken =
+followPath : Path -> Cmd Msg
+followPath pathTaken =
     let
         toMsg =
             FetchArticleResponse pathTaken >> Messages.Pathfinding
@@ -87,9 +90,9 @@ getArticle pathTaken =
         requestArticleResult toMsg title
 
 
-hasReachedDestination : Title -> Title -> Bool
-hasReachedDestination current destination =
-    current == destination
+hasReachedDestination : Path -> PathfindingModel -> Bool
+hasReachedDestination pathTaken model =
+    pathTaken.next == model.destination.title
 
 
 onPathNotFound : PathfindingModel -> ( Model, Cmd Msg )
