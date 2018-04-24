@@ -1,4 +1,4 @@
-module Pathfinding.Util exposing (exploreArticle)
+module Pathfinding.Util exposing (addArticleLinks)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
@@ -7,8 +7,8 @@ import Pathfinding.Model exposing (PathfindingModel, Path)
 import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-exploreArticle : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
-exploreArticle priorityQueue destination pathTaken isVisited currentArticle =
+addArticleLinks : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
+addArticleLinks priorityQueue destination pathTaken isVisited currentArticle =
     currentArticle.links
         |> List.filter isRegularArticle
         |> List.filter (not << isVisited)

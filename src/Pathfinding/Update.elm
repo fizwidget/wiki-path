@@ -7,7 +7,7 @@ import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title as Title exposing (Title)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.Util exposing (exploreArticle)
+import Pathfinding.Util exposing (addArticleLinks)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Pathfinding.Model.PriorityQueue as PriorityQueue
@@ -37,7 +37,7 @@ updateWithArticle model pathTaken article =
             Set.member (Title.value title) model.visitedTitles
 
         updatedPriorityQueue =
-            exploreArticle
+            addArticleLinks
                 model.priorityQueue
                 model.destination
                 pathTaken
@@ -47,7 +47,7 @@ updateWithArticle model pathTaken article =
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
     in
-        expandHighestPriorityPath updatedModel
+        followHighestPriorityPath updatedModel
 
 
 updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
@@ -56,11 +56,11 @@ updateWithError model error =
         updatedModel =
             { model | errors = error :: model.errors }
     in
-        expandHighestPriorityPath updatedModel
+        followHighestPriorityPath updatedModel
 
 
-expandHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg )
-expandHighestPriorityPath model =
+followHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg )
+followHighestPriorityPath model =
     let
         ( highestPriorityPath, updatedPriorityQueue ) =
             PriorityQueue.removeHighestPriority model.priorityQueue
@@ -73,7 +73,7 @@ expandHighestPriorityPath model =
 
         explorePath pathTaken =
             if hasReachedDestination pathTaken updatedModel then
-                onDestinationReached updatedModel pathTaken
+                destinationReached updatedModel pathTaken
             else
                 ( Model.Pathfinding <| markVisited pathTaken.next updatedModel
                 , followPath pathTaken
@@ -81,11 +81,11 @@ expandHighestPriorityPath model =
     in
         highestPriorityPath
             |> Maybe.map explorePath
-            |> Maybe.withDefault (onPathNotFound updatedModel)
+            |> Maybe.withDefault (pathNotFound updatedModel)
 
 
-onDestinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
-onDestinationReached { source, destination } destinationToSource =
+destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
+destinationReached { source, destination } destinationToSource =
     Finished.Init.init
         source.title
         destination.title
@@ -109,8 +109,8 @@ hasReachedDestination pathTaken model =
     pathTaken.next == model.destination.title
 
 
-onPathNotFound : PathfindingModel -> ( Model, Cmd Msg )
-onPathNotFound model =
+pathNotFound : PathfindingModel -> ( Model, Cmd Msg )
+pathNotFound model =
     ( Model.Pathfinding { model | fatalError = Just PathNotFound }
     , Cmd.none
     )
