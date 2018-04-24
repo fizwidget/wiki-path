@@ -2,7 +2,7 @@ module Common.View exposing (viewLink, viewSpinner, viewArticleError)
 
 import Html exposing (Html, div, text, a)
 import Html.Attributes exposing (href, class, style)
-import Common.Model.Title exposing (Title, value)
+import Common.Model.Title as Title exposing (Title)
 import Common.Model.Article exposing (ArticleError(..))
 
 
@@ -28,12 +28,12 @@ viewArticleError error =
 
 viewLink : Title -> Html msg
 viewLink title =
-    a [ href (toUrl title) ] [ text (value title) ]
+    a [ href (toUrl title) ] [ text (Title.value title) ]
 
 
 toUrl : Title -> String
 toUrl title =
-    "https://en.wikipedia.org/wiki/" ++ (value title)
+    "https://en.wikipedia.org/wiki/" ++ (Title.value title)
 
 
 viewSpinner : Bool -> Html msg

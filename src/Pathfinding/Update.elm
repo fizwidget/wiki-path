@@ -7,7 +7,7 @@ import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title as Title exposing (Title)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.SearchAlgorithm exposing (addNodes)
+import Pathfinding.SearchAlgorithm exposing (exploreArticle)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Pathfinding.Model.PriorityQueue as PriorityQueue
@@ -34,10 +34,15 @@ updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 updateWithArticle model pathTaken article =
     let
         isVisited title =
-            Set.member (Title.value title) model.visited
+            Set.member (Title.value title) model.visitedTitles
 
         updatedPriorityQueue =
-            addNodes model.priorityQueue model.destination pathTaken isVisited article
+            exploreArticle
+                model.priorityQueue
+                model.destination
+                pathTaken
+                isVisited
+                article
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
@@ -64,7 +69,7 @@ expandHighestPriorityPath model =
             { model | priorityQueue = updatedPriorityQueue }
 
         markVisited title model =
-            { model | visited = Set.insert (Title.value title) model.visited }
+            { model | visitedTitles = Set.insert (Title.value title) model.visitedTitles }
 
         explorePath pathTaken =
             if hasReachedDestination pathTaken updatedModel then

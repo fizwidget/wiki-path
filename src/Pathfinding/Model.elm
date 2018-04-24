@@ -10,7 +10,7 @@ type alias PathfindingModel =
     { source : Article
     , destination : Article
     , priorityQueue : PriorityQueue Path
-    , visited : Set String
+    , visitedTitles : Set String
     , errors : List ArticleError
     , fatalError : Maybe Error
     }

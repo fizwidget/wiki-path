@@ -1,14 +1,14 @@
-module Pathfinding.SearchAlgorithm exposing (addNodes)
+module Pathfinding.SearchAlgorithm exposing (exploreArticle)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
-import Common.Model.Title exposing (Title, value)
+import Common.Model.Title as Title exposing (Title)
 import Pathfinding.Model exposing (PathfindingModel, Path)
 import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addNodes : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
-addNodes priorityQueue destination pathTaken isVisited currentArticle =
+exploreArticle : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
+exploreArticle priorityQueue destination pathTaken isVisited currentArticle =
     currentArticle.links
         |> List.filter isRegularArticle
         |> List.filter (not << isVisited)
@@ -68,7 +68,7 @@ isRegularArticle title =
             , "Bibcode"
             ]
     in
-        List.any (\prefix -> String.startsWith prefix (value title)) ignoredPrefixes
+        List.any (\prefix -> String.startsWith prefix (Title.value title)) ignoredPrefixes
             |> not
 
 
@@ -77,7 +77,7 @@ heuristic { title, content } destinationTitle =
     if title == destinationTitle then
         1000
     else
-        find All (destinationTitle |> value |> matchWord |> caseInsensitive) content
+        find All (destinationTitle |> Title.value |> matchWord |> caseInsensitive) content
             |> List.length
             |> toFloat
 

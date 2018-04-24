@@ -2,7 +2,7 @@ module Finished.View exposing (view)
 
 import Html exposing (Html, div, h3, h4, text, a)
 import Bootstrap.Button as Button
-import Common.Model.Title exposing (Title, value)
+import Common.Model.Title as Title exposing (Title)
 import Common.View exposing (viewLink)
 import Finished.Model exposing (FinishedModel)
 import Finished.Messages exposing (FinishedMsg(BackToSetup))
@@ -33,7 +33,7 @@ headingView =
 subHeadingView : Title -> Title -> Html msg
 subHeadingView sourceTitle destinationTitle =
     h4 []
-        [ text <| "Path from " ++ (value sourceTitle) ++ " to " ++ (value destinationTitle) ++ "  was..." ]
+        [ text <| "Path from " ++ (Title.value sourceTitle) ++ " to " ++ (Title.value destinationTitle) ++ "  was..." ]
 
 
 stopsView : Title -> Title -> List Title -> Html msg

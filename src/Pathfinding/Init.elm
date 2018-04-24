@@ -22,7 +22,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , priorityQueue = PriorityQueue.empty
-    , visited = Set.empty
+    , visitedTitles = Set.empty
     , errors = []
     , fatalError = Nothing
     }

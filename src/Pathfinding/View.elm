@@ -4,7 +4,7 @@ import Html exposing (Html, text, ol, li, h3, div)
 import Html.Attributes exposing (style)
 import Bootstrap.Button as Button
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
-import Common.Model.Title exposing (Title, value)
+import Common.Model.Title as Title exposing (Title)
 import Common.View exposing (viewLink, viewArticleError)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
@@ -26,9 +26,9 @@ heading source destination =
     h3 []
         [ text <|
             "Finding path from "
-                ++ value source.title
+                ++ Title.value source.title
                 ++ " to "
-                ++ value destination.title
+                ++ Title.value destination.title
                 ++ "..."
         ]
 
