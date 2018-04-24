@@ -8,7 +8,7 @@ import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.SearchAlgorithm exposing (addNodes)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, PathPriorityQueue, Path, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Pathfinding.Model.PriorityQueue as PriorityQueue
 import Finished.Init
 import Setup.Init
@@ -38,7 +38,7 @@ updateWithArticle model pathTaken article =
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
     in
-        expandLowestCostPath updatedModel
+        expandHighestPriorityPath updatedModel
 
 
 updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
@@ -47,26 +47,26 @@ updateWithError model error =
         updatedModel =
             { model | errors = error :: model.errors }
     in
-        expandLowestCostPath updatedModel
+        expandHighestPriorityPath updatedModel
 
 
-expandLowestCostPath : PathfindingModel -> ( Model, Cmd Msg )
-expandLowestCostPath model =
+expandHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg )
+expandHighestPriorityPath model =
     let
-        ( lowestCostPath, updatedPriorityQueue ) =
-            PriorityQueue.popMin model.priorityQueue
+        ( highestPriorityPath, updatedPriorityQueue ) =
+            PriorityQueue.removeHighestPriority model.priorityQueue
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
 
-        withLowestCostPath ({ cost, next, visited } as pathTaken) =
+        withHighestPriorityPath ({ next, visited } as pathTaken) =
             if hasReachedDestination next updatedModel.destination.title then
                 onDestinationReached updatedModel (next :: visited)
             else
                 ( Model.Pathfinding updatedModel, getArticle pathTaken )
     in
-        lowestCostPath
-            |> Maybe.map withLowestCostPath
+        highestPriorityPath
+            |> Maybe.map withHighestPriorityPath
             |> Maybe.withDefault (onPathNotFound updatedModel)
 
 

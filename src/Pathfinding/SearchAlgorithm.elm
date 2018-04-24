@@ -3,35 +3,36 @@ module Pathfinding.SearchAlgorithm exposing (addNodes)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
 import Common.Model.Title exposing (Title, value)
-import Pathfinding.Model exposing (PathfindingModel, PathPriorityQueue, Path, Cost)
-import Pathfinding.Model.PriorityQueue as PriorityQueue
+import Pathfinding.Model exposing (PathfindingModel, Path)
+import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addNodes : PathPriorityQueue -> Article -> Path -> Article -> PathPriorityQueue
+addNodes : PriorityQueue Path -> Article -> Path -> Article -> PriorityQueue Path
 addNodes priorityQueue destination pathTaken currentArticle =
     currentArticle.links
         |> List.filter isRegularArticle
         |> List.filter (isUnvisited pathTaken)
-        |> List.map (withEstimatedTotalCost destination pathTaken.cost)
+        |> List.map (withPriority destination pathTaken.priority)
         |> List.map (toPath pathTaken)
-        |> List.sortBy .cost
+        |> List.sortBy .priority
+        |> List.reverse
         |> List.take 2
-        |> PriorityQueue.insert priorityQueue .cost
+        |> PriorityQueue.insert priorityQueue .priority
 
 
-toPath : Path -> ( Cost, Title ) -> Path
-toPath previousPath ( estimatedTotalCost, title ) =
-    { cost = estimatedTotalCost
+toPath : Path -> ( Priority, Title ) -> Path
+toPath previousPath ( estimatedTotalPriority, title ) =
+    { priority = estimatedTotalPriority
     , next = title
     , visited = previousPath.next :: previousPath.visited
     }
 
 
-withEstimatedTotalCost : Article -> Cost -> Title -> ( Cost, Title )
-withEstimatedTotalCost destination costSoFar title =
+withPriority : Article -> Priority -> Title -> ( Priority, Title )
+withPriority destination previousPriority title =
     heuristic destination title
-        |> (\cost -> cost + costSoFar * 0.8)
-        |> (\cost -> ( cost, title ))
+        |> (\priority -> priority + previousPriority * 0.8)
+        |> (\priority -> ( priority, title ))
 
 
 isUnvisited : Path -> Title -> Bool
@@ -73,11 +74,10 @@ isRegularArticle title =
 heuristic : Article -> Title -> Float
 heuristic { title, content } destinationTitle =
     if title == destinationTitle then
-        -1000
+        1000
     else
         find All (destinationTitle |> value |> matchWord |> caseInsensitive) content
             |> List.length
-            |> (\value -> -value)
             |> toFloat
 
 

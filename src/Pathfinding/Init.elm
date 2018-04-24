@@ -12,7 +12,7 @@ init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
     updateWithArticle
         (initialModel source destination)
-        { cost = 0, next = source.title, visited = [] }
+        { priority = 0, next = source.title, visited = [] }
         source
 
 

@@ -19,6 +19,8 @@ Timone & Pumba
 
 World -> Hello takes a long time.
 
+Possible behavior change in recent commits?
+
 # Problem
 
 Regex is sub-optional? It won't find occurences that are quoted, have a trailing colon, etc.

@@ -7,7 +7,7 @@ import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
 import Common.Model.Title exposing (Title, value)
 import Common.View exposing (viewLink, viewArticleError)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Cost, Path, Error(..))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue)
 
 
@@ -60,7 +60,7 @@ backView =
         [ text "Back" ]
 
 
-priorityQueueView : PriorityQueue Cost Path -> Html msg
+priorityQueueView : PriorityQueue Path -> Html msg
 priorityQueueView queue =
     PriorityQueue.toSortedList queue
         |> List.map stopsView
@@ -70,7 +70,7 @@ priorityQueueView queue =
 stopsView : Path -> Html msg
 stopsView pathTaken =
     div [ style [ ( "display", "inline-block" ) ] ]
-        [ text (toString -pathTaken.cost)
+        [ text (toString pathTaken.priority)
         , (pathTaken.next :: pathTaken.visited)
             |> List.reverse
             |> List.map stopView
