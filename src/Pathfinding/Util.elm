@@ -1,4 +1,4 @@
-module Pathfinding.SearchAlgorithm exposing (exploreArticle)
+module Pathfinding.Util exposing (exploreArticle)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)

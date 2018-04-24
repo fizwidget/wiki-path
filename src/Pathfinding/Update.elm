@@ -7,7 +7,7 @@ import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title as Title exposing (Title)
 import Model exposing (Model)
 import Messages exposing (Msg(..))
-import Pathfinding.SearchAlgorithm exposing (exploreArticle)
+import Pathfinding.Util exposing (exploreArticle)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 import Pathfinding.Model.PriorityQueue as PriorityQueue
