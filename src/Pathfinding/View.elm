@@ -13,7 +13,7 @@ import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 
 view : PathfindingModel -> Html PathfindingMsg
 view { source, destination, priorityQueue, errors, fatalError } =
-    div []
+    div [ style [ ( "display", "flex" ), ( "flex-direction", "column" ), ( "align-items", "center" ) ] ]
         [ heading source destination
         , maybeErrorView errors fatalError
         , backView
@@ -23,7 +23,7 @@ view { source, destination, priorityQueue, errors, fatalError } =
 
 heading : Article -> Article -> Html msg
 heading source destination =
-    h3 []
+    h3 [ style [ ( "text-align", "center" ) ] ]
         [ text <|
             "Finding path from "
                 ++ Title.value source.title
@@ -55,9 +55,11 @@ errorsView errors =
 
 backView : Html PathfindingMsg
 backView =
-    Button.button
-        [ Button.secondary, Button.onClick BackToSetup ]
-        [ text "Back" ]
+    div [ style [ ( "margin", "20px" ) ] ]
+        [ Button.button
+            [ Button.secondary, Button.onClick BackToSetup ]
+            [ text "Back" ]
+        ]
 
 
 priorityQueueView : PriorityQueue Path -> Html msg
@@ -70,8 +72,7 @@ priorityQueueView queue =
 pathView : Path -> Html msg
 pathView pathSoFar =
     div []
-        [ text (toString pathSoFar.priority)
-        , (pathSoFar.next :: pathSoFar.visited)
+        [ (pathSoFar.next :: pathSoFar.visited)
             |> List.reverse
             |> List.map stopView
             |> ol []

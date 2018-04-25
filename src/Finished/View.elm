@@ -1,6 +1,7 @@
 module Finished.View exposing (view)
 
-import Html exposing (Html, div, h3, h4, text, a)
+import Html exposing (Html, div, h2, h4, text, a)
+import Html.Attributes exposing (style)
 import Bootstrap.Button as Button
 import Common.Model.Title as Title exposing (Title)
 import Common.View exposing (viewLink)
@@ -27,7 +28,7 @@ modelView { source, destination, stops } =
 
 headingView : Html msg
 headingView =
-    h3 [] [ text "Success!" ]
+    h2 [] [ text "Success!" ]
 
 
 subHeadingView : Title -> Title -> Html msg
@@ -46,6 +47,8 @@ stopsView source destination stops =
 
 restartButton : Html FinishedMsg
 restartButton =
-    Button.button
-        [ Button.secondary, Button.onClick BackToSetup ]
-        [ text "Back" ]
+    div [ style [ ( "margin", "20px" ) ] ]
+        [ Button.button
+            [ Button.secondary, Button.onClick BackToSetup ]
+            [ text "Back" ]
+        ]
