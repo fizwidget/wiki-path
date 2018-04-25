@@ -11,7 +11,7 @@ addLinks : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue 
 addLinks priorityQueue destination pathSoFar links =
     links
         |> List.filter isNotIgnored
-        |> List.filter (isUnvisited priorityQueue)
+        |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
         |> List.sortBy .priority
         |> List.reverse
@@ -47,10 +47,11 @@ matchWord target =
     "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
 
 
-isUnvisited : PriorityQueue Path -> Title -> Bool
-isUnvisited priorityQueue title =
+isUnvisited : PriorityQueue Path -> Path -> Title -> Bool
+isUnvisited priorityQueue pathSoFar title =
     priorityQueue
         |> PriorityQueue.toSortedList
+        |> (::) pathSoFar
         |> List.concatMap (\pathSoFar -> pathSoFar.next :: pathSoFar.visited)
         |> List.member title
         |> not
