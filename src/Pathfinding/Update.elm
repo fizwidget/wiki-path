@@ -37,7 +37,7 @@ updateWithArticle model pathSoFar article =
                 model.priorityQueue
                 model.destination
                 pathSoFar
-                article
+                article.links
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }

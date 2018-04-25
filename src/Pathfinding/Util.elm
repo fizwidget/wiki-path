@@ -7,9 +7,9 @@ import Common.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Prio
 import Pathfinding.Model exposing (PathfindingModel, Path)
 
 
-addLinks : PriorityQueue Path -> Article -> Path -> Article -> PriorityQueue Path
-addLinks priorityQueue destination pathSoFar currentArticle =
-    currentArticle.links
+addLinks : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
+addLinks priorityQueue destination pathSoFar links =
+    links
         |> List.filter isNotIgnored
         |> List.filter (isUnvisited priorityQueue)
         |> List.map (extendPath pathSoFar destination)
