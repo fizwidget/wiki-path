@@ -14,6 +14,5 @@ TODOs:
 * Improve readability of `Pathfinding.Update` by combining `Path` and `Article` somehow?
 * Completely decouple the different pages from each other.
 * Come up with a better heuristic regex (current one doesn't handle quotes, trailing colon, etc).
-
-Notes:
-* Currently struggles with "World -> Hello".
+* Still something weird with redirects going on? E.g. "Banana -> The Chronicles of Narnia" visits the same article twice.
+* Struggles with "World -> Hello" for some reason?
