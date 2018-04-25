@@ -1,4 +1,4 @@
-module Pathfinding.Util exposing (addArticleLinks)
+module Pathfinding.Util exposing (addLinks)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
@@ -7,10 +7,10 @@ import Pathfinding.Model exposing (PathfindingModel, Path)
 import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addArticleLinks : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
-addArticleLinks priorityQueue destination pathSoFar isUnvisited currentArticle =
+addLinks : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
+addLinks priorityQueue destination pathSoFar isUnvisited currentArticle =
     currentArticle.links
-        |> List.filter isRegularArticle
+        |> List.filter isNotIgnored
         |> List.filter isUnvisited
         |> List.map (extendPath pathSoFar destination)
         |> List.sortBy .priority
@@ -32,8 +32,23 @@ getPriority destination pathSoFar title =
     pathSoFar.priority * 0.8 + (heuristic destination title)
 
 
-isRegularArticle : Title -> Bool
-isRegularArticle title =
+heuristic : Article -> Title -> Float
+heuristic { title, content } destinationTitle =
+    if title == destinationTitle then
+        1000
+    else
+        find All (destinationTitle |> Title.value |> matchWord |> caseInsensitive) content
+            |> List.length
+            |> toFloat
+
+
+matchWord : String -> Regex
+matchWord target =
+    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
+
+
+isNotIgnored : Title -> Bool
+isNotIgnored title =
     let
         ignoredPrefixes =
             [ "Category:"
@@ -59,21 +74,14 @@ isRegularArticle title =
             , "JSTOR"
             , "Bibcode"
             ]
+
+        titleValue =
+            Title.value title
+
+        hasIgnoredPrefix =
+            List.any (\prefix -> String.startsWith prefix titleValue) ignoredPrefixes
+
+        hasMinimumLength =
+            String.length titleValue > 1
     in
-        List.any (\prefix -> String.startsWith prefix (Title.value title)) ignoredPrefixes
-            |> not
-
-
-heuristic : Article -> Title -> Float
-heuristic { title, content } destinationTitle =
-    if title == destinationTitle then
-        1000
-    else
-        find All (destinationTitle |> Title.value |> matchWord |> caseInsensitive) content
-            |> List.length
-            |> toFloat
-
-
-matchWord : String -> Regex
-matchWord target =
-    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
+        hasMinimumLength && not hasIgnoredPrefix
