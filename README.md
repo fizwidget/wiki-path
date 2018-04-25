@@ -1,6 +1,10 @@
 # The Wikipedia Game (in Elm!)
 
-Wikilinks is a 100% frontend Elm implementation of the [Wikipedia game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game). It'll find a path between any two Wikipedia articles.
+WikiLinks is a 100% frontend Elm implementation of the [Wikipedia game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game). It'll find a path between any two Wikipedia articles.
+
+[Have a play with it here!](https://fizwidget.github.io/wikipedia-game/index.html)
+
+- - -
 
 TODOs:
 * Improve performance by performing requests in parallel.
