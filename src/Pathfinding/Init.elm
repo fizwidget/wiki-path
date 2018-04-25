@@ -1,11 +1,11 @@
 module Pathfinding.Init exposing (init)
 
 import Common.Model.Article exposing (Article)
+import Common.Model.PriorityQueue as PriorityQueue
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
 import Pathfinding.Update exposing (updateWithArticle)
 import Pathfinding.Model exposing (PathfindingModel)
-import Pathfinding.Model.PriorityQueue as PriorityQueue
 
 
 init : Article -> Article -> ( Model, Cmd Msg )

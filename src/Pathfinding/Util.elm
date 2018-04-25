@@ -3,15 +3,15 @@ module Pathfinding.Util exposing (addLinks)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Model.Article exposing (Article)
 import Common.Model.Title as Title exposing (Title)
+import Common.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 import Pathfinding.Model exposing (PathfindingModel, Path)
-import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addLinks : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
-addLinks priorityQueue destination pathSoFar isUnvisited currentArticle =
+addLinks : PriorityQueue Path -> Article -> Path -> Article -> PriorityQueue Path
+addLinks priorityQueue destination pathSoFar currentArticle =
     currentArticle.links
         |> List.filter isNotIgnored
-        |> List.filter isUnvisited
+        |> List.filter (isUnvisited priorityQueue)
         |> List.map (extendPath pathSoFar destination)
         |> List.sortBy .priority
         |> List.reverse
@@ -21,14 +21,14 @@ addLinks priorityQueue destination pathSoFar isUnvisited currentArticle =
 
 extendPath : Path -> Article -> Title -> Path
 extendPath pathSoFar destination nextTitle =
-    { priority = getPriority destination pathSoFar nextTitle
+    { priority = calculatePriority destination pathSoFar nextTitle
     , next = nextTitle
     , visited = pathSoFar.next :: pathSoFar.visited
     }
 
 
-getPriority : Article -> Path -> Title -> Priority
-getPriority destination pathSoFar title =
+calculatePriority : Article -> Path -> Title -> Priority
+calculatePriority destination pathSoFar title =
     pathSoFar.priority * 0.8 + (heuristic destination title)
 
 
@@ -45,6 +45,15 @@ heuristic { title, content } destinationTitle =
 matchWord : String -> Regex
 matchWord target =
     "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
+
+
+isUnvisited : PriorityQueue Path -> Title -> Bool
+isUnvisited priorityQueue title =
+    priorityQueue
+        |> PriorityQueue.toSortedList
+        |> List.concatMap (\pathSoFar -> pathSoFar.next :: pathSoFar.visited)
+        |> List.member title
+        |> not
 
 
 isNotIgnored : Title -> Bool

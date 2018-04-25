@@ -1,4 +1,4 @@
-module Pathfinding.Model.PriorityQueue exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, isEmpty, toSortedList)
+module Common.Model.PriorityQueue exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, isEmpty, toSortedList)
 
 import PairingHeap exposing (PairingHeap)
 
@@ -17,7 +17,7 @@ empty =
 
 
 insert : PriorityQueue a -> (a -> Priority) -> List a -> PriorityQueue a
-insert (PriorityQueue queue) getPriority values =
+insert (PriorityQueue pairingHeap) getPriority values =
     let
         getNegatedPriority value =
             -(getPriority value)
@@ -28,24 +28,24 @@ insert (PriorityQueue queue) getPriority values =
         valuesWithNegatedPriorities =
             List.map withNegatedPriority values
     in
-        List.foldl PairingHeap.insert queue valuesWithNegatedPriorities |> PriorityQueue
+        List.foldl PairingHeap.insert pairingHeap valuesWithNegatedPriorities |> PriorityQueue
 
 
 removeHighestPriority : PriorityQueue a -> ( Maybe a, PriorityQueue a )
-removeHighestPriority (PriorityQueue queue) =
-    ( PairingHeap.findMin queue |> Maybe.map Tuple.second
-    , PairingHeap.deleteMin queue |> PriorityQueue
+removeHighestPriority (PriorityQueue pairingHeap) =
+    ( PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
+    , PairingHeap.deleteMin pairingHeap |> PriorityQueue
     )
 
 
 isEmpty : PriorityQueue a -> Bool
-isEmpty (PriorityQueue queue) =
-    PairingHeap.findMin queue
+isEmpty (PriorityQueue pairingHeap) =
+    PairingHeap.findMin pairingHeap
         |> Maybe.map (always True)
         |> Maybe.withDefault False
 
 
 toSortedList : PriorityQueue a -> List a
-toSortedList (PriorityQueue queue) =
-    PairingHeap.toSortedList queue
+toSortedList (PriorityQueue pairingHeap) =
+    PairingHeap.toSortedList pairingHeap
         |> List.map Tuple.second

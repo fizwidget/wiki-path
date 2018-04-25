@@ -4,12 +4,12 @@ import Result exposing (Result(Ok, Err))
 import Common.Service exposing (requestArticleResult)
 import Common.Model.Article exposing (Article, ArticleError)
 import Common.Model.Title as Title exposing (Title)
+import Common.Model.PriorityQueue as PriorityQueue
 import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (addLinks)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
-import Pathfinding.Model.PriorityQueue as PriorityQueue
 import Finished.Init
 import Setup.Init
 
@@ -37,7 +37,6 @@ updateWithArticle model pathSoFar article =
                 model.priorityQueue
                 model.destination
                 pathSoFar
-                (isUnvisited model)
                 article
 
         updatedModel =
@@ -74,9 +73,7 @@ followPath model pathToFollow =
     if hasReachedDestination pathToFollow model.destination then
         destinationReached model pathToFollow
     else
-        ( Model.Pathfinding model
-        , fetchNextArticle pathToFollow
-        )
+        ( Model.Pathfinding model, fetchNextArticle pathToFollow )
 
 
 destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
@@ -97,15 +94,6 @@ fetchNextArticle pathSoFar =
             Title.value pathSoFar.next
     in
         requestArticleResult toMsg title
-
-
-isUnvisited : PathfindingModel -> Title -> Bool
-isUnvisited { priorityQueue } title =
-    priorityQueue
-        |> PriorityQueue.toSortedList
-        |> List.concatMap (\pathSoFar -> pathSoFar.next :: pathSoFar.visited)
-        |> List.member title
-        |> not
 
 
 hasReachedDestination : Path -> Article -> Bool

@@ -5,10 +5,10 @@ import Html.Attributes exposing (style)
 import Bootstrap.Button as Button
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
 import Common.Model.Title as Title exposing (Title)
+import Common.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue)
 import Common.View exposing (viewLink, viewArticleError)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
-import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue)
 
 
 view : PathfindingModel -> Html PathfindingMsg

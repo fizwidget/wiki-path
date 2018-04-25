@@ -2,7 +2,7 @@ module Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
 
 import Common.Model.Title exposing (Title)
 import Common.Model.Article exposing (Article, RemoteArticle, ArticleError)
-import Pathfinding.Model.PriorityQueue exposing (PriorityQueue, Priority)
+import Common.Model.PriorityQueue exposing (PriorityQueue, Priority)
 
 
 type alias PathfindingModel =
