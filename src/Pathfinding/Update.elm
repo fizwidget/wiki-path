@@ -18,10 +18,10 @@ import Setup.Init
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
-        FetchArticleResponse pathTaken articleResult ->
+        FetchArticleResponse pathSoFar articleResult ->
             case articleResult of
                 Ok article ->
-                    updateWithArticle model pathTaken article
+                    updateWithArticle model pathSoFar article
 
                 Err error ->
                     updateWithError model error
@@ -31,17 +31,17 @@ update message model =
 
 
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
-updateWithArticle model pathTaken article =
+updateWithArticle model pathSoFar article =
     let
-        isVisited title =
-            Set.member (Title.value title) model.visitedTitles
+        isUnvisited title =
+            not <| Set.member (Title.value title) model.visitedTitles
 
         updatedPriorityQueue =
             addArticleLinks
                 model.priorityQueue
                 model.destination
-                pathTaken
-                isVisited
+                pathSoFar
+                isUnvisited
                 article
 
         updatedModel =
@@ -67,21 +67,25 @@ followHighestPriorityPath model =
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
-
-        markVisited title model =
-            { model | visitedTitles = Set.insert (Title.value title) model.visitedTitles }
-
-        explorePath pathTaken =
-            if hasReachedDestination pathTaken updatedModel then
-                destinationReached updatedModel pathTaken
-            else
-                ( Model.Pathfinding <| markVisited pathTaken.next updatedModel
-                , followPath pathTaken
-                )
     in
         highestPriorityPath
-            |> Maybe.map explorePath
+            |> Maybe.map (explorePath updatedModel)
             |> Maybe.withDefault (pathNotFound updatedModel)
+
+
+explorePath : PathfindingModel -> Path -> ( Model, Cmd Msg )
+explorePath model newPath =
+    if hasReachedDestination newPath model.destination then
+        destinationReached model newPath
+    else
+        ( markVisited newPath.next model |> Model.Pathfinding
+        , fetchNextArticle newPath
+        )
+
+
+markVisited : Title -> PathfindingModel -> PathfindingModel
+markVisited title model =
+    { model | visitedTitles = Set.insert (Title.value title) model.visitedTitles }
 
 
 destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
@@ -92,21 +96,21 @@ destinationReached { source, destination } destinationToSource =
         (List.reverse <| destinationToSource.next :: destinationToSource.visited)
 
 
-followPath : Path -> Cmd Msg
-followPath pathTaken =
+fetchNextArticle : Path -> Cmd Msg
+fetchNextArticle pathSoFar =
     let
         toMsg =
-            FetchArticleResponse pathTaken >> Messages.Pathfinding
+            FetchArticleResponse pathSoFar >> Messages.Pathfinding
 
         title =
-            Title.value pathTaken.next
+            Title.value pathSoFar.next
     in
         requestArticleResult toMsg title
 
 
-hasReachedDestination : Path -> PathfindingModel -> Bool
-hasReachedDestination pathTaken model =
-    pathTaken.next == model.destination.title
+hasReachedDestination : Path -> Article -> Bool
+hasReachedDestination pathSoFar destination =
+    pathSoFar.next == destination.title
 
 
 pathNotFound : PathfindingModel -> ( Model, Cmd Msg )

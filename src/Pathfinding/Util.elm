@@ -8,36 +8,28 @@ import Pathfinding.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue,
 
 
 addArticleLinks : PriorityQueue Path -> Article -> Path -> (Title -> Bool) -> Article -> PriorityQueue Path
-addArticleLinks priorityQueue destination pathTaken isVisited currentArticle =
+addArticleLinks priorityQueue destination pathSoFar isUnvisited currentArticle =
     currentArticle.links
         |> List.filter isRegularArticle
-        |> List.filter (not << isVisited)
-        |> List.map (withPriority destination pathTaken.priority)
-        |> List.map (extendPath pathTaken)
+        |> List.filter isUnvisited
+        |> List.map (extendPath pathSoFar destination)
         |> List.sortBy .priority
         |> List.reverse
         |> List.take 2
         |> PriorityQueue.insert priorityQueue .priority
 
 
-extendPath : Path -> ( Priority, Title ) -> Path
-extendPath previousPath ( estimatedTotalPriority, title ) =
-    { priority = estimatedTotalPriority
-    , next = title
-    , visited = previousPath.next :: previousPath.visited
+extendPath : Path -> Article -> Title -> Path
+extendPath pathSoFar destination nextTitle =
+    { priority = getPriority destination pathSoFar nextTitle
+    , next = nextTitle
+    , visited = pathSoFar.next :: pathSoFar.visited
     }
 
 
-withPriority : Article -> Priority -> Title -> ( Priority, Title )
-withPriority destination previousPriority title =
-    heuristic destination title
-        |> (\priority -> priority + previousPriority * 0.8)
-        |> (\priority -> ( priority, title ))
-
-
-isUnvisited : Path -> Title -> Bool
-isUnvisited { next, visited } title =
-    (title /= next) && (not <| List.member title visited)
+getPriority : Article -> Path -> Title -> Priority
+getPriority destination pathSoFar title =
+    pathSoFar.priority * 0.8 + (heuristic destination title)
 
 
 isRegularArticle : Title -> Bool

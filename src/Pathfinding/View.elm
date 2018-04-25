@@ -63,15 +63,15 @@ backView =
 priorityQueueView : PriorityQueue Path -> Html msg
 priorityQueueView queue =
     PriorityQueue.toSortedList queue
-        |> List.map stopsView
+        |> List.map pathView
         |> div []
 
 
-stopsView : Path -> Html msg
-stopsView pathTaken =
+pathView : Path -> Html msg
+pathView pathSoFar =
     div [ style [ ( "display", "inline-block" ) ] ]
-        [ text (toString pathTaken.priority)
-        , (pathTaken.next :: pathTaken.visited)
+        [ text (toString pathSoFar.priority)
+        , (pathSoFar.next :: pathSoFar.visited)
             |> List.reverse
             |> List.map stopView
             |> ol []
