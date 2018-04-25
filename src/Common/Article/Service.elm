@@ -1,14 +1,14 @@
-module Common.Service exposing (requestRemoteArticle, requestArticleResult)
+module Common.Article.Service exposing (requestRemoteArticle, requestArticleResult)
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
-import Common.Model.Article exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
-import Common.Api
+import Common.Article.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
+import Common.Article.Api as Api
 
 
 requestRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
 requestRemoteArticle tagger title =
-    Common.Api.requestArticle title
+    Api.requestArticle title
         |> RemoteData.sendRequest
         |> Cmd.map toRemoteArticle
         |> Cmd.map tagger
@@ -23,7 +23,7 @@ toRemoteArticle data =
 
 requestArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
 requestArticleResult tagger title =
-    Common.Api.requestArticle title
+    Api.requestArticle title
         |> Http.send (tagger << toArticleResult)
 
 

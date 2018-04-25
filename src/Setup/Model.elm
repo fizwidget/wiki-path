@@ -1,6 +1,6 @@
 module Setup.Model exposing (SetupModel, UserInput)
 
-import Common.Model.Article exposing (Article, RemoteArticle)
+import Common.Article.Model exposing (Article, RemoteArticle)
 
 
 type alias SetupModel =

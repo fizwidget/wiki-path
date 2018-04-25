@@ -1,9 +1,9 @@
 module Pathfinding.Util exposing (addLinks)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
-import Common.Model.Article exposing (Article)
-import Common.Model.Title as Title exposing (Title)
-import Common.Model.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import Common.Article.Model exposing (Article)
+import Common.Title.Model as Title exposing (Title)
+import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
 import Pathfinding.Model exposing (PathfindingModel, Path)
 
 

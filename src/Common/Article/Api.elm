@@ -1,9 +1,9 @@
-module Common.Api exposing (requestArticle)
+module Common.Article.Api exposing (requestArticle)
 
 import Http
-import Common.Model.Article exposing (ArticleResult)
-import Common.Decoder exposing (decodeArticle)
-import Common.Url exposing (QueryParam(WithValue, WithNoValue), buildUrl)
+import Common.Article.Model exposing (ArticleResult)
+import Common.Article.Decoder exposing (decodeArticle)
+import Common.Url.Model exposing (QueryParam(WithValue, WithNoValue), buildUrl)
 
 
 requestArticle : String -> Http.Request ArticleResult

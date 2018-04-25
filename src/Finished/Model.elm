@@ -1,6 +1,6 @@
 module Finished.Model exposing (FinishedModel)
 
-import Common.Model.Title exposing (Title)
+import Common.Title.Model exposing (Title)
 
 
 type alias FinishedModel =

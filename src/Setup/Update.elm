@@ -1,8 +1,8 @@
 module Setup.Update exposing (update)
 
 import RemoteData exposing (RemoteData(Loading, NotAsked))
-import Common.Service exposing (requestRemoteArticle)
-import Common.Model.Article exposing (RemoteArticle)
+import Common.Article.Service exposing (requestRemoteArticle)
+import Common.Article.Model exposing (RemoteArticle)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.Messages exposing (SetupMsg(..))

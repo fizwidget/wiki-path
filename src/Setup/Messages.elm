@@ -1,6 +1,6 @@
 module Setup.Messages exposing (SetupMsg(..))
 
-import Common.Model.Article exposing (RemoteArticle)
+import Common.Article.Model exposing (RemoteArticle)
 
 
 type SetupMsg

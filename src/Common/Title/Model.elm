@@ -1,4 +1,4 @@
-module Common.Model.Title exposing (Title, from, value)
+module Common.Title.Model exposing (Title, from, value)
 
 
 type Title

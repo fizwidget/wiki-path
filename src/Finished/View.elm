@@ -3,7 +3,7 @@ module Finished.View exposing (view)
 import Html exposing (Html, div, h2, h4, text, a)
 import Html.Attributes exposing (style)
 import Bootstrap.Button as Button
-import Common.Model.Title as Title exposing (Title)
+import Common.Title.Model as Title exposing (Title)
 import Common.View exposing (viewLink)
 import Finished.Model exposing (FinishedModel)
 import Finished.Messages exposing (FinishedMsg(BackToSetup))

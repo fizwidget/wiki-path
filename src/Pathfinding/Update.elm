@@ -1,10 +1,10 @@
 module Pathfinding.Update exposing (update, updateWithArticle)
 
 import Result exposing (Result(Ok, Err))
-import Common.Service exposing (requestArticleResult)
-import Common.Model.Article exposing (Article, ArticleError)
-import Common.Model.Title as Title exposing (Title)
-import Common.Model.PriorityQueue as PriorityQueue
+import Common.Article.Service exposing (requestArticleResult)
+import Common.Article.Model exposing (Article, ArticleError)
+import Common.Title.Model as Title exposing (Title)
+import Common.PriorityQueue.Model as PriorityQueue
 import Model exposing (Model)
 import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (addLinks)

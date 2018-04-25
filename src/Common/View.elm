@@ -2,8 +2,8 @@ module Common.View exposing (viewLink, viewSpinner, viewArticleError)
 
 import Html exposing (Html, div, text, a)
 import Html.Attributes exposing (href, class, style)
-import Common.Model.Title as Title exposing (Title)
-import Common.Model.Article exposing (ArticleError(..))
+import Common.Title.Model as Title exposing (Title)
+import Common.Article.Model exposing (ArticleError(..))
 
 
 viewArticleError : ArticleError -> Html msg

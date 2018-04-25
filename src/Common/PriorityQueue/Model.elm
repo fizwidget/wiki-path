@@ -1,4 +1,4 @@
-module Common.Model.PriorityQueue exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, getHighestPriority, isEmpty, toSortedList)
+module Common.PriorityQueue.Model exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, getHighestPriority, isEmpty, toSortedList)
 
 import PairingHeap exposing (PairingHeap)
 

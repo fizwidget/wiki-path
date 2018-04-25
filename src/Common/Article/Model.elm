@@ -1,8 +1,8 @@
-module Common.Model.Article exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
+module Common.Article.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(..))
 
 import Http
 import RemoteData exposing (RemoteData)
-import Common.Model.Title exposing (Title)
+import Common.Title.Model exposing (Title)
 
 
 type alias HtmlString =
