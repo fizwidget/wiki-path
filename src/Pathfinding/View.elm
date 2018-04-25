@@ -62,14 +62,14 @@ backView =
 
 priorityQueueView : PriorityQueue Path -> Html msg
 priorityQueueView queue =
-    PriorityQueue.toSortedList queue
-        |> List.map pathView
-        |> div []
+    PriorityQueue.getHighestPriority queue
+        |> Maybe.map pathView
+        |> Maybe.withDefault (div [] [])
 
 
 pathView : Path -> Html msg
 pathView pathSoFar =
-    div [ style [ ( "display", "inline-block" ) ] ]
+    div []
         [ text (toString pathSoFar.priority)
         , (pathSoFar.next :: pathSoFar.visited)
             |> List.reverse

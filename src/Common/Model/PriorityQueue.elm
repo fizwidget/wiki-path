@@ -1,4 +1,4 @@
-module Common.Model.PriorityQueue exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, isEmpty, toSortedList)
+module Common.Model.PriorityQueue exposing (PriorityQueue, Priority, empty, insert, removeHighestPriority, getHighestPriority, isEmpty, toSortedList)
 
 import PairingHeap exposing (PairingHeap)
 
@@ -36,6 +36,11 @@ removeHighestPriority (PriorityQueue pairingHeap) =
     ( PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
     , PairingHeap.deleteMin pairingHeap |> PriorityQueue
     )
+
+
+getHighestPriority : PriorityQueue a -> Maybe a
+getHighestPriority (PriorityQueue pairingHeap) =
+    PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
 
 
 isEmpty : PriorityQueue a -> Bool
