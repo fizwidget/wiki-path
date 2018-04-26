@@ -1,7 +1,7 @@
 module Setup.Update exposing (update)
 
 import RemoteData exposing (RemoteData(Loading, NotAsked))
-import Common.Article.Service exposing (requestRemoteArticle)
+import Common.Article.Service as ArticleService
 import Common.Article.Model exposing (RemoteArticle)
 import Model exposing (Model)
 import Messages exposing (Msg)
@@ -66,8 +66,8 @@ requestArticles : SetupModel -> Cmd Msg
 requestArticles { sourceTitleInput, destinationTitleInput } =
     let
         requests =
-            [ requestRemoteArticle FetchSourceArticleResult sourceTitleInput
-            , requestRemoteArticle FetchDestinationArticleResult destinationTitleInput
+            [ ArticleService.requestRemote FetchSourceArticleResult sourceTitleInput
+            , ArticleService.requestRemote FetchDestinationArticleResult destinationTitleInput
             ]
     in
         requests
@@ -78,18 +78,17 @@ requestArticles { sourceTitleInput, destinationTitleInput } =
 setSourceArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setSourceArticle model source =
     ( { model | source = source }, Cmd.none )
-        |> transitionIfDone
+        |> beginPathfindingIfArticlesLoaded
 
 
 setDestinationArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setDestinationArticle model destination =
     ( { model | destination = destination }, Cmd.none )
-        |> transitionIfDone
+        |> beginPathfindingIfArticlesLoaded
 
 
-transitionIfDone : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
-transitionIfDone ( model, cmd ) =
-    RemoteData.map2 (,) model.source model.destination
+beginPathfindingIfArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
+beginPathfindingIfArticlesLoaded ( model, cmd ) =
+    RemoteData.map2 Pathfinding.Init.init model.source model.destination
         |> RemoteData.toMaybe
-        |> Maybe.map (\( source, destination ) -> Pathfinding.Init.init source destination)
         |> Maybe.withDefault ( Model.Setup model, cmd )

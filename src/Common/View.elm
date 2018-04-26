@@ -50,8 +50,4 @@ viewSpinner isVisible =
     in
         div
             [ class "lds-ellipsis", css [ visibilityValue ] ]
-            [ div [] []
-            , div [] []
-            , div [] []
-            , div [] []
-            ]
+            (List.repeat 4 <| div [] [])

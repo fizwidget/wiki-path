@@ -16,7 +16,7 @@ view model =
     div [ css [ margin (px 20) ] ]
         [ fromUnstyled <| CDN.stylesheet
         , appStyles
-        , responsiveStyles
+        , enableResponsiveness
         , headingView
         , modelView model
         ]
@@ -27,8 +27,8 @@ appStyles =
     node "link" [ rel "stylesheet", href "./Common/Styles.css" ] []
 
 
-responsiveStyles : Html msg
-responsiveStyles =
+enableResponsiveness : Html msg
+enableResponsiveness =
     node "meta"
         [ Attributes.name "viewport"
         , Attributes.content "width=device-width, initial-scale=1"
