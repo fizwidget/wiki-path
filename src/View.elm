@@ -2,7 +2,7 @@ module View exposing (view)
 
 import Css exposing (..)
 import Html.Styled as Html exposing (Html, fromUnstyled, toUnstyled, node, h1, text, div)
-import Html.Styled.Attributes exposing (css, rel, href)
+import Html.Styled.Attributes as Attributes exposing (css, rel, href)
 import Bootstrap.CDN as CDN
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
@@ -13,9 +13,10 @@ import Finished.View
 
 view : Model -> Html Msg
 view model =
-    div [ css [ maxWidth (px 600), marginLeft auto, marginRight auto ] ]
+    div [ css [ margin (px 20) ] ]
         [ fromUnstyled <| CDN.stylesheet
         , appStyles
+        , responsiveStyles
         , headingView
         , modelView model
         ]
@@ -24,6 +25,15 @@ view model =
 appStyles : Html msg
 appStyles =
     node "link" [ rel "stylesheet", href "./Common/Styles.css" ] []
+
+
+responsiveStyles : Html msg
+responsiveStyles =
+    node "meta"
+        [ Attributes.name "viewport"
+        , Attributes.content "width=device-width, initial-scale=1"
+        ]
+        []
 
 
 headingView : Html msg
