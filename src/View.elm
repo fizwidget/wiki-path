@@ -1,9 +1,9 @@
 module View exposing (view)
 
-import Html exposing (Html, h1, text)
-import Html.Attributes exposing (style, rel, href)
+import Css exposing (..)
+import Html.Styled as Html exposing (Html, fromUnstyled, toUnstyled, node, h1, text, div)
+import Html.Styled.Attributes exposing (css, rel, href)
 import Bootstrap.CDN as CDN
-import Bootstrap.Grid as Grid
 import Model exposing (Model(..))
 import Messages exposing (Msg(..))
 import Setup.View
@@ -13,28 +13,28 @@ import Finished.View
 
 view : Model -> Html Msg
 view model =
-    Grid.container [ style [ ( "max-width", "600px" ) ] ]
-        [ CDN.stylesheet
+    div [ css [ maxWidth (px 600), marginLeft auto, marginRight auto, margin (px 20) ] ]
+        [ fromUnstyled <| CDN.stylesheet
         , appStyles
-        , Grid.row [] [ Grid.col [] [ headingView ] ]
-        , Grid.row [] [ Grid.col [] [ modelView model ] ]
+        , headingView
+        , modelView model
         ]
 
 
 appStyles : Html msg
 appStyles =
-    Html.node "link" [ rel "stylesheet", href "./src/Common/Styles.css" ] []
+    node "link" [ rel "stylesheet", href "./Common/Styles.css" ] []
 
 
 headingView : Html msg
 headingView =
     h1
-        [ style
-            [ ( "font-size", "400%" )
-            , ( "font-weight", "900" )
-            , ( "text-align", "center" )
-            , ( "margin-top", "50px" )
-            , ( "margin-bottom", "30px" )
+        [ css
+            [ fontSize (pct 400)
+            , fontWeight (int 900)
+            , textAlign center
+            , marginTop (px 50)
+            , marginBottom (px 30)
             ]
         ]
         [ text "WikiLinks" ]

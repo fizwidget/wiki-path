@@ -1,7 +1,8 @@
 module Pathfinding.View exposing (view)
 
-import Html exposing (Html, text, ol, li, h3, div)
-import Html.Attributes exposing (style)
+import Css exposing (..)
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
+import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Title.Model as Title exposing (Title)
@@ -13,7 +14,7 @@ import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 
 view : PathfindingModel -> Html PathfindingMsg
 view { source, destination, priorityQueue, errors, fatalError } =
-    div [ style [ ( "display", "flex" ), ( "flex-direction", "column" ), ( "align-items", "center" ) ] ]
+    div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
         , maybeErrorView errors fatalError
         , backView
@@ -23,7 +24,7 @@ view { source, destination, priorityQueue, errors, fatalError } =
 
 heading : Article -> Article -> Html msg
 heading source destination =
-    h3 [ style [ ( "text-align", "center" ) ] ]
+    h3 [ css [ textAlign center ] ]
         [ text <|
             "Finding path from "
                 ++ Title.value source.title
@@ -55,10 +56,11 @@ errorsView errors =
 
 backView : Html PathfindingMsg
 backView =
-    div [ style [ ( "margin", "20px" ) ] ]
-        [ Button.button
-            [ Button.secondary, Button.onClick BackToSetup ]
-            [ text "Back" ]
+    div [ css [ margin (px 20) ] ]
+        [ fromUnstyled <|
+            Button.button
+                [ Button.secondary, Button.onClick BackToSetup ]
+                [ toUnstyled <| text "Back" ]
         ]
 
 
