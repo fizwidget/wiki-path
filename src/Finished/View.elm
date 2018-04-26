@@ -1,7 +1,8 @@
 module Finished.View exposing (view)
 
-import Html exposing (Html, div, h2, h4, text, a)
-import Html.Attributes exposing (style)
+import Css exposing (..)
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, a)
+import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as Button
 import Common.Title.Model as Title exposing (Title)
 import Common.View exposing (viewLink)
@@ -34,7 +35,13 @@ headingView =
 subHeadingView : Title -> Title -> Html msg
 subHeadingView sourceTitle destinationTitle =
     h4 []
-        [ text <| "Path from " ++ (Title.value sourceTitle) ++ " to " ++ (Title.value destinationTitle) ++ "  was..." ]
+        [ text <|
+            "Path from "
+                ++ (Title.value sourceTitle)
+                ++ " to "
+                ++ (Title.value destinationTitle)
+                ++ "  was..."
+        ]
 
 
 stopsView : Title -> Title -> List Title -> Html msg
@@ -47,8 +54,9 @@ stopsView source destination stops =
 
 restartButton : Html FinishedMsg
 restartButton =
-    div [ style [ ( "margin", "20px" ) ] ]
-        [ Button.button
-            [ Button.secondary, Button.onClick BackToSetup ]
-            [ text "Back" ]
+    div [ css [ margin (px 20) ] ]
+        [ fromUnstyled <|
+            Button.button
+                [ Button.secondary, Button.onClick BackToSetup ]
+                [ toUnstyled <| text "Back" ]
         ]

@@ -1,7 +1,8 @@
 module Common.View exposing (viewLink, viewSpinner, viewArticleError)
 
-import Html exposing (Html, div, text, a)
-import Html.Attributes exposing (href, class, style)
+import Css exposing (..)
+import Html.Styled exposing (Html, div, text, a)
+import Html.Styled.Attributes exposing (css, href, class)
 import Common.Title.Model as Title exposing (Title)
 import Common.Article.Model exposing (ArticleError(..))
 
@@ -28,7 +29,9 @@ viewArticleError error =
 
 viewLink : Title -> Html msg
 viewLink title =
-    a [ href (toUrl title) ] [ text (Title.value title) ]
+    a
+        [ href (toUrl title) ]
+        [ text (Title.value title) ]
 
 
 toUrl : Title -> String
@@ -39,14 +42,14 @@ toUrl title =
 viewSpinner : Bool -> Html msg
 viewSpinner isVisible =
     let
-        visibility =
+        visibilityValue =
             if isVisible then
-                "visible"
+                visibility visible
             else
-                "hidden"
+                visibility hidden
     in
         div
-            [ class "lds-ellipsis", style [ ( "visibility", visibility ) ] ]
+            [ class "lds-ellipsis", css [ visibilityValue ] ]
             [ div [] []
             , div [] []
             , div [] []

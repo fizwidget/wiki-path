@@ -1,12 +1,10 @@
 module Setup.View exposing (view)
 
-import Html exposing (Html, div, input, button, text)
-import Html.Attributes exposing (value, type_, style, placeholder)
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, input, button, text)
+import Html.Styled.Attributes exposing (value, type_, style, placeholder)
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import Bootstrap.Grid.Col as Col
-import Bootstrap.Grid.Row as Row
 import RemoteData
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
 import Common.View exposing (viewSpinner, viewArticleError)
@@ -16,14 +14,16 @@ import Setup.Model exposing (SetupModel, UserInput)
 
 view : SetupModel -> Html SetupMsg
 view model =
-    Form.form []
-        [ titleInputs model
-        , div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
-            [ viewSpinnerIfLoading model.source
-            , loadArticlesButton model
-            , viewSpinnerIfLoading model.destination
+    fromUnstyled <|
+        Form.form []
+            [ toUnstyled <| titleInputs model
+            , toUnstyled <|
+                div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
+                    [ viewSpinnerIfLoading model.source
+                    , loadArticlesButton model
+                    , viewSpinnerIfLoading model.destination
+                    ]
             ]
-        ]
 
 
 titleInputs : SetupModel -> Html SetupMsg
@@ -54,11 +54,12 @@ articleTitleInput placeholderText toMsg title article =
                    , Input.placeholder placeholderText
                    ]
     in
-        Form.group []
-            [ Input.text inputOptions
-            , Form.invalidFeedback [] [ getErrorMessage article ]
-            , Form.validFeedback [] []
-            ]
+        fromUnstyled <|
+            Form.group []
+                [ Input.text inputOptions
+                , Form.invalidFeedback [] [ toUnstyled <| getErrorMessage article ]
+                , Form.validFeedback [] []
+                ]
 
 
 getInputStatus : RemoteArticle -> List (Input.Option msg)
@@ -79,16 +80,13 @@ getInputStatus article =
 
 loadArticlesButton : SetupModel -> Html SetupMsg
 loadArticlesButton model =
-    Form.row [ Row.centerLg ]
-        [ Form.col [ Col.lgAuto ]
-            [ Button.button
-                [ Button.primary
-                , Button.disabled (shouldDisableLoadButton model)
-                , Button.onClick FetchArticlesRequest
-                ]
-                [ text "Find path" ]
+    fromUnstyled <|
+        Button.button
+            [ Button.primary
+            , Button.disabled (shouldDisableLoadButton model)
+            , Button.onClick FetchArticlesRequest
             ]
-        ]
+            [ toUnstyled <| text "Find path" ]
 
 
 shouldDisableLoadButton : SetupModel -> Bool
