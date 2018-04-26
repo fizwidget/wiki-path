@@ -13,7 +13,7 @@ import Finished.View
 
 view : Model -> Html Msg
 view model =
-    div [ css [ maxWidth (px 600), marginLeft auto, marginRight auto ] ]
+    div [ css [ margin (px 20) ] ]
         [ fromUnstyled <| CDN.stylesheet
         , appStyles
         , headingView
