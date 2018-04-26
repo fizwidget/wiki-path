@@ -13,7 +13,7 @@ addLinks priorityQueue destination pathSoFar links =
         |> List.filter isNotIgnored
         |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
-        |> takeHighestPriorities
+        |> keepHighestPriorityPaths
         |> PriorityQueue.insert priorityQueue .priority
 
 
@@ -25,9 +25,9 @@ extendPath pathSoFar destination nextTitle =
     }
 
 
-takeHighestPriorities : List Path -> List Path
-takeHighestPriorities pathSoFar =
-    pathSoFar
+keepHighestPriorityPaths : List Path -> List Path
+keepHighestPriorityPaths paths =
+    paths
         |> List.sortBy .priority
         |> List.reverse
         |> List.take 2
