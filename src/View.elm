@@ -23,7 +23,7 @@ view model =
 
 appStyles : Html msg
 appStyles =
-    Html.node "link" [ rel "stylesheet", href "Styles.css" ] []
+    Html.node "link" [ rel "stylesheet", href "./src/Common/Styles.css" ] []
 
 
 headingView : Html msg
