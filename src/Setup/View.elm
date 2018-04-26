@@ -1,7 +1,8 @@
 module Setup.View exposing (view)
 
+import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, input, button, text)
-import Html.Styled.Attributes exposing (value, type_, style, placeholder)
+import Html.Styled.Attributes exposing (css, value, type_, style, placeholder)
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
@@ -18,17 +19,22 @@ view model =
         Form.form []
             [ toUnstyled <| titleInputs model
             , toUnstyled <|
-                div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "space-evenly" ) ] ]
-                    [ viewSpinnerIfLoading model.source
-                    , loadArticlesButton model
-                    , viewSpinnerIfLoading model.destination
+                div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "center" ) ] ]
+                    [ withSpacing <| viewSpinnerIfLoading model.source
+                    , withSpacing <| loadArticlesButton model
+                    , withSpacing <| viewSpinnerIfLoading model.destination
                     ]
             ]
 
 
+withSpacing : Html msg -> Html msg
+withSpacing content =
+    div [ css [ padding2 (px 0) (px 20) ] ] [ content ]
+
+
 titleInputs : SetupModel -> Html SetupMsg
 titleInputs { sourceTitleInput, destinationTitleInput, source, destination } =
-    div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "flex-wrap", "wrap" ) ] ]
+    div [ style [ ( "display", "flex" ), ( "justify-content", "center" ), ( "flex-wrap", "wrap" ) ] ]
         [ viewSourceTitleInput sourceTitleInput source
         , viewDestinationTitleInput destinationTitleInput destination
         ]
@@ -54,12 +60,14 @@ articleTitleInput placeholderText toMsg title article =
                    , Input.placeholder placeholderText
                    ]
     in
-        fromUnstyled <|
-            Form.group []
-                [ Input.text inputOptions
-                , Form.invalidFeedback [] [ toUnstyled <| getErrorMessage article ]
-                , Form.validFeedback [] []
-                ]
+        div [ css [ paddingLeft (px 8), paddingRight (px 8) ] ]
+            [ fromUnstyled <|
+                Form.group []
+                    [ Input.text inputOptions
+                    , Form.invalidFeedback [] [ toUnstyled <| getErrorMessage article ]
+                    , Form.validFeedback [] []
+                    ]
+            ]
 
 
 getInputStatus : RemoteArticle -> List (Input.Option msg)
