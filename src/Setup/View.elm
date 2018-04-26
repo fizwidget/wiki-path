@@ -28,7 +28,7 @@ view model =
 
 titleInputs : SetupModel -> Html SetupMsg
 titleInputs { sourceTitleInput, destinationTitleInput, source, destination } =
-    div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "height", "60px" ) ] ]
+    div [ style [ ( "display", "flex" ), ( "justify-content", "space-evenly" ), ( "flex-wrap", "wrap" ) ] ]
         [ viewSourceTitleInput sourceTitleInput source
         , viewDestinationTitleInput destinationTitleInput destination
         ]
