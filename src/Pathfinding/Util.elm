@@ -13,9 +13,7 @@ addLinks priorityQueue destination pathSoFar links =
         |> List.filter isNotIgnored
         |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
-        |> List.sortBy .priority
-        |> List.reverse
-        |> List.take 2
+        |> takeHighestPriorities
         |> PriorityQueue.insert priorityQueue .priority
 
 
@@ -25,6 +23,14 @@ extendPath pathSoFar destination nextTitle =
     , next = nextTitle
     , visited = pathSoFar.next :: pathSoFar.visited
     }
+
+
+takeHighestPriorities : List Path -> List Path
+takeHighestPriorities pathSoFar =
+    pathSoFar
+        |> List.sortBy .priority
+        |> List.reverse
+        |> List.take 2
 
 
 calculatePriority : Article -> Path -> Title -> Priority

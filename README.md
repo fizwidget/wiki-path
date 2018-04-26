@@ -7,6 +7,7 @@ WikiLinks is a frontend [Elm](http://elm-lang.org/) implementation of the [Wikip
 - - -
 
 TODOs:
+* Improve performance of `isUnvisited` check by using a set.
 * Improve performance by performing requests in parallel.
 * Experiment with improved pathfinding by penalising longer paths.
 * Loading spinner for pathfinding view.
