@@ -12,9 +12,9 @@ import Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 view : FinishedModel -> Html FinishedMsg
 view model =
-    div []
+    div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
         [ modelView model
-        , restartButton
+        , backButton
         ]
 
 
@@ -52,8 +52,8 @@ stopsView source destination stops =
         |> div []
 
 
-restartButton : Html FinishedMsg
-restartButton =
+backButton : Html FinishedMsg
+backButton =
     div [ css [ margin (px 20) ] ]
         [ fromUnstyled <|
             Button.button

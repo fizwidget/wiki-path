@@ -2,7 +2,7 @@ module Setup.View exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, input, button, text)
-import Html.Styled.Attributes exposing (css, value, type_, style, placeholder)
+import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Bootstrap.Button as Button
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
@@ -19,7 +19,7 @@ view model =
         Form.form []
             [ toUnstyled <| titleInputs model
             , toUnstyled <|
-                div [ style [ ( "display", "flex" ), ( "align-items", "center" ), ( "justify-content", "center" ) ] ]
+                div [ css [ displayFlex, alignItems center, justifyContent center ] ]
                     [ withSpacing <| viewSpinnerIfLoading model.source
                     , withSpacing <| loadArticlesButton model
                     , withSpacing <| viewSpinnerIfLoading model.destination
@@ -34,7 +34,7 @@ withSpacing content =
 
 titleInputs : SetupModel -> Html SetupMsg
 titleInputs { sourceTitleInput, destinationTitleInput, source, destination } =
-    div [ style [ ( "display", "flex" ), ( "justify-content", "center" ), ( "flex-wrap", "wrap" ) ] ]
+    div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
         [ viewSourceTitleInput sourceTitleInput source
         , viewDestinationTitleInput destinationTitleInput destination
         ]
