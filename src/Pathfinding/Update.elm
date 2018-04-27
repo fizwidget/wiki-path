@@ -10,11 +10,9 @@ import Messages exposing (Msg(..))
 import Pathfinding.Util exposing (addLinks)
 import Pathfinding.Messages exposing (PathfindingMsg(..))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
-import Finished.Init
-import Setup.Init
 
 
-update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
+update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg, Maybe (List Title) )
 update message model =
     case message of
         FetchArticleResponse pathSoFar articleResult ->
@@ -25,11 +23,8 @@ update message model =
                 Err error ->
                     updateWithError model error
 
-        BackToSetup ->
-            Setup.Init.init
 
-
-updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
+updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg, Maybe (List Title) )
 updateWithArticle model pathSoFar article =
     let
         updatedPriorityQueue =
@@ -45,7 +40,7 @@ updateWithArticle model pathSoFar article =
         followHighestPriorityPath updatedModel
 
 
-updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
+updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg, Maybe (List Title) )
 updateWithError model error =
     let
         updatedModel =
@@ -54,7 +49,7 @@ updateWithError model error =
         followHighestPriorityPath updatedModel
 
 
-followHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg )
+followHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg, Maybe (List Title) )
 followHighestPriorityPath model =
     let
         ( highestPriorityPath, updatedPriorityQueue ) =
@@ -68,20 +63,15 @@ followHighestPriorityPath model =
             |> Maybe.withDefault (pathNotFound updatedModel)
 
 
-followPath : PathfindingModel -> Path -> ( Model, Cmd Msg )
+followPath : PathfindingModel -> Path -> ( Model, Cmd Msg, Maybe (List Title) )
 followPath model pathToFollow =
     if hasReachedDestination pathToFollow model.destination then
-        destinationReached model pathToFollow
+        ( Model.Pathfinding model
+        , Cmd.none
+        , Just <| List.reverse <| pathToFollow.next :: pathToFollow.visited
+        )
     else
-        ( Model.Pathfinding model, fetchNextArticle pathToFollow )
-
-
-destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
-destinationReached { source, destination } destinationToSource =
-    Finished.Init.init
-        source.title
-        destination.title
-        (List.reverse <| destinationToSource.next :: destinationToSource.visited)
+        ( Model.Pathfinding model, fetchNextArticle pathToFollow, Nothing )
 
 
 fetchNextArticle : Path -> Cmd Msg
@@ -101,8 +91,9 @@ hasReachedDestination pathSoFar destination =
     pathSoFar.next == destination.title
 
 
-pathNotFound : PathfindingModel -> ( Model, Cmd Msg )
+pathNotFound : PathfindingModel -> ( Model, Cmd Msg, Maybe (List Title) )
 pathNotFound model =
     ( Model.Pathfinding { model | fatalError = Just PathNotFound }
     , Cmd.none
+    , Nothing
     )

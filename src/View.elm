@@ -57,7 +57,12 @@ modelView model =
             Setup.View.view subModel |> Html.map Messages.Setup
 
         Model.Pathfinding subModel ->
-            Pathfinding.View.view subModel |> Html.map Messages.Pathfinding
+            Pathfinding.View.view subModel onSetupRequested
 
         Model.Finished subModel ->
-            Finished.View.view subModel |> Html.map Messages.Finished
+            Finished.View.view subModel onSetupRequested
+
+
+onSetupRequested : Msg
+onSetupRequested =
+    ToSetup

@@ -5,8 +5,8 @@ import Model exposing (Model(Finished))
 import Messages exposing (Msg)
 
 
-init : Title -> Title -> List Title -> ( Model, Cmd Msg )
-init source destination stops =
-    ( Finished { source = source, destination = destination, stops = stops }
+init : List Title -> ( Model, Cmd Msg )
+init stops =
+    ( Finished { stops = stops }
     , Cmd.none
     )

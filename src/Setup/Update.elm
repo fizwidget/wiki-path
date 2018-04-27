@@ -2,15 +2,18 @@ module Setup.Update exposing (update)
 
 import RemoteData exposing (RemoteData(Loading, NotAsked))
 import Common.Article.Service as ArticleService
-import Common.Article.Model exposing (RemoteArticle)
-import Model exposing (Model)
-import Messages exposing (Msg)
+import Common.Article.Model exposing (Article, RemoteArticle)
 import Setup.Messages exposing (SetupMsg(..))
 import Setup.Model exposing (SetupModel, UserInput)
-import Pathfinding.Init
 
 
-update : SetupMsg -> SetupModel -> ( Model, Cmd Msg )
+type alias Articles =
+    { source : Article
+    , destination : Article
+    }
+
+
+update : SetupMsg -> SetupModel -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 update message model =
     case message of
         SourceArticleTitleChange value ->
@@ -23,72 +26,68 @@ update message model =
             loadArticles model
 
         FetchSourceArticleResult article ->
-            setSourceArticle model article
+            (setSourceArticle model article)
 
         FetchDestinationArticleResult article ->
             setDestinationArticle model article
 
 
-setSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
+setSourceTitle : SetupModel -> UserInput -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 setSourceTitle model sourceTitleInput =
-    ( Model.Setup
-        { model
-            | source = NotAsked
-            , sourceTitleInput = sourceTitleInput
-        }
+    ( { model
+        | source = NotAsked
+        , sourceTitleInput = sourceTitleInput
+      }
     , Cmd.none
+    , Nothing
     )
 
 
-setDestinationTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
+setDestinationTitle : SetupModel -> UserInput -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 setDestinationTitle model destinationTitleInput =
-    ( Model.Setup
-        { model
-            | destination = NotAsked
-            , destinationTitleInput = destinationTitleInput
-        }
+    ( { model
+        | destination = NotAsked
+        , destinationTitleInput = destinationTitleInput
+      }
     , Cmd.none
+    , Nothing
     )
 
 
-loadArticles : SetupModel -> ( Model, Cmd Msg )
+loadArticles : SetupModel -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 loadArticles model =
-    ( Model.Setup
-        { model
-            | source = Loading
-            , destination = Loading
-        }
+    ( { model
+        | source = Loading
+        , destination = Loading
+      }
     , requestArticles model
+    , Nothing
     )
 
 
-requestArticles : SetupModel -> Cmd Msg
+requestArticles : SetupModel -> Cmd SetupMsg
 requestArticles { sourceTitleInput, destinationTitleInput } =
-    let
-        requests =
-            [ ArticleService.requestRemote FetchSourceArticleResult sourceTitleInput
-            , ArticleService.requestRemote FetchDestinationArticleResult destinationTitleInput
-            ]
-    in
-        requests
-            |> Cmd.batch
-            |> Cmd.map Messages.Setup
+    Cmd.batch
+        [ ArticleService.requestRemote FetchSourceArticleResult sourceTitleInput
+        , ArticleService.requestRemote FetchDestinationArticleResult destinationTitleInput
+        ]
 
 
-setSourceArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+setSourceArticle : SetupModel -> RemoteArticle -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 setSourceArticle model source =
     ( { model | source = source }, Cmd.none )
         |> beginPathfindingIfArticlesLoaded
 
 
-setDestinationArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+setDestinationArticle : SetupModel -> RemoteArticle -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 setDestinationArticle model destination =
     ( { model | destination = destination }, Cmd.none )
         |> beginPathfindingIfArticlesLoaded
 
 
-beginPathfindingIfArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
+beginPathfindingIfArticlesLoaded : ( SetupModel, Cmd SetupMsg ) -> ( SetupModel, Cmd SetupMsg, Maybe Articles )
 beginPathfindingIfArticlesLoaded ( model, cmd ) =
-    RemoteData.map2 Pathfinding.Init.init model.source model.destination
+    RemoteData.map2 Articles model.source model.destination
         |> RemoteData.toMaybe
-        |> Maybe.withDefault ( Model.Setup model, cmd )
+        |> Maybe.map (\articles -> ( model, cmd, Just articles ))
+        |> Maybe.withDefault ( model, cmd, Nothing )

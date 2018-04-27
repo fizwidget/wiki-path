@@ -8,16 +8,15 @@ import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.View exposing (viewLink, viewArticleError)
-import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
 
 
-view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, errors, fatalError } =
+view : PathfindingModel -> msg -> Html msg
+view { source, destination, priorityQueue, errors, fatalError } onSetupRequested =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
         , maybeErrorView errors fatalError
-        , backView
+        , backView onSetupRequested
         , priorityQueueView priorityQueue
         ]
 
@@ -54,12 +53,12 @@ errorsView errors =
     div [] <| List.map viewArticleError errors
 
 
-backView : Html PathfindingMsg
-backView =
+backView : msg -> Html msg
+backView onSetupRequested =
     div [ css [ margin (px 20) ] ]
         [ fromUnstyled <|
             Button.button
-                [ Button.secondary, Button.onClick BackToSetup ]
+                [ Button.secondary, Button.onClick onSetupRequested ]
                 [ toUnstyled <| text "Back" ]
         ]
 

@@ -7,19 +7,20 @@ import Bootstrap.Button as Button
 import Common.Title.Model as Title exposing (Title)
 import Common.View exposing (viewLink)
 import Finished.Model exposing (FinishedModel)
-import Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 
-view : FinishedModel -> Html FinishedMsg
-view model =
+view : FinishedModel -> msg -> Html msg
+view model onSetupRequested =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
         [ modelView model
-        , backButton
+        , backButton onSetupRequested
         ]
 
 
 modelView : FinishedModel -> Html msg
-modelView { source, destination, stops } =
+modelView { stops } =
+    let
+        source = 
     div []
         [ headingView
         , subHeadingView source destination
@@ -52,11 +53,11 @@ stopsView source destination stops =
         |> div []
 
 
-backButton : Html FinishedMsg
-backButton =
+backButton : msg -> Html msg
+backButton onSetupRequested =
     div [ css [ margin (px 20) ] ]
         [ fromUnstyled <|
             Button.button
-                [ Button.secondary, Button.onClick BackToSetup ]
+                [ Button.secondary, Button.onClick onSetupRequested ]
                 [ toUnstyled <| text "Back" ]
         ]

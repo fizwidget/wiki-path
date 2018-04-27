@@ -6,4 +6,3 @@ import Pathfinding.Model exposing (Path)
 
 type PathfindingMsg
     = FetchArticleResponse Path ArticleResult
-    | BackToSetup
