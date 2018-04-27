@@ -39,18 +39,19 @@ calculatePriority destination pathSoFar title =
 
 
 heuristic : Article -> Title -> Float
-heuristic { title, content } destinationTitle =
-    if title == destinationTitle then
+heuristic destination title =
+    if title == destination.title then
         1000
     else
-        find All (destinationTitle |> Title.value |> matchWord |> caseInsensitive) content
+        -- How many times is the title mentioned in the destination article?
+        find All (title |> Title.value |> matchWord) destination.content
             |> List.length
             |> toFloat
 
 
 matchWord : String -> Regex
 matchWord target =
-    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
+    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex |> caseInsensitive
 
 
 isUnvisited : PriorityQueue Path -> Path -> Title -> Bool
