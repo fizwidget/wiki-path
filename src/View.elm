@@ -4,8 +4,8 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html, fromUnstyled, toUnstyled, node, h1, text, div)
 import Html.Styled.Attributes as Attributes exposing (css, rel, href)
 import Bootstrap.CDN as CDN
-import Model exposing (Model(..))
-import Messages exposing (Msg(..))
+import Model exposing (Model)
+import Messages exposing (Msg)
 import Setup.View
 import Pathfinding.View
 import Finished.View

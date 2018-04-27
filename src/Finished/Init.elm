@@ -7,6 +7,10 @@ import Messages exposing (Msg)
 
 init : Title -> Title -> List Title -> ( Model, Cmd Msg )
 init source destination stops =
-    ( Finished { source = source, destination = destination, stops = stops }
+    ( Finished
+        { source = source
+        , destination = destination
+        , stops = stops
+        }
     , Cmd.none
     )
