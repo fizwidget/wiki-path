@@ -73,7 +73,7 @@ priorityQueueView queue =
 
 pathView : Path -> Html msg
 pathView pathSoFar =
-    div []
+    div [ css [ fontSize (px 20) ] ]
         [ (pathSoFar.next :: pathSoFar.visited)
             |> List.reverse
             |> List.map stopView

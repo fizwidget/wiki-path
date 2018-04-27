@@ -15,19 +15,12 @@ import Setup.Model exposing (SetupModel, UserInput)
 
 view : SetupModel -> Html SetupMsg
 view model =
-    form []
+    form
+        [ css [ displayFlex, alignItems center, flexDirection column ] ]
         [ titleInputs model
-        , div [ css [ displayFlex, alignItems center, justifyContent center ] ]
-            [ withSpacing <| viewSpinnerIfLoading model.source
-            , withSpacing <| loadArticlesButton model
-            , withSpacing <| viewSpinnerIfLoading model.destination
-            ]
+        , findPathButton model
+        , showSpinnerIfLoading model
         ]
-
-
-withSpacing : Html msg -> Html msg
-withSpacing content =
-    div [ css [ padding2 (px 0) (px 20) ] ] [ content ]
 
 
 titleInputs : SetupModel -> Html SetupMsg
@@ -84,8 +77,8 @@ getInputStatus article =
             [ Input.success ]
 
 
-loadArticlesButton : SetupModel -> Html SetupMsg
-loadArticlesButton model =
+findPathButton : SetupModel -> Html SetupMsg
+findPathButton model =
     fromUnstyled <|
         Button.button
             [ Button.primary
@@ -96,17 +89,28 @@ loadArticlesButton model =
 
 
 shouldDisableLoadButton : SetupModel -> Bool
-shouldDisableLoadButton { sourceTitleInput, destinationTitleInput } =
+shouldDisableLoadButton model =
     let
         isBlank =
             String.trim >> String.isEmpty
     in
-        isBlank sourceTitleInput || isBlank destinationTitleInput
+        isBlank model.sourceTitleInput
+            || isBlank model.destinationTitleInput
+            || isLoading model
 
 
-viewSpinnerIfLoading : RemoteArticle -> Html msg
-viewSpinnerIfLoading article =
-    div [] [ viewSpinner <| RemoteData.isLoading article ]
+showSpinnerIfLoading : SetupModel -> Html msg
+showSpinnerIfLoading model =
+    div
+        [ css [ paddingTop (px 6) ] ]
+        [ viewSpinner <| isLoading model ]
+
+
+isLoading : SetupModel -> Bool
+isLoading { source, destination } =
+    [ source, destination ]
+        |> RemoteData.fromList
+        |> RemoteData.isLoading
 
 
 getErrorMessage : RemoteArticle -> Html msg
