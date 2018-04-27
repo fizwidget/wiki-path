@@ -5,15 +5,15 @@ import RemoteData exposing (RemoteData)
 import Common.Title.Model exposing (Title)
 
 
-type alias HtmlString =
-    String
-
-
 type alias Article =
     { title : Title
     , links : List Title
     , content : HtmlString
     }
+
+
+type alias HtmlString =
+    String
 
 
 type alias ArticleResult =

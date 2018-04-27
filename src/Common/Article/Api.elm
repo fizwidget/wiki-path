@@ -1,13 +1,13 @@
-module Common.Article.Api exposing (requestArticle)
+module Common.Article.Api exposing (buildRequest)
 
 import Http
 import Common.Article.Model exposing (ArticleResult)
 import Common.Article.Decoder exposing (decodeArticle)
-import Common.Url.Model exposing (QueryParam(WithValue, WithNoValue), buildUrl)
+import Common.Url.Model exposing (QueryParam(KeyValue, Key), buildUrl)
 
 
-requestArticle : String -> Http.Request ArticleResult
-requestArticle title =
+buildRequest : String -> Http.Request ArticleResult
+buildRequest title =
     Http.get (buildArticleUrl title) decodeArticle
 
 
@@ -18,12 +18,12 @@ buildArticleUrl title =
             "https://en.wikipedia.org/w/api.php"
 
         queryParams =
-            [ WithValue ( "action", "parse" )
-            , WithNoValue "redirects"
-            , WithValue ( "format", "json" )
-            , WithValue ( "formatversion", "2" )
-            , WithValue ( "origin", "*" )
-            , WithValue ( "page", title )
+            [ KeyValue ( "action", "parse" )
+            , Key "redirects"
+            , KeyValue ( "format", "json" )
+            , KeyValue ( "formatversion", "2" )
+            , KeyValue ( "origin", "*" )
+            , KeyValue ( "page", title )
             ]
     in
         buildUrl baseUrl queryParams

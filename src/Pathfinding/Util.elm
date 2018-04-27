@@ -13,9 +13,7 @@ addLinks priorityQueue destination pathSoFar links =
         |> List.filter isNotIgnored
         |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
-        |> List.sortBy .priority
-        |> List.reverse
-        |> List.take 2
+        |> keepHighestPriorityPaths
         |> PriorityQueue.insert priorityQueue .priority
 
 
@@ -27,24 +25,33 @@ extendPath pathSoFar destination nextTitle =
     }
 
 
+keepHighestPriorityPaths : List Path -> List Path
+keepHighestPriorityPaths paths =
+    paths
+        |> List.sortBy .priority
+        |> List.reverse
+        |> List.take 2
+
+
 calculatePriority : Article -> Path -> Title -> Priority
 calculatePriority destination pathSoFar title =
     pathSoFar.priority * 0.8 + (heuristic destination title)
 
 
 heuristic : Article -> Title -> Float
-heuristic { title, content } destinationTitle =
-    if title == destinationTitle then
+heuristic destination title =
+    if title == destination.title then
         1000
     else
-        find All (destinationTitle |> Title.value |> matchWord |> caseInsensitive) content
+        -- How many times is the title mentioned in the destination article?
+        find All (title |> Title.value |> matchWord) destination.content
             |> List.length
             |> toFloat
 
 
 matchWord : String -> Regex
 matchWord target =
-    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex
+    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex |> caseInsensitive
 
 
 isUnvisited : PriorityQueue Path -> Path -> Title -> Bool

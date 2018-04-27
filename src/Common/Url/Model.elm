@@ -1,4 +1,4 @@
-module Common.Url.Model exposing (QueryParam(WithValue, WithNoValue), buildUrl)
+module Common.Url.Model exposing (QueryParam(KeyValue, Key), buildUrl)
 
 
 buildUrl : BaseUrl -> List QueryParam -> Url
@@ -16,16 +16,16 @@ buildUrl baseUrl queryParams =
 queryParamToString : QueryParam -> String
 queryParamToString queryParam =
     case queryParam of
-        WithValue ( name, value ) ->
-            name ++ "=" ++ value
+        KeyValue ( key, value ) ->
+            key ++ "=" ++ value
 
-        WithNoValue name ->
-            name
+        Key key ->
+            key
 
 
 type QueryParam
-    = WithValue ( QueryParamName, QueryParamValue )
-    | WithNoValue QueryParamName
+    = KeyValue ( QueryParamName, QueryParamValue )
+    | Key QueryParamName
 
 
 type alias BaseUrl =

@@ -1,17 +1,17 @@
 module Pathfinding.Update exposing (update, updateWithArticle)
 
 import Result exposing (Result(Ok, Err))
-import Common.Article.Service exposing (requestArticleResult)
+import Common.Article.Service as ArticleService
 import Common.Article.Model exposing (Article, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.PriorityQueue.Model as PriorityQueue
 import Model exposing (Model)
-import Messages exposing (Msg(..))
-import Pathfinding.Util exposing (addLinks)
-import Pathfinding.Messages exposing (PathfindingMsg(..))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(..))
+import Messages exposing (Msg)
 import Finished.Init
 import Setup.Init
+import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
+import Pathfinding.Util exposing (addLinks)
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
@@ -93,7 +93,7 @@ fetchNextArticle pathSoFar =
         title =
             Title.value pathSoFar.next
     in
-        requestArticleResult toMsg title
+        ArticleService.request toMsg title
 
 
 hasReachedDestination : Path -> Article -> Bool
