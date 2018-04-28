@@ -17730,7 +17730,7 @@ var _fizwidget$wikipedia_game$Finished_View$view = function (model) {
 		});
 };
 var _fizwidget$wikipedia_game$Init$init = _fizwidget$wikipedia_game$Setup_Init$init;
-var _fizwidget$wikipedia_game$Pathfinding_Util$isNotIgnored = function (title) {
+var _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting = function (title) {
 	var titleValue = _fizwidget$wikipedia_game$Common_Title_Model$value(title);
 	var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$String$length(titleValue),
@@ -17801,7 +17801,11 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$isNotIgnored = function (title) {
 																						_1: {
 																							ctor: '::',
 																							_0: 'Bibcode',
-																							_1: {ctor: '[]'}
+																							_1: {
+																								ctor: '::',
+																								_0: 'Wayback Machine',
+																								_1: {ctor: '[]'}
+																							}
 																						}
 																					}
 																				}
@@ -17911,7 +17915,7 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$addLinks = F4(
 					A2(
 						_elm_lang$core$List$filter,
 						A2(_fizwidget$wikipedia_game$Pathfinding_Util$isUnvisited, priorityQueue, pathSoFar),
-						A2(_elm_lang$core$List$filter, _fizwidget$wikipedia_game$Pathfinding_Util$isNotIgnored, links)))));
+						A2(_elm_lang$core$List$filter, _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting, links)))));
 	});
 var _fizwidget$wikipedia_game$Pathfinding_Update$pathNotFound = function (model) {
 	return {
@@ -19565,13 +19569,26 @@ var _fizwidget$wikipedia_game$View$view = function (model) {
 			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
 				{
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$margin(
-						_rtfeldman$elm_css$Css$px(20)),
+					_0: _rtfeldman$elm_css$Css$fontSize(
+						_rtfeldman$elm_css$Css$px(24)),
 					_1: {
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$fontSize(
-							_rtfeldman$elm_css$Css$px(20)),
-						_1: {ctor: '[]'}
+						_0: _rtfeldman$elm_css$Css$maxWidth(
+							_rtfeldman$elm_css$Css$px(800)),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$padding(
+								_rtfeldman$elm_css$Css$px(20)),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$marginLeft(_rtfeldman$elm_css$Css$auto),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$marginRight(_rtfeldman$elm_css$Css$auto),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
 					}
 				}),
 			_1: {ctor: '[]'}
