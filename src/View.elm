@@ -13,7 +13,15 @@ import Finished.View
 
 view : Model -> Html Msg
 view model =
-    div [ css [ margin (px 20), fontSize (px 20) ] ]
+    div
+        [ css
+            [ fontSize (px 24)
+            , maxWidth (px 800)
+            , padding (px 20)
+            , marginLeft auto
+            , marginRight auto
+            ]
+        ]
         [ externalStyles
         , enableResponsiveness
         , viewHeading
