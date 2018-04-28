@@ -7,6 +7,7 @@ body { font-family: calibri, helvetica, arial, sans-serif; }
   width: 64px;
   height: 64px;
 }
+
 .lds-ellipsis div {
   position: absolute;
   top: 27px;
@@ -16,22 +17,27 @@ body { font-family: calibri, helvetica, arial, sans-serif; }
   background: #cef;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
+
 .lds-ellipsis div:nth-child(1) {
   left: 6px;
   animation: lds-ellipsis1 0.6s infinite;
 }
+
 .lds-ellipsis div:nth-child(2) {
   left: 6px;
   animation: lds-ellipsis2 0.6s infinite;
 }
+
 .lds-ellipsis div:nth-child(3) {
   left: 26px;
   animation: lds-ellipsis2 0.6s infinite;
 }
+
 .lds-ellipsis div:nth-child(4) {
   left: 45px;
   animation: lds-ellipsis3 0.6s infinite;
 }
+
 @keyframes lds-ellipsis1 {
   0% {
     transform: scale(0);
@@ -40,6 +46,7 @@ body { font-family: calibri, helvetica, arial, sans-serif; }
     transform: scale(1);
   }
 }
+
 @keyframes lds-ellipsis3 {
   0% {
     transform: scale(1);
@@ -48,6 +55,7 @@ body { font-family: calibri, helvetica, arial, sans-serif; }
     transform: scale(0);
   }
 }
+
 @keyframes lds-ellipsis2 {
   0% {
     transform: translate(0, 0);
@@ -19048,32 +19056,53 @@ var _fizwidget$wikipedia_game$Setup_View$shouldDisableLoadButton = function (mod
 		return _elm_lang$core$String$isEmpty(
 			_elm_lang$core$String$trim(_p3));
 	};
-	return isBlank(model.sourceTitleInput) || (isBlank(model.destinationTitleInput) || _fizwidget$wikipedia_game$Setup_View$isLoading(model));
+	return _fizwidget$wikipedia_game$Setup_View$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
 };
 var _fizwidget$wikipedia_game$Setup_View$findPathButton = function (model) {
-	return _rtfeldman$elm_css$Html_Styled$fromUnstyled(
-		A2(
-			_rundis$elm_bootstrap$Bootstrap_Button$button,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-				_1: {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
 					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-						_fizwidget$wikipedia_game$Setup_View$shouldDisableLoadButton(model)),
-					_1: {
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(4)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+				A2(
+					_rundis$elm_bootstrap$Bootstrap_Button$button,
+					{
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wikipedia_game$Setup_Messages$FetchArticlesRequest),
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+									_fizwidget$wikipedia_game$Setup_View$shouldDisableLoadButton(model)),
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wikipedia_game$Setup_Messages$FetchArticlesRequest),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+							_rtfeldman$elm_css$Html_Styled$text('Find path')),
 						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
-					_rtfeldman$elm_css$Html_Styled$text('Find path')),
-				_1: {ctor: '[]'}
-			}));
+					})),
+			_1: {ctor: '[]'}
+		});
 };
 var _fizwidget$wikipedia_game$Setup_View$getInputStatus = function (article) {
 	var _p4 = article;
@@ -19103,14 +19132,18 @@ var _fizwidget$wikipedia_game$Setup_View$articleTitleInput = F4(
 			_fizwidget$wikipedia_game$Setup_View$getInputStatus(article),
 			{
 				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(toMsg),
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$large,
 				_1: {
 					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(title),
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(toMsg),
 					_1: {
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder(placeholderText),
-						_1: {ctor: '[]'}
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(title),
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder(placeholderText),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			});
@@ -19121,18 +19154,15 @@ var _fizwidget$wikipedia_game$Setup_View$articleTitleInput = F4(
 				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
 					{
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$paddingLeft(
+						_0: A2(
+							_rtfeldman$elm_css$Css$padding2,
+							_rtfeldman$elm_css$Css$px(0),
 							_rtfeldman$elm_css$Css$px(8)),
 						_1: {
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$paddingRight(
-								_rtfeldman$elm_css$Css$px(8)),
-							_1: {
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$height(
-									_rtfeldman$elm_css$Css$px(62)),
-								_1: {ctor: '[]'}
-							}
+							_0: _rtfeldman$elm_css$Css$height(
+								_rtfeldman$elm_css$Css$px(76)),
+							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {ctor: '[]'}
@@ -19429,7 +19459,7 @@ var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
 			}
 		});
 };
-var _fizwidget$wikipedia_game$View$modelView = function (model) {
+var _fizwidget$wikipedia_game$View$viewModel = function (model) {
 	var _p0 = model;
 	switch (_p0.ctor) {
 		case 'Setup':
@@ -19449,7 +19479,7 @@ var _fizwidget$wikipedia_game$View$modelView = function (model) {
 				_fizwidget$wikipedia_game$Finished_View$view(_p0._0));
 	}
 };
-var _fizwidget$wikipedia_game$View$headingView = A2(
+var _fizwidget$wikipedia_game$View$viewHeading = A2(
 	_rtfeldman$elm_css$Html_Styled$h1,
 	{
 		ctor: '::',
@@ -19464,16 +19494,20 @@ var _fizwidget$wikipedia_game$View$headingView = A2(
 						_rtfeldman$elm_css$Css$int(900)),
 					_1: {
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_0: _rtfeldman$elm_css$Css$fontFamily(_rtfeldman$elm_css$Css$serif),
 						_1: {
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$marginTop(
-								_rtfeldman$elm_css$Css$px(50)),
+							_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
 							_1: {
 								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$marginBottom(
-									_rtfeldman$elm_css$Css$px(30)),
-								_1: {ctor: '[]'}
+								_0: _rtfeldman$elm_css$Css$marginTop(
+									_rtfeldman$elm_css$Css$px(50)),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$marginBottom(
+										_rtfeldman$elm_css$Css$px(34)),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -19499,19 +19533,30 @@ var _fizwidget$wikipedia_game$View$enableResponsiveness = A3(
 		}
 	},
 	{ctor: '[]'});
-var _fizwidget$wikipedia_game$View$appStyles = A3(
-	_rtfeldman$elm_css$Html_Styled$node,
-	'link',
+var _fizwidget$wikipedia_game$View$externalStyles = A2(
+	_rtfeldman$elm_css$Html_Styled$div,
+	{ctor: '[]'},
 	{
 		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled_Attributes$rel('stylesheet'),
+		_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(_rundis$elm_bootstrap$Bootstrap_CDN$stylesheet),
 		_1: {
 			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href('./Common/Styles.css'),
+			_0: A3(
+				_rtfeldman$elm_css$Html_Styled$node,
+				'link',
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled_Attributes$rel('stylesheet'),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled_Attributes$href('./Common/SpinnerStyles.css'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
 			_1: {ctor: '[]'}
 		}
-	},
-	{ctor: '[]'});
+	});
 var _fizwidget$wikipedia_game$View$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
@@ -19522,27 +19567,28 @@ var _fizwidget$wikipedia_game$View$view = function (model) {
 					ctor: '::',
 					_0: _rtfeldman$elm_css$Css$margin(
 						_rtfeldman$elm_css$Css$px(20)),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$fontSize(
+							_rtfeldman$elm_css$Css$px(20)),
+						_1: {ctor: '[]'}
+					}
 				}),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(_rundis$elm_bootstrap$Bootstrap_CDN$stylesheet),
+			_0: _fizwidget$wikipedia_game$View$externalStyles,
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$View$appStyles,
+				_0: _fizwidget$wikipedia_game$View$enableResponsiveness,
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wikipedia_game$View$enableResponsiveness,
+					_0: _fizwidget$wikipedia_game$View$viewHeading,
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wikipedia_game$View$headingView,
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wikipedia_game$View$modelView(model),
-							_1: {ctor: '[]'}
-						}
+						_0: _fizwidget$wikipedia_game$View$viewModel(model),
+						_1: {ctor: '[]'}
 					}
 				}
 			}
