@@ -3,7 +3,7 @@ module View exposing (view)
 import Css exposing (..)
 import Html.Styled as Html exposing (Html, fromUnstyled, toUnstyled, node, h1, text, div)
 import Html.Styled.Attributes as Attributes exposing (css, rel, href)
-import Bootstrap.CDN as CDN
+import Bootstrap.CDN
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.View
@@ -13,18 +13,20 @@ import Finished.View
 
 view : Model -> Html Msg
 view model =
-    div [ css [ margin (px 20) ] ]
-        [ fromUnstyled <| CDN.stylesheet
-        , appStyles
+    div [ css [ margin (px 20), fontSize (px 20) ] ]
+        [ externalStyles
         , enableResponsiveness
-        , headingView
-        , modelView model
+        , viewHeading
+        , viewModel model
         ]
 
 
-appStyles : Html msg
-appStyles =
-    node "link" [ rel "stylesheet", href "./Common/Styles.css" ] []
+externalStyles : Html msg
+externalStyles =
+    div []
+        [ fromUnstyled <| Bootstrap.CDN.stylesheet
+        , node "link" [ rel "stylesheet", href "./Common/SpinnerStyles.css" ] []
+        ]
 
 
 enableResponsiveness : Html msg
@@ -36,28 +38,32 @@ enableResponsiveness =
         []
 
 
-headingView : Html msg
-headingView =
+viewHeading : Html msg
+viewHeading =
     h1
         [ css
             [ fontSize (pct 400)
             , fontWeight (int 900)
+            , fontFamily serif
             , textAlign center
             , marginTop (px 50)
-            , marginBottom (px 30)
+            , marginBottom (px 34)
             ]
         ]
         [ text "WikiLinks" ]
 
 
-modelView : Model -> Html Msg
-modelView model =
+viewModel : Model -> Html Msg
+viewModel model =
     case model of
         Model.Setup subModel ->
-            Setup.View.view subModel |> Html.map Messages.Setup
+            Setup.View.view subModel
+                |> Html.map Messages.Setup
 
         Model.Pathfinding subModel ->
-            Pathfinding.View.view subModel |> Html.map Messages.Pathfinding
+            Pathfinding.View.view subModel
+                |> Html.map Messages.Pathfinding
 
         Model.Finished subModel ->
-            Finished.View.view subModel |> Html.map Messages.Finished
+            Finished.View.view subModel
+                |> Html.map Messages.Finished
