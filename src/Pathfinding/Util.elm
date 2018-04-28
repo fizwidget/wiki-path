@@ -10,7 +10,7 @@ import Pathfinding.Model exposing (PathfindingModel, Path)
 addLinks : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
 addLinks priorityQueue destination pathSoFar links =
     links
-        |> List.filter isNotIgnored
+        |> List.filter isInteresting
         |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
         |> keepHighestPriorityPaths
@@ -64,8 +64,11 @@ isUnvisited priorityQueue pathSoFar title =
         |> not
 
 
-isNotIgnored : Title -> Bool
-isNotIgnored title =
+isInteresting : Title -> Bool
+isInteresting title =
+    -- We're filtering out these commonly-occuring links because it's kinda
+    -- boring if the majority of paths go via the same links. They wouldn't
+    -- normally be followed when playing the Wikipedia game anyway.
     let
         ignoredPrefixes =
             [ "Category:"
@@ -90,6 +93,7 @@ isNotIgnored title =
             , "PubMed"
             , "JSTOR"
             , "Bibcode"
+            , "Wayback Machine"
             ]
 
         titleValue =
