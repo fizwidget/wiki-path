@@ -46,12 +46,13 @@ articleTitleInput placeholderText toMsg title article =
     let
         inputOptions =
             getInputStatus article
-                ++ [ Input.onInput toMsg
+                ++ [ Input.large
+                   , Input.onInput toMsg
                    , Input.value title
                    , Input.placeholder placeholderText
                    ]
     in
-        div [ css [ paddingLeft (px 8), paddingRight (px 8), height (px 62) ] ]
+        div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
             [ fromUnstyled <|
                 Form.group []
                     [ Input.text inputOptions
@@ -79,13 +80,16 @@ getInputStatus article =
 
 findPathButton : SetupModel -> Html SetupMsg
 findPathButton model =
-    fromUnstyled <|
-        Button.button
-            [ Button.primary
-            , Button.disabled (shouldDisableLoadButton model)
-            , Button.onClick FetchArticlesRequest
-            ]
-            [ toUnstyled <| text "Find path" ]
+    div [ css [ padding (px 4) ] ]
+        [ fromUnstyled <|
+            Button.button
+                [ Button.primary
+                , Button.large
+                , Button.disabled (shouldDisableLoadButton model)
+                , Button.onClick FetchArticlesRequest
+                ]
+                [ toUnstyled <| text "Find path" ]
+        ]
 
 
 shouldDisableLoadButton : SetupModel -> Bool
@@ -94,9 +98,9 @@ shouldDisableLoadButton model =
         isBlank =
             String.trim >> String.isEmpty
     in
-        isBlank model.sourceTitleInput
+        isLoading model
+            || isBlank model.sourceTitleInput
             || isBlank model.destinationTitleInput
-            || isLoading model
 
 
 showSpinnerIfLoading : SetupModel -> Html msg

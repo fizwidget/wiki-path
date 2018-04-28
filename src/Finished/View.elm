@@ -49,7 +49,7 @@ stopsView source destination stops =
     stops
         |> List.map viewLink
         |> List.intersperse (text " → ")
-        |> div [ css [ fontSize (px 20) ] ]
+        |> div []
 
 
 backButton : Html FinishedMsg
