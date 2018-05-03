@@ -1,9 +1,8 @@
 module View exposing (view)
 
 import Css exposing (..)
-import Html.Styled as Html exposing (Html, fromUnstyled, toUnstyled, node, h1, text, div)
-import Html.Styled.Attributes as Attributes exposing (css, rel, href)
-import Bootstrap.CDN
+import Html.Styled as Html exposing (Html, div, h1, text)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.View
@@ -22,28 +21,9 @@ view model =
             , marginRight auto
             ]
         ]
-        [ externalStyles
-        , enableResponsiveness
-        , viewHeading
+        [ viewHeading
         , viewModel model
         ]
-
-
-externalStyles : Html msg
-externalStyles =
-    div []
-        [ fromUnstyled <| Bootstrap.CDN.stylesheet
-        , node "link" [ rel "stylesheet", href "./Common/SpinnerStyles.css" ] []
-        ]
-
-
-enableResponsiveness : Html msg
-enableResponsiveness =
-    node "meta"
-        [ Attributes.name "viewport"
-        , Attributes.content "width=device-width, initial-scale=1"
-        ]
-        []
 
 
 viewHeading : Html msg

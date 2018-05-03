@@ -1,70 +1,4 @@
-<!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
-body { font-family: calibri, helvetica, arial, sans-serif; }
-.lds-ellipsis {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
 
-.lds-ellipsis div {
-  position: absolute;
-  top: 27px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: #cef;
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
-}
-
-.lds-ellipsis div:nth-child(1) {
-  left: 6px;
-  animation: lds-ellipsis1 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(2) {
-  left: 6px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(3) {
-  left: 26px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(4) {
-  left: 45px;
-  animation: lds-ellipsis3 0.6s infinite;
-}
-
-@keyframes lds-ellipsis1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-
-@keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(19px, 0);
-  }
-}
-</style><script type="text/javascript">
 (function() {
 'use strict';
 
@@ -200,6 +134,7 @@ function A9(fun, a, b, c, d, e, f, g, h, i)
     ? fun.func(a, b, c, d, e, f, g, h, i)
     : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
+
 //import Native.List //
 
 var _elm_lang$core$Native_Array = function() {
@@ -1166,7 +1101,8 @@ return {
 	fromJSArray: fromJSArray
 };
 
-}();//import Native.Utils //
+}();
+//import Native.Utils //
 
 var _elm_lang$core$Native_Basics = function() {
 
@@ -1306,7 +1242,8 @@ return {
 	isInfinite: isInfinite
 };
 
-}();//import //
+}();
+//import //
 
 var _elm_lang$core$Native_Utils = function() {
 
@@ -1793,7 +1730,8 @@ return {
 	toString: toString
 };
 
-}();var _elm_lang$core$Basics$never = function (_p0) {
+}();
+var _elm_lang$core$Basics$never = function (_p0) {
 	never:
 	while (true) {
 		var _p1 = _p0;
@@ -1918,6 +1856,7 @@ var _elm_lang$core$Basics$LT = {ctor: 'LT'};
 var _elm_lang$core$Basics$JustOneMore = function (a) {
 	return {ctor: 'JustOneMore', _0: a};
 };
+
 var _elm_lang$core$Maybe$withDefault = F2(
 	function ($default, maybe) {
 		var _p0 = maybe;
@@ -1990,6 +1929,7 @@ var _elm_lang$core$Maybe$map5 = F6(
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_List = function() {
@@ -2126,7 +2066,8 @@ return {
 	sortWith: F2(sortWith)
 };
 
-}();var _elm_lang$core$List$sortWith = _elm_lang$core$Native_List.sortWith;
+}();
+var _elm_lang$core$List$sortWith = _elm_lang$core$Native_List.sortWith;
 var _elm_lang$core$List$sortBy = _elm_lang$core$Native_List.sortBy;
 var _elm_lang$core$List$sort = function (xs) {
 	return A2(_elm_lang$core$List$sortBy, _elm_lang$core$Basics$identity, xs);
@@ -2678,6 +2619,7 @@ var _elm_lang$core$List$indexedMap = F2(
 				_elm_lang$core$List$length(xs) - 1),
 			xs);
 	});
+
 var _elm_lang$core$Array$append = _elm_lang$core$Native_Array.append;
 var _elm_lang$core$Array$length = _elm_lang$core$Native_Array.length;
 var _elm_lang$core$Array$isEmpty = function (array) {
@@ -2732,6 +2674,7 @@ var _elm_lang$core$Array$repeat = F2(
 			_elm_lang$core$Basics$always(e));
 	});
 var _elm_lang$core$Array$Array = {ctor: 'Array'};
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Debug = function() {
@@ -2761,7 +2704,8 @@ return {
 	log: F2(log)
 };
 
-}();//import Maybe, Native.List, Native.Utils, Result //
+}();
+//import Maybe, Native.List, Native.Utils, Result //
 
 var _elm_lang$core$Native_String = function() {
 
@@ -3100,6 +3044,7 @@ return {
 };
 
 }();
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Char = function() {
@@ -3113,7 +3058,8 @@ return {
 	toLocaleLower: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLocaleLowerCase()); }
 };
 
-}();var _elm_lang$core$Char$fromCode = _elm_lang$core$Native_Char.fromCode;
+}();
+var _elm_lang$core$Char$fromCode = _elm_lang$core$Native_Char.fromCode;
 var _elm_lang$core$Char$toCode = _elm_lang$core$Native_Char.toCode;
 var _elm_lang$core$Char$toLocaleLower = _elm_lang$core$Native_Char.toLocaleLower;
 var _elm_lang$core$Char$toLocaleUpper = _elm_lang$core$Native_Char.toLocaleUpper;
@@ -3155,6 +3101,7 @@ var _elm_lang$core$Char$isHexDigit = function ($char) {
 		_elm_lang$core$Native_Utils.chr('F'),
 		$char));
 };
+
 var _elm_lang$core$Result$toMaybe = function (result) {
 	var _p0 = result;
 	if (_p0.ctor === 'Ok') {
@@ -3296,6 +3243,7 @@ var _elm_lang$core$Result$fromMaybe = F2(
 			return _elm_lang$core$Result$Err(err);
 		}
 	});
+
 var _elm_lang$core$String$fromList = _elm_lang$core$Native_String.fromList;
 var _elm_lang$core$String$toList = _elm_lang$core$Native_String.toList;
 var _elm_lang$core$String$toFloat = _elm_lang$core$Native_String.toFloat;
@@ -3339,6 +3287,7 @@ var _elm_lang$core$String$fromChar = function ($char) {
 	return A2(_elm_lang$core$String$cons, $char, '');
 };
 var _elm_lang$core$String$isEmpty = _elm_lang$core$Native_String.isEmpty;
+
 var _elm_lang$core$Dict$foldr = F3(
 	function (f, acc, t) {
 		foldr:
@@ -4255,6 +4204,7 @@ var _elm_lang$core$Dict$diff = F2(
 			t1,
 			t2);
 	});
+
 //import Maybe, Native.Array, Native.List, Native.Utils, Result //
 
 var _elm_lang$core$Native_Json = function() {
@@ -4830,6 +4780,7 @@ return {
 };
 
 }();
+
 var _elm_lang$core$Json_Encode$list = _elm_lang$core$Native_Json.encodeList;
 var _elm_lang$core$Json_Encode$array = _elm_lang$core$Native_Json.encodeArray;
 var _elm_lang$core$Json_Encode$object = _elm_lang$core$Native_Json.encodeObject;
@@ -4840,6 +4791,7 @@ var _elm_lang$core$Json_Encode$int = _elm_lang$core$Native_Json.identity;
 var _elm_lang$core$Json_Encode$string = _elm_lang$core$Native_Json.identity;
 var _elm_lang$core$Json_Encode$encode = _elm_lang$core$Native_Json.encode;
 var _elm_lang$core$Json_Encode$Value = {ctor: 'Value'};
+
 var _elm_lang$core$Json_Decode$null = _elm_lang$core$Native_Json.decodeNull;
 var _elm_lang$core$Json_Decode$value = _elm_lang$core$Native_Json.decodePrimitive('value');
 var _elm_lang$core$Json_Decode$andThen = _elm_lang$core$Native_Json.andThen;
@@ -4902,8 +4854,10 @@ var _elm_lang$core$Json_Decode$int = _elm_lang$core$Native_Json.decodePrimitive(
 var _elm_lang$core$Json_Decode$bool = _elm_lang$core$Native_Json.decodePrimitive('bool');
 var _elm_lang$core$Json_Decode$string = _elm_lang$core$Native_Json.decodePrimitive('string');
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
+
 var _elm_lang$core$Debug$crash = _elm_lang$core$Native_Debug.crash;
 var _elm_lang$core$Debug$log = _elm_lang$core$Native_Debug.log;
+
 var _elm_lang$core$Tuple$mapSecond = F2(
 	function (func, _p0) {
 		var _p1 = _p0;
@@ -4930,6 +4884,7 @@ var _elm_lang$core$Tuple$first = function (_p6) {
 	var _p7 = _p6;
 	return _p7._0;
 };
+
 //import //
 
 var _elm_lang$core$Native_Platform = function() {
@@ -5489,6 +5444,7 @@ return {
 };
 
 }();
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Scheduler = function() {
@@ -5769,7 +5725,8 @@ return {
 	rawSend: rawSend
 };
 
-}();var _elm_lang$core$Platform_Cmd$batch = _elm_lang$core$Native_Platform.batch;
+}();
+var _elm_lang$core$Platform_Cmd$batch = _elm_lang$core$Native_Platform.batch;
 var _elm_lang$core$Platform_Cmd$none = _elm_lang$core$Platform_Cmd$batch(
 	{ctor: '[]'});
 var _elm_lang$core$Platform_Cmd_ops = _elm_lang$core$Platform_Cmd_ops || {};
@@ -5783,11 +5740,13 @@ _elm_lang$core$Platform_Cmd_ops['!'] = F2(
 	});
 var _elm_lang$core$Platform_Cmd$map = _elm_lang$core$Native_Platform.map;
 var _elm_lang$core$Platform_Cmd$Cmd = {ctor: 'Cmd'};
+
 var _elm_lang$core$Platform_Sub$batch = _elm_lang$core$Native_Platform.batch;
 var _elm_lang$core$Platform_Sub$none = _elm_lang$core$Platform_Sub$batch(
 	{ctor: '[]'});
 var _elm_lang$core$Platform_Sub$map = _elm_lang$core$Native_Platform.map;
 var _elm_lang$core$Platform_Sub$Sub = {ctor: 'Sub'};
+
 var _elm_lang$core$Platform$hack = _elm_lang$core$Native_Scheduler.succeed;
 var _elm_lang$core$Platform$sendToSelf = _elm_lang$core$Native_Platform.sendToSelf;
 var _elm_lang$core$Platform$sendToApp = _elm_lang$core$Native_Platform.sendToApp;
@@ -5797,6 +5756,7 @@ var _elm_lang$core$Platform$Program = {ctor: 'Program'};
 var _elm_lang$core$Platform$Task = {ctor: 'Task'};
 var _elm_lang$core$Platform$ProcessId = {ctor: 'ProcessId'};
 var _elm_lang$core$Platform$Router = {ctor: 'Router'};
+
 var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode = _elm_lang$core$Json_Decode$succeed;
 var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$resolve = _elm_lang$core$Json_Decode$andThen(_elm_lang$core$Basics$identity);
 var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom = _elm_lang$core$Json_Decode$map2(
@@ -5876,6 +5836,7 @@ var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required = F3(
 			A2(_elm_lang$core$Json_Decode$field, key, valDecoder),
 			decoder);
 	});
+
 var _elm_lang$core$Native_Bitwise = function() {
 
 return {
@@ -5889,6 +5850,7 @@ return {
 };
 
 }();
+
 var _elm_lang$core$Bitwise$shiftRightZfBy = _elm_lang$core$Native_Bitwise.shiftRightZfBy;
 var _elm_lang$core$Bitwise$shiftRightBy = _elm_lang$core$Native_Bitwise.shiftRightBy;
 var _elm_lang$core$Bitwise$shiftLeftBy = _elm_lang$core$Native_Bitwise.shiftLeftBy;
@@ -5896,6 +5858,7 @@ var _elm_lang$core$Bitwise$complement = _elm_lang$core$Native_Bitwise.complement
 var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
 var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
 var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
+
 var _Skinney$murmur3$UTF8$accumulate = F3(
 	function (add, $char, _p0) {
 		var _p1 = _p0;
@@ -5963,6 +5926,7 @@ var _Skinney$murmur3$UTF8$foldl = F3(
 				{ctor: '_Tuple2', _0: acc, _1: _elm_lang$core$Maybe$Nothing},
 				input));
 	});
+
 var _Skinney$murmur3$Murmur3$mur = F2(
 	function (c, h) {
 		return 4294967295 & (((h & 65535) * c) + ((65535 & ((h >>> 16) * c)) << 16));
@@ -6008,6 +5972,7 @@ var _Skinney$murmur3$Murmur3$hashString = F2(
 				A4(_Skinney$murmur3$Murmur3$HashData, 0, seed, 0, 0),
 				str));
 	});
+
 var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
 var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
 var _elm_lang$core$Task$spawnCmd = F2(
@@ -6204,6 +6169,7 @@ var _elm_lang$core$Task$cmdMap = F2(
 			A2(_elm_lang$core$Task$map, tagger, _p11._0));
 	});
 _elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
+
 //import Native.Scheduler //
 
 var _elm_lang$core$Native_Time = function() {
@@ -6230,7 +6196,8 @@ return {
 	setInterval_: F2(setInterval_)
 };
 
-}();var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+}();
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
 var _elm_lang$core$Time$spawnHelp = F3(
 	function (router, intervals, processes) {
 		var _p0 = intervals;
@@ -6417,6 +6384,7 @@ var _elm_lang$core$Time$subMap = F2(
 			});
 	});
 _elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
+
 var _elm_lang$core$Color$fmod = F2(
 	function (f, n) {
 		var integer = _elm_lang$core$Basics$floor(f);
@@ -6582,6 +6550,7 @@ var _elm_lang$core$Color$Linear = F3(
 		return {ctor: 'Linear', _0: a, _1: b, _2: c};
 	});
 var _elm_lang$core$Color$linear = _elm_lang$core$Color$Linear;
+
 //import Maybe, Native.List //
 
 var _elm_lang$core$Native_Regex = function() {
@@ -6701,6 +6670,7 @@ return {
 };
 
 }();
+
 var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
 var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
 var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
@@ -6717,6 +6687,7 @@ var _elm_lang$core$Regex$AtMost = function (a) {
 	return {ctor: 'AtMost', _0: a};
 };
 var _elm_lang$core$Regex$All = {ctor: 'All'};
+
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrap;
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags;
 
@@ -8598,6 +8569,7 @@ return {
 };
 
 }();
+
 var _elm_lang$virtual_dom$VirtualDom$programWithFlags = function (impl) {
 	return A2(_elm_lang$virtual_dom$Native_VirtualDom.programWithFlags, _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags, impl);
 };
@@ -8628,6 +8600,7 @@ var _elm_lang$virtual_dom$VirtualDom$Options = F2(
 	});
 var _elm_lang$virtual_dom$VirtualDom$Node = {ctor: 'Node'};
 var _elm_lang$virtual_dom$VirtualDom$Property = {ctor: 'Property'};
+
 var _elm_lang$html$Html$programWithFlags = _elm_lang$virtual_dom$VirtualDom$programWithFlags;
 var _elm_lang$html$Html$program = _elm_lang$virtual_dom$VirtualDom$program;
 var _elm_lang$html$Html$beginnerProgram = function (_p0) {
@@ -8752,6 +8725,7 @@ var _elm_lang$html$Html$details = _elm_lang$html$Html$node('details');
 var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
+
 var _elm_lang$html$Html_Attributes$map = _elm_lang$virtual_dom$VirtualDom$mapProperty;
 var _elm_lang$html$Html_Attributes$attribute = _elm_lang$virtual_dom$VirtualDom$attribute;
 var _elm_lang$html$Html_Attributes$contextmenu = function (value) {
@@ -9101,6 +9075,7 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 				A2(_elm_lang$core$List$filter, _elm_lang$core$Tuple$second, list))));
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
+
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
 var _elm_lang$html$Html_Events$targetChecked = A2(
 	_elm_lang$core$Json_Decode$at,
@@ -9215,6 +9190,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 	function (a, b) {
 		return {stopPropagation: a, preventDefault: b};
 	});
+
 var _elm_lang$http$Native_Http = function() {
 
 
@@ -9453,6 +9429,7 @@ return {
 };
 
 }();
+
 var _elm_lang$http$Http_Internal$map = F2(
 	function (func, request) {
 		return _elm_lang$core$Native_Utils.update(
@@ -9479,6 +9456,7 @@ var _elm_lang$http$Http_Internal$Header = F2(
 	function (a, b) {
 		return {ctor: 'Header', _0: a, _1: b};
 	});
+
 var _elm_lang$http$Http$decodeUri = _elm_lang$http$Native_Http.decodeUri;
 var _elm_lang$http$Http$encodeUri = _elm_lang$http$Native_Http.encodeUri;
 var _elm_lang$http$Http$expectStringResponse = _elm_lang$http$Native_Http.expectStringResponse;
@@ -9573,6 +9551,7 @@ var _elm_lang$http$Http$StringPart = F2(
 		return {ctor: 'StringPart', _0: a, _1: b};
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+
 var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
 	var _p0 = data;
 	if (_p0.ctor === 'NotAsked') {
@@ -9834,6 +9813,7 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 				};
 		}
 	});
+
 var _fizwidget$wikipedia_game$Common_Title_Model$value = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0;
@@ -9842,6 +9822,7 @@ var _fizwidget$wikipedia_game$Common_Title_Model$Title = function (a) {
 	return {ctor: 'Title', _0: a};
 };
 var _fizwidget$wikipedia_game$Common_Title_Model$from = _fizwidget$wikipedia_game$Common_Title_Model$Title;
+
 var _fizwidget$wikipedia_game$Common_Article_Model$Article = F3(
 	function (a, b, c) {
 		return {title: a, links: b, content: c};
@@ -9854,7 +9835,9 @@ var _fizwidget$wikipedia_game$Common_Article_Model$UnknownError = function (a) {
 };
 var _fizwidget$wikipedia_game$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitle'};
 var _fizwidget$wikipedia_game$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
+
 var _fizwidget$wikipedia_game$Common_Title_Decoder$decodeTitle = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wikipedia_game$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
+
 var _fizwidget$wikipedia_game$Common_Article_Decoder$toError = function (errorCode) {
 	var _p0 = errorCode;
 	switch (_p0) {
@@ -9949,6 +9932,7 @@ var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeArticle = _elm_lang$c
 			_1: {ctor: '[]'}
 		}
 	});
+
 var _fizwidget$wikipedia_game$Common_Url_Model$queryParamToString = function (queryParam) {
 	var _p0 = queryParam;
 	if (_p0.ctor === 'KeyValue') {
@@ -9975,6 +9959,7 @@ var _fizwidget$wikipedia_game$Common_Url_Model$Key = function (a) {
 var _fizwidget$wikipedia_game$Common_Url_Model$KeyValue = function (a) {
 	return {ctor: 'KeyValue', _0: a};
 };
+
 var _fizwidget$wikipedia_game$Common_Article_Api$buildArticleUrl = function (title) {
 	var queryParams = {
 		ctor: '::',
@@ -10015,6 +10000,7 @@ var _fizwidget$wikipedia_game$Common_Article_Api$buildRequest = function (title)
 		_fizwidget$wikipedia_game$Common_Article_Api$buildArticleUrl(title),
 		_fizwidget$wikipedia_game$Common_Article_Decoder$decodeArticle);
 };
+
 var _fizwidget$wikipedia_game$Common_Article_Service$toRemoteArticle = function (webData) {
 	return A2(
 		_krisajenkins$remotedata$RemoteData$andThen,
@@ -10048,6 +10034,7 @@ var _fizwidget$wikipedia_game$Common_Article_Service$request = F2(
 			},
 			_fizwidget$wikipedia_game$Common_Article_Api$buildRequest(title));
 	});
+
 var _rhofour$elm_pairing_heap$PairingHeap$findMin = function (x) {
 	var _p0 = x;
 	if (_p0.ctor === 'Empty') {
@@ -10135,6 +10122,7 @@ var _rhofour$elm_pairing_heap$PairingHeap$toSortedList = function (heap) {
 		};
 	}
 };
+
 var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$toSortedList = function (_p0) {
 	var _p1 = _p0;
 	return A2(
@@ -10193,6 +10181,7 @@ var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$removeHighestPriority =
 			_rhofour$elm_pairing_heap$PairingHeap$deleteMin(_p10))
 	};
 };
+
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
 	return A4(
 		_elm_lang$core$Regex$replace,
@@ -10218,6 +10207,7 @@ var _rtfeldman$elm_css_util$Css_Helpers$identifierToString = F2(
 			_rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier(name),
 			_rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier(identifier));
 	});
+
 var _rtfeldman$elm_css$Css_Structure$dropEmptyDeclarations = function (declarations) {
 	dropEmptyDeclarations:
 	while (true) {
@@ -10962,6 +10952,7 @@ var _rtfeldman$elm_css$Css_Structure$Descendant = {ctor: 'Descendant'};
 var _rtfeldman$elm_css$Css_Structure$Child = {ctor: 'Child'};
 var _rtfeldman$elm_css$Css_Structure$GeneralSibling = {ctor: 'GeneralSibling'};
 var _rtfeldman$elm_css$Css_Structure$AdjacentSibling = {ctor: 'AdjacentSibling'};
+
 var _rtfeldman$elm_css$Css_Preprocess$propertyToPair = function (property) {
 	var value = property.important ? A2(_elm_lang$core$Basics_ops['++'], property.value, ' !important') : property.value;
 	return {ctor: '_Tuple2', _0: property.key, _1: value};
@@ -11166,6 +11157,7 @@ var _rtfeldman$elm_css$Css_Preprocess$StyleBlock = F3(
 	function (a, b, c) {
 		return {ctor: 'StyleBlock', _0: a, _1: b, _2: c};
 	});
+
 var _rtfeldman$hex$Hex$toString = function (num) {
 	return _elm_lang$core$String$fromList(
 		(_elm_lang$core$Native_Utils.cmp(num, 0) < 0) ? {
@@ -11360,6 +11352,7 @@ var _rtfeldman$hex$Hex$fromString = function (str) {
 		return A2(_elm_lang$core$Result$mapError, formatError, result);
 	}
 };
+
 var _rtfeldman$elm_css$Css$manipulation = {value: 'manipulation', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$pinchZoom = {value: 'pinch-zoom', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$panDown = {value: 'pan-down', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
@@ -13990,6 +13983,7 @@ var _rtfeldman$elm_css$Css$IntentionallyUnsupportedPleaseSeeDocs = {ctor: 'Inten
 var _rtfeldman$elm_css$Css$thin = _rtfeldman$elm_css$Css$IntentionallyUnsupportedPleaseSeeDocs;
 var _rtfeldman$elm_css$Css$thick = _rtfeldman$elm_css$Css$IntentionallyUnsupportedPleaseSeeDocs;
 var _rtfeldman$elm_css$Css$blink = _rtfeldman$elm_css$Css$IntentionallyUnsupportedPleaseSeeDocs;
+
 var _rtfeldman$elm_css$Css_Structure_Output$noIndent = '';
 var _rtfeldman$elm_css$Css_Structure_Output$spaceIndent = '    ';
 var _rtfeldman$elm_css$Css_Structure_Output$indent = function (str) {
@@ -14353,6 +14347,7 @@ var _rtfeldman$elm_css$Css_Structure_Output$prettyPrint = function (_p25) {
 				}
 			}));
 };
+
 var _rtfeldman$elm_css$Css_Preprocess_Resolve$oneOf = function (maybes) {
 	oneOf:
 	while (true) {
@@ -15039,6 +15034,7 @@ var _rtfeldman$elm_css$Css_Preprocess_Resolve$DeclarationsAndWarnings = F2(
 	function (a, b) {
 		return {declarations: a, warnings: b};
 	});
+
 var _rtfeldman$elm_css$VirtualDom_Styled$containsKey = F2(
 	function (key, pairs) {
 		containsKey:
@@ -15542,6 +15538,7 @@ var _rtfeldman$elm_css$VirtualDom_Styled$map = F2(
 					A2(_elm_lang$virtual_dom$VirtualDom$map, transform, _p41._0));
 		}
 	});
+
 var _rtfeldman$elm_css$Html_Styled_Internal$css = function (styles) {
 	var classname = _rtfeldman$elm_css$VirtualDom_Styled$getClassname(styles);
 	var classProperty = A2(
@@ -15550,6 +15547,7 @@ var _rtfeldman$elm_css$Html_Styled_Internal$css = function (styles) {
 		_elm_lang$core$Json_Encode$string(classname));
 	return A3(_rtfeldman$elm_css$VirtualDom_Styled$Property, classProperty, styles, classname);
 };
+
 var _rtfeldman$elm_css$Html_Styled$fromUnstyled = _rtfeldman$elm_css$VirtualDom_Styled$unstyledNode;
 var _rtfeldman$elm_css$Html_Styled$toUnstyled = _rtfeldman$elm_css$VirtualDom_Styled$toUnstyled;
 var _rtfeldman$elm_css$Html_Styled$program = function (config) {
@@ -15707,6 +15705,7 @@ var _rtfeldman$elm_css$Html_Styled$details = _rtfeldman$elm_css$Html_Styled$node
 var _rtfeldman$elm_css$Html_Styled$summary = _rtfeldman$elm_css$Html_Styled$node('summary');
 var _rtfeldman$elm_css$Html_Styled$menuitem = _rtfeldman$elm_css$Html_Styled$node('menuitem');
 var _rtfeldman$elm_css$Html_Styled$menu = _rtfeldman$elm_css$Html_Styled$node('menu');
+
 var _rtfeldman$elm_css$Html_Styled_Attributes$css = _rtfeldman$elm_css$Html_Styled_Internal$css;
 var _rtfeldman$elm_css$Html_Styled_Attributes$map = _rtfeldman$elm_css$VirtualDom_Styled$mapProperty;
 var _rtfeldman$elm_css$Html_Styled_Attributes$attribute = _rtfeldman$elm_css$VirtualDom_Styled$attribute;
@@ -16061,6 +16060,7 @@ var _rtfeldman$elm_css$Html_Styled_Attributes$style = function (_p0) {
 	return _rtfeldman$elm_css$Html_Styled_Attributes$fromUnstyled(
 		_elm_lang$virtual_dom$VirtualDom$style(_p0));
 };
+
 var _fizwidget$wikipedia_game$Common_View$viewSpinner = function (isVisible) {
 	var visibilityValue = isVisible ? _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$visible) : _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$hidden);
 	return A2(
@@ -16128,10 +16128,12 @@ var _fizwidget$wikipedia_game$Common_View$viewArticleError = function (error) {
 	}();
 	return _rtfeldman$elm_css$Html_Styled$text(errorMessage);
 };
+
 var _fizwidget$wikipedia_game$Setup_Model$SetupModel = F4(
 	function (a, b, c, d) {
 		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d};
 	});
+
 var _fizwidget$wikipedia_game$Pathfinding_Model$PathfindingModel = F5(
 	function (a, b, c, d, e) {
 		return {source: a, destination: b, priorityQueue: c, errors: d, fatalError: e};
@@ -16141,10 +16143,12 @@ var _fizwidget$wikipedia_game$Pathfinding_Model$Path = F3(
 		return {priority: a, next: b, visited: c};
 	});
 var _fizwidget$wikipedia_game$Pathfinding_Model$PathNotFound = {ctor: 'PathNotFound'};
+
 var _fizwidget$wikipedia_game$Finished_Model$FinishedModel = F3(
 	function (a, b, c) {
 		return {source: a, destination: b, stops: c};
 	});
+
 var _fizwidget$wikipedia_game$Model$Finished = function (a) {
 	return {ctor: 'Finished', _0: a};
 };
@@ -16154,6 +16158,7 @@ var _fizwidget$wikipedia_game$Model$Pathfinding = function (a) {
 var _fizwidget$wikipedia_game$Model$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
+
 var _fizwidget$wikipedia_game$Setup_Messages$FetchDestinationArticleResult = function (a) {
 	return {ctor: 'FetchDestinationArticleResult', _0: a};
 };
@@ -16167,12 +16172,15 @@ var _fizwidget$wikipedia_game$Setup_Messages$DestinationArticleTitleChange = fun
 var _fizwidget$wikipedia_game$Setup_Messages$SourceArticleTitleChange = function (a) {
 	return {ctor: 'SourceArticleTitleChange', _0: a};
 };
+
 var _fizwidget$wikipedia_game$Pathfinding_Messages$BackToSetup = {ctor: 'BackToSetup'};
 var _fizwidget$wikipedia_game$Pathfinding_Messages$FetchArticleResponse = F2(
 	function (a, b) {
 		return {ctor: 'FetchArticleResponse', _0: a, _1: b};
 	});
+
 var _fizwidget$wikipedia_game$Finished_Messages$BackToSetup = {ctor: 'BackToSetup'};
+
 var _fizwidget$wikipedia_game$Messages$Finished = function (a) {
 	return {ctor: 'Finished', _0: a};
 };
@@ -16182,6 +16190,7 @@ var _fizwidget$wikipedia_game$Messages$Pathfinding = function (a) {
 var _fizwidget$wikipedia_game$Messages$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
+
 var _fizwidget$wikipedia_game$Finished_Init$init = F3(
 	function (source, destination, stops) {
 		return {
@@ -16191,17 +16200,20 @@ var _fizwidget$wikipedia_game$Finished_Init$init = F3(
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
+
 var _fizwidget$wikipedia_game$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked};
 var _fizwidget$wikipedia_game$Setup_Init$init = {
 	ctor: '_Tuple2',
 	_0: _fizwidget$wikipedia_game$Model$Setup(_fizwidget$wikipedia_game$Setup_Init$initialModel),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+
 var _fizwidget$wikipedia_game$Finished_Update$update = F2(
 	function (_p0, model) {
 		var _p1 = _p0;
 		return _fizwidget$wikipedia_game$Setup_Init$init;
 	});
+
 var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption = function (align) {
 	var _p0 = align;
 	switch (_p0.ctor) {
@@ -17268,6 +17280,7 @@ var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around = {ctor: 'Around'};
 var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right = {ctor: 'Right'};
 var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center = {ctor: 'Center'};
 var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left = {ctor: 'Left'};
+
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
 	var _p0 = role;
 	switch (_p0.ctor) {
@@ -17435,6 +17448,7 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Info = {ctor: 'Info'};
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Success = {ctor: 'Success'};
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary = {ctor: 'Secondary'};
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary = {ctor: 'Primary'};
+
 var _rundis$elm_bootstrap$Bootstrap_Button$disabled = function (disabled) {
 	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Disabled(disabled);
 };
@@ -17586,6 +17600,7 @@ var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
 			_rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options),
 			children);
 	});
+
 var _fizwidget$wikipedia_game$Finished_View$backButton = A2(
 	_rtfeldman$elm_css$Html_Styled$div,
 	{
@@ -17729,7 +17744,9 @@ var _fizwidget$wikipedia_game$Finished_View$view = function (model) {
 			}
 		});
 };
+
 var _fizwidget$wikipedia_game$Init$init = _fizwidget$wikipedia_game$Setup_Init$init;
+
 var _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting = function (title) {
 	var titleValue = _fizwidget$wikipedia_game$Common_Title_Model$value(title);
 	var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
@@ -17917,6 +17934,7 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$addLinks = F4(
 						A2(_fizwidget$wikipedia_game$Pathfinding_Util$isUnvisited, priorityQueue, pathSoFar),
 						A2(_elm_lang$core$List$filter, _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting, links)))));
 	});
+
 var _fizwidget$wikipedia_game$Pathfinding_Update$pathNotFound = function (model) {
 	return {
 		ctor: '_Tuple2',
@@ -18005,6 +18023,7 @@ var _fizwidget$wikipedia_game$Pathfinding_Update$update = F2(
 			return _fizwidget$wikipedia_game$Setup_Init$init;
 		}
 	});
+
 var _fizwidget$wikipedia_game$Pathfinding_Init$initialModel = F2(
 	function (source, destination) {
 		return {
@@ -18027,6 +18046,7 @@ var _fizwidget$wikipedia_game$Pathfinding_Init$init = F2(
 			},
 			source);
 	});
+
 var _fizwidget$wikipedia_game$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p0) {
 	var _p1 = _p0;
 	var _p2 = _p1._0;
@@ -18126,6 +18146,7 @@ var _fizwidget$wikipedia_game$Setup_Update$update = F2(
 				return A2(_fizwidget$wikipedia_game$Setup_Update$setDestinationArticle, model, _p5._0);
 		}
 	});
+
 var _fizwidget$wikipedia_game$Update$update = F2(
 	function (message, model) {
 		var _p0 = {ctor: '_Tuple2', _0: message, _1: model};
@@ -18154,35 +18175,11 @@ var _fizwidget$wikipedia_game$Update$update = F2(
 		} while(false);
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
+
 var _fizwidget$wikipedia_game$Subscriptions$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _rundis$elm_bootstrap$Bootstrap_CDN$fontAwesome = A3(
-	_elm_lang$html$Html$node,
-	'link',
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$rel('stylesheet'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$href('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'),
-			_1: {ctor: '[]'}
-		}
-	},
-	{ctor: '[]'});
-var _rundis$elm_bootstrap$Bootstrap_CDN$stylesheet = A3(
-	_elm_lang$html$Html$node,
-	'link',
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$rel('stylesheet'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$href('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'),
-			_1: {ctor: '[]'}
-		}
-	},
-	{ctor: '[]'});
+
 var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
 var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
 var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
@@ -18226,6 +18223,7 @@ var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXs = A2(_rundis$elm_bootstrap$Bo
 var _rundis$elm_bootstrap$Bootstrap_Grid_Row$attrs = function (attrs) {
 	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs(attrs);
 };
+
 var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
 var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
 var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
@@ -18503,6 +18501,7 @@ var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXs = A2(_rundis$elm_bootstrap$Bo
 var _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs = function (attrs) {
 	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs(attrs);
 };
+
 var _rundis$elm_bootstrap$Bootstrap_Form$renderCol = function (_p0) {
 	var _p1 = _p0;
 	return A2(
@@ -18676,6 +18675,7 @@ var _rundis$elm_bootstrap$Bootstrap_Form$colLabelLg = function (options) {
 var _rundis$elm_bootstrap$Bootstrap_Form$Attrs = function (a) {
 	return {ctor: 'Attrs', _0: a};
 };
+
 var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString = function (validation) {
 	var _p0 = validation;
 	if (_p0.ctor === 'Success') {
@@ -18693,6 +18693,7 @@ var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute
 };
 var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger = {ctor: 'Danger'};
 var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success = {ctor: 'Success'};
+
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$validationAttribute = function (validation) {
 	return _elm_lang$html$Html_Attributes$class(
 		_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString(validation));
@@ -19012,6 +19013,7 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Input$url = _rundis$elm_bootstrap$Boots
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$search = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Search);
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$tel = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Tel);
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$color = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Color);
+
 var _fizwidget$wikipedia_game$Setup_View$getErrorMessage = function (remoteArticle) {
 	var _p0 = remoteArticle;
 	if (_p0.ctor === 'Failure') {
@@ -19273,6 +19275,7 @@ var _fizwidget$wikipedia_game$Setup_View$view = function (model) {
 			}
 		});
 };
+
 var _fizwidget$wikipedia_game$Pathfinding_View$stopView = function (title) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$li,
@@ -19463,6 +19466,7 @@ var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
 			}
 		});
 };
+
 var _fizwidget$wikipedia_game$View$viewModel = function (model) {
 	var _p0 = model;
 	switch (_p0.ctor) {
@@ -19524,43 +19528,6 @@ var _fizwidget$wikipedia_game$View$viewHeading = A2(
 		_0: _rtfeldman$elm_css$Html_Styled$text('WikiLinks'),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wikipedia_game$View$enableResponsiveness = A3(
-	_rtfeldman$elm_css$Html_Styled$node,
-	'meta',
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled_Attributes$name('viewport'),
-		_1: {
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$content('width=device-width, initial-scale=1'),
-			_1: {ctor: '[]'}
-		}
-	},
-	{ctor: '[]'});
-var _fizwidget$wikipedia_game$View$externalStyles = A2(
-	_rtfeldman$elm_css$Html_Styled$div,
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(_rundis$elm_bootstrap$Bootstrap_CDN$stylesheet),
-		_1: {
-			ctor: '::',
-			_0: A3(
-				_rtfeldman$elm_css$Html_Styled$node,
-				'link',
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Html_Styled_Attributes$rel('stylesheet'),
-					_1: {
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Html_Styled_Attributes$href('./Common/SpinnerStyles.css'),
-						_1: {ctor: '[]'}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		}
-	});
 var _fizwidget$wikipedia_game$View$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
@@ -19595,22 +19562,15 @@ var _fizwidget$wikipedia_game$View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$View$externalStyles,
+			_0: _fizwidget$wikipedia_game$View$viewHeading,
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$View$enableResponsiveness,
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wikipedia_game$View$viewHeading,
-					_1: {
-						ctor: '::',
-						_0: _fizwidget$wikipedia_game$View$viewModel(model),
-						_1: {ctor: '[]'}
-					}
-				}
+				_0: _fizwidget$wikipedia_game$View$viewModel(model),
+				_1: {ctor: '[]'}
 			}
 		});
 };
+
 var _fizwidget$wikipedia_game$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _fizwidget$wikipedia_game$Init$init,
@@ -19621,6 +19581,7 @@ var _fizwidget$wikipedia_game$Main$main = _elm_lang$html$Html$program(
 		update: _fizwidget$wikipedia_game$Update$update,
 		subscriptions: _fizwidget$wikipedia_game$Subscriptions$subscriptions
 	})();
+
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _fizwidget$wikipedia_game$Main$main !== 'undefined') {
@@ -19656,4 +19617,4 @@ for (var publicModule in Elm)
 }
 
 }).call(this);
-</script></head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>
+
