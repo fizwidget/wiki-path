@@ -7,7 +7,7 @@ import Bootstrap.Button as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
-import Common.View exposing (viewLink, viewArticleError)
+import Common.View exposing (viewLink, viewArticleError, viewSpinner)
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
 
@@ -18,6 +18,7 @@ view { source, destination, priorityQueue, errors, fatalError } =
         [ heading source destination
         , maybeErrorView errors fatalError
         , backView
+        , viewSpinner True
         , priorityQueueView priorityQueue
         ]
 
