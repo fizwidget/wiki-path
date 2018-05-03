@@ -19459,8 +19459,12 @@ var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
 					_0: _fizwidget$wikipedia_game$Pathfinding_View$backView,
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wikipedia_game$Pathfinding_View$priorityQueueView(_p3.priorityQueue),
-						_1: {ctor: '[]'}
+						_0: _fizwidget$wikipedia_game$Common_View$viewSpinner(true),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wikipedia_game$Pathfinding_View$priorityQueueView(_p3.priorityQueue),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
