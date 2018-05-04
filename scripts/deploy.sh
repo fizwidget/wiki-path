@@ -1,9 +1,7 @@
 #!/bin/bash
 
-set -e
-
 git checkout gh-pages
-git merge master
+git merge master -m "Merging master"
 ./build.sh
 git commit -am "Updating build"
 git push
