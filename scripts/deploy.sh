@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 git checkout gh-pages
 git merge master -m "Merging master"
 ./build.sh
