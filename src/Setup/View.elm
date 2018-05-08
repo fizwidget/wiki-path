@@ -8,7 +8,8 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
-import Common.View exposing (viewSpinner, viewArticleError)
+import Common.Article.View as Article
+import Common.Spinner.View as Spinner
 import Setup.Messages exposing (SetupMsg(..))
 import Setup.Model exposing (SetupModel, UserInput)
 
@@ -75,7 +76,7 @@ getInputStatus article =
             [ Input.danger ]
 
         RemoteData.Success _ ->
-            [ Input.success ]
+            []
 
 
 findPathButton : SetupModel -> Html SetupMsg
@@ -107,7 +108,7 @@ showSpinnerIfLoading : SetupModel -> Html msg
 showSpinnerIfLoading model =
     div
         [ css [ paddingTop (px 6) ] ]
-        [ viewSpinner <| isLoading model ]
+        [ Spinner.view { isVisible = isLoading model } ]
 
 
 isLoading : SetupModel -> Bool
@@ -121,7 +122,7 @@ getErrorMessage : RemoteArticle -> Html msg
 getErrorMessage remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            viewArticleError error
+            Article.viewError error
 
         _ ->
             text ""

@@ -1,4 +1,4 @@
-module Pathfinding.Util exposing (addLinks)
+module Pathfinding.Util exposing (addLinksToQueue)
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Article.Model exposing (Article)
@@ -7,8 +7,8 @@ import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Prio
 import Pathfinding.Model exposing (PathfindingModel, Path)
 
 
-addLinks : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
-addLinks priorityQueue destination pathSoFar links =
+addLinksToQueue : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
+addLinksToQueue priorityQueue destination pathSoFar links =
     links
         |> List.filter isInteresting
         |> List.filter (isUnvisited priorityQueue pathSoFar)
@@ -43,15 +43,19 @@ heuristic destination title =
     if title == destination.title then
         1000
     else
-        -- How many times is the title mentioned in the destination article?
-        find All (title |> Title.value |> matchWord) destination.content
+        toFloat <| countOccurences destination.content (Title.value title)
+
+
+countOccurences : String -> String -> Int
+countOccurences content target =
+    let
+        matchTarget =
+            ("(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")")
+                |> regex
+                |> caseInsensitive
+    in
+        find All matchTarget content
             |> List.length
-            |> toFloat
-
-
-matchWord : String -> Regex
-matchWord target =
-    "(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")" |> regex |> caseInsensitive
 
 
 isUnvisited : PriorityQueue Path -> Path -> Title -> Bool

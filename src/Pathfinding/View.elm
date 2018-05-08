@@ -5,9 +5,11 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, d
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
+import Common.Article.View as Article
 import Common.Title.Model as Title exposing (Title)
+import Common.Title.View as Title
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
-import Common.View exposing (viewLink, viewArticleError, viewSpinner)
+import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
 
@@ -18,7 +20,7 @@ view { source, destination, priorityQueue, errors, fatalError } =
         [ heading source destination
         , maybeErrorView errors fatalError
         , backView
-        , viewSpinner True
+        , Spinner.view { isVisible = True }
         , priorityQueueView priorityQueue
         ]
 
@@ -52,7 +54,7 @@ fatalErrorView error =
 
 errorsView : List ArticleError -> Html msg
 errorsView errors =
-    div [] <| List.map viewArticleError errors
+    div [] <| List.map Article.viewError errors
 
 
 backView : Html PathfindingMsg
@@ -84,4 +86,4 @@ pathView pathSoFar =
 
 stopView : Title -> Html msg
 stopView title =
-    li [] [ viewLink title ]
+    li [] [ Title.viewAsLink title ]
