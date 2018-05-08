@@ -1,9 +1,17 @@
 #!/bin/bash
 
+echo "> Checking out deployment branch..."
 git checkout gh-pages
-git rebase master
+
+echo "> Merging master into deployment branch"
+git merge master -m "Merging master"
+
+echo "> Building..."
 ./build.sh
+
+echo "> Pushing built result..."
 git commit -am "Updating build"
 git push
 git checkout master
-echo "Master branch has been deployed (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
+
+echo "Deployment successful (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
