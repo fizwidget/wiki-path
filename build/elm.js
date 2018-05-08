@@ -19483,7 +19483,7 @@ var _fizwidget$wikipedia_game$View$viewHeading = A2(
 			{
 				ctor: '::',
 				_0: _rtfeldman$elm_css$Css$fontSize(
-					_rtfeldman$elm_css$Css$px(80)),
+					_rtfeldman$elm_css$Css$vh(10)),
 				_1: {
 					ctor: '::',
 					_0: _rtfeldman$elm_css$Css$fontWeight(
