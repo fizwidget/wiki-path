@@ -30,7 +30,7 @@ viewHeading : Html msg
 viewHeading =
     h1
         [ css
-            [ fontSize (px 80)
+            [ fontSize (vh 10)
             , fontWeight (int 900)
             , fontFamily serif
             , textAlign center
