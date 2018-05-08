@@ -11,7 +11,7 @@ echo "> Building..."
 
 echo "> Pushing built result..."
 git commit -am "Updating build"
-git push
+git push -f
 git checkout master
 
 echo "Deployment successful (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
