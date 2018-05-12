@@ -112,7 +112,7 @@ showRandomizationError : SetupModel -> Html msg
 showRandomizationError { randomTitles } =
     case randomTitles of
         RemoteData.Failure error ->
-            text ("Error getting random titles: " ++ toString error)
+            text ("Error randomizing titles: " ++ toString error)
 
         _ ->
             text ""
