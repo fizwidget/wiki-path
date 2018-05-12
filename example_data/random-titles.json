@@ -1,0 +1,21 @@
+{
+    "batchcomplete": "",
+    "continue": {
+        "rncontinue": "0.714048191784|0.714048567604|48522287|0",
+        "continue": "-||"
+    },
+    "query": {
+        "random": [
+            {
+                "id": 23805386,
+                "ns": 0,
+                "title": "Hey Lover (Freddie Jackson song)"
+            },
+            {
+                "id": 140212,
+                "ns": 0,
+                "title": "McKinnon, Wyoming"
+            }
+        ]
+    }
+}

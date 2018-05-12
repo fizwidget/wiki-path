@@ -1,8 +1,10 @@
 module Setup.Update exposing (update)
 
-import RemoteData exposing (RemoteData(Loading, NotAsked))
+import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Common.Article.Service as ArticleService
 import Common.Article.Model exposing (RemoteArticle)
+import Common.Title.Model as Title exposing (Title)
+import Common.Title.Service as TitleService
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.Messages exposing (SetupMsg(..))
@@ -27,6 +29,46 @@ update message model =
 
         FetchDestinationArticleResult article ->
             setDestinationArticle model article
+
+        RandomizeTitlesRequest ->
+            loadRandomTitles model
+
+        RandomizeTitlesResponse titles ->
+            setRandomTitles model titles
+
+
+loadRandomTitles : SetupModel -> ( Model, Cmd Msg )
+loadRandomTitles model =
+    ( Model.Setup { model | randomizedTitles = Loading }
+    , TitleService.requestRandom RandomizeTitlesResponse 2 |> Cmd.map Messages.Setup
+    )
+
+
+setRandomTitles : SetupModel -> WebData (List Title) -> ( Model, Cmd Msg )
+setRandomTitles model remoteTitles =
+    let
+        updatedModel =
+            { model | randomizedTitles = remoteTitles }
+
+        setTitles : List Title -> SetupModel
+        setTitles titles =
+            let
+                titleStrings =
+                    List.map Title.value titles
+            in
+                case titleStrings of
+                    titleA :: titleB :: _ ->
+                        { updatedModel | sourceTitleInput = titleA, destinationTitleInput = titleB }
+
+                    _ ->
+                        updatedModel
+
+        withRandomizedTitles =
+            remoteTitles
+                |> RemoteData.map setTitles
+                |> RemoteData.withDefault updatedModel
+    in
+        ( Model.Setup withRandomizedTitles, Cmd.none )
 
 
 setSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
