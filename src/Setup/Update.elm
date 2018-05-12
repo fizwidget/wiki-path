@@ -37,36 +37,6 @@ update message model =
             setRandomTitles model titles
 
 
-requestRandomTitles : SetupModel -> ( Model, Cmd Msg )
-requestRandomTitles model =
-    ( Model.Setup { model | randomTitles = Loading }
-    , Title.requestRandomPair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
-    )
-
-
-setRandomTitles : SetupModel -> RemoteTitlePair -> ( Model, Cmd Msg )
-setRandomTitles model randomTitles =
-    let
-        updatedModel =
-            { model | randomTitles = randomTitles }
-    in
-        ( Model.Setup
-            (randomTitles
-                |> RemoteData.map (copyRandomTitlesToInputs updatedModel)
-                |> RemoteData.withDefault updatedModel
-            )
-        , Cmd.none
-        )
-
-
-copyRandomTitlesToInputs : SetupModel -> ( Title, Title ) -> SetupModel
-copyRandomTitlesToInputs model ( titleA, titleB ) =
-    { model
-        | sourceTitleInput = Title.value titleA
-        , destinationTitleInput = Title.value titleB
-    }
-
-
 setSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
 setSourceTitle model sourceTitleInput =
     ( Model.Setup
@@ -130,3 +100,35 @@ beginPathfindingIfArticlesLoaded ( model, cmd ) =
     RemoteData.map2 Pathfinding.Init.init model.source model.destination
         |> RemoteData.toMaybe
         |> Maybe.withDefault ( Model.Setup model, cmd )
+
+
+requestRandomTitles : SetupModel -> ( Model, Cmd Msg )
+requestRandomTitles model =
+    ( Model.Setup { model | randomTitles = Loading }
+    , Title.requestRandomPair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
+    )
+
+
+setRandomTitles : SetupModel -> RemoteTitlePair -> ( Model, Cmd Msg )
+setRandomTitles model randomTitles =
+    let
+        updatedModel =
+            { model | randomTitles = randomTitles }
+    in
+        ( Model.Setup
+            (randomTitles
+                |> RemoteData.map (setTitleInputs updatedModel)
+                |> RemoteData.withDefault updatedModel
+            )
+        , Cmd.none
+        )
+
+
+setTitleInputs : SetupModel -> ( Title, Title ) -> SetupModel
+setTitleInputs model ( titleA, titleB ) =
+    { model
+        | sourceTitleInput = Title.value titleA
+        , destinationTitleInput = Title.value titleB
+        , source = Loading
+        , destination = Loading
+    }
