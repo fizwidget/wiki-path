@@ -9955,10 +9955,13 @@ var _fizwidget$wiki_path$Common_Url_Model$queryParamToString = function (queryPa
 	if (_p0.ctor === 'KeyValue') {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			_p0._0._0,
-			A2(_elm_lang$core$Basics_ops['++'], '=', _p0._0._1));
+			_elm_lang$http$Http$encodeUri(_p0._0._0),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'=',
+				_elm_lang$http$Http$encodeUri(_p0._0._1)));
 	} else {
-		return _p0._0;
+		return _elm_lang$http$Http$encodeUri(_p0._0);
 	}
 };
 var _fizwidget$wiki_path$Common_Url_Model$buildUrl = F2(
