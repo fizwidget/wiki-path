@@ -13,7 +13,8 @@ echo "- Building..."
 echo
 
 echo "- Comitting new assets..."
-git commit -am "Updating build"
+git add .
+git commit -m "Updating build"
 echo
 
 echo "- Pushing built result..."
