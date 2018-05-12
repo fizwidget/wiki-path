@@ -1,21 +1,27 @@
 #!/bin/bash
 
-printf "Checking out deployment branch...\n\n"
+echo "Checking out deployment branch..."
 git checkout gh-pages
+echo
 
-printf "Merging master into deployment branch\n\n"
+echo "Merging master into deployment branch"
 git merge master -m "Merging master"
+echo
 
-printf "Building...\n\n"
+echo "Building..."
 ./build.sh
+echo
 
-printf "Comitting new assets...\n\n"
+echo "Comitting new assets..."
 git commit -am "Updating build"
+echo
 
-printf "Pushing built result...\n\n"
+echo "Pushing built result..."
 git push -f
+echo
 
-printf "Checking out master...\n\n"
+echo "Checking out master..."
 git checkout master
+echo
 
-printf "Deployment successful (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
+echo "Deployment successful (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
