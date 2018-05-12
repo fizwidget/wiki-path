@@ -9814,42 +9814,60 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 		}
 	});
 
-var _fizwidget$wikipedia_game$Common_Title_Model$value = function (_p0) {
+var _fizwidget$wiki_path$Common_Title_Model$value = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0;
 };
-var _fizwidget$wikipedia_game$Common_Title_Model$Title = function (a) {
+var _fizwidget$wiki_path$Common_Title_Model$Title = function (a) {
 	return {ctor: 'Title', _0: a};
 };
-var _fizwidget$wikipedia_game$Common_Title_Model$from = _fizwidget$wikipedia_game$Common_Title_Model$Title;
+var _fizwidget$wiki_path$Common_Title_Model$from = _fizwidget$wiki_path$Common_Title_Model$Title;
 
-var _fizwidget$wikipedia_game$Common_Article_Model$Article = F3(
+var _fizwidget$wiki_path$Common_Article_Model$Article = F3(
 	function (a, b, c) {
 		return {title: a, links: b, content: c};
 	});
-var _fizwidget$wikipedia_game$Common_Article_Model$NetworkError = function (a) {
+var _fizwidget$wiki_path$Common_Article_Model$NetworkError = function (a) {
 	return {ctor: 'NetworkError', _0: a};
 };
-var _fizwidget$wikipedia_game$Common_Article_Model$UnknownError = function (a) {
+var _fizwidget$wiki_path$Common_Article_Model$UnknownError = function (a) {
 	return {ctor: 'UnknownError', _0: a};
 };
-var _fizwidget$wikipedia_game$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitle'};
-var _fizwidget$wikipedia_game$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
+var _fizwidget$wiki_path$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitle'};
+var _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
 
-var _fizwidget$wikipedia_game$Common_Title_Decoder$decodeTitle = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wikipedia_game$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
+var _fizwidget$wiki_path$Common_Title_Decoder$decodeTitle = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
+var _fizwidget$wiki_path$Common_Title_Decoder$decodeTitleObject = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'title',
+	_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_elm_lang$core$Basics$identity));
+var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
+	{
+		ctor: '::',
+		_0: 'query',
+		_1: {
+			ctor: '::',
+			_0: 'random',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Title_Decoder$decodeTitleObject),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_elm_lang$core$Basics$identity));
 
-var _fizwidget$wikipedia_game$Common_Article_Decoder$toError = function (errorCode) {
+var _fizwidget$wiki_path$Common_Article_Decoder$toError = function (errorCode) {
 	var _p0 = errorCode;
 	switch (_p0) {
 		case 'missingtitle':
-			return _fizwidget$wikipedia_game$Common_Article_Model$ArticleNotFound;
+			return _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound;
 		case 'invalidtitle':
-			return _fizwidget$wikipedia_game$Common_Article_Model$InvalidTitle;
+			return _fizwidget$wiki_path$Common_Article_Model$InvalidTitle;
 		default:
-			return _fizwidget$wikipedia_game$Common_Article_Model$UnknownError(errorCode);
+			return _fizwidget$wiki_path$Common_Article_Model$UnknownError(errorCode);
 	}
 };
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeError = A3(
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeError = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
 	{
 		ctor: '::',
@@ -9861,31 +9879,31 @@ var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeError = A3(
 		}
 	},
 	_elm_lang$core$Json_Decode$string,
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wikipedia_game$Common_Article_Decoder$toError));
-var _fizwidget$wikipedia_game$Common_Article_Decoder$Link = F2(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Decoder$toError));
+var _fizwidget$wiki_path$Common_Article_Decoder$Link = F2(
 	function (a, b) {
 		return {title: a, exists: b};
 	});
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeLink = A3(
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeLink = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'exists',
 	_elm_lang$core$Json_Decode$bool,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'title',
-		_fizwidget$wikipedia_game$Common_Title_Decoder$decodeTitle,
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wikipedia_game$Common_Article_Decoder$Link)));
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeExistingLink = A2(
+		_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Decoder$Link)));
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeExistingLink = A2(
 	_elm_lang$core$Json_Decode$map,
 	function (link) {
 		return link.exists ? _elm_lang$core$Maybe$Just(link.title) : _elm_lang$core$Maybe$Nothing;
 	},
-	_fizwidget$wikipedia_game$Common_Article_Decoder$decodeLink);
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeLinks = A2(
+	_fizwidget$wiki_path$Common_Article_Decoder$decodeLink);
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeLinks = A2(
 	_elm_lang$core$Json_Decode$map,
 	_elm_lang$core$List$filterMap(_elm_lang$core$Basics$identity),
-	_elm_lang$core$Json_Decode$list(_fizwidget$wikipedia_game$Common_Article_Decoder$decodeExistingLink));
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeSuccess = A3(
+	_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Article_Decoder$decodeExistingLink));
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeSuccess = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
 	{
 		ctor: '::',
@@ -9908,7 +9926,7 @@ var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeSuccess = A3(
 				_1: {ctor: '[]'}
 			}
 		},
-		_fizwidget$wikipedia_game$Common_Article_Decoder$decodeLinks,
+		_fizwidget$wiki_path$Common_Article_Decoder$decodeLinks,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
 			{
@@ -9920,20 +9938,20 @@ var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeSuccess = A3(
 					_1: {ctor: '[]'}
 				}
 			},
-			_fizwidget$wikipedia_game$Common_Title_Decoder$decodeTitle,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wikipedia_game$Common_Article_Model$Article))));
-var _fizwidget$wikipedia_game$Common_Article_Decoder$decodeArticle = _elm_lang$core$Json_Decode$oneOf(
+			_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Model$Article))));
+var _fizwidget$wiki_path$Common_Article_Decoder$decodeArticle = _elm_lang$core$Json_Decode$oneOf(
 	{
 		ctor: '::',
-		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wikipedia_game$Common_Article_Decoder$decodeSuccess),
+		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Common_Article_Decoder$decodeSuccess),
 		_1: {
 			ctor: '::',
-			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wikipedia_game$Common_Article_Decoder$decodeError),
+			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Common_Article_Decoder$decodeError),
 			_1: {ctor: '[]'}
 		}
 	});
 
-var _fizwidget$wikipedia_game$Common_Url_Model$queryParamToString = function (queryParam) {
+var _fizwidget$wiki_path$Common_Url_Model$queryParamToString = function (queryParam) {
 	var _p0 = queryParam;
 	if (_p0.ctor === 'KeyValue') {
 		return A2(
@@ -9944,46 +9962,46 @@ var _fizwidget$wikipedia_game$Common_Url_Model$queryParamToString = function (qu
 		return _p0._0;
 	}
 };
-var _fizwidget$wikipedia_game$Common_Url_Model$buildUrl = F2(
+var _fizwidget$wiki_path$Common_Url_Model$buildUrl = F2(
 	function (baseUrl, queryParams) {
-		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wikipedia_game$Common_Url_Model$queryParamToString, queryParams);
+		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Url_Model$queryParamToString, queryParams);
 		var joinedQueryParams = A2(_elm_lang$core$String$join, '&', queryParamStrings);
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			baseUrl,
 			A2(_elm_lang$core$Basics_ops['++'], '?', joinedQueryParams));
 	});
-var _fizwidget$wikipedia_game$Common_Url_Model$Key = function (a) {
+var _fizwidget$wiki_path$Common_Url_Model$Key = function (a) {
 	return {ctor: 'Key', _0: a};
 };
-var _fizwidget$wikipedia_game$Common_Url_Model$KeyValue = function (a) {
+var _fizwidget$wiki_path$Common_Url_Model$KeyValue = function (a) {
 	return {ctor: 'KeyValue', _0: a};
 };
 
-var _fizwidget$wikipedia_game$Common_Article_Api$buildArticleUrl = function (title) {
+var _fizwidget$wiki_path$Common_Article_Api$buildArticleUrl = function (title) {
 	var queryParams = {
 		ctor: '::',
-		_0: _fizwidget$wikipedia_game$Common_Url_Model$KeyValue(
+		_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
 			{ctor: '_Tuple2', _0: 'action', _1: 'parse'}),
 		_1: {
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Common_Url_Model$Key('redirects'),
+			_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$Common_Url_Model$KeyValue(
-					{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
+				_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+					{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wikipedia_game$Common_Url_Model$KeyValue(
-						{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
+					_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+						{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wikipedia_game$Common_Url_Model$KeyValue(
-							{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+						_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+							{ctor: '_Tuple2', _0: 'page', _1: title}),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wikipedia_game$Common_Url_Model$KeyValue(
-								{ctor: '_Tuple2', _0: 'page', _1: title}),
+							_0: _fizwidget$wiki_path$Common_Url_Model$Key('redirects'),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9992,47 +10010,47 @@ var _fizwidget$wikipedia_game$Common_Article_Api$buildArticleUrl = function (tit
 		}
 	};
 	var baseUrl = 'https://en.wikipedia.org/w/api.php';
-	return A2(_fizwidget$wikipedia_game$Common_Url_Model$buildUrl, baseUrl, queryParams);
+	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, baseUrl, queryParams);
 };
-var _fizwidget$wikipedia_game$Common_Article_Api$buildRequest = function (title) {
+var _fizwidget$wiki_path$Common_Article_Api$buildRequest = function (title) {
 	return A2(
 		_elm_lang$http$Http$get,
-		_fizwidget$wikipedia_game$Common_Article_Api$buildArticleUrl(title),
-		_fizwidget$wikipedia_game$Common_Article_Decoder$decodeArticle);
+		_fizwidget$wiki_path$Common_Article_Api$buildArticleUrl(title),
+		_fizwidget$wiki_path$Common_Article_Decoder$decodeArticle);
 };
 
-var _fizwidget$wikipedia_game$Common_Article_Service$toRemoteArticle = function (webData) {
+var _fizwidget$wiki_path$Common_Article_Service$toRemoteArticle = function (webData) {
 	return A2(
 		_krisajenkins$remotedata$RemoteData$andThen,
 		_krisajenkins$remotedata$RemoteData$fromResult,
-		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wikipedia_game$Common_Article_Model$NetworkError, webData));
+		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Article_Model$NetworkError, webData));
 };
-var _fizwidget$wikipedia_game$Common_Article_Service$toArticleResult = function (result) {
+var _fizwidget$wiki_path$Common_Article_Service$toArticleResult = function (result) {
 	return A2(
 		_elm_lang$core$Result$andThen,
 		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$Result$mapError, _fizwidget$wikipedia_game$Common_Article_Model$NetworkError, result));
+		A2(_elm_lang$core$Result$mapError, _fizwidget$wiki_path$Common_Article_Model$NetworkError, result));
 };
-var _fizwidget$wikipedia_game$Common_Article_Service$requestRemote = F2(
+var _fizwidget$wiki_path$Common_Article_Service$requestRemote = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$core$Platform_Cmd$map,
 			function (_p0) {
 				return toMsg(
-					_fizwidget$wikipedia_game$Common_Article_Service$toRemoteArticle(_p0));
+					_fizwidget$wiki_path$Common_Article_Service$toRemoteArticle(_p0));
 			},
 			_krisajenkins$remotedata$RemoteData$sendRequest(
-				_fizwidget$wikipedia_game$Common_Article_Api$buildRequest(title)));
+				_fizwidget$wiki_path$Common_Article_Api$buildRequest(title)));
 	});
-var _fizwidget$wikipedia_game$Common_Article_Service$request = F2(
+var _fizwidget$wiki_path$Common_Article_Service$request = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$http$Http$send,
 			function (_p1) {
 				return toMsg(
-					_fizwidget$wikipedia_game$Common_Article_Service$toArticleResult(_p1));
+					_fizwidget$wiki_path$Common_Article_Service$toArticleResult(_p1));
 			},
-			_fizwidget$wikipedia_game$Common_Article_Api$buildRequest(title));
+			_fizwidget$wiki_path$Common_Article_Api$buildRequest(title));
 	});
 
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
@@ -15559,7 +15577,7 @@ var _rtfeldman$elm_css$Html_Styled$summary = _rtfeldman$elm_css$Html_Styled$node
 var _rtfeldman$elm_css$Html_Styled$menuitem = _rtfeldman$elm_css$Html_Styled$node('menuitem');
 var _rtfeldman$elm_css$Html_Styled$menu = _rtfeldman$elm_css$Html_Styled$node('menu');
 
-var _fizwidget$wikipedia_game$Common_Article_View$viewError = function (error) {
+var _fizwidget$wiki_path$Common_Article_View$viewError = function (error) {
 	var errorMessage = function () {
 		var _p0 = error;
 		switch (_p0.ctor) {
@@ -15667,14 +15685,14 @@ var _rhofour$elm_pairing_heap$PairingHeap$toSortedList = function (heap) {
 	}
 };
 
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$toSortedList = function (_p0) {
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$toSortedList = function (_p0) {
 	var _p1 = _p0;
 	return A2(
 		_elm_lang$core$List$map,
 		_elm_lang$core$Tuple$second,
 		_rhofour$elm_pairing_heap$PairingHeap$toSortedList(_p1._0));
 };
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$isEmpty = function (_p2) {
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$isEmpty = function (_p2) {
 	var _p3 = _p2;
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
@@ -15684,18 +15702,18 @@ var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$isEmpty = function (_p2
 			_elm_lang$core$Basics$always(true),
 			_rhofour$elm_pairing_heap$PairingHeap$findMin(_p3._0)));
 };
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$getHighestPriority = function (_p4) {
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority = function (_p4) {
 	var _p5 = _p4;
 	return A2(
 		_elm_lang$core$Maybe$map,
 		_elm_lang$core$Tuple$second,
 		_rhofour$elm_pairing_heap$PairingHeap$findMin(_p5._0));
 };
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$PriorityQueue = function (a) {
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue = function (a) {
 	return {ctor: 'PriorityQueue', _0: a};
 };
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$empty = _fizwidget$wikipedia_game$Common_PriorityQueue_Model$PriorityQueue(_rhofour$elm_pairing_heap$PairingHeap$empty);
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$insert = F3(
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$empty = _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(_rhofour$elm_pairing_heap$PairingHeap$empty);
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$insert = F3(
 	function (_p6, getPriority, values) {
 		var _p7 = _p6;
 		var getNegatedPriority = function (value) {
@@ -15709,10 +15727,10 @@ var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$insert = F3(
 			};
 		};
 		var valuesWithNegatedPriorities = A2(_elm_lang$core$List$map, withNegatedPriority, values);
-		return _fizwidget$wikipedia_game$Common_PriorityQueue_Model$PriorityQueue(
+		return _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(
 			A3(_elm_lang$core$List$foldl, _rhofour$elm_pairing_heap$PairingHeap$insert, _p7._0, valuesWithNegatedPriorities));
 	});
-var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$removeHighestPriority = function (_p8) {
+var _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority = function (_p8) {
 	var _p9 = _p8;
 	var _p10 = _p9._0;
 	return {
@@ -15721,7 +15739,7 @@ var _fizwidget$wikipedia_game$Common_PriorityQueue_Model$removeHighestPriority =
 			_elm_lang$core$Maybe$map,
 			_elm_lang$core$Tuple$second,
 			_rhofour$elm_pairing_heap$PairingHeap$findMin(_p10)),
-		_1: _fizwidget$wikipedia_game$Common_PriorityQueue_Model$PriorityQueue(
+		_1: _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(
 			_rhofour$elm_pairing_heap$PairingHeap$deleteMin(_p10))
 	};
 };
@@ -16081,7 +16099,7 @@ var _rtfeldman$elm_css$Html_Styled_Attributes$style = function (_p0) {
 		_elm_lang$virtual_dom$VirtualDom$style(_p0));
 };
 
-var _fizwidget$wikipedia_game$Common_Spinner_View$view = function (_p0) {
+var _fizwidget$wiki_path$Common_Spinner_View$view = function (_p0) {
 	var _p1 = _p0;
 	var visibilityValue = _p1.isVisible ? _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$visible) : _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$hidden);
 	return A2(
@@ -16109,112 +16127,172 @@ var _fizwidget$wikipedia_game$Common_Spinner_View$view = function (_p0) {
 				{ctor: '[]'})));
 };
 
-var _fizwidget$wikipedia_game$Common_Title_View$toUrl = function (title) {
+var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl = function (titleCount) {
+	var articleNamespace = '0';
+	var queryParams = {
+		ctor: '::',
+		_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+			{ctor: '_Tuple2', _0: 'action', _1: 'query'}),
+		_1: {
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+					{ctor: '_Tuple2', _0: 'list', _1: 'random'}),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+						{
+							ctor: '_Tuple2',
+							_0: 'rnlimit',
+							_1: _elm_lang$core$Basics$toString(titleCount)
+						}),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+							{ctor: '_Tuple2', _0: 'rnnamespace', _1: articleNamespace}),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
+								{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	};
+	var baseUrl = 'https://en.wikipedia.org/w/api.php';
+	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, baseUrl, queryParams);
+};
+var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest = function (titleCount) {
+	return A2(
+		_elm_lang$http$Http$get,
+		_fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl(titleCount),
+		_fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse);
+};
+
+var _fizwidget$wiki_path$Common_Title_Service$requestRandom = F2(
+	function (toMsg, articleCount) {
+		return A2(
+			_elm_lang$core$Platform_Cmd$map,
+			toMsg,
+			_krisajenkins$remotedata$RemoteData$sendRequest(
+				_fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest(articleCount)));
+	});
+
+var _fizwidget$wiki_path$Common_Title_View$toUrl = function (title) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		'https://en.wikipedia.org/wiki/',
-		_fizwidget$wikipedia_game$Common_Title_Model$value(title));
+		_fizwidget$wiki_path$Common_Title_Model$value(title));
 };
-var _fizwidget$wikipedia_game$Common_Title_View$viewAsLink = function (title) {
+var _fizwidget$wiki_path$Common_Title_View$viewAsLink = function (title) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$a,
 		{
 			ctor: '::',
 			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href(
-				_fizwidget$wikipedia_game$Common_Title_View$toUrl(title)),
+				_fizwidget$wiki_path$Common_Title_View$toUrl(title)),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
 			_0: _rtfeldman$elm_css$Html_Styled$text(
-				_fizwidget$wikipedia_game$Common_Title_Model$value(title)),
+				_fizwidget$wiki_path$Common_Title_Model$value(title)),
 			_1: {ctor: '[]'}
 		});
 };
 
-var _fizwidget$wikipedia_game$Setup_Model$SetupModel = F4(
-	function (a, b, c, d) {
-		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d};
+var _fizwidget$wiki_path$Setup_Model$SetupModel = F5(
+	function (a, b, c, d, e) {
+		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d, randomizedTitles: e};
 	});
 
-var _fizwidget$wikipedia_game$Pathfinding_Model$PathfindingModel = F5(
+var _fizwidget$wiki_path$Pathfinding_Model$PathfindingModel = F5(
 	function (a, b, c, d, e) {
 		return {source: a, destination: b, priorityQueue: c, errors: d, fatalError: e};
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Model$Path = F3(
+var _fizwidget$wiki_path$Pathfinding_Model$Path = F3(
 	function (a, b, c) {
 		return {priority: a, next: b, visited: c};
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Model$PathNotFound = {ctor: 'PathNotFound'};
+var _fizwidget$wiki_path$Pathfinding_Model$PathNotFound = {ctor: 'PathNotFound'};
 
-var _fizwidget$wikipedia_game$Finished_Model$FinishedModel = F3(
+var _fizwidget$wiki_path$Finished_Model$FinishedModel = F3(
 	function (a, b, c) {
 		return {source: a, destination: b, stops: c};
 	});
 
-var _fizwidget$wikipedia_game$Model$Finished = function (a) {
+var _fizwidget$wiki_path$Model$Finished = function (a) {
 	return {ctor: 'Finished', _0: a};
 };
-var _fizwidget$wikipedia_game$Model$Pathfinding = function (a) {
+var _fizwidget$wiki_path$Model$Pathfinding = function (a) {
 	return {ctor: 'Pathfinding', _0: a};
 };
-var _fizwidget$wikipedia_game$Model$Setup = function (a) {
+var _fizwidget$wiki_path$Model$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
 
-var _fizwidget$wikipedia_game$Setup_Messages$FetchDestinationArticleResult = function (a) {
+var _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesResponse = function (a) {
+	return {ctor: 'RandomizeTitlesResponse', _0: a};
+};
+var _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesRequest = {ctor: 'RandomizeTitlesRequest'};
+var _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResult = function (a) {
 	return {ctor: 'FetchDestinationArticleResult', _0: a};
 };
-var _fizwidget$wikipedia_game$Setup_Messages$FetchSourceArticleResult = function (a) {
+var _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResult = function (a) {
 	return {ctor: 'FetchSourceArticleResult', _0: a};
 };
-var _fizwidget$wikipedia_game$Setup_Messages$FetchArticlesRequest = {ctor: 'FetchArticlesRequest'};
-var _fizwidget$wikipedia_game$Setup_Messages$DestinationArticleTitleChange = function (a) {
+var _fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest = {ctor: 'FetchArticlesRequest'};
+var _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange = function (a) {
 	return {ctor: 'DestinationArticleTitleChange', _0: a};
 };
-var _fizwidget$wikipedia_game$Setup_Messages$SourceArticleTitleChange = function (a) {
+var _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange = function (a) {
 	return {ctor: 'SourceArticleTitleChange', _0: a};
 };
 
-var _fizwidget$wikipedia_game$Pathfinding_Messages$BackToSetup = {ctor: 'BackToSetup'};
-var _fizwidget$wikipedia_game$Pathfinding_Messages$FetchArticleResponse = F2(
+var _fizwidget$wiki_path$Pathfinding_Messages$BackToSetup = {ctor: 'BackToSetup'};
+var _fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse = F2(
 	function (a, b) {
 		return {ctor: 'FetchArticleResponse', _0: a, _1: b};
 	});
 
-var _fizwidget$wikipedia_game$Finished_Messages$BackToSetup = {ctor: 'BackToSetup'};
+var _fizwidget$wiki_path$Finished_Messages$BackToSetup = {ctor: 'BackToSetup'};
 
-var _fizwidget$wikipedia_game$Messages$Finished = function (a) {
+var _fizwidget$wiki_path$Messages$Finished = function (a) {
 	return {ctor: 'Finished', _0: a};
 };
-var _fizwidget$wikipedia_game$Messages$Pathfinding = function (a) {
+var _fizwidget$wiki_path$Messages$Pathfinding = function (a) {
 	return {ctor: 'Pathfinding', _0: a};
 };
-var _fizwidget$wikipedia_game$Messages$Setup = function (a) {
+var _fizwidget$wiki_path$Messages$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
 
-var _fizwidget$wikipedia_game$Finished_Init$init = F3(
+var _fizwidget$wiki_path$Finished_Init$init = F3(
 	function (source, destination, stops) {
 		return {
 			ctor: '_Tuple2',
-			_0: _fizwidget$wikipedia_game$Model$Finished(
+			_0: _fizwidget$wiki_path$Model$Finished(
 				{source: source, destination: destination, stops: stops}),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
 
-var _fizwidget$wikipedia_game$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked};
-var _fizwidget$wikipedia_game$Setup_Init$init = {
+var _fizwidget$wiki_path$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomizedTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+var _fizwidget$wiki_path$Setup_Init$init = {
 	ctor: '_Tuple2',
-	_0: _fizwidget$wikipedia_game$Model$Setup(_fizwidget$wikipedia_game$Setup_Init$initialModel),
+	_0: _fizwidget$wiki_path$Model$Setup(_fizwidget$wiki_path$Setup_Init$initialModel),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 
-var _fizwidget$wikipedia_game$Finished_Update$update = F2(
+var _fizwidget$wiki_path$Finished_Update$update = F2(
 	function (_p0, model) {
 		var _p1 = _p0;
-		return _fizwidget$wikipedia_game$Setup_Init$init;
+		return _fizwidget$wiki_path$Setup_Init$init;
 	});
 
 var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption = function (align) {
@@ -17604,7 +17682,7 @@ var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
 			children);
 	});
 
-var _fizwidget$wikipedia_game$Finished_View$backButton = A2(
+var _fizwidget$wiki_path$Finished_View$backButton = A2(
 	_rtfeldman$elm_css$Html_Styled$div,
 	{
 		ctor: '::',
@@ -17627,7 +17705,7 @@ var _fizwidget$wikipedia_game$Finished_View$backButton = A2(
 					_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
 					_1: {
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wikipedia_game$Finished_Messages$BackToSetup),
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Finished_Messages$BackToSetup),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -17639,7 +17717,7 @@ var _fizwidget$wikipedia_game$Finished_View$backButton = A2(
 				})),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wikipedia_game$Finished_View$stopsView = F3(
+var _fizwidget$wiki_path$Finished_View$stopsView = F3(
 	function (source, destination, stops) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$div,
@@ -17647,9 +17725,9 @@ var _fizwidget$wikipedia_game$Finished_View$stopsView = F3(
 			A2(
 				_elm_lang$core$List$intersperse,
 				_rtfeldman$elm_css$Html_Styled$text(' → '),
-				A2(_elm_lang$core$List$map, _fizwidget$wikipedia_game$Common_Title_View$viewAsLink, stops)));
+				A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Title_View$viewAsLink, stops)));
 	});
-var _fizwidget$wikipedia_game$Finished_View$subHeadingView = F2(
+var _fizwidget$wiki_path$Finished_View$subHeadingView = F2(
 	function (sourceTitle, destinationTitle) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$h4,
@@ -17662,18 +17740,18 @@ var _fizwidget$wikipedia_game$Finished_View$subHeadingView = F2(
 						'Path from ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_fizwidget$wikipedia_game$Common_Title_Model$value(sourceTitle),
+							_fizwidget$wiki_path$Common_Title_Model$value(sourceTitle),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' to ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_fizwidget$wikipedia_game$Common_Title_Model$value(destinationTitle),
+									_fizwidget$wiki_path$Common_Title_Model$value(destinationTitle),
 									'  was...'))))),
 				_1: {ctor: '[]'}
 			});
 	});
-var _fizwidget$wikipedia_game$Finished_View$headingView = A2(
+var _fizwidget$wiki_path$Finished_View$headingView = A2(
 	_rtfeldman$elm_css$Html_Styled$h2,
 	{ctor: '[]'},
 	{
@@ -17681,7 +17759,7 @@ var _fizwidget$wikipedia_game$Finished_View$headingView = A2(
 		_0: _rtfeldman$elm_css$Html_Styled$text('Success!'),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wikipedia_game$Finished_View$modelView = function (_p0) {
+var _fizwidget$wiki_path$Finished_View$modelView = function (_p0) {
 	var _p1 = _p0;
 	var _p3 = _p1.source;
 	var _p2 = _p1.destination;
@@ -17690,19 +17768,19 @@ var _fizwidget$wikipedia_game$Finished_View$modelView = function (_p0) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Finished_View$headingView,
+			_0: _fizwidget$wiki_path$Finished_View$headingView,
 			_1: {
 				ctor: '::',
-				_0: A2(_fizwidget$wikipedia_game$Finished_View$subHeadingView, _p3, _p2),
+				_0: A2(_fizwidget$wiki_path$Finished_View$subHeadingView, _p3, _p2),
 				_1: {
 					ctor: '::',
-					_0: A3(_fizwidget$wikipedia_game$Finished_View$stopsView, _p3, _p2, _p1.stops),
+					_0: A3(_fizwidget$wiki_path$Finished_View$stopsView, _p3, _p2, _p1.stops),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _fizwidget$wikipedia_game$Finished_View$view = function (model) {
+var _fizwidget$wiki_path$Finished_View$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -17729,19 +17807,19 @@ var _fizwidget$wikipedia_game$Finished_View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Finished_View$modelView(model),
+			_0: _fizwidget$wiki_path$Finished_View$modelView(model),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$Finished_View$backButton,
+				_0: _fizwidget$wiki_path$Finished_View$backButton,
 				_1: {ctor: '[]'}
 			}
 		});
 };
 
-var _fizwidget$wikipedia_game$Init$init = _fizwidget$wikipedia_game$Setup_Init$init;
+var _fizwidget$wiki_path$Init$init = _fizwidget$wiki_path$Setup_Init$init;
 
-var _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting = function (title) {
-	var titleValue = _fizwidget$wikipedia_game$Common_Title_Model$value(title);
+var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (title) {
+	var titleValue = _fizwidget$wiki_path$Common_Title_Model$value(title);
 	var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$String$length(titleValue),
 		1) > 0;
@@ -17846,7 +17924,7 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting = function (title) 
 		ignoredPrefixes);
 	return hasMinimumLength && (!hasIgnoredPrefix);
 };
-var _fizwidget$wikipedia_game$Pathfinding_Util$isUnvisited = F3(
+var _fizwidget$wiki_path$Pathfinding_Util$isUnvisited = F3(
 	function (priorityQueue, pathSoFar, title) {
 		return !A2(
 			_elm_lang$core$List$member,
@@ -17862,9 +17940,9 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$isUnvisited = F3(
 							return {ctor: '::', _0: x, _1: y};
 						}),
 					pathSoFar,
-					_fizwidget$wikipedia_game$Common_PriorityQueue_Model$toSortedList(priorityQueue))));
+					_fizwidget$wiki_path$Common_PriorityQueue_Model$toSortedList(priorityQueue))));
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Util$countOccurences = F2(
+var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
 	function (content, target) {
 		var matchTarget = _elm_lang$core$Regex$caseInsensitive(
 			_elm_lang$core$Regex$regex(
@@ -17878,19 +17956,19 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$countOccurences = F2(
 		return _elm_lang$core$List$length(
 			A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, matchTarget, content));
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Util$heuristic = F2(
+var _fizwidget$wiki_path$Pathfinding_Util$heuristic = F2(
 	function (destination, title) {
 		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 1000 : _elm_lang$core$Basics$toFloat(
 			A2(
-				_fizwidget$wikipedia_game$Pathfinding_Util$countOccurences,
+				_fizwidget$wiki_path$Pathfinding_Util$countOccurences,
 				destination.content,
-				_fizwidget$wikipedia_game$Common_Title_Model$value(title)));
+				_fizwidget$wiki_path$Common_Title_Model$value(title)));
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Util$calculatePriority = F3(
+var _fizwidget$wiki_path$Pathfinding_Util$calculatePriority = F3(
 	function (destination, pathSoFar, title) {
-		return (pathSoFar.priority * 0.8) + A2(_fizwidget$wikipedia_game$Pathfinding_Util$heuristic, destination, title);
+		return (pathSoFar.priority * 0.8) + A2(_fizwidget$wiki_path$Pathfinding_Util$heuristic, destination, title);
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Util$keepHighestPriorityPaths = function (paths) {
+var _fizwidget$wiki_path$Pathfinding_Util$keepHighestPriorityPaths = function (paths) {
 	return A2(
 		_elm_lang$core$List$take,
 		2,
@@ -17902,73 +17980,73 @@ var _fizwidget$wikipedia_game$Pathfinding_Util$keepHighestPriorityPaths = functi
 				},
 				paths)));
 };
-var _fizwidget$wikipedia_game$Pathfinding_Util$extendPath = F3(
+var _fizwidget$wiki_path$Pathfinding_Util$extendPath = F3(
 	function (pathSoFar, destination, nextTitle) {
 		return {
-			priority: A3(_fizwidget$wikipedia_game$Pathfinding_Util$calculatePriority, destination, pathSoFar, nextTitle),
+			priority: A3(_fizwidget$wiki_path$Pathfinding_Util$calculatePriority, destination, pathSoFar, nextTitle),
 			next: nextTitle,
 			visited: {ctor: '::', _0: pathSoFar.next, _1: pathSoFar.visited}
 		};
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Util$addLinksToQueue = F4(
+var _fizwidget$wiki_path$Pathfinding_Util$addLinksToQueue = F4(
 	function (priorityQueue, destination, pathSoFar, links) {
 		return A3(
-			_fizwidget$wikipedia_game$Common_PriorityQueue_Model$insert,
+			_fizwidget$wiki_path$Common_PriorityQueue_Model$insert,
 			priorityQueue,
 			function (_) {
 				return _.priority;
 			},
-			_fizwidget$wikipedia_game$Pathfinding_Util$keepHighestPriorityPaths(
+			_fizwidget$wiki_path$Pathfinding_Util$keepHighestPriorityPaths(
 				A2(
 					_elm_lang$core$List$map,
-					A2(_fizwidget$wikipedia_game$Pathfinding_Util$extendPath, pathSoFar, destination),
+					A2(_fizwidget$wiki_path$Pathfinding_Util$extendPath, pathSoFar, destination),
 					A2(
 						_elm_lang$core$List$filter,
-						A2(_fizwidget$wikipedia_game$Pathfinding_Util$isUnvisited, priorityQueue, pathSoFar),
-						A2(_elm_lang$core$List$filter, _fizwidget$wikipedia_game$Pathfinding_Util$isInteresting, links)))));
+						A2(_fizwidget$wiki_path$Pathfinding_Util$isUnvisited, priorityQueue, pathSoFar),
+						A2(_elm_lang$core$List$filter, _fizwidget$wiki_path$Pathfinding_Util$isInteresting, links)))));
 	});
 
-var _fizwidget$wikipedia_game$Pathfinding_Update$pathNotFound = function (model) {
+var _fizwidget$wiki_path$Pathfinding_Update$pathNotFound = function (model) {
 	return {
 		ctor: '_Tuple2',
-		_0: _fizwidget$wikipedia_game$Model$Pathfinding(
+		_0: _fizwidget$wiki_path$Model$Pathfinding(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
-					fatalError: _elm_lang$core$Maybe$Just(_fizwidget$wikipedia_game$Pathfinding_Model$PathNotFound)
+					fatalError: _elm_lang$core$Maybe$Just(_fizwidget$wiki_path$Pathfinding_Model$PathNotFound)
 				})),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
-var _fizwidget$wikipedia_game$Pathfinding_Update$hasReachedDestination = F2(
+var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
 	function (nextTitle, destination) {
 		return _elm_lang$core$Native_Utils.eq(nextTitle, destination.title);
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$fetchNextArticle = function (pathSoFar) {
-	var title = _fizwidget$wikipedia_game$Common_Title_Model$value(pathSoFar.next);
+var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (pathSoFar) {
+	var title = _fizwidget$wiki_path$Common_Title_Model$value(pathSoFar.next);
 	var toMsg = function (_p0) {
-		return _fizwidget$wikipedia_game$Messages$Pathfinding(
-			A2(_fizwidget$wikipedia_game$Pathfinding_Messages$FetchArticleResponse, pathSoFar, _p0));
+		return _fizwidget$wiki_path$Messages$Pathfinding(
+			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathSoFar, _p0));
 	};
-	return A2(_fizwidget$wikipedia_game$Common_Article_Service$request, toMsg, title);
+	return A2(_fizwidget$wiki_path$Common_Article_Service$request, toMsg, title);
 };
-var _fizwidget$wikipedia_game$Pathfinding_Update$destinationReached = F2(
+var _fizwidget$wiki_path$Pathfinding_Update$destinationReached = F2(
 	function (_p1, destinationToSource) {
 		var _p2 = _p1;
 		var sourceToDestination = _elm_lang$core$List$reverse(
 			{ctor: '::', _0: destinationToSource.next, _1: destinationToSource.visited});
-		return A3(_fizwidget$wikipedia_game$Finished_Init$init, _p2.source.title, _p2.destination.title, sourceToDestination);
+		return A3(_fizwidget$wiki_path$Finished_Init$init, _p2.source.title, _p2.destination.title, sourceToDestination);
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$followPath = F2(
+var _fizwidget$wiki_path$Pathfinding_Update$followPath = F2(
 	function (model, pathToFollow) {
-		return A2(_fizwidget$wikipedia_game$Pathfinding_Update$hasReachedDestination, pathToFollow.next, model.destination) ? A2(_fizwidget$wikipedia_game$Pathfinding_Update$destinationReached, model, pathToFollow) : {
+		return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, pathToFollow.next, model.destination) ? A2(_fizwidget$wiki_path$Pathfinding_Update$destinationReached, model, pathToFollow) : {
 			ctor: '_Tuple2',
-			_0: _fizwidget$wikipedia_game$Model$Pathfinding(model),
-			_1: _fizwidget$wikipedia_game$Pathfinding_Update$fetchNextArticle(pathToFollow)
+			_0: _fizwidget$wiki_path$Model$Pathfinding(model),
+			_1: _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle(pathToFollow)
 		};
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$followHighestPriorityPath = function (model) {
-	var _p3 = _fizwidget$wikipedia_game$Common_PriorityQueue_Model$removeHighestPriority(model.priorityQueue);
+var _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath = function (model) {
+	var _p3 = _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority(model.priorityQueue);
 	var highestPriorityPath = _p3._0;
 	var updatedPriorityQueue = _p3._1;
 	var updatedModel = _elm_lang$core$Native_Utils.update(
@@ -17976,64 +18054,64 @@ var _fizwidget$wikipedia_game$Pathfinding_Update$followHighestPriorityPath = fun
 		{priorityQueue: updatedPriorityQueue});
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
-		_fizwidget$wikipedia_game$Pathfinding_Update$pathNotFound(updatedModel),
+		_fizwidget$wiki_path$Pathfinding_Update$pathNotFound(updatedModel),
 		A2(
 			_elm_lang$core$Maybe$map,
-			_fizwidget$wikipedia_game$Pathfinding_Update$followPath(updatedModel),
+			_fizwidget$wiki_path$Pathfinding_Update$followPath(updatedModel),
 			highestPriorityPath));
 };
-var _fizwidget$wikipedia_game$Pathfinding_Update$updateWithError = F2(
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithError = F2(
 	function (model, error) {
 		var updatedModel = _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				errors: {ctor: '::', _0: error, _1: model.errors}
 			});
-		return _fizwidget$wikipedia_game$Pathfinding_Update$followHighestPriorityPath(updatedModel);
+		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath(updatedModel);
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$updateWithArticle = F3(
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
 	function (model, pathSoFar, nextArticle) {
-		var updatedPriorityQueue = A4(_fizwidget$wikipedia_game$Pathfinding_Util$addLinksToQueue, model.priorityQueue, model.destination, pathSoFar, nextArticle.links);
+		var updatedPriorityQueue = A4(_fizwidget$wiki_path$Pathfinding_Util$addLinksToQueue, model.priorityQueue, model.destination, pathSoFar, nextArticle.links);
 		var updatedModel = _elm_lang$core$Native_Utils.update(
 			model,
 			{priorityQueue: updatedPriorityQueue});
-		return _fizwidget$wikipedia_game$Pathfinding_Update$followHighestPriorityPath(updatedModel);
+		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath(updatedModel);
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$updateWithResult = F3(
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithResult = F3(
 	function (model, pathSoFar, articleResult) {
 		var _p4 = articleResult;
 		if (_p4.ctor === 'Ok') {
 			var _p5 = _p4._0;
-			return A2(_fizwidget$wikipedia_game$Pathfinding_Update$hasReachedDestination, _p5.title, model.destination) ? A2(_fizwidget$wikipedia_game$Pathfinding_Update$destinationReached, model, pathSoFar) : A3(_fizwidget$wikipedia_game$Pathfinding_Update$updateWithArticle, model, pathSoFar, _p5);
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, _p5.title, model.destination) ? A2(_fizwidget$wiki_path$Pathfinding_Update$destinationReached, model, pathSoFar) : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, pathSoFar, _p5);
 		} else {
-			return A2(_fizwidget$wikipedia_game$Pathfinding_Update$updateWithError, model, _p4._0);
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$updateWithError, model, _p4._0);
 		}
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Update$update = F2(
+var _fizwidget$wiki_path$Pathfinding_Update$update = F2(
 	function (message, model) {
 		var _p6 = message;
 		if (_p6.ctor === 'FetchArticleResponse') {
-			return A3(_fizwidget$wikipedia_game$Pathfinding_Update$updateWithResult, model, _p6._0, _p6._1);
+			return A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithResult, model, _p6._0, _p6._1);
 		} else {
-			return _fizwidget$wikipedia_game$Setup_Init$init;
+			return _fizwidget$wiki_path$Setup_Init$init;
 		}
 	});
 
-var _fizwidget$wikipedia_game$Pathfinding_Init$initialModel = F2(
+var _fizwidget$wiki_path$Pathfinding_Init$initialModel = F2(
 	function (source, destination) {
 		return {
 			source: source,
 			destination: destination,
-			priorityQueue: _fizwidget$wikipedia_game$Common_PriorityQueue_Model$empty,
+			priorityQueue: _fizwidget$wiki_path$Common_PriorityQueue_Model$empty,
 			errors: {ctor: '[]'},
 			fatalError: _elm_lang$core$Maybe$Nothing
 		};
 	});
-var _fizwidget$wikipedia_game$Pathfinding_Init$init = F2(
+var _fizwidget$wiki_path$Pathfinding_Init$init = F2(
 	function (source, destination) {
 		return A3(
-			_fizwidget$wikipedia_game$Pathfinding_Update$updateWithArticle,
-			A2(_fizwidget$wikipedia_game$Pathfinding_Init$initialModel, source, destination),
+			_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle,
+			A2(_fizwidget$wiki_path$Pathfinding_Init$initialModel, source, destination),
 			{
 				priority: 0,
 				next: source.title,
@@ -18042,22 +18120,22 @@ var _fizwidget$wikipedia_game$Pathfinding_Init$init = F2(
 			source);
 	});
 
-var _fizwidget$wikipedia_game$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p0) {
+var _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p0) {
 	var _p1 = _p0;
 	var _p2 = _p1._0;
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		{
 			ctor: '_Tuple2',
-			_0: _fizwidget$wikipedia_game$Model$Setup(_p2),
+			_0: _fizwidget$wiki_path$Model$Setup(_p2),
 			_1: _p1._1
 		},
 		_krisajenkins$remotedata$RemoteData$toMaybe(
-			A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wikipedia_game$Pathfinding_Init$init, _p2.source, _p2.destination)));
+			A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Pathfinding_Init$init, _p2.source, _p2.destination)));
 };
-var _fizwidget$wikipedia_game$Setup_Update$setDestinationArticle = F2(
+var _fizwidget$wiki_path$Setup_Update$setDestinationArticle = F2(
 	function (model, destination) {
-		return _fizwidget$wikipedia_game$Setup_Update$beginPathfindingIfArticlesLoaded(
+		return _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded(
 			{
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
@@ -18066,9 +18144,9 @@ var _fizwidget$wikipedia_game$Setup_Update$setDestinationArticle = F2(
 				_1: _elm_lang$core$Platform_Cmd$none
 			});
 	});
-var _fizwidget$wikipedia_game$Setup_Update$setSourceArticle = F2(
+var _fizwidget$wiki_path$Setup_Update$setSourceArticle = F2(
 	function (model, source) {
-		return _fizwidget$wikipedia_game$Setup_Update$beginPathfindingIfArticlesLoaded(
+		return _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded(
 			{
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
@@ -18077,72 +18155,115 @@ var _fizwidget$wikipedia_game$Setup_Update$setSourceArticle = F2(
 				_1: _elm_lang$core$Platform_Cmd$none
 			});
 	});
-var _fizwidget$wikipedia_game$Setup_Update$requestArticles = function (_p3) {
+var _fizwidget$wiki_path$Setup_Update$requestArticles = function (_p3) {
 	var _p4 = _p3;
 	var requests = {
 		ctor: '::',
-		_0: A2(_fizwidget$wikipedia_game$Common_Article_Service$requestRemote, _fizwidget$wikipedia_game$Setup_Messages$FetchSourceArticleResult, _p4.sourceTitleInput),
+		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResult, _p4.sourceTitleInput),
 		_1: {
 			ctor: '::',
-			_0: A2(_fizwidget$wikipedia_game$Common_Article_Service$requestRemote, _fizwidget$wikipedia_game$Setup_Messages$FetchDestinationArticleResult, _p4.destinationTitleInput),
+			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResult, _p4.destinationTitleInput),
 			_1: {ctor: '[]'}
 		}
 	};
 	return A2(
 		_elm_lang$core$Platform_Cmd$map,
-		_fizwidget$wikipedia_game$Messages$Setup,
+		_fizwidget$wiki_path$Messages$Setup,
 		_elm_lang$core$Platform_Cmd$batch(requests));
 };
-var _fizwidget$wikipedia_game$Setup_Update$loadArticles = function (model) {
+var _fizwidget$wiki_path$Setup_Update$loadArticles = function (model) {
 	return {
 		ctor: '_Tuple2',
-		_0: _fizwidget$wikipedia_game$Model$Setup(
+		_0: _fizwidget$wiki_path$Model$Setup(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading})),
-		_1: _fizwidget$wikipedia_game$Setup_Update$requestArticles(model)
+		_1: _fizwidget$wiki_path$Setup_Update$requestArticles(model)
 	};
 };
-var _fizwidget$wikipedia_game$Setup_Update$setDestinationTitle = F2(
+var _fizwidget$wiki_path$Setup_Update$setDestinationTitle = F2(
 	function (model, destinationTitleInput) {
 		return {
 			ctor: '_Tuple2',
-			_0: _fizwidget$wikipedia_game$Model$Setup(
+			_0: _fizwidget$wiki_path$Model$Setup(
 				_elm_lang$core$Native_Utils.update(
 					model,
 					{destination: _krisajenkins$remotedata$RemoteData$NotAsked, destinationTitleInput: destinationTitleInput})),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
-var _fizwidget$wikipedia_game$Setup_Update$setSourceTitle = F2(
+var _fizwidget$wiki_path$Setup_Update$setSourceTitle = F2(
 	function (model, sourceTitleInput) {
 		return {
 			ctor: '_Tuple2',
-			_0: _fizwidget$wikipedia_game$Model$Setup(
+			_0: _fizwidget$wiki_path$Model$Setup(
 				_elm_lang$core$Native_Utils.update(
 					model,
 					{source: _krisajenkins$remotedata$RemoteData$NotAsked, sourceTitleInput: sourceTitleInput})),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
-var _fizwidget$wikipedia_game$Setup_Update$update = F2(
+var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
+	function (model, remoteTitles) {
+		var updatedModel = _elm_lang$core$Native_Utils.update(
+			model,
+			{randomizedTitles: remoteTitles});
+		var setTitles = function (titles) {
+			var titleStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Title_Model$value, titles);
+			var _p5 = titleStrings;
+			if ((_p5.ctor === '::') && (_p5._1.ctor === '::')) {
+				return _elm_lang$core$Native_Utils.update(
+					updatedModel,
+					{sourceTitleInput: _p5._0, destinationTitleInput: _p5._1._0});
+			} else {
+				return updatedModel;
+			}
+		};
+		var withRandomizedTitles = A2(
+			_krisajenkins$remotedata$RemoteData$withDefault,
+			updatedModel,
+			A2(_krisajenkins$remotedata$RemoteData$map, setTitles, remoteTitles));
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(withRandomizedTitles),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Setup_Update$loadRandomTitles = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _fizwidget$wiki_path$Model$Setup(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{randomizedTitles: _krisajenkins$remotedata$RemoteData$Loading})),
+		_1: A2(
+			_elm_lang$core$Platform_Cmd$map,
+			_fizwidget$wiki_path$Messages$Setup,
+			A2(_fizwidget$wiki_path$Common_Title_Service$requestRandom, _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesResponse, 2))
+	};
+};
+var _fizwidget$wiki_path$Setup_Update$update = F2(
 	function (message, model) {
-		var _p5 = message;
-		switch (_p5.ctor) {
+		var _p6 = message;
+		switch (_p6.ctor) {
 			case 'SourceArticleTitleChange':
-				return A2(_fizwidget$wikipedia_game$Setup_Update$setSourceTitle, model, _p5._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceTitle, model, _p6._0);
 			case 'DestinationArticleTitleChange':
-				return A2(_fizwidget$wikipedia_game$Setup_Update$setDestinationTitle, model, _p5._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationTitle, model, _p6._0);
 			case 'FetchArticlesRequest':
-				return _fizwidget$wikipedia_game$Setup_Update$loadArticles(model);
+				return _fizwidget$wiki_path$Setup_Update$loadArticles(model);
 			case 'FetchSourceArticleResult':
-				return A2(_fizwidget$wikipedia_game$Setup_Update$setSourceArticle, model, _p5._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceArticle, model, _p6._0);
+			case 'FetchDestinationArticleResult':
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationArticle, model, _p6._0);
+			case 'RandomizeTitlesRequest':
+				return _fizwidget$wiki_path$Setup_Update$loadRandomTitles(model);
 			default:
-				return A2(_fizwidget$wikipedia_game$Setup_Update$setDestinationArticle, model, _p5._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setRandomTitles, model, _p6._0);
 		}
 	});
 
-var _fizwidget$wikipedia_game$Update$update = F2(
+var _fizwidget$wiki_path$Update$update = F2(
 	function (message, model) {
 		var _p0 = {ctor: '_Tuple2', _0: message, _1: model};
 		_v0_3:
@@ -18150,19 +18271,19 @@ var _fizwidget$wikipedia_game$Update$update = F2(
 			switch (_p0._0.ctor) {
 				case 'Setup':
 					if (_p0._1.ctor === 'Setup') {
-						return A2(_fizwidget$wikipedia_game$Setup_Update$update, _p0._0._0, _p0._1._0);
+						return A2(_fizwidget$wiki_path$Setup_Update$update, _p0._0._0, _p0._1._0);
 					} else {
 						break _v0_3;
 					}
 				case 'Pathfinding':
 					if (_p0._1.ctor === 'Pathfinding') {
-						return A2(_fizwidget$wikipedia_game$Pathfinding_Update$update, _p0._0._0, _p0._1._0);
+						return A2(_fizwidget$wiki_path$Pathfinding_Update$update, _p0._0._0, _p0._1._0);
 					} else {
 						break _v0_3;
 					}
 				default:
 					if (_p0._1.ctor === 'Finished') {
-						return A2(_fizwidget$wikipedia_game$Finished_Update$update, _p0._0._0, _p0._1._0);
+						return A2(_fizwidget$wiki_path$Finished_Update$update, _p0._0._0, _p0._1._0);
 					} else {
 						break _v0_3;
 					}
@@ -18171,7 +18292,7 @@ var _fizwidget$wikipedia_game$Update$update = F2(
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 
-var _fizwidget$wikipedia_game$Subscriptions$subscriptions = function (model) {
+var _fizwidget$wiki_path$Subscriptions$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 
@@ -19009,17 +19130,18 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Input$search = _rundis$elm_bootstrap$Bo
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$tel = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Tel);
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$color = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Color);
 
-var _fizwidget$wikipedia_game$Setup_View$getErrorMessage = function (remoteArticle) {
+var _fizwidget$wiki_path$Setup_View$getErrorMessage = function (remoteArticle) {
 	var _p0 = remoteArticle;
 	if (_p0.ctor === 'Failure') {
-		return _fizwidget$wikipedia_game$Common_Article_View$viewError(_p0._0);
+		return _fizwidget$wiki_path$Common_Article_View$viewError(_p0._0);
 	} else {
 		return _rtfeldman$elm_css$Html_Styled$text('');
 	}
 };
-var _fizwidget$wikipedia_game$Setup_View$isLoading = function (_p1) {
+var _fizwidget$wiki_path$Setup_View$isLoading = function (_p1) {
 	var _p2 = _p1;
-	return _krisajenkins$remotedata$RemoteData$isLoading(
+	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomizedTitles);
+	var areArticlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(
 		_krisajenkins$remotedata$RemoteData$fromList(
 			{
 				ctor: '::',
@@ -19030,8 +19152,9 @@ var _fizwidget$wikipedia_game$Setup_View$isLoading = function (_p1) {
 					_1: {ctor: '[]'}
 				}
 			}));
+	return areArticlesLoading || areTitlesLoading;
 };
-var _fizwidget$wikipedia_game$Setup_View$showSpinnerIfLoading = function (model) {
+var _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19047,21 +19170,73 @@ var _fizwidget$wikipedia_game$Setup_View$showSpinnerIfLoading = function (model)
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Common_Spinner_View$view(
+			_0: _fizwidget$wiki_path$Common_Spinner_View$view(
 				{
-					isVisible: _fizwidget$wikipedia_game$Setup_View$isLoading(model)
+					isVisible: _fizwidget$wiki_path$Setup_View$isLoading(model)
 				}),
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wikipedia_game$Setup_View$shouldDisableLoadButton = function (model) {
+var _fizwidget$wiki_path$Setup_View$shouldDisableLoadButton = function (model) {
 	var isBlank = function (_p3) {
 		return _elm_lang$core$String$isEmpty(
 			_elm_lang$core$String$trim(_p3));
 	};
-	return _fizwidget$wikipedia_game$Setup_View$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
+	return _fizwidget$wiki_path$Setup_View$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
 };
-var _fizwidget$wikipedia_game$Setup_View$findPathButton = function (model) {
+var _fizwidget$wiki_path$Setup_View$showRandomizationError = function (_p4) {
+	var _p5 = _p4;
+	var _p6 = _p5.randomizedTitles;
+	if (_p6.ctor === 'Failure') {
+		return _rtfeldman$elm_css$Html_Styled$text(
+			_elm_lang$core$Basics$toString(_p6._0));
+	} else {
+		return _rtfeldman$elm_css$Html_Styled$text('');
+	}
+};
+var _fizwidget$wiki_path$Setup_View$randomizeTitlesButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(4)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+				A2(
+					_rundis$elm_bootstrap$Bootstrap_Button$button,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$light,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+								_fizwidget$wiki_path$Setup_View$isLoading(model)),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$RandomizeTitlesRequest),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+							_rtfeldman$elm_css$Html_Styled$text('Randomize')),
+						_1: {ctor: '[]'}
+					})),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Setup_View$findPathButton = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19089,10 +19264,10 @@ var _fizwidget$wikipedia_game$Setup_View$findPathButton = function (model) {
 							_1: {
 								ctor: '::',
 								_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-									_fizwidget$wikipedia_game$Setup_View$shouldDisableLoadButton(model)),
+									_fizwidget$wiki_path$Setup_View$shouldDisableLoadButton(model)),
 								_1: {
 									ctor: '::',
-									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wikipedia_game$Setup_Messages$FetchArticlesRequest),
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -19107,9 +19282,9 @@ var _fizwidget$wikipedia_game$Setup_View$findPathButton = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wikipedia_game$Setup_View$getInputStatus = function (article) {
-	var _p4 = article;
-	switch (_p4.ctor) {
+var _fizwidget$wiki_path$Setup_View$getInputStatus = function (article) {
+	var _p7 = article;
+	switch (_p7.ctor) {
 		case 'NotAsked':
 			return {ctor: '[]'};
 		case 'Loading':
@@ -19124,11 +19299,11 @@ var _fizwidget$wikipedia_game$Setup_View$getInputStatus = function (article) {
 			return {ctor: '[]'};
 	}
 };
-var _fizwidget$wikipedia_game$Setup_View$articleTitleInput = F4(
+var _fizwidget$wiki_path$Setup_View$articleTitleInput = F4(
 	function (placeholderText, toMsg, title, article) {
 		var inputOptions = A2(
 			_elm_lang$core$Basics_ops['++'],
-			_fizwidget$wikipedia_game$Setup_View$getInputStatus(article),
+			_fizwidget$wiki_path$Setup_View$getInputStatus(article),
 			{
 				ctor: '::',
 				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$large,
@@ -19183,7 +19358,7 @@ var _fizwidget$wikipedia_game$Setup_View$articleTitleInput = F4(
 									{
 										ctor: '::',
 										_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
-											_fizwidget$wikipedia_game$Setup_View$getErrorMessage(article)),
+											_fizwidget$wiki_path$Setup_View$getErrorMessage(article)),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -19199,10 +19374,10 @@ var _fizwidget$wikipedia_game$Setup_View$articleTitleInput = F4(
 				_1: {ctor: '[]'}
 			});
 	});
-var _fizwidget$wikipedia_game$Setup_View$viewDestinationTitleInput = A2(_fizwidget$wikipedia_game$Setup_View$articleTitleInput, 'To...', _fizwidget$wikipedia_game$Setup_Messages$DestinationArticleTitleChange);
-var _fizwidget$wikipedia_game$Setup_View$viewSourceTitleInput = A2(_fizwidget$wikipedia_game$Setup_View$articleTitleInput, 'From...', _fizwidget$wikipedia_game$Setup_Messages$SourceArticleTitleChange);
-var _fizwidget$wikipedia_game$Setup_View$titleInputs = function (_p5) {
-	var _p6 = _p5;
+var _fizwidget$wiki_path$Setup_View$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'To...', _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange);
+var _fizwidget$wiki_path$Setup_View$viewSourceTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'From...', _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange);
+var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p8) {
+	var _p9 = _p8;
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19225,15 +19400,15 @@ var _fizwidget$wikipedia_game$Setup_View$titleInputs = function (_p5) {
 		},
 		{
 			ctor: '::',
-			_0: A2(_fizwidget$wikipedia_game$Setup_View$viewSourceTitleInput, _p6.sourceTitleInput, _p6.source),
+			_0: A2(_fizwidget$wiki_path$Setup_View$viewSourceTitleInput, _p9.sourceTitleInput, _p9.source),
 			_1: {
 				ctor: '::',
-				_0: A2(_fizwidget$wikipedia_game$Setup_View$viewDestinationTitleInput, _p6.destinationTitleInput, _p6.destination),
+				_0: A2(_fizwidget$wiki_path$Setup_View$viewDestinationTitleInput, _p9.destinationTitleInput, _p9.destination),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _fizwidget$wikipedia_game$Setup_View$view = function (model) {
+var _fizwidget$wiki_path$Setup_View$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$form,
 		{
@@ -19256,30 +19431,38 @@ var _fizwidget$wikipedia_game$Setup_View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Setup_View$titleInputs(model),
+			_0: _fizwidget$wiki_path$Setup_View$titleInputs(model),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$Setup_View$findPathButton(model),
+				_0: _fizwidget$wiki_path$Setup_View$findPathButton(model),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wikipedia_game$Setup_View$showSpinnerIfLoading(model),
-					_1: {ctor: '[]'}
+					_0: _fizwidget$wiki_path$Setup_View$randomizeTitlesButton(model),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Setup_View$showRandomizationError(model),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading(model),
+							_1: {ctor: '[]'}
+						}
+					}
 				}
 			}
 		});
 };
 
-var _fizwidget$wikipedia_game$Pathfinding_View$stopView = function (title) {
+var _fizwidget$wiki_path$Pathfinding_View$stopView = function (title) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$li,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$Common_Title_View$viewAsLink(title),
+			_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(title),
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wikipedia_game$Pathfinding_View$pathView = function (pathSoFar) {
+var _fizwidget$wiki_path$Pathfinding_View$pathView = function (pathSoFar) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{ctor: '[]'},
@@ -19290,13 +19473,13 @@ var _fizwidget$wikipedia_game$Pathfinding_View$pathView = function (pathSoFar) {
 				{ctor: '[]'},
 				A2(
 					_elm_lang$core$List$map,
-					_fizwidget$wikipedia_game$Pathfinding_View$stopView,
+					_fizwidget$wiki_path$Pathfinding_View$stopView,
 					_elm_lang$core$List$reverse(
 						{ctor: '::', _0: pathSoFar.next, _1: pathSoFar.visited}))),
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wikipedia_game$Pathfinding_View$priorityQueueView = function (queue) {
+var _fizwidget$wiki_path$Pathfinding_View$priorityQueueView = function (queue) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		A2(
@@ -19305,10 +19488,10 @@ var _fizwidget$wikipedia_game$Pathfinding_View$priorityQueueView = function (que
 			{ctor: '[]'}),
 		A2(
 			_elm_lang$core$Maybe$map,
-			_fizwidget$wikipedia_game$Pathfinding_View$pathView,
-			_fizwidget$wikipedia_game$Common_PriorityQueue_Model$getHighestPriority(queue)));
+			_fizwidget$wiki_path$Pathfinding_View$pathView,
+			_fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority(queue)));
 };
-var _fizwidget$wikipedia_game$Pathfinding_View$backView = A2(
+var _fizwidget$wiki_path$Pathfinding_View$backView = A2(
 	_rtfeldman$elm_css$Html_Styled$div,
 	{
 		ctor: '::',
@@ -19331,7 +19514,7 @@ var _fizwidget$wikipedia_game$Pathfinding_View$backView = A2(
 					_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
 					_1: {
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wikipedia_game$Pathfinding_Messages$BackToSetup),
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Pathfinding_Messages$BackToSetup),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -19343,13 +19526,13 @@ var _fizwidget$wikipedia_game$Pathfinding_View$backView = A2(
 				})),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wikipedia_game$Pathfinding_View$errorsView = function (errors) {
+var _fizwidget$wiki_path$Pathfinding_View$errorsView = function (errors) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _fizwidget$wikipedia_game$Common_Article_View$viewError, errors));
+		A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Article_View$viewError, errors));
 };
-var _fizwidget$wikipedia_game$Pathfinding_View$fatalErrorView = function (error) {
+var _fizwidget$wiki_path$Pathfinding_View$fatalErrorView = function (error) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		_rtfeldman$elm_css$Html_Styled$text(''),
@@ -19361,22 +19544,22 @@ var _fizwidget$wikipedia_game$Pathfinding_View$fatalErrorView = function (error)
 			},
 			error));
 };
-var _fizwidget$wikipedia_game$Pathfinding_View$maybeErrorView = F2(
+var _fizwidget$wiki_path$Pathfinding_View$maybeErrorView = F2(
 	function (errors, fatalError) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$div,
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$Pathfinding_View$fatalErrorView(fatalError),
+				_0: _fizwidget$wiki_path$Pathfinding_View$fatalErrorView(fatalError),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wikipedia_game$Pathfinding_View$errorsView(errors),
+					_0: _fizwidget$wiki_path$Pathfinding_View$errorsView(errors),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _fizwidget$wikipedia_game$Pathfinding_View$heading = F2(
+var _fizwidget$wiki_path$Pathfinding_View$heading = F2(
 	function (source, destination) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$h3,
@@ -19398,18 +19581,18 @@ var _fizwidget$wikipedia_game$Pathfinding_View$heading = F2(
 						'Finding path from ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_fizwidget$wikipedia_game$Common_Title_Model$value(source.title),
+							_fizwidget$wiki_path$Common_Title_Model$value(source.title),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' to ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_fizwidget$wikipedia_game$Common_Title_Model$value(destination.title),
+									_fizwidget$wiki_path$Common_Title_Model$value(destination.title),
 									'...'))))),
 				_1: {ctor: '[]'}
 			});
 	});
-var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
+var _fizwidget$wiki_path$Pathfinding_View$view = function (_p2) {
 	var _p3 = _p2;
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
@@ -19433,20 +19616,20 @@ var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
 		},
 		{
 			ctor: '::',
-			_0: A2(_fizwidget$wikipedia_game$Pathfinding_View$heading, _p3.source, _p3.destination),
+			_0: A2(_fizwidget$wiki_path$Pathfinding_View$heading, _p3.source, _p3.destination),
 			_1: {
 				ctor: '::',
-				_0: A2(_fizwidget$wikipedia_game$Pathfinding_View$maybeErrorView, _p3.errors, _p3.fatalError),
+				_0: A2(_fizwidget$wiki_path$Pathfinding_View$maybeErrorView, _p3.errors, _p3.fatalError),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wikipedia_game$Pathfinding_View$backView,
+					_0: _fizwidget$wiki_path$Pathfinding_View$backView,
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wikipedia_game$Common_Spinner_View$view(
+						_0: _fizwidget$wiki_path$Common_Spinner_View$view(
 							{isVisible: true}),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wikipedia_game$Pathfinding_View$priorityQueueView(_p3.priorityQueue),
+							_0: _fizwidget$wiki_path$Pathfinding_View$priorityQueueView(_p3.priorityQueue),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -19455,27 +19638,27 @@ var _fizwidget$wikipedia_game$Pathfinding_View$view = function (_p2) {
 		});
 };
 
-var _fizwidget$wikipedia_game$View$viewModel = function (model) {
+var _fizwidget$wiki_path$View$viewModel = function (model) {
 	var _p0 = model;
 	switch (_p0.ctor) {
 		case 'Setup':
 			return A2(
 				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wikipedia_game$Messages$Setup,
-				_fizwidget$wikipedia_game$Setup_View$view(_p0._0));
+				_fizwidget$wiki_path$Messages$Setup,
+				_fizwidget$wiki_path$Setup_View$view(_p0._0));
 		case 'Pathfinding':
 			return A2(
 				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wikipedia_game$Messages$Pathfinding,
-				_fizwidget$wikipedia_game$Pathfinding_View$view(_p0._0));
+				_fizwidget$wiki_path$Messages$Pathfinding,
+				_fizwidget$wiki_path$Pathfinding_View$view(_p0._0));
 		default:
 			return A2(
 				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wikipedia_game$Messages$Finished,
-				_fizwidget$wikipedia_game$Finished_View$view(_p0._0));
+				_fizwidget$wiki_path$Messages$Finished,
+				_fizwidget$wiki_path$Finished_View$view(_p0._0));
 	}
 };
-var _fizwidget$wikipedia_game$View$viewHeading = A2(
+var _fizwidget$wiki_path$View$viewHeading = A2(
 	_rtfeldman$elm_css$Html_Styled$h1,
 	{
 		ctor: '::',
@@ -19513,10 +19696,10 @@ var _fizwidget$wikipedia_game$View$viewHeading = A2(
 	},
 	{
 		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled$text('WikiLinks'),
+		_0: _rtfeldman$elm_css$Html_Styled$text('WikiPath'),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wikipedia_game$View$view = function (model) {
+var _fizwidget$wiki_path$View$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19550,30 +19733,2118 @@ var _fizwidget$wikipedia_game$View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wikipedia_game$View$viewHeading,
+			_0: _fizwidget$wiki_path$View$viewHeading,
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wikipedia_game$View$viewModel(model),
+				_0: _fizwidget$wiki_path$View$viewModel(model),
 				_1: {ctor: '[]'}
 			}
 		});
 };
 
-var _fizwidget$wikipedia_game$Main$main = _elm_lang$html$Html$program(
+var _fizwidget$wiki_path$Main$main = _elm_lang$html$Html$program(
 	{
-		init: _fizwidget$wikipedia_game$Init$init,
+		init: _fizwidget$wiki_path$Init$init,
 		view: function (_p0) {
 			return _rtfeldman$elm_css$Html_Styled$toUnstyled(
-				_fizwidget$wikipedia_game$View$view(_p0));
+				_fizwidget$wiki_path$View$view(_p0));
 		},
-		update: _fizwidget$wikipedia_game$Update$update,
-		subscriptions: _fizwidget$wikipedia_game$Subscriptions$subscriptions
+		update: _fizwidget$wiki_path$Update$update,
+		subscriptions: _fizwidget$wiki_path$Subscriptions$subscriptions
 	})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
-if (typeof _fizwidget$wikipedia_game$Main$main !== 'undefined') {
-    _fizwidget$wikipedia_game$Main$main(Elm['Main'], 'Main', undefined);
+if (typeof _fizwidget$wiki_path$Main$main !== 'undefined') {
+    _fizwidget$wiki_path$Main$main(Elm['Main'], 'Main', undefined);
+}
+
+if (typeof define === "function" && define['amd'])
+{
+  define([], function() { return Elm; });
+  return;
+}
+
+if (typeof module === "object")
+{
+  module['exports'] = Elm;
+  return;
+}
+
+var globalElm = this['Elm'];
+if (typeof globalElm === "undefined")
+{
+  this['Elm'] = Elm;
+  return;
+}
+
+for (var publicModule in Elm)
+{
+  if (publicModule in globalElm)
+  {
+    throw new Error('There are two Elm modules called `' + publicModule + '` on this page! Rename one of them.');
+  }
+  globalElm[publicModule] = Elm[publicModule];
+}
+
+}).call(this);
+
+: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Finished_Messages$BackToSetup),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+						_rtfeldman$elm_css$Html_Styled$text('Back')),
+					_1: {ctor: '[]'}
+				})),
+		_1: {ctor: '[]'}
+	});
+var _fizwidget$wiki_path$Finished_View$stopsView = F3(
+	function (source, destination, stops) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{ctor: '[]'},
+			A2(
+				_elm_lang$core$List$intersperse,
+				_rtfeldman$elm_css$Html_Styled$text(' → '),
+				A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Title_View$viewAsLink, stops)));
+	});
+var _fizwidget$wiki_path$Finished_View$subHeadingView = F2(
+	function (sourceTitle, destinationTitle) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$h4,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Path from ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_fizwidget$wiki_path$Common_Title_Model$value(sourceTitle),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' to ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_fizwidget$wiki_path$Common_Title_Model$value(destinationTitle),
+									'  was...'))))),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fizwidget$wiki_path$Finished_View$headingView = A2(
+	_rtfeldman$elm_css$Html_Styled$h2,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: _rtfeldman$elm_css$Html_Styled$text('Success!'),
+		_1: {ctor: '[]'}
+	});
+var _fizwidget$wiki_path$Finished_View$modelView = function (_p0) {
+	var _p1 = _p0;
+	var _p3 = _p1.source;
+	var _p2 = _p1.destination;
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Finished_View$headingView,
+			_1: {
+				ctor: '::',
+				_0: A2(_fizwidget$wiki_path$Finished_View$subHeadingView, _p3, _p2),
+				_1: {
+					ctor: '::',
+					_0: A3(_fizwidget$wiki_path$Finished_View$stopsView, _p3, _p2, _p1.stops),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _fizwidget$wiki_path$Finished_View$view = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$displayFlex,
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Finished_View$modelView(model),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Finished_View$backButton,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
+var _fizwidget$wiki_path$Init$init = _fizwidget$wiki_path$Setup_Init$init;
+
+var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (title) {
+	var titleValue = _fizwidget$wiki_path$Common_Title_Model$value(title);
+	var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$String$length(titleValue),
+		1) > 0;
+	var ignoredPrefixes = {
+		ctor: '::',
+		_0: 'Category:',
+		_1: {
+			ctor: '::',
+			_0: 'Template:',
+			_1: {
+				ctor: '::',
+				_0: 'Wikipedia:',
+				_1: {
+					ctor: '::',
+					_0: 'Help:',
+					_1: {
+						ctor: '::',
+						_0: 'Special:',
+						_1: {
+							ctor: '::',
+							_0: 'Template talk:',
+							_1: {
+								ctor: '::',
+								_0: 'ISBN',
+								_1: {
+									ctor: '::',
+									_0: 'International Standard Book Number',
+									_1: {
+										ctor: '::',
+										_0: 'Digital object identifier',
+										_1: {
+											ctor: '::',
+											_0: 'Portal:',
+											_1: {
+												ctor: '::',
+												_0: 'Book:',
+												_1: {
+													ctor: '::',
+													_0: 'User:',
+													_1: {
+														ctor: '::',
+														_0: 'Commons',
+														_1: {
+															ctor: '::',
+															_0: 'Talk:',
+															_1: {
+																ctor: '::',
+																_0: 'Wikipedia talk:',
+																_1: {
+																	ctor: '::',
+																	_0: 'User talk:',
+																	_1: {
+																		ctor: '::',
+																		_0: 'Module:',
+																		_1: {
+																			ctor: '::',
+																			_0: 'File:',
+																			_1: {
+																				ctor: '::',
+																				_0: 'International Standard Serial Number',
+																				_1: {
+																					ctor: '::',
+																					_0: 'PubMed',
+																					_1: {
+																						ctor: '::',
+																						_0: 'JSTOR',
+																						_1: {
+																							ctor: '::',
+																							_0: 'Bibcode',
+																							_1: {
+																								ctor: '::',
+																								_0: 'Wayback Machine',
+																								_1: {ctor: '[]'}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+	var hasIgnoredPrefix = A2(
+		_elm_lang$core$List$any,
+		function (prefix) {
+			return A2(_elm_lang$core$String$startsWith, prefix, titleValue);
+		},
+		ignoredPrefixes);
+	return hasMinimumLength && (!hasIgnoredPrefix);
+};
+var _fizwidget$wiki_path$Pathfinding_Util$isUnvisited = F3(
+	function (priorityQueue, pathSoFar, title) {
+		return !A2(
+			_elm_lang$core$List$member,
+			title,
+			A2(
+				_elm_lang$core$List$concatMap,
+				function (pathSoFar) {
+					return {ctor: '::', _0: pathSoFar.next, _1: pathSoFar.visited};
+				},
+				A2(
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						}),
+					pathSoFar,
+					_fizwidget$wiki_path$Common_PriorityQueue_Model$toSortedList(priorityQueue))));
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
+	function (content, target) {
+		var matchTarget = _elm_lang$core$Regex$caseInsensitive(
+			_elm_lang$core$Regex$regex(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'(^|\\s+|\")',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Regex$escape(target),
+						'(\\s+|$|\")'))));
+		return _elm_lang$core$List$length(
+			A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, matchTarget, content));
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$heuristic = F2(
+	function (destination, title) {
+		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 1000 : _elm_lang$core$Basics$toFloat(
+			A2(
+				_fizwidget$wiki_path$Pathfinding_Util$countOccurences,
+				destination.content,
+				_fizwidget$wiki_path$Common_Title_Model$value(title)));
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$calculatePriority = F3(
+	function (destination, pathSoFar, title) {
+		return (pathSoFar.priority * 0.8) + A2(_fizwidget$wiki_path$Pathfinding_Util$heuristic, destination, title);
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$keepHighestPriorityPaths = function (paths) {
+	return A2(
+		_elm_lang$core$List$take,
+		2,
+		_elm_lang$core$List$reverse(
+			A2(
+				_elm_lang$core$List$sortBy,
+				function (_) {
+					return _.priority;
+				},
+				paths)));
+};
+var _fizwidget$wiki_path$Pathfinding_Util$extendPath = F3(
+	function (pathSoFar, destination, nextTitle) {
+		return {
+			priority: A3(_fizwidget$wiki_path$Pathfinding_Util$calculatePriority, destination, pathSoFar, nextTitle),
+			next: nextTitle,
+			visited: {ctor: '::', _0: pathSoFar.next, _1: pathSoFar.visited}
+		};
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$addLinksToQueue = F4(
+	function (priorityQueue, destination, pathSoFar, links) {
+		return A3(
+			_fizwidget$wiki_path$Common_PriorityQueue_Model$insert,
+			priorityQueue,
+			function (_) {
+				return _.priority;
+			},
+			_fizwidget$wiki_path$Pathfinding_Util$keepHighestPriorityPaths(
+				A2(
+					_elm_lang$core$List$map,
+					A2(_fizwidget$wiki_path$Pathfinding_Util$extendPath, pathSoFar, destination),
+					A2(
+						_elm_lang$core$List$filter,
+						A2(_fizwidget$wiki_path$Pathfinding_Util$isUnvisited, priorityQueue, pathSoFar),
+						A2(_elm_lang$core$List$filter, _fizwidget$wiki_path$Pathfinding_Util$isInteresting, links)))));
+	});
+
+var _fizwidget$wiki_path$Pathfinding_Update$pathNotFound = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _fizwidget$wiki_path$Model$Pathfinding(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{
+					fatalError: _elm_lang$core$Maybe$Just(_fizwidget$wiki_path$Pathfinding_Model$PathNotFound)
+				})),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
+	function (nextTitle, destination) {
+		return _elm_lang$core$Native_Utils.eq(nextTitle, destination.title);
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (pathSoFar) {
+	var title = _fizwidget$wiki_path$Common_Title_Model$value(pathSoFar.next);
+	var toMsg = function (_p0) {
+		return _fizwidget$wiki_path$Messages$Pathfinding(
+			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathSoFar, _p0));
+	};
+	return A2(_fizwidget$wiki_path$Common_Article_Service$request, toMsg, title);
+};
+var _fizwidget$wiki_path$Pathfinding_Update$destinationReached = F2(
+	function (_p1, destinationToSource) {
+		var _p2 = _p1;
+		var sourceToDestination = _elm_lang$core$List$reverse(
+			{ctor: '::', _0: destinationToSource.next, _1: destinationToSource.visited});
+		return A3(_fizwidget$wiki_path$Finished_Init$init, _p2.source.title, _p2.destination.title, sourceToDestination);
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$followPath = F2(
+	function (model, pathToFollow) {
+		return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, pathToFollow.next, model.destination) ? A2(_fizwidget$wiki_path$Pathfinding_Update$destinationReached, model, pathToFollow) : {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Pathfinding(model),
+			_1: _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle(pathToFollow)
+		};
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath = function (model) {
+	var _p3 = _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority(model.priorityQueue);
+	var highestPriorityPath = _p3._0;
+	var updatedPriorityQueue = _p3._1;
+	var updatedModel = _elm_lang$core$Native_Utils.update(
+		model,
+		{priorityQueue: updatedPriorityQueue});
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		_fizwidget$wiki_path$Pathfinding_Update$pathNotFound(updatedModel),
+		A2(
+			_elm_lang$core$Maybe$map,
+			_fizwidget$wiki_path$Pathfinding_Update$followPath(updatedModel),
+			highestPriorityPath));
+};
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithError = F2(
+	function (model, error) {
+		var updatedModel = _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				errors: {ctor: '::', _0: error, _1: model.errors}
+			});
+		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath(updatedModel);
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
+	function (model, pathSoFar, nextArticle) {
+		var updatedPriorityQueue = A4(_fizwidget$wiki_path$Pathfinding_Util$addLinksToQueue, model.priorityQueue, model.destination, pathSoFar, nextArticle.links);
+		var updatedModel = _elm_lang$core$Native_Utils.update(
+			model,
+			{priorityQueue: updatedPriorityQueue});
+		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPath(updatedModel);
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$updateWithResult = F3(
+	function (model, pathSoFar, articleResult) {
+		var _p4 = articleResult;
+		if (_p4.ctor === 'Ok') {
+			var _p5 = _p4._0;
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, _p5.title, model.destination) ? A2(_fizwidget$wiki_path$Pathfinding_Update$destinationReached, model, pathSoFar) : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, pathSoFar, _p5);
+		} else {
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$updateWithError, model, _p4._0);
+		}
+	});
+var _fizwidget$wiki_path$Pathfinding_Update$update = F2(
+	function (message, model) {
+		var _p6 = message;
+		if (_p6.ctor === 'FetchArticleResponse') {
+			return A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithResult, model, _p6._0, _p6._1);
+		} else {
+			return _fizwidget$wiki_path$Setup_Init$init;
+		}
+	});
+
+var _fizwidget$wiki_path$Pathfinding_Init$initialModel = F2(
+	function (source, destination) {
+		return {
+			source: source,
+			destination: destination,
+			priorityQueue: _fizwidget$wiki_path$Common_PriorityQueue_Model$empty,
+			errors: {ctor: '[]'},
+			fatalError: _elm_lang$core$Maybe$Nothing
+		};
+	});
+var _fizwidget$wiki_path$Pathfinding_Init$init = F2(
+	function (source, destination) {
+		return A3(
+			_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle,
+			A2(_fizwidget$wiki_path$Pathfinding_Init$initialModel, source, destination),
+			{
+				priority: 0,
+				next: source.title,
+				visited: {ctor: '[]'}
+			},
+			source);
+	});
+
+var _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = _p1._0;
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		{
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(_p2),
+			_1: _p1._1
+		},
+		_krisajenkins$remotedata$RemoteData$toMaybe(
+			A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Pathfinding_Init$init, _p2.source, _p2.destination)));
+};
+var _fizwidget$wiki_path$Setup_Update$setDestinationArticle = F2(
+	function (model, destination) {
+		return _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded(
+			{
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{destination: destination}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			});
+	});
+var _fizwidget$wiki_path$Setup_Update$setSourceArticle = F2(
+	function (model, source) {
+		return _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded(
+			{
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{source: source}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			});
+	});
+var _fizwidget$wiki_path$Setup_Update$requestArticles = function (_p3) {
+	var _p4 = _p3;
+	var requests = {
+		ctor: '::',
+		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResult, _p4.sourceTitleInput),
+		_1: {
+			ctor: '::',
+			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResult, _p4.destinationTitleInput),
+			_1: {ctor: '[]'}
+		}
+	};
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_fizwidget$wiki_path$Messages$Setup,
+		_elm_lang$core$Platform_Cmd$batch(requests));
+};
+var _fizwidget$wiki_path$Setup_Update$loadArticles = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _fizwidget$wiki_path$Model$Setup(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading})),
+		_1: _fizwidget$wiki_path$Setup_Update$requestArticles(model)
+	};
+};
+var _fizwidget$wiki_path$Setup_Update$setDestinationTitle = F2(
+	function (model, destinationTitleInput) {
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{destination: _krisajenkins$remotedata$RemoteData$NotAsked, destinationTitleInput: destinationTitleInput})),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Setup_Update$setSourceTitle = F2(
+	function (model, sourceTitleInput) {
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{source: _krisajenkins$remotedata$RemoteData$NotAsked, sourceTitleInput: sourceTitleInput})),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
+	function (model, remoteTitles) {
+		var updatedModel = _elm_lang$core$Native_Utils.update(
+			model,
+			{randomizedTitles: remoteTitles});
+		var setTitles = function (titles) {
+			var titleStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Title_Model$value, titles);
+			var _p5 = titleStrings;
+			if ((_p5.ctor === '::') && (_p5._1.ctor === '::')) {
+				return _elm_lang$core$Native_Utils.update(
+					updatedModel,
+					{sourceTitleInput: _p5._0, destinationTitleInput: _p5._1._0});
+			} else {
+				return updatedModel;
+			}
+		};
+		var withRandomizedTitles = A2(
+			_krisajenkins$remotedata$RemoteData$withDefault,
+			updatedModel,
+			A2(_krisajenkins$remotedata$RemoteData$map, setTitles, remoteTitles));
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(withRandomizedTitles),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Setup_Update$loadRandomTitles = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _fizwidget$wiki_path$Model$Setup(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{randomizedTitles: _krisajenkins$remotedata$RemoteData$Loading})),
+		_1: A2(
+			_elm_lang$core$Platform_Cmd$map,
+			_fizwidget$wiki_path$Messages$Setup,
+			A2(_fizwidget$wiki_path$Common_Title_Service$requestRandom, _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesResponse, 2))
+	};
+};
+var _fizwidget$wiki_path$Setup_Update$update = F2(
+	function (message, model) {
+		var _p6 = message;
+		switch (_p6.ctor) {
+			case 'SourceArticleTitleChange':
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceTitle, model, _p6._0);
+			case 'DestinationArticleTitleChange':
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationTitle, model, _p6._0);
+			case 'FetchArticlesRequest':
+				return _fizwidget$wiki_path$Setup_Update$loadArticles(model);
+			case 'FetchSourceArticleResult':
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceArticle, model, _p6._0);
+			case 'FetchDestinationArticleResult':
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationArticle, model, _p6._0);
+			case 'RandomizeTitlesRequest':
+				return _fizwidget$wiki_path$Setup_Update$loadRandomTitles(model);
+			default:
+				return A2(_fizwidget$wiki_path$Setup_Update$setRandomTitles, model, _p6._0);
+		}
+	});
+
+var _fizwidget$wiki_path$Update$update = F2(
+	function (message, model) {
+		var _p0 = {ctor: '_Tuple2', _0: message, _1: model};
+		_v0_3:
+		do {
+			switch (_p0._0.ctor) {
+				case 'Setup':
+					if (_p0._1.ctor === 'Setup') {
+						return A2(_fizwidget$wiki_path$Setup_Update$update, _p0._0._0, _p0._1._0);
+					} else {
+						break _v0_3;
+					}
+				case 'Pathfinding':
+					if (_p0._1.ctor === 'Pathfinding') {
+						return A2(_fizwidget$wiki_path$Pathfinding_Update$update, _p0._0._0, _p0._1._0);
+					} else {
+						break _v0_3;
+					}
+				default:
+					if (_p0._1.ctor === 'Finished') {
+						return A2(_fizwidget$wiki_path$Finished_Update$update, _p0._0._0, _p0._1._0);
+					} else {
+						break _v0_3;
+					}
+			}
+		} while(false);
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+
+var _fizwidget$wiki_path$Subscriptions$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs(attrs);
+};
+
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xlAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lgAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$mdAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$smAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xsAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs(attrs);
+};
+
+var _rundis$elm_bootstrap$Bootstrap_Form$renderCol = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_p1._0.elemFn,
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes(_p1._0.options),
+		_p1._0.children);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$row = F2(
+	function (options, cols) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-group'),
+				_1: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes(options)
+			},
+			A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Form$renderCol, cols));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$applyModifier = F2(
+	function (modifier, options) {
+		var _p2 = modifier;
+		return _elm_lang$core$Native_Utils.update(
+			options,
+			{
+				attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p2._0)
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$defaultOptions = {
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$toAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form$defaultOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('form-group'),
+			_1: {ctor: '[]'}
+		},
+		options.attributes);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$invalidFeedback = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('invalid-feedback'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$validFeedback = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('valid-feedback'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$helpInline = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$small,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('text-muted'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$help = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$small,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-text text-muted'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$label = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-control-label'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$group = F2(
+	function (options, children) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_rundis$elm_bootstrap$Bootstrap_Form$toAttributes(options),
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$form = F2(
+	function (attributes, children) {
+		return A2(_elm_lang$html$Html$form, attributes, children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$formInline = function (attributes) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$form(
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('form-inline'),
+			_1: attributes
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Options = function (a) {
+	return {attributes: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Col = function (a) {
+	return {ctor: 'Col', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$col = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form$Col(
+			{elemFn: _elm_lang$html$Html$div, options: options, children: children});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabel = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form$Col(
+			{
+				elemFn: _elm_lang$html$Html$label,
+				options: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('col-form-label'),
+							_1: {ctor: '[]'}
+						}),
+					_1: options
+				},
+				children: children
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabelSm = function (options) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$colLabel(
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('col-form-label-sm'),
+					_1: {ctor: '[]'}
+				}),
+			_1: options
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabelLg = function (options) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$colLabel(
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('col-form-label-lg'),
+					_1: {ctor: '[]'}
+				}),
+			_1: options
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString = function (validation) {
+	var _p0 = validation;
+	if (_p0.ctor === 'Success') {
+		return 'is-valid';
+	} else {
+		return 'is-invalid';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute = function (validation) {
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'has-',
+			_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString(validation)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger = {ctor: 'Danger'};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success = {ctor: 'Success'};
+
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$validationAttribute = function (validation) {
+	return _elm_lang$html$Html_Attributes$class(
+		_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString(validation));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$typeAttribute = function (inputType) {
+	return _elm_lang$html$Html_Attributes$type_(
+		function () {
+			var _p0 = inputType;
+			switch (_p0.ctor) {
+				case 'Text':
+					return 'text';
+				case 'Password':
+					return 'password';
+				case 'DatetimeLocal':
+					return 'datetime-local';
+				case 'Date':
+					return 'date';
+				case 'Month':
+					return 'month';
+				case 'Time':
+					return 'time';
+				case 'Week':
+					return 'week';
+				case 'Number':
+					return 'number';
+				case 'Email':
+					return 'email';
+				case 'Url':
+					return 'url';
+				case 'Search':
+					return 'search';
+				case 'Tel':
+					return 'tel';
+				default:
+					return 'color';
+			}
+		}());
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$sizeAttribute = function (size) {
+	return A2(
+		_elm_lang$core$Maybe$map,
+		function (s) {
+			return _elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'form-control-', s));
+		},
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$applyModifier = F2(
+	function (modifier, options) {
+		var _p1 = modifier;
+		switch (_p1.ctor) {
+			case 'Size':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						size: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Id':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						id: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Type':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{tipe: _p1._0});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: _p1._0});
+			case 'Value':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						value: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'DefaultValue':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						defaultValue: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Placeholder':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						placeholder: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'OnInput':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						onInput: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Validation':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						validation: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Readonly':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{readonly: _p1._0});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Options = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {tipe: a, id: b, size: c, disabled: d, value: e, defaultValue: f, placeholder: g, onInput: h, validation: i, readonly: j, attributes: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Input = function (a) {
+	return {ctor: 'Input', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Readonly = function (a) {
+	return {ctor: 'Readonly', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$readonly = function (readonly) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Readonly(readonly);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Placeholder = function (a) {
+	return {ctor: 'Placeholder', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Placeholder(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation = function (a) {
+	return {ctor: 'Validation', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$success = _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$danger = _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$OnInput = function (a) {
+	return {ctor: 'OnInput', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput = function (toMsg) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$OnInput(toMsg);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$DefaultValue = function (a) {
+	return {ctor: 'DefaultValue', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$DefaultValue(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Value = function (a) {
+	return {ctor: 'Value', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$value = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Value(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Disabled = function (a) {
+	return {ctor: 'Disabled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Disabled(disabled);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Type = function (a) {
+	return {ctor: 'Type', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$create = F2(
+	function (tipe, options) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Input$Input(
+			{
+				options: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$Type(tipe),
+					_1: options
+				}
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Id = function (a) {
+	return {ctor: 'Id', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$id = function (id) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Id(id);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Size = function (a) {
+	return {ctor: 'Size', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$small = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$large = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Color = {ctor: 'Color'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Tel = {ctor: 'Tel'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Search = {ctor: 'Search'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Url = {ctor: 'Url'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Email = {ctor: 'Email'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Number = {ctor: 'Number'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Week = {ctor: 'Week'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Time = {ctor: 'Time'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Month = {ctor: 'Month'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Date = {ctor: 'Date'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$DatetimeLocal = {ctor: 'DatetimeLocal'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Password = {ctor: 'Password'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Text = {ctor: 'Text'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultOptions = {
+	tipe: _rundis$elm_bootstrap$Bootstrap_Form_Input$Text,
+	id: _elm_lang$core$Maybe$Nothing,
+	size: _elm_lang$core$Maybe$Nothing,
+	disabled: false,
+	value: _elm_lang$core$Maybe$Nothing,
+	defaultValue: _elm_lang$core$Maybe$Nothing,
+	placeholder: _elm_lang$core$Maybe$Nothing,
+	onInput: _elm_lang$core$Maybe$Nothing,
+	validation: _elm_lang$core$Maybe$Nothing,
+	readonly: false,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$toAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Input$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('form-control'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$readonly(options.readonly),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$typeAttribute(options.tipe),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$id, options.id),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Form_Input$sizeAttribute, options.size),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$value, options.value),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$defaultValue, options.defaultValue),
+								_1: {
+									ctor: '::',
+									_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$placeholder, options.placeholder),
+									_1: {
+										ctor: '::',
+										_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onInput, options.onInput),
+										_1: {
+											ctor: '::',
+											_0: A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Form_Input$validationAttribute, options.validation),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			options.attributes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$view = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_elm_lang$html$Html$input,
+		_rundis$elm_bootstrap$Bootstrap_Form_Input$toAttributes(_p3._0.options),
+		{ctor: '[]'});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$input = F2(
+	function (tipe, options) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Input$view(
+			A2(_rundis$elm_bootstrap$Bootstrap_Form_Input$create, tipe, options));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$text = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Text);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$password = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Password);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$datetimeLocal = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$DatetimeLocal);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$date = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Date);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$month = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Month);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$time = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Time);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$week = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Week);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$number = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Number);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$email = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Email);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$url = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Url);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$search = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Search);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$tel = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Tel);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$color = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Color);
+
+var _fizwidget$wiki_path$Setup_View$getErrorMessage = function (remoteArticle) {
+	var _p0 = remoteArticle;
+	if (_p0.ctor === 'Failure') {
+		return _fizwidget$wiki_path$Common_Article_View$viewError(_p0._0);
+	} else {
+		return _rtfeldman$elm_css$Html_Styled$text('');
+	}
+};
+var _fizwidget$wiki_path$Setup_View$isLoading = function (_p1) {
+	var _p2 = _p1;
+	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomizedTitles);
+	var areArticlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(
+		_krisajenkins$remotedata$RemoteData$fromList(
+			{
+				ctor: '::',
+				_0: _p2.source,
+				_1: {
+					ctor: '::',
+					_0: _p2.destination,
+					_1: {ctor: '[]'}
+				}
+			}));
+	return areArticlesLoading || areTitlesLoading;
+};
+var _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$paddingTop(
+						_rtfeldman$elm_css$Css$px(6)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Common_Spinner_View$view(
+				{
+					isVisible: _fizwidget$wiki_path$Setup_View$isLoading(model)
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Setup_View$shouldDisableLoadButton = function (model) {
+	var isBlank = function (_p3) {
+		return _elm_lang$core$String$isEmpty(
+			_elm_lang$core$String$trim(_p3));
+	};
+	return _fizwidget$wiki_path$Setup_View$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
+};
+var _fizwidget$wiki_path$Setup_View$showRandomizationError = function (_p4) {
+	var _p5 = _p4;
+	var _p6 = _p5.randomizedTitles;
+	if (_p6.ctor === 'Failure') {
+		return _rtfeldman$elm_css$Html_Styled$text(
+			_elm_lang$core$Basics$toString(_p6._0));
+	} else {
+		return _rtfeldman$elm_css$Html_Styled$text('');
+	}
+};
+var _fizwidget$wiki_path$Setup_View$randomizeTitlesButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(4)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+				A2(
+					_rundis$elm_bootstrap$Bootstrap_Button$button,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$light,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+								_fizwidget$wiki_path$Setup_View$isLoading(model)),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$RandomizeTitlesRequest),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+							_rtfeldman$elm_css$Html_Styled$text('Randomize')),
+						_1: {ctor: '[]'}
+					})),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Setup_View$findPathButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(4)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+				A2(
+					_rundis$elm_bootstrap$Bootstrap_Button$button,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+									_fizwidget$wiki_path$Setup_View$shouldDisableLoadButton(model)),
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+							_rtfeldman$elm_css$Html_Styled$text('Find path')),
+						_1: {ctor: '[]'}
+					})),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Setup_View$getInputStatus = function (article) {
+	var _p7 = article;
+	switch (_p7.ctor) {
+		case 'NotAsked':
+			return {ctor: '[]'};
+		case 'Loading':
+			return {ctor: '[]'};
+		case 'Failure':
+			return {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$danger,
+				_1: {ctor: '[]'}
+			};
+		default:
+			return {ctor: '[]'};
+	}
+};
+var _fizwidget$wiki_path$Setup_View$articleTitleInput = F4(
+	function (placeholderText, toMsg, title, article) {
+		var inputOptions = A2(
+			_elm_lang$core$Basics_ops['++'],
+			_fizwidget$wiki_path$Setup_View$getInputStatus(article),
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$large,
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(toMsg),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(title),
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder(placeholderText),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: A2(
+							_rtfeldman$elm_css$Css$padding2,
+							_rtfeldman$elm_css$Css$px(0),
+							_rtfeldman$elm_css$Css$px(8)),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$height(
+								_rtfeldman$elm_css$Css$px(76)),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+					A2(
+						_rundis$elm_bootstrap$Bootstrap_Form$group,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$text(inputOptions),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_rundis$elm_bootstrap$Bootstrap_Form$invalidFeedback,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+											_fizwidget$wiki_path$Setup_View$getErrorMessage(article)),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_rundis$elm_bootstrap$Bootstrap_Form$validFeedback,
+										{ctor: '[]'},
+										{ctor: '[]'}),
+									_1: {ctor: '[]'}
+								}
+							}
+						})),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fizwidget$wiki_path$Setup_View$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'To...', _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange);
+var _fizwidget$wiki_path$Setup_View$viewSourceTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'From...', _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange);
+var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p8) {
+	var _p9 = _p8;
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$displayFlex,
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$flexWrap(_rtfeldman$elm_css$Css$wrap),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(_fizwidget$wiki_path$Setup_View$viewSourceTitleInput, _p9.sourceTitleInput, _p9.source),
+			_1: {
+				ctor: '::',
+				_0: A2(_fizwidget$wiki_path$Setup_View$viewDestinationTitleInput, _p9.destinationTitleInput, _p9.destination),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fizwidget$wiki_path$Setup_View$view = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$form,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$displayFlex,
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Setup_View$titleInputs(model),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Setup_View$findPathButton(model),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Setup_View$randomizeTitlesButton(model),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Setup_View$showRandomizationError(model),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading(model),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+
+var _fizwidget$wiki_path$Pathfinding_View$stopView = function (title) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$li,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(title),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Pathfinding_View$pathView = function (pathSoFar) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_rtfeldman$elm_css$Html_Styled$ol,
+				{ctor: '[]'},
+				A2(
+					_elm_lang$core$List$map,
+					_fizwidget$wiki_path$Pathfinding_View$stopView,
+					_elm_lang$core$List$reverse(
+						{ctor: '::', _0: pathSoFar.next, _1: pathSoFar.visited}))),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Pathfinding_View$priorityQueueView = function (queue) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{ctor: '[]'},
+			{ctor: '[]'}),
+		A2(
+			_elm_lang$core$Maybe$map,
+			_fizwidget$wiki_path$Pathfinding_View$pathView,
+			_fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority(queue)));
+};
+var _fizwidget$wiki_path$Pathfinding_View$backView = A2(
+	_rtfeldman$elm_css$Html_Styled$div,
+	{
+		ctor: '::',
+		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Css$margin(
+					_rtfeldman$elm_css$Css$px(20)),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _rtfeldman$elm_css$Html_Styled$fromUnstyled(
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Button$button,
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Pathfinding_Messages$BackToSetup),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
+						_rtfeldman$elm_css$Html_Styled$text('Back')),
+					_1: {ctor: '[]'}
+				})),
+		_1: {ctor: '[]'}
+	});
+var _fizwidget$wiki_path$Pathfinding_View$errorsView = function (errors) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Article_View$viewError, errors));
+};
+var _fizwidget$wiki_path$Pathfinding_View$fatalErrorView = function (error) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		_rtfeldman$elm_css$Html_Styled$text(''),
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p0) {
+				var _p1 = _p0;
+				return _rtfeldman$elm_css$Html_Styled$text('Path not found :(');
+			},
+			error));
+};
+var _fizwidget$wiki_path$Pathfinding_View$maybeErrorView = F2(
+	function (errors, fatalError) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Pathfinding_View$fatalErrorView(fatalError),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Pathfinding_View$errorsView(errors),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _fizwidget$wiki_path$Pathfinding_View$heading = F2(
+	function (source, destination) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$h3,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Finding path from ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_fizwidget$wiki_path$Common_Title_Model$value(source.title),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' to ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_fizwidget$wiki_path$Common_Title_Model$value(destination.title),
+									'...'))))),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fizwidget$wiki_path$Pathfinding_View$view = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$displayFlex,
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(_fizwidget$wiki_path$Pathfinding_View$heading, _p3.source, _p3.destination),
+			_1: {
+				ctor: '::',
+				_0: A2(_fizwidget$wiki_path$Pathfinding_View$maybeErrorView, _p3.errors, _p3.fatalError),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Pathfinding_View$backView,
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Common_Spinner_View$view(
+							{isVisible: true}),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Pathfinding_View$priorityQueueView(_p3.priorityQueue),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+
+var _fizwidget$wiki_path$View$viewModel = function (model) {
+	var _p0 = model;
+	switch (_p0.ctor) {
+		case 'Setup':
+			return A2(
+				_rtfeldman$elm_css$Html_Styled$map,
+				_fizwidget$wiki_path$Messages$Setup,
+				_fizwidget$wiki_path$Setup_View$view(_p0._0));
+		case 'Pathfinding':
+			return A2(
+				_rtfeldman$elm_css$Html_Styled$map,
+				_fizwidget$wiki_path$Messages$Pathfinding,
+				_fizwidget$wiki_path$Pathfinding_View$view(_p0._0));
+		default:
+			return A2(
+				_rtfeldman$elm_css$Html_Styled$map,
+				_fizwidget$wiki_path$Messages$Finished,
+				_fizwidget$wiki_path$Finished_View$view(_p0._0));
+	}
+};
+var _fizwidget$wiki_path$View$viewHeading = A2(
+	_rtfeldman$elm_css$Html_Styled$h1,
+	{
+		ctor: '::',
+		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Css$fontSize(
+					_rtfeldman$elm_css$Css$vh(10)),
+				_1: {
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$fontWeight(
+						_rtfeldman$elm_css$Css$int(900)),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$fontFamily(_rtfeldman$elm_css$Css$serif),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$marginTop(
+									_rtfeldman$elm_css$Css$px(50)),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$marginBottom(
+										_rtfeldman$elm_css$Css$px(34)),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _rtfeldman$elm_css$Html_Styled$text('WikiPath'),
+		_1: {ctor: '[]'}
+	});
+var _fizwidget$wiki_path$View$view = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$fontSize(
+						_rtfeldman$elm_css$Css$px(24)),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$maxWidth(
+							_rtfeldman$elm_css$Css$px(800)),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$padding(
+								_rtfeldman$elm_css$Css$px(20)),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$marginLeft(_rtfeldman$elm_css$Css$auto),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$marginRight(_rtfeldman$elm_css$Css$auto),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$View$viewHeading,
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$View$viewModel(model),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
+var _fizwidget$wiki_path$Main$main = _elm_lang$html$Html$program(
+	{
+		init: _fizwidget$wiki_path$Init$init,
+		view: function (_p0) {
+			return _rtfeldman$elm_css$Html_Styled$toUnstyled(
+				_fizwidget$wiki_path$View$view(_p0));
+		},
+		update: _fizwidget$wiki_path$Update$update,
+		subscriptions: _fizwidget$wiki_path$Subscriptions$subscriptions
+	})();
+
+var Elm = {};
+Elm['Main'] = Elm['Main'] || {};
+if (typeof _fizwidget$wiki_path$Main$main !== 'undefined') {
+    _fizwidget$wiki_path$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"Setup":["Setup.Messages.SetupMsg"],"Finished":["Finished.Messages.FinishedMsg"],"Pathfinding":["Pathfinding.Messages.PathfindingMsg"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"Setup.Messages.SetupMsg":{"args":[],"tags":{"FetchSourceArticleResult":["Common.Article.Model.RemoteArticle"],"FetchDestinationArticleResult":["Common.Article.Model.RemoteArticle"],"RandomizeTitlesResponse":["RemoteData.WebData (List Common.Title.Model.Title)"],"RandomizeTitlesRequest":[],"SourceArticleTitleChange":["Setup.Model.UserInput"],"FetchArticlesRequest":[],"DestinationArticleTitleChange":["Setup.Model.UserInput"]}},"Common.Title.Model.Title":{"args":[],"tags":{"Title":["String"]}},"Common.Article.Model.ArticleError":{"args":[],"tags":{"ArticleNotFound":[],"UnknownError":["String"],"NetworkError":["Http.Error"],"InvalidTitle":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Pathfinding.Messages.PathfindingMsg":{"args":[],"tags":{"FetchArticleResponse":["Pathfinding.Model.Path","Common.Article.Model.ArticleResult"],"BackToSetup":[]}},"Finished.Messages.FinishedMsg":{"args":[],"tags":{"BackToSetup":[]}}},"aliases":{"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Common.PriorityQueue.Model.Priority":{"args":[],"type":"Float"},"Common.Article.Model.HtmlString":{"args":[],"type":"String"},"Common.Article.Model.Article":{"args":[],"type":"{ title : Common.Title.Model.Title , links : List Common.Title.Model.Title , content : Common.Article.Model.HtmlString }"},"Setup.Model.UserInput":{"args":[],"type":"String"},"Pathfinding.Model.Path":{"args":[],"type":"{ priority : Common.PriorityQueue.Model.Priority , next : Common.Title.Model.Title , visited : List Common.Title.Model.Title }"},"Common.Article.Model.ArticleResult":{"args":[],"type":"Result.Result Common.Article.Model.ArticleError Common.Article.Model.Article"},"Common.Article.Model.RemoteArticle":{"args":[],"type":"RemoteData.RemoteData Common.Article.Model.ArticleError Common.Article.Model.Article"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
