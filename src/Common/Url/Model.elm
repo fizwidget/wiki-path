@@ -1,5 +1,7 @@
 module Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
 
+import Http
+
 
 buildUrl : BaseUrl -> List QueryParam -> Url
 buildUrl baseUrl queryParams =
@@ -17,10 +19,10 @@ queryParamToString : QueryParam -> String
 queryParamToString queryParam =
     case queryParam of
         KeyValue ( key, value ) ->
-            key ++ "=" ++ value
+            (Http.encodeUri key) ++ "=" ++ (Http.encodeUri value)
 
         Key key ->
-            key
+            Http.encodeUri key
 
 
 type QueryParam
