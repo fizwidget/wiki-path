@@ -19218,7 +19218,7 @@ var _fizwidget$wiki_path$Setup_View$showRandomizationError = function (_p4) {
 		return _rtfeldman$elm_css$Html_Styled$text(
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				'Error getting random titles: ',
+				'Error randomizing titles: ',
 				_elm_lang$core$Basics$toString(_p6._0)));
 	} else {
 		return _rtfeldman$elm_css$Html_Styled$text('');
