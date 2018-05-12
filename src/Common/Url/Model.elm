@@ -1,4 +1,4 @@
-module Common.Url.Model exposing (QueryParam(KeyValue, Key), buildUrl)
+module Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
 
 
 buildUrl : BaseUrl -> List QueryParam -> Url
