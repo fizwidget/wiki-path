@@ -18143,18 +18143,61 @@ var _fizwidget$wiki_path$Pathfinding_Init$init = F2(
 			source);
 	});
 
-var _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p0) {
-	var _p1 = _p0;
-	var _p2 = _p1._0;
+var _fizwidget$wiki_path$Setup_Update$setTitleInputs = F2(
+	function (model, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				sourceTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p1._0),
+				destinationTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p1._1),
+				source: _krisajenkins$remotedata$RemoteData$Loading,
+				destination: _krisajenkins$remotedata$RemoteData$Loading
+			});
+	});
+var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
+	function (model, randomTitles) {
+		var updatedModel = _elm_lang$core$Native_Utils.update(
+			model,
+			{randomTitles: randomTitles});
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(
+				A2(
+					_krisajenkins$remotedata$RemoteData$withDefault,
+					updatedModel,
+					A2(
+						_krisajenkins$remotedata$RemoteData$map,
+						_fizwidget$wiki_path$Setup_Update$setTitleInputs(updatedModel),
+						randomTitles))),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Setup_Update$requestRandomTitles = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _fizwidget$wiki_path$Model$Setup(
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{randomTitles: _krisajenkins$remotedata$RemoteData$Loading})),
+		_1: A2(
+			_elm_lang$core$Platform_Cmd$map,
+			_fizwidget$wiki_path$Messages$Setup,
+			_fizwidget$wiki_path$Common_Title_Service$requestRandomPair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
+	};
+};
+var _fizwidget$wiki_path$Setup_Update$beginPathfindingIfArticlesLoaded = function (_p2) {
+	var _p3 = _p2;
+	var _p4 = _p3._0;
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		{
 			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(_p2),
-			_1: _p1._1
+			_0: _fizwidget$wiki_path$Model$Setup(_p4),
+			_1: _p3._1
 		},
 		_krisajenkins$remotedata$RemoteData$toMaybe(
-			A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Pathfinding_Init$init, _p2.source, _p2.destination)));
+			A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Pathfinding_Init$init, _p4.source, _p4.destination)));
 };
 var _fizwidget$wiki_path$Setup_Update$setDestinationArticle = F2(
 	function (model, destination) {
@@ -18178,14 +18221,14 @@ var _fizwidget$wiki_path$Setup_Update$setSourceArticle = F2(
 				_1: _elm_lang$core$Platform_Cmd$none
 			});
 	});
-var _fizwidget$wiki_path$Setup_Update$requestArticles = function (_p3) {
-	var _p4 = _p3;
+var _fizwidget$wiki_path$Setup_Update$requestArticles = function (_p5) {
+	var _p6 = _p5;
 	var requests = {
 		ctor: '::',
-		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, _p4.sourceTitleInput),
+		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, _p6.sourceTitleInput),
 		_1: {
 			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, _p4.destinationTitleInput),
+			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, _p6.destinationTitleInput),
 			_1: {ctor: '[]'}
 		}
 	};
@@ -18226,47 +18269,6 @@ var _fizwidget$wiki_path$Setup_Update$setSourceTitle = F2(
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
-var _fizwidget$wiki_path$Setup_Update$copyRandomTitlesToInputs = F2(
-	function (model, _p5) {
-		var _p6 = _p5;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				sourceTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p6._0),
-				destinationTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p6._1)
-			});
-	});
-var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
-	function (model, randomTitles) {
-		var updatedModel = _elm_lang$core$Native_Utils.update(
-			model,
-			{randomTitles: randomTitles});
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(
-				A2(
-					_krisajenkins$remotedata$RemoteData$withDefault,
-					updatedModel,
-					A2(
-						_krisajenkins$remotedata$RemoteData$map,
-						_fizwidget$wiki_path$Setup_Update$copyRandomTitlesToInputs(updatedModel),
-						randomTitles))),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
-	});
-var _fizwidget$wiki_path$Setup_Update$requestRandomTitles = function (model) {
-	return {
-		ctor: '_Tuple2',
-		_0: _fizwidget$wiki_path$Model$Setup(
-			_elm_lang$core$Native_Utils.update(
-				model,
-				{randomTitles: _krisajenkins$remotedata$RemoteData$Loading})),
-		_1: A2(
-			_elm_lang$core$Platform_Cmd$map,
-			_fizwidget$wiki_path$Messages$Setup,
-			_fizwidget$wiki_path$Common_Title_Service$requestRandomPair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
-	};
-};
 var _fizwidget$wiki_path$Setup_Update$update = F2(
 	function (message, model) {
 		var _p7 = message;
