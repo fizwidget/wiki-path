@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
-    "summary": "Implementation of the Wikipedia Game in Elm",
-    "repository": "https://github.com/fizwidget/wikipedia-game.git",
+    "summary": "Finds paths between Wikipedia articles",
+    "repository": "https://github.com/fizwidget/wiki-path.git",
     "license": "BSD3",
     "source-directories": [
         "src"

@@ -100,7 +100,7 @@ randomizeTitlesButton model =
     div [ css [ padding (px 4) ] ]
         [ fromUnstyled <|
             Button.button
-                [ Button.info
+                [ Button.light
                 , Button.disabled (isLoading model)
                 , Button.onClick RandomizeTitlesRequest
                 ]
