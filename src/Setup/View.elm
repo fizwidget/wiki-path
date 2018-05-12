@@ -102,17 +102,17 @@ randomizeTitlesButton model =
             Button.button
                 [ Button.light
                 , Button.disabled (isLoading model)
-                , Button.onClick RandomizeTitlesRequest
+                , Button.onClick FetchRandomTitlesRequest
                 ]
                 [ toUnstyled <| text "Randomize" ]
         ]
 
 
 showRandomizationError : SetupModel -> Html msg
-showRandomizationError { randomizedTitles } =
-    case randomizedTitles of
+showRandomizationError { randomTitles } =
+    case randomTitles of
         RemoteData.Failure error ->
-            text (toString error)
+            text ("Error getting random titles: " ++ toString error)
 
         _ ->
             text ""
@@ -137,7 +137,7 @@ showSpinnerIfLoading model =
 
 
 isLoading : SetupModel -> Bool
-isLoading { source, destination, randomizedTitles } =
+isLoading { source, destination, randomTitles } =
     let
         areArticlesLoading =
             [ source, destination ]
@@ -145,7 +145,7 @@ isLoading { source, destination, randomizedTitles } =
                 |> RemoteData.isLoading
 
         areTitlesLoading =
-            RemoteData.isLoading randomizedTitles
+            RemoteData.isLoading randomTitles
     in
         areArticlesLoading || areTitlesLoading
 
