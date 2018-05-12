@@ -9822,6 +9822,10 @@ var _fizwidget$wiki_path$Common_Title_Model$Title = function (a) {
 	return {ctor: 'Title', _0: a};
 };
 var _fizwidget$wiki_path$Common_Title_Model$from = _fizwidget$wiki_path$Common_Title_Model$Title;
+var _fizwidget$wiki_path$Common_Title_Model$NetworkError = function (a) {
+	return {ctor: 'NetworkError', _0: a};
+};
+var _fizwidget$wiki_path$Common_Title_Model$UnexpectedTitleCount = {ctor: 'UnexpectedTitleCount'};
 
 var _fizwidget$wiki_path$Common_Article_Model$Article = F3(
 	function (a, b, c) {
@@ -9837,13 +9841,8 @@ var _fizwidget$wiki_path$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitl
 var _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
 
 var _fizwidget$wiki_path$Common_Title_Decoder$decodeTitle = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
-var _fizwidget$wiki_path$Common_Title_Decoder$decodeTitleObject = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'title',
-	_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_elm_lang$core$Basics$identity));
-var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
+var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A2(
+	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
 		_0: 'query',
@@ -9853,8 +9852,8 @@ var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A3(
 			_1: {ctor: '[]'}
 		}
 	},
-	_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Title_Decoder$decodeTitleObject),
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_elm_lang$core$Basics$identity));
+	_elm_lang$core$Json_Decode$list(
+		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title_Decoder$decodeTitle)));
 
 var _fizwidget$wiki_path$Common_Article_Decoder$toError = function (errorCode) {
 	var _p0 = errorCode;
@@ -15594,7 +15593,14 @@ var _fizwidget$wiki_path$Common_Article_View$viewError = function (error) {
 					_elm_lang$core$Basics$toString(_p0._0));
 		}
 	}();
-	return _rtfeldman$elm_css$Html_Styled$text(errorMessage);
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text(errorMessage),
+			_1: {ctor: '[]'}
+		});
 };
 
 var _rhofour$elm_pairing_heap$PairingHeap$findMin = function (x) {
@@ -16174,14 +16180,31 @@ var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest = function (ti
 		_fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse);
 };
 
-var _fizwidget$wiki_path$Common_Title_Service$requestRandom = F2(
-	function (toMsg, articleCount) {
-		return A2(
-			_elm_lang$core$Platform_Cmd$map,
-			toMsg,
-			_krisajenkins$remotedata$RemoteData$sendRequest(
-				_fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest(articleCount)));
-	});
+var _fizwidget$wiki_path$Common_Title_Service$toRemoteTitlePair = function (remoteTitles) {
+	var toPair = function (titles) {
+		var _p0 = titles;
+		if ((_p0.ctor === '::') && (_p0._1.ctor === '::')) {
+			return _krisajenkins$remotedata$RemoteData$succeed(
+				{ctor: '_Tuple2', _0: _p0._0, _1: _p0._1._0});
+		} else {
+			return _krisajenkins$remotedata$RemoteData$Failure(_fizwidget$wiki_path$Common_Title_Model$UnexpectedTitleCount);
+		}
+	};
+	return A2(
+		_krisajenkins$remotedata$RemoteData$andThen,
+		toPair,
+		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Title_Model$NetworkError, remoteTitles));
+};
+var _fizwidget$wiki_path$Common_Title_Service$requestRandomPair = function (toMsg) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		function (_p1) {
+			return toMsg(
+				_fizwidget$wiki_path$Common_Title_Service$toRemoteTitlePair(_p1));
+		},
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			_fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest(2)));
+};
 
 var _fizwidget$wiki_path$Common_Title_View$toUrl = function (title) {
 	return A2(
@@ -16208,7 +16231,7 @@ var _fizwidget$wiki_path$Common_Title_View$viewAsLink = function (title) {
 
 var _fizwidget$wiki_path$Setup_Model$SetupModel = F5(
 	function (a, b, c, d, e) {
-		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d, randomizedTitles: e};
+		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d, randomTitles: e};
 	});
 
 var _fizwidget$wiki_path$Pathfinding_Model$PathfindingModel = F5(
@@ -16236,15 +16259,15 @@ var _fizwidget$wiki_path$Model$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
 
-var _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesResponse = function (a) {
-	return {ctor: 'RandomizeTitlesResponse', _0: a};
+var _fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse = function (a) {
+	return {ctor: 'FetchRandomTitlesResponse', _0: a};
 };
-var _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesRequest = {ctor: 'RandomizeTitlesRequest'};
-var _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResult = function (a) {
-	return {ctor: 'FetchDestinationArticleResult', _0: a};
+var _fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesRequest = {ctor: 'FetchRandomTitlesRequest'};
+var _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse = function (a) {
+	return {ctor: 'FetchDestinationArticleResponse', _0: a};
 };
-var _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResult = function (a) {
-	return {ctor: 'FetchSourceArticleResult', _0: a};
+var _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse = function (a) {
+	return {ctor: 'FetchSourceArticleResponse', _0: a};
 };
 var _fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest = {ctor: 'FetchArticlesRequest'};
 var _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange = function (a) {
@@ -16282,7 +16305,7 @@ var _fizwidget$wiki_path$Finished_Init$init = F3(
 		};
 	});
 
-var _fizwidget$wiki_path$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomizedTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+var _fizwidget$wiki_path$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
 var _fizwidget$wiki_path$Setup_Init$init = {
 	ctor: '_Tuple2',
 	_0: _fizwidget$wiki_path$Model$Setup(_fizwidget$wiki_path$Setup_Init$initialModel),
@@ -18159,10 +18182,10 @@ var _fizwidget$wiki_path$Setup_Update$requestArticles = function (_p3) {
 	var _p4 = _p3;
 	var requests = {
 		ctor: '::',
-		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResult, _p4.sourceTitleInput),
+		_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, _p4.sourceTitleInput),
 		_1: {
 			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResult, _p4.destinationTitleInput),
+			_0: A2(_fizwidget$wiki_path$Common_Article_Service$requestRemote, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, _p4.destinationTitleInput),
 			_1: {ctor: '[]'}
 		}
 	};
@@ -18203,63 +18226,65 @@ var _fizwidget$wiki_path$Setup_Update$setSourceTitle = F2(
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
+var _fizwidget$wiki_path$Setup_Update$copyRandomTitlesToInputs = F2(
+	function (model, _p5) {
+		var _p6 = _p5;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				sourceTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p6._0),
+				destinationTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p6._1)
+			});
+	});
 var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
-	function (model, remoteTitles) {
+	function (model, randomTitles) {
 		var updatedModel = _elm_lang$core$Native_Utils.update(
 			model,
-			{randomizedTitles: remoteTitles});
-		var setTitles = function (titles) {
-			var titleStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Title_Model$value, titles);
-			var _p5 = titleStrings;
-			if ((_p5.ctor === '::') && (_p5._1.ctor === '::')) {
-				return _elm_lang$core$Native_Utils.update(
-					updatedModel,
-					{sourceTitleInput: _p5._0, destinationTitleInput: _p5._1._0});
-			} else {
-				return updatedModel;
-			}
-		};
-		var withRandomizedTitles = A2(
-			_krisajenkins$remotedata$RemoteData$withDefault,
-			updatedModel,
-			A2(_krisajenkins$remotedata$RemoteData$map, setTitles, remoteTitles));
+			{randomTitles: randomTitles});
 		return {
 			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(withRandomizedTitles),
+			_0: _fizwidget$wiki_path$Model$Setup(
+				A2(
+					_krisajenkins$remotedata$RemoteData$withDefault,
+					updatedModel,
+					A2(
+						_krisajenkins$remotedata$RemoteData$map,
+						_fizwidget$wiki_path$Setup_Update$copyRandomTitlesToInputs(updatedModel),
+						randomTitles))),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
-var _fizwidget$wiki_path$Setup_Update$loadRandomTitles = function (model) {
+var _fizwidget$wiki_path$Setup_Update$requestRandomTitles = function (model) {
 	return {
 		ctor: '_Tuple2',
 		_0: _fizwidget$wiki_path$Model$Setup(
 			_elm_lang$core$Native_Utils.update(
 				model,
-				{randomizedTitles: _krisajenkins$remotedata$RemoteData$Loading})),
+				{randomTitles: _krisajenkins$remotedata$RemoteData$Loading})),
 		_1: A2(
 			_elm_lang$core$Platform_Cmd$map,
 			_fizwidget$wiki_path$Messages$Setup,
-			A2(_fizwidget$wiki_path$Common_Title_Service$requestRandom, _fizwidget$wiki_path$Setup_Messages$RandomizeTitlesResponse, 2))
+			_fizwidget$wiki_path$Common_Title_Service$requestRandomPair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
 	};
 };
 var _fizwidget$wiki_path$Setup_Update$update = F2(
 	function (message, model) {
-		var _p6 = message;
-		switch (_p6.ctor) {
+		var _p7 = message;
+		switch (_p7.ctor) {
 			case 'SourceArticleTitleChange':
-				return A2(_fizwidget$wiki_path$Setup_Update$setSourceTitle, model, _p6._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceTitle, model, _p7._0);
 			case 'DestinationArticleTitleChange':
-				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationTitle, model, _p6._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationTitle, model, _p7._0);
 			case 'FetchArticlesRequest':
 				return _fizwidget$wiki_path$Setup_Update$loadArticles(model);
-			case 'FetchSourceArticleResult':
-				return A2(_fizwidget$wiki_path$Setup_Update$setSourceArticle, model, _p6._0);
-			case 'FetchDestinationArticleResult':
-				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationArticle, model, _p6._0);
-			case 'RandomizeTitlesRequest':
-				return _fizwidget$wiki_path$Setup_Update$loadRandomTitles(model);
+			case 'FetchSourceArticleResponse':
+				return A2(_fizwidget$wiki_path$Setup_Update$setSourceArticle, model, _p7._0);
+			case 'FetchDestinationArticleResponse':
+				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationArticle, model, _p7._0);
+			case 'FetchRandomTitlesRequest':
+				return _fizwidget$wiki_path$Setup_Update$requestRandomTitles(model);
 			default:
-				return A2(_fizwidget$wiki_path$Setup_Update$setRandomTitles, model, _p6._0);
+				return A2(_fizwidget$wiki_path$Setup_Update$setRandomTitles, model, _p7._0);
 		}
 	});
 
@@ -19140,7 +19165,7 @@ var _fizwidget$wiki_path$Setup_View$getErrorMessage = function (remoteArticle) {
 };
 var _fizwidget$wiki_path$Setup_View$isLoading = function (_p1) {
 	var _p2 = _p1;
-	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomizedTitles);
+	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomTitles);
 	var areArticlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(
 		_krisajenkins$remotedata$RemoteData$fromList(
 			{
@@ -19186,10 +19211,13 @@ var _fizwidget$wiki_path$Setup_View$shouldDisableLoadButton = function (model) {
 };
 var _fizwidget$wiki_path$Setup_View$showRandomizationError = function (_p4) {
 	var _p5 = _p4;
-	var _p6 = _p5.randomizedTitles;
+	var _p6 = _p5.randomTitles;
 	if (_p6.ctor === 'Failure') {
 		return _rtfeldman$elm_css$Html_Styled$text(
-			_elm_lang$core$Basics$toString(_p6._0));
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Error getting random titles: ',
+				_elm_lang$core$Basics$toString(_p6._0)));
 	} else {
 		return _rtfeldman$elm_css$Html_Styled$text('');
 	}
@@ -19222,7 +19250,7 @@ var _fizwidget$wiki_path$Setup_View$randomizeTitlesButton = function (model) {
 								_fizwidget$wiki_path$Setup_View$isLoading(model)),
 							_1: {
 								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$RandomizeTitlesRequest),
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesRequest),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -19575,21 +19603,24 @@ var _fizwidget$wiki_path$Pathfinding_View$heading = F2(
 			},
 			{
 				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$text(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'Finding path from ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_fizwidget$wiki_path$Common_Title_Model$value(source.title),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								' to ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_fizwidget$wiki_path$Common_Title_Model$value(destination.title),
-									'...'))))),
-				_1: {ctor: '[]'}
+				_0: _rtfeldman$elm_css$Html_Styled$text('Finding path from '),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(source.title),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(destination.title),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Html_Styled$text('...'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
 			});
 	});
 var _fizwidget$wiki_path$Pathfinding_View$view = function (_p2) {
