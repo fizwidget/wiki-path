@@ -9,13 +9,13 @@ requestRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
 requestRandomPair toMsg =
     Api.buildRandomTitleRequest 2
         |> RemoteData.sendRequest
-        |> Cmd.map (toTuple >> toMsg)
+        |> Cmd.map (toRemoteTitlePair >> toMsg)
 
 
-toTuple : WebData (List Title) -> RemoteTitlePair
-toTuple remoteTitles =
+toRemoteTitlePair : WebData (List Title) -> RemoteTitlePair
+toRemoteTitlePair remoteTitles =
     let
-        toRemoteTuple titles =
+        toPair titles =
             case titles of
                 titleA :: titleB :: _ ->
                     RemoteData.succeed ( titleA, titleB )
@@ -25,4 +25,4 @@ toTuple remoteTitles =
     in
         remoteTitles
             |> RemoteData.mapError NetworkError
-            |> RemoteData.andThen toRemoteTuple
+            |> RemoteData.andThen toPair
