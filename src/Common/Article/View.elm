@@ -1,6 +1,6 @@
 module Common.Article.View exposing (viewError)
 
-import Html.Styled exposing (Html, text)
+import Html.Styled exposing (Html, div, text)
 import Common.Article.Model exposing (ArticleError(..))
 
 
@@ -21,4 +21,4 @@ viewError error =
                 NetworkError error ->
                     ("Network error: " ++ toString error)
     in
-        text errorMessage
+        div [] [ text errorMessage ]

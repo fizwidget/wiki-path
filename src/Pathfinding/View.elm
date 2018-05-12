@@ -28,12 +28,11 @@ view { source, destination, priorityQueue, errors, fatalError } =
 heading : Article -> Article -> Html msg
 heading source destination =
     h3 [ css [ textAlign center ] ]
-        [ text <|
-            "Finding path from "
-                ++ Title.value source.title
-                ++ " to "
-                ++ Title.value destination.title
-                ++ "..."
+        [ text "Finding path from "
+        , Title.viewAsLink source.title
+        , text " to "
+        , Title.viewAsLink destination.title
+        , text "..."
         ]
 
 

@@ -1,12 +1,28 @@
-module Common.Title.Service exposing (requestRandom)
+module Common.Title.Service exposing (requestRandomPair)
 
-import RemoteData exposing (WebData)
+import RemoteData exposing (WebData, RemoteData)
 import Common.Title.Api as Api
-import Common.Title.Model exposing (Title)
+import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(NetworkError, UnexpectedTitleCount))
 
 
-requestRandom : (WebData (List Title) -> msg) -> Int -> Cmd msg
-requestRandom toMsg articleCount =
-    Api.buildRandomTitleRequest articleCount
+requestRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
+requestRandomPair toMsg =
+    Api.buildRandomTitleRequest 2
         |> RemoteData.sendRequest
-        |> Cmd.map toMsg
+        |> Cmd.map (toTuple >> toMsg)
+
+
+toTuple : WebData (List Title) -> RemoteTitlePair
+toTuple remoteTitles =
+    let
+        toRemoteTuple titles =
+            case titles of
+                titleA :: titleB :: _ ->
+                    RemoteData.succeed ( titleA, titleB )
+
+                _ ->
+                    RemoteData.Failure UnexpectedTitleCount
+    in
+        remoteTitles
+            |> RemoteData.mapError NetworkError
+            |> RemoteData.andThen toRemoteTuple

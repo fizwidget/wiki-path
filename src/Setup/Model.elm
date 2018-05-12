@@ -1,8 +1,7 @@
 module Setup.Model exposing (SetupModel, UserInput)
 
-import RemoteData exposing (WebData)
 import Common.Article.Model exposing (RemoteArticle)
-import Common.Title.Model exposing (Title)
+import Common.Title.Model exposing (Title, RemoteTitlePair)
 
 
 type alias SetupModel =
@@ -10,7 +9,7 @@ type alias SetupModel =
     , destinationTitleInput : UserInput
     , source : RemoteArticle
     , destination : RemoteArticle
-    , randomizedTitles : WebData (List Title)
+    , randomTitles : RemoteTitlePair
     }
 
 
