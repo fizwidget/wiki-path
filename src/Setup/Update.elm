@@ -114,12 +114,13 @@ setRandomTitles model randomTitles =
     let
         updatedModel =
             { model | randomTitles = randomTitles }
-    in
-        ( Model.Setup
-            (randomTitles
+
+        updatedModelWithInputsSet =
+            randomTitles
                 |> RemoteData.map (setTitleInputs updatedModel)
                 |> RemoteData.withDefault updatedModel
-            )
+    in
+        ( Model.Setup updatedModelWithInputsSet
         , Cmd.none
         )
 
@@ -129,6 +130,6 @@ setTitleInputs model ( titleA, titleB ) =
     { model
         | sourceTitleInput = Title.value titleA
         , destinationTitleInput = Title.value titleB
-        , source = Loading
-        , destination = Loading
+        , source = NotAsked
+        , destination = NotAsked
     }
