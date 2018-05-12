@@ -20,6 +20,8 @@ view model =
         [ css [ displayFlex, alignItems center, flexDirection column ] ]
         [ titleInputs model
         , findPathButton model
+        , randomizeTitlesButton model
+        , showRandomizationError model
         , showSpinnerIfLoading model
         ]
 
@@ -93,6 +95,29 @@ findPathButton model =
         ]
 
 
+randomizeTitlesButton : SetupModel -> Html SetupMsg
+randomizeTitlesButton model =
+    div [ css [ padding (px 4) ] ]
+        [ fromUnstyled <|
+            Button.button
+                [ Button.light
+                , Button.disabled (isLoading model)
+                , Button.onClick RandomizeTitlesRequest
+                ]
+                [ toUnstyled <| text "Randomize" ]
+        ]
+
+
+showRandomizationError : SetupModel -> Html msg
+showRandomizationError { randomizedTitles } =
+    case randomizedTitles of
+        RemoteData.Failure error ->
+            text (toString error)
+
+        _ ->
+            text ""
+
+
 shouldDisableLoadButton : SetupModel -> Bool
 shouldDisableLoadButton model =
     let
@@ -112,10 +137,17 @@ showSpinnerIfLoading model =
 
 
 isLoading : SetupModel -> Bool
-isLoading { source, destination } =
-    [ source, destination ]
-        |> RemoteData.fromList
-        |> RemoteData.isLoading
+isLoading { source, destination, randomizedTitles } =
+    let
+        areArticlesLoading =
+            [ source, destination ]
+                |> RemoteData.fromList
+                |> RemoteData.isLoading
+
+        areTitlesLoading =
+            RemoteData.isLoading randomizedTitles
+    in
+        areArticlesLoading || areTitlesLoading
 
 
 getErrorMessage : RemoteArticle -> Html msg

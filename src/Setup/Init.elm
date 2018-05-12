@@ -17,4 +17,5 @@ initialModel =
     , destinationTitleInput = ""
     , source = NotAsked
     , destination = NotAsked
+    , randomizedTitles = NotAsked
     }

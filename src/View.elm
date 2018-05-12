@@ -38,7 +38,7 @@ viewHeading =
             , marginBottom (px 34)
             ]
         ]
-        [ text "WikiLinks" ]
+        [ text "WikiPath" ]
 
 
 viewModel : Model -> Html Msg
