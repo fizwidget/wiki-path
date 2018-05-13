@@ -3,7 +3,8 @@ module Finished.View exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, a)
 import Html.Styled.Attributes exposing (css)
-import Bootstrap.Button as Button
+import Bootstrap.Button as ButtonOptions
+import Common.Button.View as Button
 import Common.Title.Model as Title exposing (Title)
 import Common.Title.View as Title
 import Finished.Model exposing (FinishedModel)
@@ -55,8 +56,7 @@ stopsView source destination stops =
 backButton : Html FinishedMsg
 backButton =
     div [ css [ margin (px 20) ] ]
-        [ fromUnstyled <|
-            Button.button
-                [ Button.secondary, Button.onClick BackToSetup ]
-                [ toUnstyled <| text "Back" ]
+        [ Button.view
+            [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]
+            [ text "Back" ]
         ]
