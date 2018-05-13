@@ -97,9 +97,10 @@ findPathButton model =
 
 randomizeTitlesButton : SetupModel -> Html SetupMsg
 randomizeTitlesButton model =
-    div [ css [ padding (px 4) ] ]
+    div [ css [ padding (px 12) ] ]
         [ Button.view
-            [ ButtonOptions.light
+            [ ButtonOptions.large
+            , ButtonOptions.light
             , ButtonOptions.disabled (isLoading model)
             , ButtonOptions.onClick FetchRandomTitlesRequest
             ]
