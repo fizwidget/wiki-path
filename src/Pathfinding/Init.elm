@@ -23,4 +23,5 @@ initialModel source destination =
     , priorityQueue = PriorityQueue.empty
     , errors = []
     , fatalError = Nothing
+    , concurrencySlots = 4
     }

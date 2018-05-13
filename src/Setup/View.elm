@@ -3,10 +3,11 @@ module Setup.View exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
-import Bootstrap.Button as Button
+import RemoteData
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import RemoteData
+import Bootstrap.Button as ButtonOptions
+import Common.Button.View as Button
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
 import Common.Article.View as Article
 import Common.Spinner.View as Spinner
@@ -84,27 +85,25 @@ getInputStatus article =
 findPathButton : SetupModel -> Html SetupMsg
 findPathButton model =
     div [ css [ padding (px 4) ] ]
-        [ fromUnstyled <|
-            Button.button
-                [ Button.primary
-                , Button.large
-                , Button.disabled (shouldDisableLoadButton model)
-                , Button.onClick FetchArticlesRequest
-                ]
-                [ toUnstyled <| text "Find path" ]
+        [ Button.view
+            [ ButtonOptions.primary
+            , ButtonOptions.large
+            , ButtonOptions.disabled (shouldDisableLoadButton model)
+            , ButtonOptions.onClick FetchArticlesRequest
+            ]
+            [ text "Find path" ]
         ]
 
 
 randomizeTitlesButton : SetupModel -> Html SetupMsg
 randomizeTitlesButton model =
     div [ css [ padding (px 4) ] ]
-        [ fromUnstyled <|
-            Button.button
-                [ Button.light
-                , Button.disabled (isLoading model)
-                , Button.onClick FetchRandomTitlesRequest
-                ]
-                [ toUnstyled <| text "Randomize" ]
+        [ Button.view
+            [ ButtonOptions.light
+            , ButtonOptions.disabled (isLoading model)
+            , ButtonOptions.onClick FetchRandomTitlesRequest
+            ]
+            [ text "Randomize" ]
         ]
 
 

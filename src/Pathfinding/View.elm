@@ -3,7 +3,8 @@ module Pathfinding.View exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
-import Bootstrap.Button as Button
+import Bootstrap.Button as ButtonOptions
+import Common.Button.View as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Article.View as Article
 import Common.Title.Model as Title exposing (Title)
@@ -59,10 +60,9 @@ errorsView errors =
 backView : Html PathfindingMsg
 backView =
     div [ css [ margin (px 20) ] ]
-        [ fromUnstyled <|
-            Button.button
-                [ Button.secondary, Button.onClick BackToSetup ]
-                [ toUnstyled <| text "Back" ]
+        [ Button.view
+            [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]
+            [ text "Back" ]
         ]
 
 

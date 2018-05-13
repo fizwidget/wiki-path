@@ -5,7 +5,6 @@ import Html.Styled exposing (toUnstyled)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Update
-import Subscriptions
 import Init
 import View
 
@@ -16,5 +15,5 @@ main =
         { init = Init.init
         , view = View.view >> toUnstyled
         , update = Update.update
-        , subscriptions = Subscriptions.subscriptions
+        , subscriptions = \_ -> Sub.none
         }
