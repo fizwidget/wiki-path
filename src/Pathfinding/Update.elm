@@ -65,36 +65,41 @@ updateWithError model error =
 followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
-        pathCount =
-            clamp 1 2 model.concurrencySlots
+        maxPathsToFollow =
+            clamp 1 2 (maxInFlightRequests - model.inFlightRequests)
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.priorityQueue pathCount
+            PriorityQueue.removeHighestPriorities model.priorityQueue maxPathsToFollow
 
         updatedModel =
             { model
                 | priorityQueue = updatedPriorityQueue
-                , concurrencySlots = max 0 (model.concurrencySlots - pathCount)
+                , inFlightRequests = model.inFlightRequests + List.length highestPriorityPaths
             }
     in
-        followPaths updatedModel highestPriorityPaths
+        if List.isEmpty highestPriorityPaths && updatedModel.inFlightRequests == 0 then
+            pathNotFound updatedModel
+        else
+            followPaths updatedModel highestPriorityPaths
 
 
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model pathsToFollow =
     let
-        successfulPath =
+        maybePathToDestination =
             pathsToFollow
                 |> List.filter (\pathToFollow -> hasReachedDestination pathToFollow.next model.destination)
                 |> List.sortBy (\pathToFollow -> List.length pathToFollow.visited)
                 |> List.head
     in
-        case successfulPath of
+        case maybePathToDestination of
             Just pathToDestination ->
                 destinationReached model pathToDestination
 
             Nothing ->
-                ( Model.Pathfinding model, List.map fetchNextArticle pathsToFollow |> Cmd.batch )
+                ( Model.Pathfinding model
+                , Cmd.batch <| List.map fetchNextArticle pathsToFollow
+                )
 
 
 destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
@@ -108,14 +113,9 @@ destinationReached { source, destination } destinationToSource =
 
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle pathSoFar =
-    let
-        toMsg =
-            FetchArticleResponse pathSoFar >> Messages.Pathfinding
-
-        title =
-            Title.value pathSoFar.next
-    in
-        ArticleService.request toMsg title
+    ArticleService.request
+        (FetchArticleResponse pathSoFar >> Messages.Pathfinding)
+        (Title.value pathSoFar.next)
 
 
 hasReachedDestination : Title -> Article -> Bool
@@ -128,3 +128,8 @@ pathNotFound model =
     ( Model.Pathfinding { model | fatalError = Just PathNotFound }
     , Cmd.none
     )
+
+
+maxInFlightRequests : Int
+maxInFlightRequests =
+    4
