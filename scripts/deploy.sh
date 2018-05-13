@@ -12,8 +12,8 @@ echo "- Building..."
 ./build.sh
 echo
 
-echo "- Comitting new assets..."
-git add .
+echo "- Comitting new artefacts..."
+git add build/elm.js
 git commit -m "Updating build"
 echo
 
