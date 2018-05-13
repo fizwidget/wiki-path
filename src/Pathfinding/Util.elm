@@ -98,6 +98,8 @@ isInteresting title =
             , "JSTOR"
             , "Bibcode"
             , "Wayback Machine"
+            , "Virtual International Authority File"
+            , "Integrated Authority File"
             ]
 
         titleValue =
