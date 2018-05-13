@@ -50,7 +50,7 @@ updateWithArticle model pathSoFar nextArticle =
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
     in
-        followHighestPriorityPath updatedModel
+        followHighestPriorityPaths updatedModel
 
 
 updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
@@ -59,29 +59,42 @@ updateWithError model error =
         updatedModel =
             { model | errors = error :: model.errors }
     in
-        followHighestPriorityPath updatedModel
+        followHighestPriorityPaths updatedModel
 
 
-followHighestPriorityPath : PathfindingModel -> ( Model, Cmd Msg )
-followHighestPriorityPath model =
+followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
+followHighestPriorityPaths model =
     let
-        ( highestPriorityPath, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriority model.priorityQueue
+        pathCount =
+            clamp 1 2 model.concurrencySlots
+
+        ( highestPriorityPaths, updatedPriorityQueue ) =
+            PriorityQueue.removeHighestPriorities model.priorityQueue pathCount
 
         updatedModel =
-            { model | priorityQueue = updatedPriorityQueue }
+            { model
+                | priorityQueue = updatedPriorityQueue
+                , concurrencySlots = max 0 (model.concurrencySlots - pathCount)
+            }
     in
-        highestPriorityPath
-            |> Maybe.map (followPath updatedModel)
-            |> Maybe.withDefault (pathNotFound updatedModel)
+        followPaths updatedModel highestPriorityPaths
 
 
-followPath : PathfindingModel -> Path -> ( Model, Cmd Msg )
-followPath model pathToFollow =
-    if hasReachedDestination pathToFollow.next model.destination then
-        destinationReached model pathToFollow
-    else
-        ( Model.Pathfinding model, fetchNextArticle pathToFollow )
+followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
+followPaths model pathsToFollow =
+    let
+        successfulPath =
+            pathsToFollow
+                |> List.filter (\pathToFollow -> hasReachedDestination pathToFollow.next model.destination)
+                |> List.sortBy (\pathToFollow -> List.length pathToFollow.visited)
+                |> List.head
+    in
+        case successfulPath of
+            Just pathToDestination ->
+                destinationReached model pathToDestination
+
+            Nothing ->
+                ( Model.Pathfinding model, List.map fetchNextArticle pathsToFollow |> Cmd.batch )
 
 
 destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
