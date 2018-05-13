@@ -26,15 +26,19 @@ update message model =
 
 updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
 updateWithResult model pathSoFar articleResult =
-    case articleResult of
-        Ok nextArticle ->
-            if hasReachedDestination nextArticle.title model.destination then
-                destinationReached model pathSoFar
-            else
-                updateWithArticle model pathSoFar nextArticle
+    let
+        updatedModel =
+            { model | inFlightRequests = model.inFlightRequests - 1 }
+    in
+        case articleResult of
+            Ok nextArticle ->
+                if hasReachedDestination nextArticle.title updatedModel.destination then
+                    destinationReached updatedModel pathSoFar
+                else
+                    updateWithArticle updatedModel pathSoFar nextArticle
 
-        Err error ->
-            updateWithError model error
+            Err error ->
+                updateWithError updatedModel error
 
 
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
@@ -65,17 +69,14 @@ updateWithError model error =
 followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
-        maxPathsToFollow =
-            clamp 1 2 (maxInFlightRequests - model.inFlightRequests)
+        pathsToFollowCount =
+            min 2 (maxInFlightRequests - model.inFlightRequests)
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.priorityQueue maxPathsToFollow
+            PriorityQueue.removeHighestPriorities model.priorityQueue pathsToFollowCount
 
         updatedModel =
-            { model
-                | priorityQueue = updatedPriorityQueue
-                , inFlightRequests = model.inFlightRequests + List.length highestPriorityPaths
-            }
+            { model | priorityQueue = updatedPriorityQueue }
     in
         if List.isEmpty highestPriorityPaths && updatedModel.inFlightRequests == 0 then
             pathNotFound updatedModel
@@ -86,19 +87,22 @@ followHighestPriorityPaths model =
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model pathsToFollow =
     let
+        updatedModel =
+            { model | inFlightRequests = model.inFlightRequests + List.length pathsToFollow }
+
         maybePathToDestination =
             pathsToFollow
-                |> List.filter (\pathToFollow -> hasReachedDestination pathToFollow.next model.destination)
+                |> List.filter (\pathToFollow -> hasReachedDestination pathToFollow.next updatedModel.destination)
                 |> List.sortBy (\pathToFollow -> List.length pathToFollow.visited)
                 |> List.head
     in
         case maybePathToDestination of
             Just pathToDestination ->
-                destinationReached model pathToDestination
+                destinationReached updatedModel pathToDestination
 
             Nothing ->
-                ( Model.Pathfinding model
-                , Cmd.batch <| List.map fetchNextArticle pathsToFollow
+                ( Model.Pathfinding updatedModel
+                , List.map fetchNextArticle pathsToFollow |> Cmd.batch
                 )
 
 
