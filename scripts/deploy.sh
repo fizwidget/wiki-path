@@ -13,8 +13,8 @@ echo "- Building..."
 echo
 
 echo "- Comitting new artefacts..."
-git add build/elm.js
-git commit -m "Updating build"
+git add ./build/elm.js
+git commit -m "Updating build artefacts"
 echo
 
 echo "- Pushing built result..."
