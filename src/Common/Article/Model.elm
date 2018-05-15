@@ -28,4 +28,4 @@ type ArticleError
     = ArticleNotFound
     | InvalidTitle
     | UnknownError String
-    | NetworkError Http.Error
+    | HttpError Http.Error
