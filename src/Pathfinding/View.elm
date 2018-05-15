@@ -7,7 +7,6 @@ import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Article.View as Article
-import Common.Title.Model as Title exposing (Title)
 import Common.Title.View as Title
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
@@ -19,9 +18,9 @@ view : PathfindingModel -> Html PathfindingMsg
 view { source, destination, priorityQueue, errors, fatalError } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
-        , maybeErrorView errors fatalError
+        , errorView errors fatalError
+        , warningView priorityQueue destination
         , backView
-        , Spinner.view { isVisible = True }
         , priorityQueueView priorityQueue
         ]
 
@@ -37,23 +36,26 @@ heading source destination =
         ]
 
 
-maybeErrorView : List ArticleError -> Maybe Error -> Html msg
-maybeErrorView errors fatalError =
+errorView : List ArticleError -> Maybe Error -> Html msg
+errorView errors fatalError =
     div []
         [ fatalErrorView fatalError
-        , errorsView errors
+        , nonFatalErrorView errors
         ]
 
 
 fatalErrorView : Maybe Error -> Html msg
 fatalErrorView error =
-    error
-        |> Maybe.map (\PathNotFound -> text "Path not found :(")
-        |> Maybe.withDefault (text "")
+    case error of
+        Just PathNotFound ->
+            text "Path not found :("
+
+        Nothing ->
+            text ""
 
 
-errorsView : List ArticleError -> Html msg
-errorsView errors =
+nonFatalErrorView : List ArticleError -> Html msg
+nonFatalErrorView errors =
     div [] <| List.map Article.viewError errors
 
 
@@ -66,6 +68,30 @@ backView =
         ]
 
 
+warningView : PriorityQueue Path -> Article -> Html msg
+warningView priorityQueue destination =
+    div [ css [ textAlign center ] ]
+        [ destinationContentWarning destination
+        , pathCountWarning priorityQueue
+        ]
+
+
+destinationContentWarning : Article -> Html msg
+destinationContentWarning destination =
+    if String.length destination.content < 7000 then
+        div [] [ text "The destination article has very little content, so this might not go well 😬" ]
+    else
+        text ""
+
+
+pathCountWarning : PriorityQueue Path -> Html msg
+pathCountWarning priorityQueue =
+    if PriorityQueue.size priorityQueue > 100 then
+        div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
+    else
+        text ""
+
+
 priorityQueueView : PriorityQueue Path -> Html msg
 priorityQueueView queue =
     PriorityQueue.getHighestPriority queue
@@ -75,14 +101,15 @@ priorityQueueView queue =
 
 pathView : Path -> Html msg
 pathView pathSoFar =
-    div []
-        [ (pathSoFar.next :: pathSoFar.visited)
-            |> List.reverse
-            |> List.map stopView
-            |> ol []
-        ]
-
-
-stopView : Title -> Html msg
-stopView title =
-    li [] [ Title.viewAsLink title ]
+    let
+        stops =
+            pathSoFar.next :: pathSoFar.visited
+    in
+        div [ css [ textAlign center ] ]
+            [ stops
+                |> List.map Title.viewAsLink
+                |> List.intersperse (div [] [ text "↑" ])
+                |> List.append [ div [] [ text "↑" ] ]
+                |> List.append [ Spinner.view { isVisible = True } ]
+                |> div []
+            ]
