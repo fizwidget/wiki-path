@@ -17786,20 +17786,7 @@ var _fizwidget$wiki_path$Finished_View$subHeadingView = F2(
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$text(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'Path from ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_fizwidget$wiki_path$Common_Title_Model$value(sourceTitle),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								' to ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_fizwidget$wiki_path$Common_Title_Model$value(destinationTitle),
-									'  was...'))))),
+				_0: _rtfeldman$elm_css$Html_Styled$text('Path was... '),
 				_1: {ctor: '[]'}
 			});
 	});
@@ -19402,8 +19389,16 @@ var _fizwidget$wiki_path$Setup_View$getInputStatus = function (article) {
 			return {ctor: '[]'};
 	}
 };
-var _fizwidget$wiki_path$Setup_View$articleTitleInput = F4(
-	function (placeholderText, toMsg, title, article) {
+var _fizwidget$wiki_path$Setup_View$articleTitleInput = F5(
+	function (placeholderText, toMsg, title, article, inputStatus) {
+		var isDisabled = function () {
+			var _p8 = inputStatus;
+			if (_p8.ctor === 'Enabled') {
+				return false;
+			} else {
+				return true;
+			}
+		}();
 		var inputOptions = A2(
 			_elm_lang$core$Basics_ops['++'],
 			_fizwidget$wiki_path$Setup_View$getInputStatus(article),
@@ -19419,7 +19414,11 @@ var _fizwidget$wiki_path$Setup_View$articleTitleInput = F4(
 						_1: {
 							ctor: '::',
 							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder(placeholderText),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$disabled(isDisabled),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
@@ -19479,8 +19478,11 @@ var _fizwidget$wiki_path$Setup_View$articleTitleInput = F4(
 	});
 var _fizwidget$wiki_path$Setup_View$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'To...', _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange);
 var _fizwidget$wiki_path$Setup_View$viewSourceTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'From...', _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange);
-var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p8) {
-	var _p9 = _p8;
+var _fizwidget$wiki_path$Setup_View$Disabled = {ctor: 'Disabled'};
+var _fizwidget$wiki_path$Setup_View$Enabled = {ctor: 'Enabled'};
+var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p9) {
+	var _p10 = _p9;
+	var inputStatus = _fizwidget$wiki_path$Setup_View$isLoading(_p10) ? _fizwidget$wiki_path$Setup_View$Disabled : _fizwidget$wiki_path$Setup_View$Enabled;
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19503,10 +19505,10 @@ var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p8) {
 		},
 		{
 			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Setup_View$viewSourceTitleInput, _p9.sourceTitleInput, _p9.source),
+			_0: A3(_fizwidget$wiki_path$Setup_View$viewSourceTitleInput, _p10.sourceTitleInput, _p10.source, inputStatus),
 			_1: {
 				ctor: '::',
-				_0: A2(_fizwidget$wiki_path$Setup_View$viewDestinationTitleInput, _p9.destinationTitleInput, _p9.destination),
+				_0: A3(_fizwidget$wiki_path$Setup_View$viewDestinationTitleInput, _p10.destinationTitleInput, _p10.destination, inputStatus),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -19635,7 +19637,14 @@ var _fizwidget$wiki_path$Pathfinding_View$pathCountWarning = function (priorityQ
 		}) : _rtfeldman$elm_css$Html_Styled$text('');
 };
 var _fizwidget$wiki_path$Pathfinding_View$destinationContentWarning = function (destination) {
-	return (_elm_lang$core$Native_Utils.cmp(
+	return A2(_elm_lang$core$String$contains, 'disambigbox', destination.content) ? A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text('The destination article is a disambiguation page, so I probably won\'t be able to find a path to it 🤖'),
+			_1: {ctor: '[]'}
+		}) : ((_elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$String$length(destination.content),
 		7000) < 0) ? A2(
 		_rtfeldman$elm_css$Html_Styled$div,
@@ -19644,7 +19653,7 @@ var _fizwidget$wiki_path$Pathfinding_View$destinationContentWarning = function (
 			ctor: '::',
 			_0: _rtfeldman$elm_css$Html_Styled$text('The destination article has very little content, so this might not go well 😬'),
 			_1: {ctor: '[]'}
-		}) : _rtfeldman$elm_css$Html_Styled$text('');
+		}) : _rtfeldman$elm_css$Html_Styled$text(''));
 };
 var _fizwidget$wiki_path$Pathfinding_View$warningView = F2(
 	function (priorityQueue, destination) {
