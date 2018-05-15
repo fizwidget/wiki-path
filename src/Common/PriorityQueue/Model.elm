@@ -74,8 +74,8 @@ getHighestPriority (PriorityQueue pairingHeap) =
 isEmpty : PriorityQueue a -> Bool
 isEmpty (PriorityQueue pairingHeap) =
     PairingHeap.findMin pairingHeap
-        |> Maybe.map (always True)
-        |> Maybe.withDefault False
+        |> Maybe.map (always False)
+        |> Maybe.withDefault True
 
 
 toSortedList : PriorityQueue a -> List a

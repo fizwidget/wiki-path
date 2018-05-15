@@ -1,7 +1,7 @@
 module Pathfinding.Update exposing (update, updateWithArticle)
 
 import Result exposing (Result(Ok, Err))
-import Common.Article.Service as ArticleService
+import Common.Article.Service as Article
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.PriorityQueue.Model as PriorityQueue
@@ -18,7 +18,7 @@ update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         FetchArticleResponse pathSoFar articleResult ->
-            updateWithResult model pathSoFar articleResult
+            updateWithResult (decrementInFlightRequests model) pathSoFar articleResult
 
         BackToSetup ->
             Setup.Init.init
@@ -26,19 +26,20 @@ update message model =
 
 updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
 updateWithResult model pathSoFar articleResult =
-    let
-        updatedModel =
-            { model | inFlightRequests = model.inFlightRequests - 1 }
-    in
-        case articleResult of
-            Ok nextArticle ->
-                if hasReachedDestination nextArticle.title updatedModel.destination then
-                    destinationReached updatedModel pathSoFar
-                else
-                    updateWithArticle updatedModel pathSoFar nextArticle
+    case articleResult of
+        Ok nextArticle ->
+            if hasReachedDestination nextArticle.title model.destination then
+                destinationReached model pathSoFar
+            else
+                updateWithArticle model pathSoFar nextArticle
 
-            Err error ->
-                updateWithError updatedModel error
+        Err error ->
+            updateWithError model error
+
+
+decrementInFlightRequests : PathfindingModel -> PathfindingModel
+decrementInFlightRequests model =
+    { model | inFlightRequests = model.inFlightRequests - 1 }
 
 
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
@@ -70,7 +71,7 @@ followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
         pathsToFollowCount =
-            min 2 (maxInFlightRequests - model.inFlightRequests)
+            maxInFlightRequests - model.inFlightRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
             PriorityQueue.removeHighestPriorities model.priorityQueue pathsToFollowCount
@@ -117,7 +118,7 @@ destinationReached { source, destination } destinationToSource =
 
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle pathSoFar =
-    ArticleService.request
+    Article.request
         (FetchArticleResponse pathSoFar >> Messages.Pathfinding)
         (Title.value pathSoFar.next)
 
