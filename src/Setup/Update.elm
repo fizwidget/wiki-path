@@ -80,17 +80,17 @@ requestArticles model =
 setSourceArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setSourceArticle model source =
     ( { model | source = source }, Cmd.none )
-        |> beginPathfindingIfArticlesLoaded
+        |> beginPathfindingIfBothArticlesLoaded
 
 
 setDestinationArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setDestinationArticle model destination =
     ( { model | destination = destination }, Cmd.none )
-        |> beginPathfindingIfArticlesLoaded
+        |> beginPathfindingIfBothArticlesLoaded
 
 
-beginPathfindingIfArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
-beginPathfindingIfArticlesLoaded ( model, cmd ) =
+beginPathfindingIfBothArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
+beginPathfindingIfBothArticlesLoaded ( model, cmd ) =
     RemoteData.map2 Pathfinding.Init.init model.source model.destination
         |> RemoteData.toMaybe
         |> Maybe.withDefault ( Model.Setup model, cmd )

@@ -30,16 +30,25 @@ empty =
 insert : PriorityQueue a -> (a -> Priority) -> List a -> PriorityQueue a
 insert (PriorityQueue pairingHeap) getPriority values =
     let
-        getNegatedPriority value =
-            -(getPriority value)
+        getNegatedPriority =
+            getPriority >> negate
 
         withNegatedPriority =
             \value -> ( getNegatedPriority value, value )
 
         valuesWithNegatedPriorities =
             List.map withNegatedPriority values
+
+        updatedPairingHeap =
+            List.foldl PairingHeap.insert pairingHeap valuesWithNegatedPriorities
     in
-        List.foldl PairingHeap.insert pairingHeap valuesWithNegatedPriorities |> PriorityQueue
+        PriorityQueue updatedPairingHeap
+
+
+getHighestPriority : PriorityQueue a -> Maybe a
+getHighestPriority (PriorityQueue pairingHeap) =
+    PairingHeap.findMin pairingHeap
+        |> Maybe.map Tuple.second
 
 
 removeHighestPriority : PriorityQueue a -> ( Maybe a, PriorityQueue a )
@@ -64,11 +73,6 @@ removeHighestPriorities priorityQueue howMany =
     in
         helper priorityQueue howMany []
             |> Tuple.mapFirst (List.filterMap identity)
-
-
-getHighestPriority : PriorityQueue a -> Maybe a
-getHighestPriority (PriorityQueue pairingHeap) =
-    PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
 
 
 isEmpty : PriorityQueue a -> Bool
