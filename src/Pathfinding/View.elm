@@ -81,7 +81,7 @@ destinationContentWarning destination =
     if String.contains "disambigbox" destination.content then
         div [] [ text "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916" ]
     else if String.length destination.content < 7000 then
-        div [] [ text "The destination article has very little content, so this might not go well 😬" ]
+        div [] [ text "The destination article is very short, so my pathfinding heuristic won't work very well \x1F916" ]
     else
         text ""
 
