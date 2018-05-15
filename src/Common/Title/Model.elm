@@ -24,4 +24,4 @@ type alias RemoteTitlePair =
 
 type TitleError
     = UnexpectedTitleCount
-    | NetworkError Http.Error
+    | HttpError Http.Error

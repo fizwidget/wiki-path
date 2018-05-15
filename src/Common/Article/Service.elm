@@ -2,7 +2,7 @@ module Common.Article.Service exposing (requestRemote, request)
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
-import Common.Article.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(NetworkError))
+import Common.Article.Model exposing (Article, ArticleResult, RemoteArticle, ArticleError(HttpError))
 import Common.Article.Api as ArticleApi
 
 
@@ -22,12 +22,12 @@ requestRemote toMsg title =
 toArticleResult : Result Http.Error ArticleResult -> ArticleResult
 toArticleResult result =
     result
-        |> Result.mapError NetworkError
+        |> Result.mapError HttpError
         |> Result.andThen identity
 
 
 toRemoteArticle : WebData ArticleResult -> RemoteArticle
 toRemoteArticle webData =
     webData
-        |> RemoteData.mapError NetworkError
+        |> RemoteData.mapError HttpError
         |> RemoteData.andThen RemoteData.fromResult

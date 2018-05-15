@@ -18,7 +18,7 @@ viewError error =
                 UnknownError errorCode ->
                     ("Unknown error: " ++ errorCode)
 
-                NetworkError error ->
+                HttpError error ->
                     ("Network error: " ++ toString error)
     in
         div [] [ text errorMessage ]

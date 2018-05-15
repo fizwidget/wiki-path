@@ -2,7 +2,7 @@ module Common.Title.Service exposing (requestRandomPair)
 
 import RemoteData exposing (WebData, RemoteData)
 import Common.Title.Api as Api
-import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(NetworkError, UnexpectedTitleCount))
+import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(HttpError, UnexpectedTitleCount))
 
 
 requestRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
@@ -24,5 +24,5 @@ toRemoteTitlePair remoteTitles =
                     RemoteData.Failure UnexpectedTitleCount
     in
         remoteTitles
-            |> RemoteData.mapError NetworkError
+            |> RemoteData.mapError HttpError
             |> RemoteData.andThen toPair

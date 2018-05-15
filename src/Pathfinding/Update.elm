@@ -1,7 +1,7 @@
 module Pathfinding.Update exposing (update, updateWithArticle)
 
 import Result exposing (Result(Ok, Err))
-import Common.Article.Service as ArticleService
+import Common.Article.Service as Article
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.PriorityQueue.Model as PriorityQueue
@@ -18,7 +18,10 @@ update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         FetchArticleResponse pathSoFar articleResult ->
-            updateWithResult model pathSoFar articleResult
+            updateWithResult
+                (decrementInFlightRequests model)
+                pathSoFar
+                articleResult
 
         BackToSetup ->
             Setup.Init.init
@@ -26,30 +29,26 @@ update message model =
 
 updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
 updateWithResult model pathSoFar articleResult =
-    let
-        updatedModel =
-            { model | inFlightRequests = model.inFlightRequests - 1 }
-    in
-        case articleResult of
-            Ok nextArticle ->
-                if hasReachedDestination nextArticle.title updatedModel.destination then
-                    destinationReached updatedModel pathSoFar
-                else
-                    updateWithArticle updatedModel pathSoFar nextArticle
+    case articleResult of
+        Ok article ->
+            if hasReachedDestination article.title model.destination then
+                destinationReached model pathSoFar
+            else
+                updateWithArticle model pathSoFar article
 
-            Err error ->
-                updateWithError updatedModel error
+        Err error ->
+            updateWithError model error
 
 
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
-updateWithArticle model pathSoFar nextArticle =
+updateWithArticle model pathSoFar article =
     let
         updatedPriorityQueue =
             Util.addLinksToQueue
                 model.priorityQueue
                 model.destination
                 pathSoFar
-                nextArticle.links
+                article.links
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
@@ -69,16 +68,19 @@ updateWithError model error =
 followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
-        pathsToFollowCount =
-            min 2 (maxInFlightRequests - model.inFlightRequests)
+        maxPathsToRemove =
+            inFlightRequestLimit - model.inFlightRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.priorityQueue pathsToFollowCount
+            PriorityQueue.removeHighestPriorities model.priorityQueue maxPathsToRemove
+
+        isSearchExhausted =
+            List.isEmpty highestPriorityPaths && model.inFlightRequests == 0
 
         updatedModel =
             { model | priorityQueue = updatedPriorityQueue }
     in
-        if List.isEmpty highestPriorityPaths && updatedModel.inFlightRequests == 0 then
+        if isSearchExhausted then
             pathNotFound updatedModel
         else
             followPaths updatedModel highestPriorityPaths
@@ -86,24 +88,17 @@ followHighestPriorityPaths model =
 
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model pathsToFollow =
-    let
-        updatedModel =
-            { model | inFlightRequests = model.inFlightRequests + List.length pathsToFollow }
+    shortestPathToDestination pathsToFollow model.destination
+        |> Maybe.map (destinationReached model)
+        |> Maybe.withDefault (fetchNextArticles model pathsToFollow)
 
-        maybePathToDestination =
-            pathsToFollow
-                |> List.filter (\pathToFollow -> hasReachedDestination pathToFollow.next updatedModel.destination)
-                |> List.sortBy (\pathToFollow -> List.length pathToFollow.visited)
-                |> List.head
-    in
-        case maybePathToDestination of
-            Just pathToDestination ->
-                destinationReached updatedModel pathToDestination
 
-            Nothing ->
-                ( Model.Pathfinding updatedModel
-                , List.map fetchNextArticle pathsToFollow |> Cmd.batch
-                )
+shortestPathToDestination : List Path -> Article -> Maybe Path
+shortestPathToDestination paths destination =
+    paths
+        |> List.filter (\path -> hasReachedDestination path.next destination)
+        |> List.sortBy (\path -> List.length path.visited)
+        |> List.head
 
 
 destinationReached : PathfindingModel -> Path -> ( Model, Cmd Msg )
@@ -115,9 +110,21 @@ destinationReached { source, destination } destinationToSource =
         Finished.Init.init source.title destination.title sourceToDestination
 
 
+fetchNextArticles : PathfindingModel -> List Path -> ( Model, Cmd Msg )
+fetchNextArticles model pathsToFollow =
+    let
+        articleRequests =
+            List.map fetchNextArticle pathsToFollow
+
+        updatedModel =
+            incrementInFightRequests model (List.length articleRequests)
+    in
+        ( Model.Pathfinding updatedModel, Cmd.batch articleRequests )
+
+
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle pathSoFar =
-    ArticleService.request
+    Article.request
         (FetchArticleResponse pathSoFar >> Messages.Pathfinding)
         (Title.value pathSoFar.next)
 
@@ -134,6 +141,16 @@ pathNotFound model =
     )
 
 
-maxInFlightRequests : Int
-maxInFlightRequests =
+inFlightRequestLimit : Int
+inFlightRequestLimit =
     4
+
+
+decrementInFlightRequests : PathfindingModel -> PathfindingModel
+decrementInFlightRequests model =
+    { model | inFlightRequests = model.inFlightRequests - 1 }
+
+
+incrementInFightRequests : PathfindingModel -> Int -> PathfindingModel
+incrementInFightRequests model requestCount =
+    { model | inFlightRequests = model.inFlightRequests + requestCount }

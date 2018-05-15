@@ -1,7 +1,7 @@
 module Setup.Update exposing (update)
 
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Common.Article.Service as ArticleService
+import Common.Article.Service as Article
 import Common.Article.Model exposing (RemoteArticle)
 import Common.Title.Model as Title exposing (Title, RemoteTitlePair)
 import Common.Title.Service as Title
@@ -22,7 +22,7 @@ update message model =
             setDestinationTitle model value
 
         FetchArticlesRequest ->
-            loadArticles model
+            requestArticles model
 
         FetchSourceArticleResponse article ->
             setSourceArticle model article
@@ -59,44 +59,38 @@ setDestinationTitle model destinationTitleInput =
     )
 
 
-loadArticles : SetupModel -> ( Model, Cmd Msg )
-loadArticles model =
-    ( Model.Setup
-        { model
-            | source = Loading
-            , destination = Loading
-        }
-    , requestArticles model
-    )
-
-
-requestArticles : SetupModel -> Cmd Msg
-requestArticles { sourceTitleInput, destinationTitleInput } =
+requestArticles : SetupModel -> ( Model, Cmd Msg )
+requestArticles model =
     let
+        updatedModel =
+            { model | source = Loading, destination = Loading }
+
         requests =
-            [ ArticleService.requestRemote FetchSourceArticleResponse sourceTitleInput
-            , ArticleService.requestRemote FetchDestinationArticleResponse destinationTitleInput
+            [ Article.requestRemote FetchSourceArticleResponse model.sourceTitleInput
+            , Article.requestRemote FetchDestinationArticleResponse model.destinationTitleInput
             ]
     in
-        requests
+        ( Model.Setup updatedModel
+        , requests
             |> Cmd.batch
             |> Cmd.map Messages.Setup
+        )
 
 
 setSourceArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setSourceArticle model source =
     ( { model | source = source }, Cmd.none )
-        |> beginPathfindingIfArticlesLoaded
+        |> beginPathfindingIfBothArticlesLoaded
 
 
 setDestinationArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
 setDestinationArticle model destination =
     ( { model | destination = destination }, Cmd.none )
-        |> beginPathfindingIfArticlesLoaded
+        |> beginPathfindingIfBothArticlesLoaded
 
 
-beginPathfindingIfArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
-beginPathfindingIfArticlesLoaded ( model, cmd ) =
+beginPathfindingIfBothArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
+beginPathfindingIfBothArticlesLoaded ( model, cmd ) =
     RemoteData.map2 Pathfinding.Init.init model.source model.destination
         |> RemoteData.toMaybe
         |> Maybe.withDefault ( Model.Setup model, cmd )

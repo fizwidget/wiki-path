@@ -1,49 +1,38 @@
-module Common.Article.Decoder exposing (decodeArticle)
+module Common.Article.Decoder exposing (decodeArticleResponse)
 
-import Json.Decode exposing (Decoder, map, string, list, bool, oneOf)
+import Json.Decode exposing (Decoder, field, at, map, string, list, bool, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError(..))
 import Common.Title.Model as Title exposing (Title)
 import Common.Title.Decoder exposing (decodeTitle)
 
 
-decodeArticle : Decoder ArticleResult
-decodeArticle =
+decodeArticleResponse : Decoder ArticleResult
+decodeArticleResponse =
     oneOf
-        [ map Result.Ok decodeSuccess
-        , map Result.Err decodeError
+        [ map Ok decodeSuccess
+        , map Err decodeError
         ]
 
 
 decodeSuccess : Decoder Article
 decodeSuccess =
+    field "parse" decodeArticle
+
+
+decodeArticle : Decoder Article
+decodeArticle =
     decode Article
-        |> requiredAt [ "parse", "title" ] decodeTitle
-        |> requiredAt [ "parse", "links" ] decodeLinks
-        |> requiredAt [ "parse", "text" ] string
+        |> required "title" decodeTitle
+        |> required "links" decodeLinkTitles
+        |> required "text" string
 
 
-decodeLinks : Decoder (List Title)
-decodeLinks =
-    Json.Decode.map (List.filterMap identity) (list decodeExistingLink)
-
-
-decodeExistingLink : Decoder (Maybe Title)
-decodeExistingLink =
-    Json.Decode.map
-        (\link ->
-            if link.exists then
-                Just link.title
-            else
-                Nothing
-        )
-        decodeLink
-
-
-type alias Link =
-    { title : Title
-    , exists : Bool
-    }
+decodeLinkTitles : Decoder (List Title)
+decodeLinkTitles =
+    list decodeLink
+        |> map (List.filter .exists)
+        |> map (List.map .title)
 
 
 decodeLink : Decoder Link
@@ -53,14 +42,20 @@ decodeLink =
         |> required "exists" bool
 
 
+type alias Link =
+    { title : Title
+    , exists : Bool
+    }
+
+
 decodeError : Decoder ArticleError
 decodeError =
-    decode toError
-        |> requiredAt [ "error", "code" ] string
+    at [ "error", "code" ] string
+        |> map fromErrorCode
 
 
-toError : String -> ArticleError
-toError errorCode =
+fromErrorCode : String -> ArticleError
+fromErrorCode errorCode =
     case errorCode of
         "missingtitle" ->
             ArticleNotFound

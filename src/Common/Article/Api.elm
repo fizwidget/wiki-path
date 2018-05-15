@@ -2,13 +2,13 @@ module Common.Article.Api exposing (buildRequest)
 
 import Http
 import Common.Article.Model exposing (ArticleResult)
-import Common.Article.Decoder exposing (decodeArticle)
+import Common.Article.Decoder exposing (decodeArticleResponse)
 import Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
 
 
 buildRequest : String -> Http.Request ArticleResult
 buildRequest title =
-    Http.get (buildArticleUrl title) decodeArticle
+    Http.get (buildArticleUrl title) decodeArticleResponse
 
 
 buildArticleUrl : String -> Url
