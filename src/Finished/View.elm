@@ -35,14 +35,7 @@ headingView =
 
 subHeadingView : Title -> Title -> Html msg
 subHeadingView sourceTitle destinationTitle =
-    h4 []
-        [ text <|
-            "Path from "
-                ++ (Title.value sourceTitle)
-                ++ " to "
-                ++ (Title.value destinationTitle)
-                ++ "  was..."
-        ]
+    h4 [] [ text "Path was... " ]
 
 
 stopsView : Title -> Title -> List Title -> Html msg

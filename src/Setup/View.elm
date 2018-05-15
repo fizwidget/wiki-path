@@ -28,32 +28,53 @@ view model =
 
 
 titleInputs : SetupModel -> Html SetupMsg
-titleInputs { sourceTitleInput, destinationTitleInput, source, destination } =
-    div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-        [ viewSourceTitleInput sourceTitleInput source
-        , viewDestinationTitleInput destinationTitleInput destination
-        ]
+titleInputs ({ sourceTitleInput, destinationTitleInput, source, destination } as model) =
+    let
+        inputStatus =
+            if isLoading model then
+                Disabled
+            else
+                Enabled
+    in
+        div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
+            [ viewSourceTitleInput sourceTitleInput source inputStatus
+            , viewDestinationTitleInput destinationTitleInput destination inputStatus
+            ]
 
 
-viewSourceTitleInput : UserInput -> RemoteArticle -> Html SetupMsg
+type InputStatus
+    = Enabled
+    | Disabled
+
+
+viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html SetupMsg
 viewSourceTitleInput =
     articleTitleInput "From..." SourceArticleTitleChange
 
 
-viewDestinationTitleInput : UserInput -> RemoteArticle -> Html SetupMsg
+viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html SetupMsg
 viewDestinationTitleInput =
     articleTitleInput "To..." DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (UserInput -> SetupMsg) -> UserInput -> RemoteArticle -> Html SetupMsg
-articleTitleInput placeholderText toMsg title article =
+articleTitleInput : String -> (UserInput -> SetupMsg) -> UserInput -> RemoteArticle -> InputStatus -> Html SetupMsg
+articleTitleInput placeholderText toMsg title article inputStatus =
     let
+        isDisabled =
+            case inputStatus of
+                Enabled ->
+                    False
+
+                Disabled ->
+                    True
+
         inputOptions =
             getInputStatus article
                 ++ [ Input.large
                    , Input.onInput toMsg
                    , Input.value title
                    , Input.placeholder placeholderText
+                   , Input.disabled isDisabled
                    ]
     in
         div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]

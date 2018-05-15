@@ -1,5 +1,6 @@
 # TODO
 
+* Make `Path` have start and end fields ("make impossible states impossible").
 * Fix heading font size for mobile devices.
 * Improve performance of `isUnvisited` check by using a set.
 * Experiment with improved pathfinding by penalising longer paths.
