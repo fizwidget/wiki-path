@@ -78,7 +78,9 @@ warningView priorityQueue destination =
 
 destinationContentWarning : Article -> Html msg
 destinationContentWarning destination =
-    if String.length destination.content < 7000 then
+    if String.contains "disambigbox" destination.content then
+        div [] [ text "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916" ]
+    else if String.length destination.content < 7000 then
         div [] [ text "The destination article has very little content, so this might not go well 😬" ]
     else
         text ""
