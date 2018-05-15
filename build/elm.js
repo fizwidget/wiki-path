@@ -19651,7 +19651,7 @@ var _fizwidget$wiki_path$Pathfinding_View$destinationContentWarning = function (
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text('The destination article has very little content, so this might not go well 😬'),
+			_0: _rtfeldman$elm_css$Html_Styled$text('The destination article is very short, so my pathfinding heuristic won\'t work very well 🤖'),
 			_1: {ctor: '[]'}
 		}) : _rtfeldman$elm_css$Html_Styled$text(''));
 };
