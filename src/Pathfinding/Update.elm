@@ -88,13 +88,13 @@ followHighestPriorityPaths model =
 
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model pathsToFollow =
-    shortestPathToDestination pathsToFollow model.destination
+    ifPathReachedDestination pathsToFollow model.destination
         |> Maybe.map (destinationReached model)
         |> Maybe.withDefault (fetchNextArticles model pathsToFollow)
 
 
-shortestPathToDestination : List Path -> Article -> Maybe Path
-shortestPathToDestination paths destination =
+ifPathReachedDestination : List Path -> Article -> Maybe Path
+ifPathReachedDestination paths destination =
     paths
         |> List.filter (\path -> hasReachedDestination path.next destination)
         |> List.sortBy (\path -> List.length path.visited)

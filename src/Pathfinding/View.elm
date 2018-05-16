@@ -78,12 +78,16 @@ warningView priorityQueue destination =
 
 destinationContentWarning : Article -> Html msg
 destinationContentWarning destination =
-    if String.contains "disambigbox" destination.content then
-        div [] [ text "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916" ]
-    else if String.length destination.content < 7000 then
-        div [] [ text "The destination article is very short, so my pathfinding heuristic won't work very well \x1F916" ]
-    else
-        text ""
+    let
+        message =
+            if String.contains "disambigbox" destination.content then
+                "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916"
+            else if String.length destination.content < 10000 then
+                "The destination article is very short, so my pathfinding heuristic won't work well \x1F916"
+            else
+                ""
+    in
+        div [] [ text message ]
 
 
 pathCountWarning : PriorityQueue Path -> Html msg
@@ -110,8 +114,9 @@ pathView pathSoFar =
         div [ css [ textAlign center ] ]
             [ stops
                 |> List.map Title.viewAsLink
-                |> List.intersperse (div [] [ text "↑" ])
-                |> List.append [ div [] [ text "↑" ] ]
+                |> List.intersperse (text "↑")
+                |> List.append [ text "↑" ]
                 |> List.append [ Spinner.view { isVisible = True } ]
+                |> List.map (List.singleton >> div [])
                 |> div []
             ]
