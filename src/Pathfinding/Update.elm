@@ -10,7 +10,7 @@ import Messages exposing (Msg)
 import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound, TooManyRequests))
 import Pathfinding.Util as Util
 
 
@@ -33,6 +33,8 @@ updateWithResult model pathSoFar articleResult =
         Ok article ->
             if hasReachedDestination article.title model.destination then
                 destinationReached model pathSoFar
+            else if hasMadeTooManyRequests model then
+                tooManyRequests model
             else
                 updateWithArticle model pathSoFar article
 
@@ -88,13 +90,13 @@ followHighestPriorityPaths model =
 
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model pathsToFollow =
-    shortestPathToDestination pathsToFollow model.destination
+    ifPathReachedDestination pathsToFollow model.destination
         |> Maybe.map (destinationReached model)
         |> Maybe.withDefault (fetchNextArticles model pathsToFollow)
 
 
-shortestPathToDestination : List Path -> Article -> Maybe Path
-shortestPathToDestination paths destination =
+ifPathReachedDestination : List Path -> Article -> Maybe Path
+ifPathReachedDestination paths destination =
     paths
         |> List.filter (\path -> hasReachedDestination path.next destination)
         |> List.sortBy (\path -> List.length path.visited)
@@ -110,6 +112,13 @@ destinationReached { source, destination } destinationToSource =
         Finished.Init.init source.title destination.title sourceToDestination
 
 
+tooManyRequests : PathfindingModel -> ( Model, Cmd Msg )
+tooManyRequests model =
+    ( Model.Pathfinding { model | fatalError = Just TooManyRequests }
+    , Cmd.none
+    )
+
+
 fetchNextArticles : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 fetchNextArticles model pathsToFollow =
     let
@@ -117,7 +126,7 @@ fetchNextArticles model pathsToFollow =
             List.map fetchNextArticle pathsToFollow
 
         updatedModel =
-            incrementInFightRequests model (List.length articleRequests)
+            incrementRequests model (List.length articleRequests)
     in
         ( Model.Pathfinding updatedModel, Cmd.batch articleRequests )
 
@@ -132,6 +141,11 @@ fetchNextArticle pathSoFar =
 hasReachedDestination : Title -> Article -> Bool
 hasReachedDestination nextTitle destination =
     nextTitle == destination.title
+
+
+hasMadeTooManyRequests : PathfindingModel -> Bool
+hasMadeTooManyRequests { totalRequestCount, inFlightRequests } =
+    totalRequestCount > 200
 
 
 pathNotFound : PathfindingModel -> ( Model, Cmd Msg )
@@ -151,6 +165,9 @@ decrementInFlightRequests model =
     { model | inFlightRequests = model.inFlightRequests - 1 }
 
 
-incrementInFightRequests : PathfindingModel -> Int -> PathfindingModel
-incrementInFightRequests model requestCount =
-    { model | inFlightRequests = model.inFlightRequests + requestCount }
+incrementRequests : PathfindingModel -> Int -> PathfindingModel
+incrementRequests model requestCount =
+    { model
+        | inFlightRequests = model.inFlightRequests + requestCount
+        , totalRequestCount = model.totalRequestCount + requestCount
+    }

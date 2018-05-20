@@ -24,4 +24,5 @@ initialModel source destination =
     , errors = []
     , fatalError = Nothing
     , inFlightRequests = 0
+    , totalRequestCount = 0
     }
