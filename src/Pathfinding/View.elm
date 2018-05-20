@@ -11,15 +11,15 @@ import Common.Title.View as Title
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound))
+import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound, TooManyRequests))
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, errors, fatalError } =
+view { source, destination, priorityQueue, errors, fatalError, totalRequestCount } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
         , errorView errors fatalError
-        , warningView priorityQueue destination
+        , warningView totalRequestCount destination
         , backView
         , priorityQueueView priorityQueue
         ]
@@ -50,6 +50,9 @@ fatalErrorView error =
         Just PathNotFound ->
             text "Path not found :("
 
+        Just TooManyRequests ->
+            text "To avoid spamming Wikipedia's servers with too many requests, we've had to stop the search 😭"
+
         Nothing ->
             text ""
 
@@ -68,11 +71,11 @@ backView =
         ]
 
 
-warningView : PriorityQueue Path -> Article -> Html msg
-warningView priorityQueue destination =
+warningView : Int -> Article -> Html msg
+warningView totalRequestCount destination =
     div [ css [ textAlign center ] ]
         [ destinationContentWarning destination
-        , pathCountWarning priorityQueue
+        , pathCountWarning totalRequestCount
         ]
 
 
@@ -90,9 +93,9 @@ destinationContentWarning destination =
         div [] [ text message ]
 
 
-pathCountWarning : PriorityQueue Path -> Html msg
-pathCountWarning priorityQueue =
-    if PriorityQueue.size priorityQueue > 100 then
+pathCountWarning : Int -> Html msg
+pathCountWarning totalRequestCount =
+    if totalRequestCount > 100 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
         text ""
