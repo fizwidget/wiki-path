@@ -116,7 +116,10 @@ fetchNextArticles model pathsToFollow =
         updatedModel =
             incrementRequests model (List.length articleRequests)
     in
-        ( Model.Pathfinding updatedModel, Cmd.batch articleRequests )
+        if hasMadeTooManyRequests model then
+            Finished.Init.initWithTooManyRequestsError
+        else
+            ( Model.Pathfinding updatedModel, Cmd.batch articleRequests )
 
 
 fetchNextArticle : Path -> Cmd Msg
@@ -132,7 +135,7 @@ hasReachedDestination nextTitle destination =
 
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
-hasMadeTooManyRequests { totalRequestCount, inFlightRequests } =
+hasMadeTooManyRequests { totalRequestCount } =
     totalRequestCount > 200
 
 

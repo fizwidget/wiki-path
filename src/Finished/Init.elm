@@ -8,14 +8,14 @@ import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFoun
 
 initWithPath : Path -> ( Model, Cmd Msg )
 initWithPath path =
-    ( Finished (Success path), Cmd.none )
+    ( Finished <| Success path, Cmd.none )
 
 
 initWithPathNotFound : ( Model, Cmd Msg )
 initWithPathNotFound =
-    ( Finished (Error PathNotFound), Cmd.none )
+    ( Finished <| Error PathNotFound, Cmd.none )
 
 
 initWithTooManyRequestsError : ( Model, Cmd Msg )
 initWithTooManyRequestsError =
-    ( Finished (Error TooManyRequests), Cmd.none )
+    ( Finished <| Error TooManyRequests, Cmd.none )

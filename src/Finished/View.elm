@@ -6,7 +6,6 @@ import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
 import Common.Path.Model exposing (Path)
-import Common.Title.Model as Title exposing (Title)
 import Common.Title.View as Title
 import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 import Finished.Messages exposing (FinishedMsg(BackToSetup))
@@ -15,9 +14,7 @@ import Finished.Messages exposing (FinishedMsg(BackToSetup))
 view : FinishedModel -> Html FinishedMsg
 view model =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
-        [ headingView
-        , subHeadingView
-        , modelView model
+        [ modelView model
         , backButton
         ]
 
@@ -26,10 +23,19 @@ modelView : FinishedModel -> Html msg
 modelView model =
     case model of
         Success path ->
-            pathView path
+            successView path
 
         Error error ->
             errorView error
+
+
+successView : Path -> Html msg
+successView path =
+    div []
+        [ headingView
+        , subHeadingView
+        , pathView path
+        ]
 
 
 headingView : Html msg
@@ -58,10 +64,10 @@ errorView : Error -> Html msg
 errorView error =
     case error of
         PathNotFound ->
-            text "Path not found :("
+            text "Sorry, couldn't find a path 💀"
 
         TooManyRequests ->
-            text "Sorry, too many requests!"
+            text "Sorry, we're making too many requests to Wikipedia! 😵"
 
 
 backButton : Html FinishedMsg
