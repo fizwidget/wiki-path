@@ -8,10 +8,11 @@ import Common.Button.View as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Article.View as Article
 import Common.Title.View as Title
+import Common.Path.Model exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound, TooManyRequests))
+import Pathfinding.Model exposing (PathfindingModel, Error(PathNotFound, TooManyRequests))
 
 
 view : PathfindingModel -> Html PathfindingMsg

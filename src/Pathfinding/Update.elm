@@ -4,13 +4,14 @@ import Result exposing (Result(Ok, Err))
 import Common.Article.Service as Article
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
+import Common.Path.Model exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Path, Error(PathNotFound, TooManyRequests))
+import Pathfinding.Model exposing (PathfindingModel, Error(PathNotFound, TooManyRequests))
 import Pathfinding.Util as Util
 
 
@@ -33,8 +34,6 @@ updateWithResult model pathSoFar articleResult =
         Ok article ->
             if hasReachedDestination article.title model.destination then
                 destinationReached model pathSoFar
-            else if hasMadeTooManyRequests model then
-                tooManyRequests model
             else
                 updateWithArticle model pathSoFar article
 
