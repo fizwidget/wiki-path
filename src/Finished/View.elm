@@ -5,9 +5,9 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, 
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
-import Common.Title.Model as Title exposing (Title)
+import Common.Path.Model exposing (Path)
 import Common.Title.View as Title
-import Finished.Model exposing (FinishedModel)
+import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 import Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 
@@ -20,11 +20,21 @@ view model =
 
 
 modelView : FinishedModel -> Html msg
-modelView { source, destination, stops } =
+modelView model =
+    case model of
+        Success path ->
+            successView path
+
+        Error error ->
+            errorView error
+
+
+successView : Path -> Html msg
+successView path =
     div []
         [ headingView
-        , subHeadingView source destination
-        , stopsView source destination stops
+        , subHeadingView
+        , pathView path
         ]
 
 
@@ -33,17 +43,31 @@ headingView =
     h2 [] [ text "Success!" ]
 
 
-subHeadingView : Title -> Title -> Html msg
-subHeadingView sourceTitle destinationTitle =
+subHeadingView : Html msg
+subHeadingView =
     h4 [] [ text "Path was... " ]
 
 
-stopsView : Title -> Title -> List Title -> Html msg
-stopsView source destination stops =
-    stops
-        |> List.map Title.viewAsLink
-        |> List.intersperse (text " → ")
-        |> div []
+pathView : Path -> Html msg
+pathView path =
+    let
+        stops =
+            (path.next :: path.visited) |> List.reverse
+    in
+        stops
+            |> List.map Title.viewAsLink
+            |> List.intersperse (text " → ")
+            |> div []
+
+
+errorView : Error -> Html msg
+errorView error =
+    case error of
+        PathNotFound ->
+            text "Sorry, couldn't find a path 💀"
+
+        TooManyRequests ->
+            text "Sorry, we're making too many requests to Wikipedia! 😵"
 
 
 backButton : Html FinishedMsg

@@ -1,7 +1,7 @@
 module Pathfinding.Messages exposing (PathfindingMsg(..))
 
 import Common.Article.Model exposing (ArticleResult)
-import Pathfinding.Model exposing (Path)
+import Common.Path.Model exposing (Path)
 
 
 type PathfindingMsg
