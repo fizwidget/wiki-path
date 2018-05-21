@@ -22,7 +22,6 @@ initialModel source destination =
     , destination = destination
     , priorityQueue = PriorityQueue.empty
     , errors = []
-    , fatalError = Nothing
     , inFlightRequests = 0
     , totalRequestCount = 0
     }

@@ -1,4 +1,4 @@
-module Pathfinding.Model exposing (PathfindingModel, Error(PathNotFound, TooManyRequests))
+module Pathfinding.Model exposing (PathfindingModel)
 
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Path.Model exposing (Path)
@@ -10,12 +10,6 @@ type alias PathfindingModel =
     , destination : Article
     , priorityQueue : PriorityQueue Path
     , errors : List ArticleError
-    , fatalError : Maybe Error
     , inFlightRequests : Int
     , totalRequestCount : Int
     }
-
-
-type Error
-    = PathNotFound
-    | TooManyRequests

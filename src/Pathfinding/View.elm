@@ -12,14 +12,14 @@ import Common.Path.Model exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel, Error(PathNotFound, TooManyRequests))
+import Pathfinding.Model exposing (PathfindingModel)
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, errors, fatalError, totalRequestCount } =
+view { source, destination, priorityQueue, errors, totalRequestCount } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
-        , errorView errors fatalError
+        , errorView errors
         , warningView totalRequestCount destination
         , backView
         , priorityQueueView priorityQueue
@@ -37,29 +37,8 @@ heading source destination =
         ]
 
 
-errorView : List ArticleError -> Maybe Error -> Html msg
-errorView errors fatalError =
-    div []
-        [ fatalErrorView fatalError
-        , nonFatalErrorView errors
-        ]
-
-
-fatalErrorView : Maybe Error -> Html msg
-fatalErrorView error =
-    case error of
-        Just PathNotFound ->
-            text "Path not found :("
-
-        Just TooManyRequests ->
-            text "To avoid spamming Wikipedia's servers with too many requests, we've had to stop the search 😭"
-
-        Nothing ->
-            text ""
-
-
-nonFatalErrorView : List ArticleError -> Html msg
-nonFatalErrorView errors =
+errorView : List ArticleError -> Html msg
+errorView errors =
     div [] <| List.map Article.viewError errors
 
 

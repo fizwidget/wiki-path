@@ -1,16 +1,21 @@
-module Finished.Init exposing (init)
+module Finished.Init exposing (initWithPath, initWithPathNotFound, initWithTooManyRequestsError)
 
-import Common.Title.Model exposing (Title)
+import Common.Path.Model exposing (Path)
 import Model exposing (Model(Finished))
 import Messages exposing (Msg)
+import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 
 
-init : Title -> Title -> List Title -> ( Model, Cmd Msg )
-init source destination stops =
-    ( Finished
-        { source = source
-        , destination = destination
-        , stops = stops
-        }
-    , Cmd.none
-    )
+initWithPath : Path -> ( Model, Cmd Msg )
+initWithPath path =
+    ( Finished (Success path), Cmd.none )
+
+
+initWithPathNotFound : ( Model, Cmd Msg )
+initWithPathNotFound =
+    ( Finished (Error PathNotFound), Cmd.none )
+
+
+initWithTooManyRequestsError : ( Model, Cmd Msg )
+initWithTooManyRequestsError =
+    ( Finished (Error TooManyRequests), Cmd.none )

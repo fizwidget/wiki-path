@@ -5,27 +5,31 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, 
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
+import Common.Path.Model exposing (Path)
 import Common.Title.Model as Title exposing (Title)
 import Common.Title.View as Title
-import Finished.Model exposing (FinishedModel)
+import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 import Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 
 view : FinishedModel -> Html FinishedMsg
 view model =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
-        [ modelView model
+        [ headingView
+        , subHeadingView
+        , modelView model
         , backButton
         ]
 
 
 modelView : FinishedModel -> Html msg
-modelView { source, destination, stops } =
-    div []
-        [ headingView
-        , subHeadingView source destination
-        , stopsView source destination stops
-        ]
+modelView model =
+    case model of
+        Success path ->
+            pathView path
+
+        Error error ->
+            errorView error
 
 
 headingView : Html msg
@@ -33,17 +37,31 @@ headingView =
     h2 [] [ text "Success!" ]
 
 
-subHeadingView : Title -> Title -> Html msg
-subHeadingView sourceTitle destinationTitle =
+subHeadingView : Html msg
+subHeadingView =
     h4 [] [ text "Path was... " ]
 
 
-stopsView : Title -> Title -> List Title -> Html msg
-stopsView source destination stops =
-    stops
-        |> List.map Title.viewAsLink
-        |> List.intersperse (text " → ")
-        |> div []
+pathView : Path -> Html msg
+pathView path =
+    let
+        stops =
+            (path.next :: path.visited) |> List.reverse
+    in
+        stops
+            |> List.map Title.viewAsLink
+            |> List.intersperse (text " → ")
+            |> div []
+
+
+errorView : Error -> Html msg
+errorView error =
+    case error of
+        PathNotFound ->
+            text "Path not found :("
+
+        TooManyRequests ->
+            text "Sorry, too many requests!"
 
 
 backButton : Html FinishedMsg

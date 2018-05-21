@@ -1,10 +1,13 @@
-module Finished.Model exposing (FinishedModel)
+module Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 
-import Common.Title.Model exposing (Title)
+import Common.Path.Model exposing (Path)
 
 
-type alias FinishedModel =
-    { source : Title
-    , destination : Title
-    , stops : List Title
-    }
+type FinishedModel
+    = Success Path
+    | Error Error
+
+
+type Error
+    = PathNotFound
+    | TooManyRequests
