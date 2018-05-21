@@ -1,5 +1,7 @@
 # TODO
 
+* Favour longer string matches, and strings that match links.
+* Restructure `Pathfinding.Update` as a pipeline?
 * Improve handling of "too many requests" case.
 * Make `Path` have start and end fields ("make impossible states impossible").
     * End should optionally be an Article.
