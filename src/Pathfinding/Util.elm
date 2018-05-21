@@ -5,7 +5,6 @@ import Common.Article.Model exposing (Article)
 import Common.Title.Model as Title exposing (Title)
 import Common.Path.Model exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
-import Pathfinding.Model exposing (PathfindingModel)
 
 
 addLinksToQueue : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
