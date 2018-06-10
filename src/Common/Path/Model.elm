@@ -1,7 +1,7 @@
 module Common.Path.Model
     exposing
         ( Path
-        , startingAt
+        , beginningWith
         , inOrder
         , inReverseOrder
         , priority
@@ -15,23 +15,23 @@ import Common.PriorityQueue.Model exposing (Priority)
 import Common.Title.Model exposing (Title)
 
 
-startingAt : Title -> Path
-startingAt title =
+beginningWith : Title -> Path
+beginningWith title =
     Path
-        { next = title
-        , visited = []
+        { nextStop = title
+        , previousStops = []
         , priority = 0
         }
 
 
 inOrder : Path -> List Title
-inOrder path =
-    inReverseOrder path |> List.reverse
+inOrder =
+    inReverseOrder >> List.reverse
 
 
 inReverseOrder : Path -> List Title
 inReverseOrder (Path path) =
-    path.next :: path.visited
+    path.nextStop :: path.previousStops
 
 
 priority : Path -> Priority
@@ -43,8 +43,8 @@ extend : Path -> Title -> Priority -> Path
 extend (Path path) title newPriority =
     Path
         { path
-            | next = title
-            , visited = path.next :: path.visited
+            | nextStop = title
+            , previousStops = path.nextStop :: path.previousStops
             , priority = newPriority
         }
 
@@ -56,17 +56,17 @@ contains title path =
 
 nextStop : Path -> Title
 nextStop (Path path) =
-    path.next
+    path.nextStop
 
 
 length : Path -> Int
-length path =
-    inOrder path |> List.length
+length =
+    inOrder >> List.length
 
 
 type Path
     = Path
-        { next : Title
-        , visited : List Title
+        { nextStop : Title
+        , previousStops : List Title
         , priority : Priority
         }

@@ -13,7 +13,7 @@ init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
     updateWithArticle
         (initialModel source destination)
-        (Path.startingAt source.title)
+        (Path.beginningWith source.title)
         source
 
 
