@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update, updateWithArticle)
+module Pathfinding.Update exposing (update, updateWithResult)
 
 import Result exposing (Result(Ok, Err))
 import Common.Article.Service as Article

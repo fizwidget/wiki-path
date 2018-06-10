@@ -16,9 +16,9 @@ import Common.Title.Model exposing (Title)
 
 
 beginningWith : Title -> Path
-beginningWith title =
+beginningWith articleTitle =
     Path
-        { nextStop = title
+        { nextStop = articleTitle
         , previousStops = []
         , priority = 0
         }
@@ -40,10 +40,10 @@ priority (Path path) =
 
 
 extend : Path -> Title -> Priority -> Path
-extend (Path path) title newPriority =
+extend (Path path) nextArticleTitle newPriority =
     Path
         { path
-            | nextStop = title
+            | nextStop = nextArticleTitle
             , previousStops = path.nextStop :: path.previousStops
             , priority = newPriority
         }
@@ -61,7 +61,7 @@ nextStop (Path path) =
 
 length : Path -> Int
 length =
-    inOrder >> List.length
+    inReverseOrder >> List.length
 
 
 type Path

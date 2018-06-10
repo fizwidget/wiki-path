@@ -5,16 +5,16 @@ import Common.PriorityQueue.Model as PriorityQueue
 import Common.Path.Model as Path
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
-import Pathfinding.Update exposing (updateWithArticle)
+import Pathfinding.Update exposing (updateWithResult)
 import Pathfinding.Model exposing (PathfindingModel)
 
 
 init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
-    updateWithArticle
+    updateWithResult
         (initialModel source destination)
         (Path.beginningWith source.title)
-        source
+        (Result.Ok source)
 
 
 initialModel : Article -> Article -> PathfindingModel
