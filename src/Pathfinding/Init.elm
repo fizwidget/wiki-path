@@ -2,6 +2,7 @@ module Pathfinding.Init exposing (init)
 
 import Common.Article.Model exposing (Article)
 import Common.PriorityQueue.Model as PriorityQueue
+import Common.Path.Model as Path
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
 import Pathfinding.Update exposing (updateWithArticle)
@@ -12,7 +13,7 @@ init : Article -> Article -> ( Model, Cmd Msg )
 init source destination =
     updateWithArticle
         (initialModel source destination)
-        { priority = 0, next = source.title, visited = [] }
+        (Path.startingAt source.title)
         source
 
 

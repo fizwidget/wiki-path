@@ -4,7 +4,7 @@ import Result exposing (Result(Ok, Err))
 import Common.Article.Service as Article
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue
 import Model exposing (Model)
 import Messages exposing (Msg)
@@ -97,8 +97,8 @@ followPaths model pathsToFollow =
 ifPathReachedDestination : List Path -> Article -> Maybe Path
 ifPathReachedDestination paths destination =
     paths
-        |> List.filter (\path -> hasReachedDestination path.next destination)
-        |> List.sortBy (\path -> List.length path.visited)
+        |> List.filter (\path -> hasReachedDestination (Path.nextStop path) destination)
+        |> List.sortBy Path.length
         |> List.head
 
 
@@ -126,7 +126,7 @@ fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle pathSoFar =
     Article.request
         (FetchArticleResponse pathSoFar >> Messages.Pathfinding)
-        (Title.value pathSoFar.next)
+        (Path.nextStop pathSoFar |> Title.value)
 
 
 hasReachedDestination : Title -> Article -> Bool

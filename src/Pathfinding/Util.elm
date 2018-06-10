@@ -3,7 +3,7 @@ module Pathfinding.Util exposing (addLinksToQueue)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Article.Model exposing (Article)
 import Common.Title.Model as Title exposing (Title)
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path, priority)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
 
 
@@ -14,28 +14,29 @@ addLinksToQueue priorityQueue destination pathSoFar links =
         |> List.filter (isUnvisited priorityQueue pathSoFar)
         |> List.map (extendPath pathSoFar destination)
         |> keepHighestPriorityPaths
-        |> PriorityQueue.insert priorityQueue .priority
+        |> PriorityQueue.insert priorityQueue Path.priority
 
 
 extendPath : Path -> Article -> Title -> Path
 extendPath pathSoFar destination nextTitle =
-    { priority = calculatePriority destination pathSoFar nextTitle
-    , next = nextTitle
-    , visited = pathSoFar.next :: pathSoFar.visited
-    }
+    let
+        updatedPriority =
+            calculatePriority destination pathSoFar nextTitle
+    in
+        Path.extend pathSoFar nextTitle updatedPriority
 
 
 keepHighestPriorityPaths : List Path -> List Path
 keepHighestPriorityPaths paths =
     paths
-        |> List.sortBy .priority
+        |> List.sortBy Path.priority
         |> List.reverse
         |> List.take 2
 
 
 calculatePriority : Article -> Path -> Title -> Priority
 calculatePriority destination pathSoFar title =
-    pathSoFar.priority * 0.8 + (heuristic destination title)
+    (Path.priority pathSoFar) * 0.8 + (heuristic destination title)
 
 
 heuristic : Article -> Title -> Float
@@ -63,8 +64,7 @@ isUnvisited priorityQueue pathSoFar title =
     priorityQueue
         |> PriorityQueue.toSortedList
         |> (::) pathSoFar
-        |> List.concatMap (\pathSoFar -> pathSoFar.next :: pathSoFar.visited)
-        |> List.member title
+        |> List.any (Path.contains title)
         |> not
 
 

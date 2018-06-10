@@ -8,7 +8,7 @@ import Common.Button.View as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Article.View as Article
 import Common.Title.View as Title
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
@@ -89,17 +89,13 @@ priorityQueueView queue =
 
 
 pathView : Path -> Html msg
-pathView pathSoFar =
-    let
-        stops =
-            pathSoFar.next :: pathSoFar.visited
-    in
-        div [ css [ textAlign center ] ]
-            [ stops
-                |> List.map Title.viewAsLink
-                |> List.intersperse (text "↑")
-                |> List.append [ text "↑" ]
-                |> List.append [ Spinner.view { isVisible = True } ]
-                |> List.map (List.singleton >> div [])
-                |> div []
-            ]
+pathView path =
+    div [ css [ textAlign center ] ]
+        [ Path.inReverseOrder path
+            |> List.map Title.viewAsLink
+            |> List.intersperse (text "↑")
+            |> List.append [ text "↑" ]
+            |> List.append [ Spinner.view { isVisible = True } ]
+            |> List.map (List.singleton >> div [])
+            |> div []
+        ]
