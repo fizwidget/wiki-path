@@ -32,7 +32,7 @@ updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg
 updateWithResult model currentPath articleResult =
     case articleResult of
         Ok article ->
-            if hasReachedDestination article.title model.destination then
+            if hasReachedDestination model article then
                 destinationReached currentPath
             else
                 updateWithArticle model currentPath article
@@ -82,23 +82,19 @@ followHighestPriorityPaths model =
             List.isEmpty highestPriorityPaths && model.pendingRequests == 0
     in
         if hasPathfindingFailed then
-            Finished.Init.initWithPathNotFound
+            Finished.Init.initWithPathNotFoundError
         else
             followPaths updatedModel highestPriorityPaths
 
 
 followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model paths =
-    let
-        maybePathToDestination =
-            paths
-                |> List.filter (hasPathReachedDestination model.destination)
-                |> List.sortBy Path.length
-                |> List.head
-    in
-        maybePathToDestination
-            |> Maybe.map destinationReached
-            |> Maybe.withDefault (fetchNextArticles model paths)
+    case containsPathToDestination model.destination paths of
+        Just pathToDestination ->
+            destinationReached pathToDestination
+
+        Nothing ->
+            fetchNextArticles model paths
 
 
 destinationReached : Path -> ( Model, Cmd Msg )
@@ -128,14 +124,21 @@ fetchNextArticle currentPath =
         (Path.nextStop currentPath |> Title.value)
 
 
-hasReachedDestination : Title -> Article -> Bool
-hasReachedDestination nextTitle destination =
-    nextTitle == destination.title
+containsPathToDestination : Article -> List Path -> Maybe Path
+containsPathToDestination destination paths =
+    let
+        hasPathReachedDestination destination currentPath =
+            Path.nextStop currentPath == destination.title
+    in
+        paths
+            |> List.filter (hasPathReachedDestination destination)
+            |> List.sortBy Path.length
+            |> List.head
 
 
-hasPathReachedDestination : Article -> Path -> Bool
-hasPathReachedDestination destination currentPath =
-    hasReachedDestination (Path.nextStop currentPath) destination
+hasReachedDestination : PathfindingModel -> Article -> Bool
+hasReachedDestination { destination } nextArticle =
+    nextArticle.title == destination.title
 
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
