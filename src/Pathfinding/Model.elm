@@ -8,8 +8,8 @@ import Common.PriorityQueue.Model exposing (PriorityQueue)
 type alias PathfindingModel =
     { source : Article
     , destination : Article
-    , priorityQueue : PriorityQueue Path
+    , paths : PriorityQueue Path
     , errors : List ArticleError
-    , inFlightRequests : Int
-    , totalRequestCount : Int
+    , pendingRequests : Int
+    , totalRequests : Int
     }

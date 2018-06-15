@@ -8,7 +8,7 @@ import Common.Button.View as Button
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)
 import Common.Article.View as Article
 import Common.Title.View as Title
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
@@ -16,13 +16,13 @@ import Pathfinding.Model exposing (PathfindingModel)
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, errors, totalRequestCount } =
+view { source, destination, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
         , errorView errors
-        , warningView totalRequestCount destination
+        , warningView totalRequests destination
         , backView
-        , priorityQueueView priorityQueue
+        , pathsView paths
         ]
 
 
@@ -52,10 +52,10 @@ backView =
 
 
 warningView : Int -> Article -> Html msg
-warningView totalRequestCount destination =
+warningView totalRequests destination =
     div [ css [ textAlign center ] ]
         [ destinationContentWarning destination
-        , pathCountWarning totalRequestCount
+        , pathCountWarning totalRequests
         ]
 
 
@@ -74,32 +74,28 @@ destinationContentWarning destination =
 
 
 pathCountWarning : Int -> Html msg
-pathCountWarning totalRequestCount =
-    if totalRequestCount > 100 then
+pathCountWarning totalRequests =
+    if totalRequests > 100 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
         text ""
 
 
-priorityQueueView : PriorityQueue Path -> Html msg
-priorityQueueView queue =
-    PriorityQueue.getHighestPriority queue
+pathsView : PriorityQueue Path -> Html msg
+pathsView paths =
+    PriorityQueue.getHighestPriority paths
         |> Maybe.map pathView
         |> Maybe.withDefault (div [] [])
 
 
 pathView : Path -> Html msg
-pathView pathSoFar =
-    let
-        stops =
-            pathSoFar.next :: pathSoFar.visited
-    in
-        div [ css [ textAlign center ] ]
-            [ stops
-                |> List.map Title.viewAsLink
-                |> List.intersperse (text "↑")
-                |> List.append [ text "↑" ]
-                |> List.append [ Spinner.view { isVisible = True } ]
-                |> List.map (List.singleton >> div [])
-                |> div []
-            ]
+pathView path =
+    div [ css [ textAlign center ] ]
+        [ Path.inReverseOrder path
+            |> List.map Title.viewAsLink
+            |> List.intersperse (text "↑")
+            |> List.append [ text "↑" ]
+            |> List.append [ Spinner.view { isVisible = True } ]
+            |> List.map (List.singleton >> div [])
+            |> div []
+        ]

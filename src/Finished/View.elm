@@ -5,7 +5,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, 
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path)
 import Common.Title.View as Title
 import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 import Finished.Messages exposing (FinishedMsg(BackToSetup))
@@ -50,14 +50,10 @@ subHeadingView =
 
 pathView : Path -> Html msg
 pathView path =
-    let
-        stops =
-            (path.next :: path.visited) |> List.reverse
-    in
-        stops
-            |> List.map Title.viewAsLink
-            |> List.intersperse (text " → ")
-            |> div []
+    Path.inOrder path
+        |> List.map Title.viewAsLink
+        |> List.intersperse (text " → ")
+        |> div []
 
 
 errorView : Error -> Html msg

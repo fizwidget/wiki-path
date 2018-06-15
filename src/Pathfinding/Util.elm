@@ -1,41 +1,29 @@
-module Pathfinding.Util exposing (addLinksToQueue)
+module Pathfinding.Util
+    exposing
+        ( extendPath
+        , isInteresting
+        , isUnvisited
+        , keepHighestPriorities
+        )
 
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Article.Model exposing (Article)
 import Common.Title.Model as Title exposing (Title)
-import Common.Path.Model exposing (Path)
+import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
 
 
-addLinksToQueue : PriorityQueue Path -> Article -> Path -> List Title -> PriorityQueue Path
-addLinksToQueue priorityQueue destination pathSoFar links =
-    links
-        |> List.filter isInteresting
-        |> List.filter (isUnvisited priorityQueue pathSoFar)
-        |> List.map (extendPath pathSoFar destination)
-        |> keepHighestPriorityPaths
-        |> PriorityQueue.insert priorityQueue .priority
-
-
 extendPath : Path -> Article -> Title -> Path
-extendPath pathSoFar destination nextTitle =
-    { priority = calculatePriority destination pathSoFar nextTitle
-    , next = nextTitle
-    , visited = pathSoFar.next :: pathSoFar.visited
-    }
-
-
-keepHighestPriorityPaths : List Path -> List Path
-keepHighestPriorityPaths paths =
-    paths
-        |> List.sortBy .priority
-        |> List.reverse
-        |> List.take 2
+extendPath currentPath destination nextTitle =
+    Path.extend
+        currentPath
+        nextTitle
+        (calculatePriority destination currentPath nextTitle)
 
 
 calculatePriority : Article -> Path -> Title -> Priority
-calculatePriority destination pathSoFar title =
-    pathSoFar.priority * 0.8 + (heuristic destination title)
+calculatePriority destination currentPath title =
+    (Path.priority currentPath) * 0.8 + (heuristic destination title)
 
 
 heuristic : Article -> Title -> Float
@@ -49,22 +37,21 @@ heuristic destination title =
 countOccurences : String -> String -> Int
 countOccurences content target =
     let
-        matchTarget =
+        occurencePattern =
             ("(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")")
                 |> regex
                 |> caseInsensitive
     in
-        find All matchTarget content
+        find All occurencePattern content
             |> List.length
 
 
 isUnvisited : PriorityQueue Path -> Path -> Title -> Bool
-isUnvisited priorityQueue pathSoFar title =
-    priorityQueue
+isUnvisited paths currentPath title =
+    paths
         |> PriorityQueue.toSortedList
-        |> (::) pathSoFar
-        |> List.concatMap (\pathSoFar -> pathSoFar.next :: pathSoFar.visited)
-        |> List.member title
+        |> (::) currentPath
+        |> List.any (Path.contains title)
         |> not
 
 
@@ -112,3 +99,14 @@ isInteresting title =
             String.length titleValue > 1
     in
         hasMinimumLength && not hasIgnoredPrefix
+
+
+keepHighestPriorities : List Path -> List Path
+keepHighestPriorities paths =
+    -- This is really just a performance improvement to prevent the
+    -- number of paths we're considering at any one time from increasing
+    -- too rapidly. Articles can have *lots* of links.
+    paths
+        |> List.sortBy Path.priority
+        |> List.reverse
+        |> List.take 2
