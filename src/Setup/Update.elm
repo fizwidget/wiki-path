@@ -1,14 +1,13 @@
 module Setup.Update exposing (update)
 
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Common.Article.Service as Article
 import Common.Article.Model exposing (RemoteArticle)
 import Common.Title.Model as Title exposing (Title, RemoteTitlePair)
-import Common.Title.Service as Title
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.Messages exposing (SetupMsg(..))
 import Setup.Model exposing (SetupModel, UserInput)
+import Setup.Service as Service
 import Pathfinding.Init
 
 
@@ -66,8 +65,8 @@ requestArticles model =
             { model | source = Loading, destination = Loading }
 
         requests =
-            [ Article.requestRemote FetchSourceArticleResponse model.sourceTitleInput
-            , Article.requestRemote FetchDestinationArticleResponse model.destinationTitleInput
+            [ Service.requestArticle FetchSourceArticleResponse model.sourceTitleInput
+            , Service.requestArticle FetchDestinationArticleResponse model.destinationTitleInput
             ]
     in
         ( Model.Setup updatedModel
@@ -99,7 +98,7 @@ beginPathfindingIfBothArticlesLoaded ( model, cmd ) =
 requestRandomTitles : SetupModel -> ( Model, Cmd Msg )
 requestRandomTitles model =
     ( Model.Setup { model | randomTitles = Loading }
-    , Title.requestRandomPair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
+    , Service.requestRandomTitlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
     )
 
 

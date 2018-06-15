@@ -1,7 +1,6 @@
 module Pathfinding.Update exposing (update, updateWithResult)
 
 import Result exposing (Result(Ok, Err))
-import Common.Article.Service as Article
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
 import Common.Path.Model as Path exposing (Path)
@@ -12,6 +11,7 @@ import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
+import Pathfinding.Service as Service
 import Pathfinding.Util as Util
 
 
@@ -123,7 +123,7 @@ fetchNextArticles model pathsToFollow =
 
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle currentPath =
-    Article.request
+    Service.requestArticle
         (FetchArticleResponse currentPath >> Messages.Pathfinding)
         (Path.nextStop currentPath |> Title.value)
 
