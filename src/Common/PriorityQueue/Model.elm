@@ -30,6 +30,8 @@ empty =
 insert : PriorityQueue a -> (a -> Priority) -> List a -> PriorityQueue a
 insert (PriorityQueue pairingHeap) getPriority values =
     let
+        -- We're negating the priorities because `PairingHeap` is a min-heap,
+        -- but we want to treat it as a max-heap (so the highest priority is at the top).
         getNegatedPriority =
             getPriority >> negate
 

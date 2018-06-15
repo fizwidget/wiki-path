@@ -16,13 +16,13 @@ import Pathfinding.Model exposing (PathfindingModel)
 
 
 view : PathfindingModel -> Html PathfindingMsg
-view { source, destination, priorityQueue, errors, totalRequestCount } =
+view { source, destination, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ heading source destination
         , errorView errors
-        , warningView totalRequestCount destination
+        , warningView totalRequests destination
         , backView
-        , priorityQueueView priorityQueue
+        , pathsView paths
         ]
 
 
@@ -52,10 +52,10 @@ backView =
 
 
 warningView : Int -> Article -> Html msg
-warningView totalRequestCount destination =
+warningView totalRequests destination =
     div [ css [ textAlign center ] ]
         [ destinationContentWarning destination
-        , pathCountWarning totalRequestCount
+        , pathCountWarning totalRequests
         ]
 
 
@@ -74,16 +74,16 @@ destinationContentWarning destination =
 
 
 pathCountWarning : Int -> Html msg
-pathCountWarning totalRequestCount =
-    if totalRequestCount > 100 then
+pathCountWarning totalRequests =
+    if totalRequests > 100 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
         text ""
 
 
-priorityQueueView : PriorityQueue Path -> Html msg
-priorityQueueView queue =
-    PriorityQueue.getHighestPriority queue
+pathsView : PriorityQueue Path -> Html msg
+pathsView paths =
+    PriorityQueue.getHighestPriority paths
         |> Maybe.map pathView
         |> Maybe.withDefault (div [] [])
 

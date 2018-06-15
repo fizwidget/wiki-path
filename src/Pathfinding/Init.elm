@@ -21,8 +21,8 @@ initialModel : Article -> Article -> PathfindingModel
 initialModel source destination =
     { source = source
     , destination = destination
-    , priorityQueue = PriorityQueue.empty
+    , paths = PriorityQueue.empty
     , errors = []
-    , inFlightRequests = 0
-    , totalRequestCount = 0
+    , pendingRequests = 0
+    , totalRequests = 0
     }
