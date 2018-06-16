@@ -1,4 +1,4 @@
-module Finished.Init exposing (initWithPath, initWithPathNotFound, initWithTooManyRequestsError)
+module Finished.Init exposing (initWithPath, initWithPathNotFoundError, initWithTooManyRequestsError)
 
 import Common.Path.Model exposing (Path)
 import Model exposing (Model(Finished))
@@ -7,12 +7,12 @@ import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFoun
 
 
 initWithPath : Path -> ( Model, Cmd Msg )
-initWithPath path =
-    ( Finished <| Success path, Cmd.none )
+initWithPath pathToDestination =
+    ( Finished <| Success pathToDestination, Cmd.none )
 
 
-initWithPathNotFound : ( Model, Cmd Msg )
-initWithPathNotFound =
+initWithPathNotFoundError : ( Model, Cmd Msg )
+initWithPathNotFoundError =
     ( Finished <| Error PathNotFound, Cmd.none )
 
 
