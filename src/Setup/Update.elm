@@ -21,7 +21,7 @@ update message model =
             setDestinationTitle model value
 
         FetchArticlesRequest ->
-            requestArticles model
+            fetchArticles model
 
         FetchSourceArticleResponse article ->
             setSourceArticle model article
@@ -30,7 +30,7 @@ update message model =
             setDestinationArticle model article
 
         FetchRandomTitlesRequest ->
-            requestRandomTitles model
+            fetchRandomTitles model
 
         FetchRandomTitlesResponse titles ->
             setRandomTitles model titles
@@ -58,15 +58,15 @@ setDestinationTitle model destinationTitleInput =
     )
 
 
-requestArticles : SetupModel -> ( Model, Cmd Msg )
-requestArticles model =
+fetchArticles : SetupModel -> ( Model, Cmd Msg )
+fetchArticles model =
     let
         updatedModel =
             { model | source = Loading, destination = Loading }
 
         requests =
-            [ Service.requestArticle FetchSourceArticleResponse model.sourceTitleInput
-            , Service.requestArticle FetchDestinationArticleResponse model.destinationTitleInput
+            [ Service.fetchArticle FetchSourceArticleResponse model.sourceTitleInput
+            , Service.fetchArticle FetchDestinationArticleResponse model.destinationTitleInput
             ]
     in
         ( Model.Setup updatedModel
@@ -95,10 +95,10 @@ beginPathfindingIfBothArticlesLoaded ( model, cmd ) =
         |> Maybe.withDefault ( Model.Setup model, cmd )
 
 
-requestRandomTitles : SetupModel -> ( Model, Cmd Msg )
-requestRandomTitles model =
+fetchRandomTitles : SetupModel -> ( Model, Cmd Msg )
+fetchRandomTitles model =
     ( Model.Setup { model | randomTitles = Loading }
-    , Service.requestRandomTitlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
+    , Service.fetchRandomTitlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
     )
 
 
@@ -121,8 +121,8 @@ setRandomTitles model randomTitles =
 setTitleInputs : SetupModel -> ( Title, Title ) -> SetupModel
 setTitleInputs model ( titleA, titleB ) =
     { model
-        | sourceTitleInput = Title.value titleA
-        , destinationTitleInput = Title.value titleB
-        , source = NotAsked
+        | source = NotAsked
+        , sourceTitleInput = Title.value titleA
         , destination = NotAsked
+        , destinationTitleInput = Title.value titleB
     }

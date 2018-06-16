@@ -1,4 +1,4 @@
-module Setup.Service exposing (requestArticle, requestRandomTitlePair)
+module Setup.Service exposing (fetchArticle, fetchRandomTitlePair)
 
 import RemoteData exposing (WebData)
 import Common.Article.Model exposing (ArticleResult, RemoteArticle, ArticleError(HttpError))
@@ -7,11 +7,18 @@ import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(HttpError
 import Common.Title.Api as TitleApi
 
 
-requestArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-requestArticle toMsg title =
+fetchArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+fetchArticle toMsg title =
     ArticleApi.buildRequest title
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+fetchRandomTitlePair : (RemoteTitlePair -> msg) -> Cmd msg
+fetchRandomTitlePair toMsg =
+    TitleApi.buildRandomTitleRequest 2
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteTitlePair >> toMsg)
 
 
 toRemoteArticle : WebData ArticleResult -> RemoteArticle
@@ -19,13 +26,6 @@ toRemoteArticle webData =
     webData
         |> RemoteData.mapError Common.Article.Model.HttpError
         |> RemoteData.andThen RemoteData.fromResult
-
-
-requestRandomTitlePair : (RemoteTitlePair -> msg) -> Cmd msg
-requestRandomTitlePair toMsg =
-    TitleApi.buildRandomTitleRequest 2
-        |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteTitlePair >> toMsg)
 
 
 toRemoteTitlePair : WebData (List Title) -> RemoteTitlePair

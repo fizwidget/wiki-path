@@ -22,19 +22,19 @@ view model =
 modelView : FinishedModel -> Html msg
 modelView model =
     case model of
-        Success path ->
-            successView path
+        Success pathToDestination ->
+            successView pathToDestination
 
         Error error ->
             errorView error
 
 
 successView : Path -> Html msg
-successView path =
-    div []
+successView pathToDestination =
+    div [ css [ textAlign center ] ]
         [ headingView
         , subHeadingView
-        , pathView path
+        , pathView pathToDestination
         ]
 
 

@@ -105,21 +105,21 @@ destinationReached =
 fetchNextArticles : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 fetchNextArticles model pathsToFollow =
     let
-        articleRequests =
+        requests =
             List.map fetchNextArticle pathsToFollow
 
         updatedModel =
-            incrementRequests model (List.length articleRequests)
+            incrementRequests model (List.length requests)
     in
-        if hasMadeTooManyRequests model then
+        if hasMadeTooManyRequests updatedModel then
             Finished.Init.initWithTooManyRequestsError
         else
-            ( Model.Pathfinding updatedModel, Cmd.batch articleRequests )
+            ( Model.Pathfinding updatedModel, Cmd.batch requests )
 
 
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle currentPath =
-    Service.requestArticle
+    Service.fetchArticle
         (FetchArticleResponse currentPath >> Messages.Pathfinding)
         (Path.nextStop currentPath |> Title.value)
 

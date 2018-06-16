@@ -1,12 +1,12 @@
-module Pathfinding.Service exposing (requestArticle)
+module Pathfinding.Service exposing (fetchArticle)
 
 import Http
 import Common.Article.Model exposing (ArticleResult, ArticleError(HttpError))
 import Common.Article.Api as ArticleApi
 
 
-requestArticle : (ArticleResult -> msg) -> String -> Cmd msg
-requestArticle toMsg title =
+fetchArticle : (ArticleResult -> msg) -> String -> Cmd msg
+fetchArticle toMsg title =
     ArticleApi.buildRequest title
         |> Http.send (toArticleResult >> toMsg)
 
