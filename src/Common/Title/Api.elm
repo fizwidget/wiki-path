@@ -3,12 +3,12 @@ module Common.Title.Api exposing (buildRandomTitleRequest)
 import Http
 import Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
 import Common.Title.Model exposing (Title)
-import Common.Title.Decoder exposing (decodeRandomTitlesResponse)
+import Common.Title.Decoder as Decoder
 
 
 buildRandomTitleRequest : Int -> Http.Request (List Title)
 buildRandomTitleRequest titleCount =
-    Http.get (buildRandomTitlesUrl titleCount) decodeRandomTitlesResponse
+    Http.get (buildRandomTitlesUrl titleCount) Decoder.randomTitlesResponse
 
 
 buildRandomTitlesUrl : Int -> Url

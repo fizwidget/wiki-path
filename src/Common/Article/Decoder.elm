@@ -1,67 +1,65 @@
-module Common.Article.Decoder exposing (decodeArticleResponse)
+module Common.Article.Decoder exposing (articleResponse)
 
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Common.Article.Model exposing (Article, Link, Namespace(..), ArticleResult, ArticleError(..))
-import Common.Title.Decoder exposing (decodeTitle)
+import Common.Title.Decoder exposing (title)
 
 
-decodeArticleResponse : Decoder ArticleResult
-decodeArticleResponse =
+articleResponse : Decoder ArticleResult
+articleResponse =
     oneOf
-        [ map Ok decodeSuccess
-        , map Err decodeError
+        [ map Ok success
+        , map Err error
         ]
 
 
-decodeSuccess : Decoder Article
-decodeSuccess =
-    field "parse" decodeArticle
+success : Decoder Article
+success =
+    field "parse" article
 
 
-decodeArticle : Decoder Article
-decodeArticle =
+article : Decoder Article
+article =
     decode Article
-        |> required "title" decodeTitle
-        |> required "links" (list decodeLink)
+        |> required "title" title
+        |> required "links" (list link)
         |> required "text" string
 
 
-decodeLink : Decoder Link
-decodeLink =
+link : Decoder Link
+link =
     decode Link
-        |> required "title" decodeTitle
-        |> required "ns" decodeNamespace
+        |> required "title" title
+        |> required "ns" namespace
         |> required "exists" bool
 
 
-decodeNamespace : Decoder Namespace
-decodeNamespace =
-    map fromNamespaceId int
+namespace : Decoder Namespace
+namespace =
+    let
+        toNamespace namespaceId =
+            if namespaceId == 0 then
+                ArticleNamespace
+            else
+                NonArticleNamespace
+    in
+        map toNamespace int
 
 
-fromNamespaceId : Int -> Namespace
-fromNamespaceId namespaceId =
-    if namespaceId == 0 then
-        ArticleNamespace
-    else
-        NonArticleNamespace
+error : Decoder ArticleError
+error =
+    let
+        toArticleError errorCode =
+            case errorCode of
+                "missingtitle" ->
+                    ArticleNotFound
 
+                "invalidtitle" ->
+                    InvalidTitle
 
-decodeError : Decoder ArticleError
-decodeError =
-    at [ "error", "code" ] string
-        |> map fromErrorCode
-
-
-fromErrorCode : String -> ArticleError
-fromErrorCode errorCode =
-    case errorCode of
-        "missingtitle" ->
-            ArticleNotFound
-
-        "invalidtitle" ->
-            InvalidTitle
-
-        _ ->
-            UnknownError errorCode
+                _ ->
+                    UnknownError errorCode
+    in
+        at [ "error", "code" ] string
+            |> map toArticleError
