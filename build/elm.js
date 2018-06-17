@@ -18305,7 +18305,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests = function 
 var _fizwidget$wiki_path$Pathfinding_Update$maxPendingRequests = 4;
 var _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests = function (_p0) {
 	var _p1 = _p0;
-	return _elm_lang$core$Native_Utils.cmp(_p1.totalRequests, 5) > 0;
+	return _elm_lang$core$Native_Utils.cmp(_p1.totalRequests, 200) > 0;
 };
 var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
 	function (_p2, nextArticle) {
