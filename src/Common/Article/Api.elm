@@ -1,7 +1,7 @@
 module Common.Article.Api exposing (buildRequest)
 
 import Http
-import Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
+import Common.Url.Model as Url exposing (Url, QueryParam(KeyValue, Key))
 import Common.Wikipedia.Api as Wikipedia
 import Common.Article.Model exposing (ArticleResult)
 import Common.Article.Decoder as Decoder
@@ -24,4 +24,4 @@ buildArticleUrl title =
             , Key "redirects"
             ]
     in
-        buildUrl Wikipedia.apiBaseUrl queryParams
+        Url.build Wikipedia.apiBaseUrl queryParams
