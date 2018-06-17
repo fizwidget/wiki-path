@@ -60,6 +60,8 @@ error =
 
                 _ ->
                     UnknownError errorCode
+
+        errorCode =
+            at [ "error", "code" ] string
     in
-        at [ "error", "code" ] string
-            |> map toArticleError
+        map toArticleError errorCode
