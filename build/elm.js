@@ -17718,10 +17718,23 @@ var _fizwidget$wiki_path$Finished_Init$initWithPath = function (pathToDestinatio
 	};
 };
 
-var _fizwidget$wiki_path$Setup_Init$initialModel = {sourceTitleInput: '', destinationTitleInput: '', source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+var _fizwidget$wiki_path$Setup_Init$initialModel = F2(
+	function (sourceTitleInput, destinationTitleInput) {
+		return {sourceTitleInput: sourceTitleInput, destinationTitleInput: destinationTitleInput, source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+	});
+var _fizwidget$wiki_path$Setup_Init$initWithInput = F2(
+	function (sourceTitleInput, destinationTitleInput) {
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Setup(
+				A2(_fizwidget$wiki_path$Setup_Init$initialModel, sourceTitleInput, destinationTitleInput)),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
 var _fizwidget$wiki_path$Setup_Init$init = {
 	ctor: '_Tuple2',
-	_0: _fizwidget$wiki_path$Model$Setup(_fizwidget$wiki_path$Setup_Init$initialModel),
+	_0: _fizwidget$wiki_path$Model$Setup(
+		A2(_fizwidget$wiki_path$Setup_Init$initialModel, '', '')),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 
@@ -17870,8 +17883,6 @@ var _fizwidget$wiki_path$Finished_View$view = function (model) {
 			}
 		});
 };
-
-var _fizwidget$wiki_path$Init$init = _fizwidget$wiki_path$Setup_Init$init;
 
 var _fizwidget$wiki_path$Setup_Service$toRemoteTitlePair = function (remoteTitles) {
 	var toPair = function (titles) {
@@ -18230,7 +18241,10 @@ var _fizwidget$wiki_path$Pathfinding_Update$update = F2(
 				_p9._0,
 				_p9._1);
 		} else {
-			return _fizwidget$wiki_path$Setup_Init$init;
+			return A2(
+				_fizwidget$wiki_path$Setup_Init$initWithInput,
+				_fizwidget$wiki_path$Common_Title_Model$value(model.source.title),
+				_fizwidget$wiki_path$Common_Title_Model$value(model.destination.title));
 		}
 	});
 
@@ -19937,7 +19951,7 @@ var _fizwidget$wiki_path$View$view = function (model) {
 
 var _fizwidget$wiki_path$Main$main = _elm_lang$html$Html$program(
 	{
-		init: _fizwidget$wiki_path$Init$init,
+		init: _fizwidget$wiki_path$Setup_Init$init,
 		view: function (_p0) {
 			return _rtfeldman$elm_css$Html_Styled$toUnstyled(
 				_fizwidget$wiki_path$View$view(_p0));
