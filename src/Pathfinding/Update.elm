@@ -151,7 +151,7 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > 200
+    totalRequests > 5
 
 
 maxPendingRequests : Int
