@@ -79,6 +79,7 @@ isInteresting link =
             , "Wayback Machine"
             , "Virtual International Authority File"
             , "Integrated Authority File"
+            , "Geographic coordinate system"
             ]
 
         titleValue =
