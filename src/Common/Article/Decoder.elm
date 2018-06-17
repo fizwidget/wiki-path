@@ -37,15 +37,15 @@ decodeLink =
 
 decodeNamespace : Decoder Namespace
 decodeNamespace =
-    int |> map fromNamespaceId
+    map fromNamespaceId int
 
 
 fromNamespaceId : Int -> Namespace
 fromNamespaceId namespaceId =
     if namespaceId == 0 then
-        Main
+        ArticleNamespace
     else
-        Other
+        NonArticleNamespace
 
 
 decodeError : Decoder ArticleError
