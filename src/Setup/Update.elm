@@ -7,7 +7,7 @@ import Model exposing (Model)
 import Messages exposing (Msg)
 import Setup.Messages exposing (SetupMsg(..))
 import Setup.Model exposing (SetupModel, UserInput)
-import Setup.Service as Service
+import Setup.Fetch as Fetch
 import Pathfinding.Init
 
 
@@ -67,8 +67,8 @@ fetchArticles model =
             { model | source = Loading, destination = Loading }
 
         requests =
-            [ Service.fetchArticle FetchSourceArticleResponse model.sourceTitleInput
-            , Service.fetchArticle FetchDestinationArticleResponse model.destinationTitleInput
+            [ Fetch.article FetchSourceArticleResponse model.sourceTitleInput
+            , Fetch.article FetchDestinationArticleResponse model.destinationTitleInput
             ]
     in
         ( Model.Setup updatedModel
@@ -105,7 +105,7 @@ maybeBeginPathfinding model =
 fetchRandomTitles : SetupModel -> ( Model, Cmd Msg )
 fetchRandomTitles model =
     ( Model.Setup { model | randomTitles = Loading }
-    , Service.fetchRandomTitlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
+    , Fetch.randomTitlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
     )
 
 

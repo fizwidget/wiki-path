@@ -11,7 +11,7 @@ import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
-import Pathfinding.Service as Service
+import Pathfinding.Fetch as Fetch
 import Pathfinding.Util as Util
 
 
@@ -127,9 +127,14 @@ fetchNextArticles model pathsToFollow =
 
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle currentPath =
-    Service.fetchArticle
-        (FetchArticleResponse currentPath >> Messages.Pathfinding)
-        (Path.nextStop currentPath |> Title.value)
+    let
+        toMsg =
+            FetchArticleResponse currentPath >> Messages.Pathfinding
+
+        title =
+            Title.value <| Path.nextStop currentPath
+    in
+        Fetch.article toMsg title
 
 
 containsPathToDestination : Article -> List Path -> Maybe Path
