@@ -9683,6 +9683,38 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _fizwidget$wiki_path$Common_Url_Model$queryParamToString = function (queryParam) {
+	var _p0 = queryParam;
+	if (_p0.ctor === 'KeyValue') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$http$Http$encodeUri(_p0._0._0),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'=',
+				_elm_lang$http$Http$encodeUri(_p0._0._1)));
+	} else {
+		return _elm_lang$http$Http$encodeUri(_p0._0);
+	}
+};
+var _fizwidget$wiki_path$Common_Url_Model$buildUrl = F2(
+	function (baseUrl, queryParams) {
+		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Url_Model$queryParamToString, queryParams);
+		var joinedQueryParams = A2(_elm_lang$core$String$join, '&', queryParamStrings);
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			baseUrl,
+			A2(_elm_lang$core$Basics_ops['++'], '?', joinedQueryParams));
+	});
+var _fizwidget$wiki_path$Common_Url_Model$Key = function (a) {
+	return {ctor: 'Key', _0: a};
+};
+var _fizwidget$wiki_path$Common_Url_Model$KeyValue = function (a) {
+	return {ctor: 'KeyValue', _0: a};
+};
+
+var _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl = 'https://en.wikipedia.org/w/api.php';
+
 var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
 	var _p0 = data;
 	if (_p0.ctor === 'NotAsked') {
@@ -9966,8 +9998,8 @@ var _fizwidget$wiki_path$Common_Article_Model$Link = F3(
 	function (a, b, c) {
 		return {title: a, namespace: b, doesExist: c};
 	});
-var _fizwidget$wiki_path$Common_Article_Model$Other = {ctor: 'Other'};
-var _fizwidget$wiki_path$Common_Article_Model$Main = {ctor: 'Main'};
+var _fizwidget$wiki_path$Common_Article_Model$NonArticleNamespace = {ctor: 'NonArticleNamespace'};
+var _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace = {ctor: 'ArticleNamespace'};
 var _fizwidget$wiki_path$Common_Article_Model$HttpError = function (a) {
 	return {ctor: 'HttpError', _0: a};
 };
@@ -9977,8 +10009,8 @@ var _fizwidget$wiki_path$Common_Article_Model$UnknownError = function (a) {
 var _fizwidget$wiki_path$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitle'};
 var _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
 
-var _fizwidget$wiki_path$Common_Title_Decoder$decodeTitle = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
-var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A2(
+var _fizwidget$wiki_path$Common_Title_Decoder$title = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
+var _fizwidget$wiki_path$Common_Title_Decoder$randomTitlesResponse = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
@@ -9990,23 +10022,10 @@ var _fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse = A2(
 		}
 	},
 	_elm_lang$core$Json_Decode$list(
-		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title_Decoder$decodeTitle)));
+		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title_Decoder$title)));
 
-var _fizwidget$wiki_path$Common_Article_Decoder$fromErrorCode = function (errorCode) {
-	var _p0 = errorCode;
-	switch (_p0) {
-		case 'missingtitle':
-			return _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound;
-		case 'invalidtitle':
-			return _fizwidget$wiki_path$Common_Article_Model$InvalidTitle;
-		default:
-			return _fizwidget$wiki_path$Common_Article_Model$UnknownError(errorCode);
-	}
-};
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeError = A2(
-	_elm_lang$core$Json_Decode$map,
-	_fizwidget$wiki_path$Common_Article_Decoder$fromErrorCode,
-	A2(
+var _fizwidget$wiki_path$Common_Article_Decoder$error = function () {
+	var errorCode = A2(
 		_elm_lang$core$Json_Decode$at,
 		{
 			ctor: '::',
@@ -10017,78 +10036,63 @@ var _fizwidget$wiki_path$Common_Article_Decoder$decodeError = A2(
 				_1: {ctor: '[]'}
 			}
 		},
-		_elm_lang$core$Json_Decode$string));
-var _fizwidget$wiki_path$Common_Article_Decoder$fromNamespaceId = function (namespaceId) {
-	return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Common_Article_Model$Main : _fizwidget$wiki_path$Common_Article_Model$Other;
-};
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeNamespace = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Article_Decoder$fromNamespaceId, _elm_lang$core$Json_Decode$int);
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeLink = A3(
+		_elm_lang$core$Json_Decode$string);
+	var toArticleError = function (errorCode) {
+		var _p0 = errorCode;
+		switch (_p0) {
+			case 'missingtitle':
+				return _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound;
+			case 'invalidtitle':
+				return _fizwidget$wiki_path$Common_Article_Model$InvalidTitle;
+			default:
+				return _fizwidget$wiki_path$Common_Article_Model$UnknownError(errorCode);
+		}
+	};
+	return A2(_elm_lang$core$Json_Decode$map, toArticleError, errorCode);
+}();
+var _fizwidget$wiki_path$Common_Article_Decoder$namespace = function () {
+	var toNamespace = function (namespaceId) {
+		return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace : _fizwidget$wiki_path$Common_Article_Model$NonArticleNamespace;
+	};
+	return A2(_elm_lang$core$Json_Decode$map, toNamespace, _elm_lang$core$Json_Decode$int);
+}();
+var _fizwidget$wiki_path$Common_Article_Decoder$link = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'exists',
 	_elm_lang$core$Json_Decode$bool,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'ns',
-		_fizwidget$wiki_path$Common_Article_Decoder$decodeNamespace,
+		_fizwidget$wiki_path$Common_Article_Decoder$namespace,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 			'title',
-			_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
+			_fizwidget$wiki_path$Common_Title_Decoder$title,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Model$Link))));
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeArticle = A3(
+var _fizwidget$wiki_path$Common_Article_Decoder$article = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'text',
 	_elm_lang$core$Json_Decode$string,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'links',
-		_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Article_Decoder$decodeLink),
+		_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Article_Decoder$link),
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 			'title',
-			_fizwidget$wiki_path$Common_Title_Decoder$decodeTitle,
+			_fizwidget$wiki_path$Common_Title_Decoder$title,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Model$Article))));
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeSuccess = A2(_elm_lang$core$Json_Decode$field, 'parse', _fizwidget$wiki_path$Common_Article_Decoder$decodeArticle);
-var _fizwidget$wiki_path$Common_Article_Decoder$decodeArticleResponse = _elm_lang$core$Json_Decode$oneOf(
+var _fizwidget$wiki_path$Common_Article_Decoder$success = A2(_elm_lang$core$Json_Decode$field, 'parse', _fizwidget$wiki_path$Common_Article_Decoder$article);
+var _fizwidget$wiki_path$Common_Article_Decoder$articleResponse = _elm_lang$core$Json_Decode$oneOf(
 	{
 		ctor: '::',
-		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Common_Article_Decoder$decodeSuccess),
+		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Common_Article_Decoder$success),
 		_1: {
 			ctor: '::',
-			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Common_Article_Decoder$decodeError),
+			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Common_Article_Decoder$error),
 			_1: {ctor: '[]'}
 		}
 	});
-
-var _fizwidget$wiki_path$Common_Url_Model$queryParamToString = function (queryParam) {
-	var _p0 = queryParam;
-	if (_p0.ctor === 'KeyValue') {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			_elm_lang$http$Http$encodeUri(_p0._0._0),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'=',
-				_elm_lang$http$Http$encodeUri(_p0._0._1)));
-	} else {
-		return _elm_lang$http$Http$encodeUri(_p0._0);
-	}
-};
-var _fizwidget$wiki_path$Common_Url_Model$buildUrl = F2(
-	function (baseUrl, queryParams) {
-		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Url_Model$queryParamToString, queryParams);
-		var joinedQueryParams = A2(_elm_lang$core$String$join, '&', queryParamStrings);
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			baseUrl,
-			A2(_elm_lang$core$Basics_ops['++'], '?', joinedQueryParams));
-	});
-var _fizwidget$wiki_path$Common_Url_Model$Key = function (a) {
-	return {ctor: 'Key', _0: a};
-};
-var _fizwidget$wiki_path$Common_Url_Model$KeyValue = function (a) {
-	return {ctor: 'KeyValue', _0: a};
-};
 
 var _fizwidget$wiki_path$Common_Article_Api$buildArticleUrl = function (title) {
 	var queryParams = {
@@ -10121,14 +10125,13 @@ var _fizwidget$wiki_path$Common_Article_Api$buildArticleUrl = function (title) {
 			}
 		}
 	};
-	var baseUrl = 'https://en.wikipedia.org/w/api.php';
-	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, baseUrl, queryParams);
+	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl, queryParams);
 };
 var _fizwidget$wiki_path$Common_Article_Api$buildRequest = function (title) {
 	return A2(
 		_elm_lang$http$Http$get,
 		_fizwidget$wiki_path$Common_Article_Api$buildArticleUrl(title),
-		_fizwidget$wiki_path$Common_Article_Decoder$decodeArticleResponse);
+		_fizwidget$wiki_path$Common_Article_Decoder$articleResponse);
 };
 
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
@@ -17786,14 +17789,13 @@ var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl = function (title
 			}
 		}
 	};
-	var baseUrl = 'https://en.wikipedia.org/w/api.php';
-	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, baseUrl, queryParams);
+	return A2(_fizwidget$wiki_path$Common_Url_Model$buildUrl, _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl, queryParams);
 };
 var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest = function (titleCount) {
 	return A2(
 		_elm_lang$http$Http$get,
 		_fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl(titleCount),
-		_fizwidget$wiki_path$Common_Title_Decoder$decodeRandomTitlesResponse);
+		_fizwidget$wiki_path$Common_Title_Decoder$randomTitlesResponse);
 };
 
 var _fizwidget$wiki_path$Common_Title_View$toUrl = function (title) {
@@ -17976,12 +17978,30 @@ var _fizwidget$wiki_path$Finished_View$backButton = A2(
 		_1: {ctor: '[]'}
 	});
 var _fizwidget$wiki_path$Finished_View$errorView = function (error) {
-	var _p0 = error;
-	if (_p0.ctor === 'PathNotFound') {
-		return _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path 💀');
-	} else {
-		return _rtfeldman$elm_css$Html_Styled$text('Sorry, we\'re making too many requests to Wikipedia! 😵');
-	}
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: function () {
+				var _p0 = error;
+				if (_p0.ctor === 'PathNotFound') {
+					return _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path 💀');
+				} else {
+					return _rtfeldman$elm_css$Html_Styled$text('Sorry, we\'re making too many requests to Wikipedia! 😵');
+				}
+			}(),
+			_1: {ctor: '[]'}
+		});
 };
 var _fizwidget$wiki_path$Finished_View$pathView = function (path) {
 	return A2(
@@ -18082,7 +18102,7 @@ var _fizwidget$wiki_path$Finished_View$view = function (model) {
 		});
 };
 
-var _fizwidget$wiki_path$Setup_Service$toRemoteTitlePair = function (remoteTitles) {
+var _fizwidget$wiki_path$Setup_Fetch$toRemoteTitlePair = function (remoteTitles) {
 	var toPair = function (titles) {
 		var _p0 = titles;
 		if ((_p0.ctor === '::') && (_p0._1.ctor === '::')) {
@@ -18097,47 +18117,47 @@ var _fizwidget$wiki_path$Setup_Service$toRemoteTitlePair = function (remoteTitle
 		toPair,
 		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Title_Model$HttpError, remoteTitles));
 };
-var _fizwidget$wiki_path$Setup_Service$toRemoteArticle = function (webData) {
+var _fizwidget$wiki_path$Setup_Fetch$toRemoteArticle = function (webData) {
 	return A2(
 		_krisajenkins$remotedata$RemoteData$andThen,
 		_krisajenkins$remotedata$RemoteData$fromResult,
 		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Article_Model$HttpError, webData));
 };
-var _fizwidget$wiki_path$Setup_Service$fetchRandomTitlePair = function (toMsg) {
+var _fizwidget$wiki_path$Setup_Fetch$randomTitlePair = function (toMsg) {
 	return A2(
 		_elm_lang$core$Platform_Cmd$map,
 		function (_p1) {
 			return toMsg(
-				_fizwidget$wiki_path$Setup_Service$toRemoteTitlePair(_p1));
+				_fizwidget$wiki_path$Setup_Fetch$toRemoteTitlePair(_p1));
 		},
 		_krisajenkins$remotedata$RemoteData$sendRequest(
 			_fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest(2)));
 };
-var _fizwidget$wiki_path$Setup_Service$fetchArticle = F2(
+var _fizwidget$wiki_path$Setup_Fetch$article = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$core$Platform_Cmd$map,
 			function (_p2) {
 				return toMsg(
-					_fizwidget$wiki_path$Setup_Service$toRemoteArticle(_p2));
+					_fizwidget$wiki_path$Setup_Fetch$toRemoteArticle(_p2));
 			},
 			_krisajenkins$remotedata$RemoteData$sendRequest(
 				_fizwidget$wiki_path$Common_Article_Api$buildRequest(title)));
 	});
 
-var _fizwidget$wiki_path$Pathfinding_Service$toArticleResult = function (result) {
+var _fizwidget$wiki_path$Pathfinding_Fetch$toArticleResult = function (result) {
 	return A2(
 		_elm_lang$core$Result$andThen,
 		_elm_lang$core$Basics$identity,
 		A2(_elm_lang$core$Result$mapError, _fizwidget$wiki_path$Common_Article_Model$HttpError, result));
 };
-var _fizwidget$wiki_path$Pathfinding_Service$fetchArticle = F2(
+var _fizwidget$wiki_path$Pathfinding_Fetch$article = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$http$Http$send,
 			function (_p0) {
 				return toMsg(
-					_fizwidget$wiki_path$Pathfinding_Service$toArticleResult(_p0));
+					_fizwidget$wiki_path$Pathfinding_Fetch$toArticleResult(_p0));
 			},
 			_fizwidget$wiki_path$Common_Article_Api$buildRequest(title));
 	});
@@ -18150,9 +18170,9 @@ var _fizwidget$wiki_path$Pathfinding_Util$keepHighestPriorities = function (path
 			A2(_elm_lang$core$List$sortBy, _fizwidget$wiki_path$Common_Path_Model$priority, paths)));
 };
 var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (link) {
-	var isInMainNamespace = function () {
+	var isInArticleNamespace = function () {
 		var _p0 = link.namespace;
-		if (_p0.ctor === 'Main') {
+		if (_p0.ctor === 'ArticleNamespace') {
 			return true;
 		} else {
 			return false;
@@ -18213,7 +18233,7 @@ var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (link) {
 			return A2(_elm_lang$core$String$startsWith, prefix, titleValue);
 		},
 		ignoredPrefixes);
-	return link.doesExist && (isInMainNamespace && (hasMinimumLength && (!hasIgnoredPrefix)));
+	return link.doesExist && (isInArticleNamespace && (hasMinimumLength && (!hasIgnoredPrefix)));
 };
 var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
 	function (visitedTitles, newPaths) {
@@ -18223,8 +18243,11 @@ var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
 			visitedTitles,
 			A2(
 				_elm_lang$core$List$map,
-				_fizwidget$wiki_path$Common_Title_Model$value,
-				A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Path_Model$nextStop, newPaths)));
+				function (_p1) {
+					return _fizwidget$wiki_path$Common_Title_Model$value(
+						_fizwidget$wiki_path$Common_Path_Model$nextStop(_p1));
+				},
+				newPaths));
 	});
 var _fizwidget$wiki_path$Pathfinding_Util$isUnvisited = F2(
 	function (visitedTitles, link) {
@@ -18282,7 +18305,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests = function 
 var _fizwidget$wiki_path$Pathfinding_Update$maxPendingRequests = 4;
 var _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests = function (_p0) {
 	var _p1 = _p0;
-	return _elm_lang$core$Native_Utils.cmp(_p1.totalRequests, 200) > 0;
+	return _elm_lang$core$Native_Utils.cmp(_p1.totalRequests, 5) > 0;
 };
 var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
 	function (_p2, nextArticle) {
@@ -18307,14 +18330,13 @@ var _fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination = F2(
 					paths)));
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (currentPath) {
-	return A2(
-		_fizwidget$wiki_path$Pathfinding_Service$fetchArticle,
-		function (_p4) {
-			return _fizwidget$wiki_path$Messages$Pathfinding(
-				A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, currentPath, _p4));
-		},
-		_fizwidget$wiki_path$Common_Title_Model$value(
-			_fizwidget$wiki_path$Common_Path_Model$nextStop(currentPath)));
+	var title = _fizwidget$wiki_path$Common_Title_Model$value(
+		_fizwidget$wiki_path$Common_Path_Model$nextStop(currentPath));
+	var toMsg = function (_p4) {
+		return _fizwidget$wiki_path$Messages$Pathfinding(
+			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, currentPath, _p4));
+	};
+	return A2(_fizwidget$wiki_path$Pathfinding_Fetch$article, toMsg, title);
 };
 var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles = F2(
 	function (model, pathsToFollow) {
@@ -18466,7 +18488,7 @@ var _fizwidget$wiki_path$Setup_Update$fetchRandomTitles = function (model) {
 		_1: A2(
 			_elm_lang$core$Platform_Cmd$map,
 			_fizwidget$wiki_path$Messages$Setup,
-			_fizwidget$wiki_path$Setup_Service$fetchRandomTitlePair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
+			_fizwidget$wiki_path$Setup_Fetch$randomTitlePair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
 	};
 };
 var _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding = function (model) {
@@ -18505,10 +18527,10 @@ var _fizwidget$wiki_path$Setup_Update$setSourceArticle = F2(
 var _fizwidget$wiki_path$Setup_Update$fetchArticles = function (model) {
 	var requests = {
 		ctor: '::',
-		_0: A2(_fizwidget$wiki_path$Setup_Service$fetchArticle, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, model.sourceTitleInput),
+		_0: A2(_fizwidget$wiki_path$Setup_Fetch$article, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, model.sourceTitleInput),
 		_1: {
 			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Setup_Service$fetchArticle, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, model.destinationTitleInput),
+			_0: A2(_fizwidget$wiki_path$Setup_Fetch$article, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, model.destinationTitleInput),
 			_1: {ctor: '[]'}
 		}
 	};
