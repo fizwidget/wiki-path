@@ -1,4 +1,4 @@
-module Setup.Init exposing (init)
+module Setup.Init exposing (init, initWithInput)
 
 import RemoteData exposing (RemoteData(NotAsked))
 import Model exposing (Model(Setup))
@@ -8,13 +8,22 @@ import Setup.Model exposing (SetupModel)
 
 init : ( Model, Cmd Msg )
 init =
-    ( Setup initialModel, Cmd.none )
+    ( Setup (initialModel "" "")
+    , Cmd.none
+    )
 
 
-initialModel : SetupModel
-initialModel =
-    { sourceTitleInput = ""
-    , destinationTitleInput = ""
+initWithInput : String -> String -> ( Model, Cmd Msg )
+initWithInput sourceTitleInput destinationTitleInput =
+    ( Setup (initialModel sourceTitleInput destinationTitleInput)
+    , Cmd.none
+    )
+
+
+initialModel : String -> String -> SetupModel
+initialModel sourceTitleInput destinationTitleInput =
+    { sourceTitleInput = sourceTitleInput
+    , destinationTitleInput = destinationTitleInput
     , source = NotAsked
     , destination = NotAsked
     , randomTitles = NotAsked

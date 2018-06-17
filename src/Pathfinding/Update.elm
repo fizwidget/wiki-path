@@ -25,7 +25,9 @@ update message model =
                 articleResult
 
         BackToSetup ->
-            Setup.Init.init
+            Setup.Init.initWithInput
+                (Title.value model.source.title)
+                (Title.value model.destination.title)
 
 
 updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
