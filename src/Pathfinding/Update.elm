@@ -1,6 +1,5 @@
 module Pathfinding.Update exposing (update, updateWithResult)
 
-import Set
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
