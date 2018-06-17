@@ -22151,7 +22151,11 @@ var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (link) {
 										_1: {
 											ctor: '::',
 											_0: 'Integrated Authority File',
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: 'Geographic coordinate system',
+												_1: {ctor: '[]'}
+											}
 										}
 									}
 								}
