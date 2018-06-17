@@ -17154,6 +17154,19 @@ var _fizwidget$wiki_path$Common_Path_Model$inOrder = function (_p8) {
 	return _elm_lang$core$List$reverse(
 		_fizwidget$wiki_path$Common_Path_Model$inReverseOrder(_p8));
 };
+var _fizwidget$wiki_path$Common_Path_Model$end = function (_p9) {
+	var _p10 = _p9;
+	return _p10._0.nextStop;
+};
+var _fizwidget$wiki_path$Common_Path_Model$beginning = function (_p11) {
+	var _p12 = _p11;
+	var _p13 = _p12._0;
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		_p13.nextStop,
+		_elm_lang$core$List$head(
+			_elm_lang$core$List$reverse(_p13.previousStops)));
+};
 var _fizwidget$wiki_path$Common_Path_Model$Path = function (a) {
 	return {ctor: 'Path', _0: a};
 };
@@ -17166,15 +17179,15 @@ var _fizwidget$wiki_path$Common_Path_Model$beginningWith = function (articleTitl
 		});
 };
 var _fizwidget$wiki_path$Common_Path_Model$extend = F3(
-	function (_p9, nextArticleTitle, newPriority) {
-		var _p10 = _p9;
-		var _p11 = _p10._0;
+	function (_p14, nextArticleTitle, newPriority) {
+		var _p15 = _p14;
+		var _p16 = _p15._0;
 		return _fizwidget$wiki_path$Common_Path_Model$Path(
 			_elm_lang$core$Native_Utils.update(
-				_p11,
+				_p16,
 				{
 					nextStop: nextArticleTitle,
-					previousStops: {ctor: '::', _0: _p11.nextStop, _1: _p11.previousStops},
+					previousStops: {ctor: '::', _0: _p16.nextStop, _1: _p16.previousStops},
 					priority: newPriority
 				}));
 	});
@@ -17741,7 +17754,18 @@ var _fizwidget$wiki_path$Setup_Init$init = {
 var _fizwidget$wiki_path$Finished_Update$update = F2(
 	function (_p0, model) {
 		var _p1 = _p0;
-		return _fizwidget$wiki_path$Setup_Init$init;
+		var _p2 = model;
+		if (_p2.ctor === 'Success') {
+			var _p3 = _p2._0;
+			return A2(
+				_fizwidget$wiki_path$Setup_Init$initWithInput,
+				_fizwidget$wiki_path$Common_Title_Model$value(
+					_fizwidget$wiki_path$Common_Path_Model$beginning(_p3)),
+				_fizwidget$wiki_path$Common_Title_Model$value(
+					_fizwidget$wiki_path$Common_Path_Model$end(_p3)));
+		} else {
+			return _fizwidget$wiki_path$Setup_Init$init;
+		}
 	});
 
 var _fizwidget$wiki_path$Finished_View$backButton = A2(
