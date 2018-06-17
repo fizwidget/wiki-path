@@ -3,9 +3,11 @@ module Pathfinding.Util
         ( extendPath
         , isInteresting
         , isUnvisited
+        , markVisited
         , keepHighestPriorities
         )
 
+import Set exposing (Set)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Common.Article.Model exposing (Article, Link, Namespace(Main, Other))
 import Common.Title.Model as Title exposing (Title)
@@ -46,13 +48,18 @@ countOccurences content target =
             |> List.length
 
 
-isUnvisited : PriorityQueue Path -> Path -> Link -> Bool
-isUnvisited paths currentPath link =
-    paths
-        |> PriorityQueue.toSortedList
-        |> (::) currentPath
-        |> List.any (Path.contains link.title)
+isUnvisited : Set String -> Link -> Bool
+isUnvisited visitedTitles link =
+    Set.member (Title.value link.title) visitedTitles
         |> not
+
+
+markVisited : Set String -> List Path -> Set String
+markVisited visitedTitles newPaths =
+    newPaths
+        |> List.map Path.nextStop
+        |> List.map Title.value
+        |> List.foldl Set.insert visitedTitles
 
 
 isInteresting : Link -> Bool
