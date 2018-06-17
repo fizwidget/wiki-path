@@ -2,21 +2,19 @@ module Common.Title.Api exposing (buildRandomTitleRequest)
 
 import Http
 import Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
+import Common.Wikipedia.Api as Wikipedia
 import Common.Title.Model exposing (Title)
-import Common.Title.Decoder exposing (decodeRandomTitlesResponse)
+import Common.Title.Decoder as Decoder
 
 
 buildRandomTitleRequest : Int -> Http.Request (List Title)
 buildRandomTitleRequest titleCount =
-    Http.get (buildRandomTitlesUrl titleCount) decodeRandomTitlesResponse
+    Http.get (buildRandomTitlesUrl titleCount) Decoder.randomTitlesResponse
 
 
 buildRandomTitlesUrl : Int -> Url
 buildRandomTitlesUrl titleCount =
     let
-        baseUrl =
-            "https://en.wikipedia.org/w/api.php"
-
         articleNamespace =
             "0"
 
@@ -29,4 +27,4 @@ buildRandomTitlesUrl titleCount =
             , KeyValue ( "origin", "*" )
             ]
     in
-        buildUrl baseUrl queryParams
+        buildUrl Wikipedia.apiBaseUrl queryParams

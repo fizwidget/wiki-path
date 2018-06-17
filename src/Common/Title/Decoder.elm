@@ -1,16 +1,16 @@
-module Common.Title.Decoder exposing (decodeTitle, decodeRandomTitlesResponse)
+module Common.Title.Decoder exposing (title, randomTitlesResponse)
 
 import Json.Decode exposing (Decoder, field, at, map, string, list)
 import Common.Title.Model as Title exposing (Title)
 
 
-decodeTitle : Decoder Title
-decodeTitle =
-    map Title.from string
-
-
-decodeRandomTitlesResponse : Decoder (List Title)
-decodeRandomTitlesResponse =
+randomTitlesResponse : Decoder (List Title)
+randomTitlesResponse =
     at
         [ "query", "random" ]
-        (list <| field "title" decodeTitle)
+        (list <| field "title" title)
+
+
+title : Decoder Title
+title =
+    map Title.from string

@@ -9,7 +9,7 @@ module Pathfinding.Util
 
 import Set exposing (Set)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
-import Common.Article.Model exposing (Article, Link, Namespace(Main, Other))
+import Common.Article.Model exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 import Common.Title.Model as Title exposing (Title)
 import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
@@ -57,8 +57,7 @@ isUnvisited visitedTitles link =
 markVisited : Set String -> List Path -> Set String
 markVisited visitedTitles newPaths =
     newPaths
-        |> List.map Path.nextStop
-        |> List.map Title.value
+        |> List.map (Path.nextStop >> Title.value)
         |> List.foldl Set.insert visitedTitles
 
 
@@ -91,15 +90,15 @@ isInteresting link =
         hasMinimumLength =
             String.length titleValue > 1
 
-        isInMainNamespace =
+        isInArticleNamespace =
             case link.namespace of
-                Main ->
+                ArticleNamespace ->
                     True
 
-                Other ->
+                NonArticleNamespace ->
                     False
     in
-        link.doesExist && isInMainNamespace && hasMinimumLength && not hasIgnoredPrefix
+        link.doesExist && isInArticleNamespace && hasMinimumLength && not hasIgnoredPrefix
 
 
 keepHighestPriorities : List Path -> List Path

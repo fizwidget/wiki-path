@@ -28,8 +28,8 @@ type alias Link =
 
 
 type Namespace
-    = Main
-    | Other
+    = ArticleNamespace
+    | NonArticleNamespace
 
 
 type alias HtmlString =

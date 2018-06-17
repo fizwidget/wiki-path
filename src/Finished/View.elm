@@ -58,12 +58,14 @@ pathView path =
 
 errorView : Error -> Html msg
 errorView error =
-    case error of
-        PathNotFound ->
-            text "Sorry, couldn't find a path 💀"
+    div [ css [ textAlign center ] ]
+        [ case error of
+            PathNotFound ->
+                text "Sorry, couldn't find a path 💀"
 
-        TooManyRequests ->
-            text "Sorry, we're making too many requests to Wikipedia! 😵"
+            TooManyRequests ->
+                text "Sorry, we're making too many requests to Wikipedia! 😵"
+        ]
 
 
 backButton : Html FinishedMsg
