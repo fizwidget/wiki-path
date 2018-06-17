@@ -20,20 +20,22 @@ update message model =
         DestinationArticleTitleChange value ->
             setDestinationTitle model value
 
-        FetchArticlesRequest ->
-            fetchArticles model
-
-        FetchSourceArticleResponse article ->
-            setSourceArticle model article
-
-        FetchDestinationArticleResponse article ->
-            setDestinationArticle model article
-
         FetchRandomTitlesRequest ->
             fetchRandomTitles model
 
         FetchRandomTitlesResponse titles ->
             setRandomTitles model titles
+
+        FetchArticlesRequest ->
+            fetchArticles model
+
+        FetchSourceArticleResponse article ->
+            setSourceArticle model article
+                |> maybeBeginPathfinding
+
+        FetchDestinationArticleResponse article ->
+            setDestinationArticle model article
+                |> maybeBeginPathfinding
 
 
 setSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
@@ -76,23 +78,28 @@ fetchArticles model =
         )
 
 
-setSourceArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+setSourceArticle : SetupModel -> RemoteArticle -> SetupModel
 setSourceArticle model source =
-    ( { model | source = source }, Cmd.none )
-        |> beginPathfindingIfBothArticlesLoaded
+    { model | source = source }
 
 
-setDestinationArticle : SetupModel -> RemoteArticle -> ( Model, Cmd Msg )
+setDestinationArticle : SetupModel -> RemoteArticle -> SetupModel
 setDestinationArticle model destination =
-    ( { model | destination = destination }, Cmd.none )
-        |> beginPathfindingIfBothArticlesLoaded
+    { model | destination = destination }
 
 
-beginPathfindingIfBothArticlesLoaded : ( SetupModel, Cmd Msg ) -> ( Model, Cmd Msg )
-beginPathfindingIfBothArticlesLoaded ( model, cmd ) =
-    RemoteData.map2 Pathfinding.Init.init model.source model.destination
-        |> RemoteData.toMaybe
-        |> Maybe.withDefault ( Model.Setup model, cmd )
+maybeBeginPathfinding : SetupModel -> ( Model, Cmd Msg )
+maybeBeginPathfinding model =
+    let
+        sourceAndDestination =
+            RemoteData.toMaybe <| RemoteData.map2 (,) model.source model.destination
+    in
+        case sourceAndDestination of
+            Just ( source, destination ) ->
+                Pathfinding.Init.init source destination
+
+            Nothing ->
+                ( Model.Setup model, Cmd.none )
 
 
 fetchRandomTitles : SetupModel -> ( Model, Cmd Msg )

@@ -1,9 +1,8 @@
 module Common.Article.Decoder exposing (decodeArticleResponse)
 
-import Json.Decode exposing (Decoder, field, at, map, string, list, bool, oneOf)
+import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import Common.Article.Model exposing (Article, ArticleResult, ArticleError(..))
-import Common.Title.Model as Title exposing (Title)
+import Common.Article.Model exposing (Article, Link, Namespace(..), ArticleResult, ArticleError(..))
 import Common.Title.Decoder exposing (decodeTitle)
 
 
@@ -24,28 +23,29 @@ decodeArticle : Decoder Article
 decodeArticle =
     decode Article
         |> required "title" decodeTitle
-        |> required "links" decodeLinkTitles
+        |> required "links" (list decodeLink)
         |> required "text" string
-
-
-decodeLinkTitles : Decoder (List Title)
-decodeLinkTitles =
-    list decodeLink
-        |> map (List.filter .exists)
-        |> map (List.map .title)
 
 
 decodeLink : Decoder Link
 decodeLink =
     decode Link
         |> required "title" decodeTitle
+        |> required "ns" decodeNamespace
         |> required "exists" bool
 
 
-type alias Link =
-    { title : Title
-    , exists : Bool
-    }
+decodeNamespace : Decoder Namespace
+decodeNamespace =
+    int |> map fromNamespaceId
+
+
+fromNamespaceId : Int -> Namespace
+fromNamespaceId namespaceId =
+    if namespaceId == 0 then
+        Main
+    else
+        Other
 
 
 decodeError : Decoder ArticleError
