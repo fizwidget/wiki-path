@@ -2,23 +2,24 @@ module Common.Article.View exposing (viewError)
 
 import Html.Styled exposing (Html, div, text)
 import Common.Article.Model exposing (ArticleError(..))
+import Common.Error.View as Error
 
 
 viewError : ArticleError -> Html msg
 viewError error =
     let
-        errorMessage =
+        errorView =
             case error of
                 ArticleNotFound ->
-                    "Couldn't find that article :("
+                    text "Couldn't find that article :("
 
                 InvalidTitle ->
-                    "Not a valid article title :("
+                    text "Not a valid article title :("
 
                 UnknownError errorCode ->
-                    ("Unknown error: " ++ errorCode)
+                    Error.view "Unknown error \x1F92F" errorCode
 
                 HttpError error ->
-                    ("Network error: " ++ toString error)
+                    Error.view "Network error 😭" (toString error)
     in
-        div [] [ text errorMessage ]
+        div [] [ errorView ]

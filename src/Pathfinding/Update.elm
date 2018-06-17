@@ -1,5 +1,6 @@
 module Pathfinding.Update exposing (update, updateWithResult)
 
+import Set
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
 import Common.Title.Model as Title exposing (Title)
@@ -46,15 +47,21 @@ updateWithResult model currentPath articleResult =
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 updateWithArticle model currentPath article =
     let
-        newPaths =
+        candidateLinks =
             article.links
                 |> List.filter Util.isInteresting
-                |> List.filter (Util.isUnvisited model.paths currentPath)
+                |> List.filter (Util.isUnvisited model.visitedTitles)
+
+        newPaths =
+            candidateLinks
                 |> List.map (Util.extendPath currentPath model.destination)
                 |> Util.keepHighestPriorities
 
         updatedModel =
-            { model | paths = PriorityQueue.insert model.paths Path.priority newPaths }
+            { model
+                | paths = PriorityQueue.insert model.paths Path.priority newPaths
+                , visitedTitles = Util.markVisited model.visitedTitles newPaths
+            }
     in
         followHighestPriorityPaths updatedModel
 

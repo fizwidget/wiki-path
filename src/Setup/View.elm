@@ -1,13 +1,14 @@
 module Setup.View exposing (view)
 
 import Css exposing (..)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, input, button, text, form)
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import RemoteData
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
+import Common.Error.View as Error
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
 import Common.Article.View as Article
 import Common.Spinner.View as Spinner
@@ -133,7 +134,7 @@ showRandomizationError : SetupModel -> Html msg
 showRandomizationError { randomTitles } =
     case randomTitles of
         RemoteData.Failure error ->
-            text ("Error randomizing titles: " ++ toString error)
+            Error.view "Error randomizing titles 😵" (toString error)
 
         _ ->
             text ""
