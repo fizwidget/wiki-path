@@ -16,5 +16,5 @@ update BackToSetup model =
                 (Path.beginning pathToDestination)
                 (Path.end pathToDestination)
 
-        Error _ ->
-            Setup.Init.init
+        Error { source, destination } ->
+            Setup.Init.initWithTitles source.title destination.title

@@ -7,7 +7,7 @@ import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Finished.Init
+import Finished.Init as Finished
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
@@ -29,22 +29,22 @@ update message model =
 
 
 updateWithResponse : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
-updateWithResponse model currentPath articleResult =
+updateWithResponse model pathToArticle articleResult =
     case articleResult of
         Ok article ->
             if hasReachedDestination model article then
-                Finished.Init.initWithPath currentPath
+                Finished.initWithPath pathToArticle
             else if hasMadeTooManyRequests model then
-                Finished.Init.initWithTooManyRequestsError
+                Finished.initWithTooManyRequestsError model.source model.destination
             else
-                updateWithArticle model currentPath article
+                updateWithArticle model pathToArticle article
 
         Err error ->
             updateWithError model error
 
 
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
-updateWithArticle model currentPath article =
+updateWithArticle model pathToArticle article =
     let
         candidateLinks =
             article.links
@@ -53,7 +53,7 @@ updateWithArticle model currentPath article =
 
         newPaths =
             candidateLinks
-                |> List.map (Util.extendPath currentPath model.destination)
+                |> List.map (Util.extendPath pathToArticle model.destination)
                 |> Util.discardLowPriorityPaths
 
         updatedModel =
@@ -90,7 +90,7 @@ followHighestPriorityPaths model =
             List.isEmpty highestPriorityPaths && model.pendingRequests == 0
     in
         if hasPathfindingFailed then
-            Finished.Init.initWithPathNotFoundError
+            Finished.initWithPathNotFoundError model.source model.destination
         else
             followPaths updatedModel highestPriorityPaths
 
@@ -99,7 +99,7 @@ followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            Finished.Init.initWithPath pathToDestination
+            Finished.initWithPath pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -118,13 +118,13 @@ fetchNextArticles model pathsToFollow =
 
 
 fetchNextArticle : Path -> Cmd Msg
-fetchNextArticle currentPath =
+fetchNextArticle pathToFollow =
     let
         toMsg =
-            FetchArticleResponse currentPath >> Messages.Pathfinding
+            FetchArticleResponse pathToFollow >> Messages.Pathfinding
 
         title =
-            Title.value <| Path.nextStop currentPath
+            Title.value <| Path.nextStop pathToFollow
     in
         Fetch.article toMsg title
 

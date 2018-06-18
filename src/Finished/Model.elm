@@ -1,11 +1,16 @@
 module Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 
 import Common.Path.Model exposing (Path)
+import Common.Article.Model exposing (Article)
 
 
 type FinishedModel
     = Success Path
-    | Error Error
+    | Error
+        { source : Article
+        , destination : Article
+        , error : Error
+        }
 
 
 type Error

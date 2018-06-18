@@ -1,5 +1,6 @@
 module Finished.Init exposing (initWithPath, initWithPathNotFoundError, initWithTooManyRequestsError)
 
+import Common.Article.Model exposing (Article)
 import Common.Path.Model exposing (Path)
 import Model exposing (Model(Finished))
 import Messages exposing (Msg)
@@ -11,11 +12,23 @@ initWithPath pathToDestination =
     ( Finished <| Success pathToDestination, Cmd.none )
 
 
-initWithPathNotFoundError : ( Model, Cmd Msg )
-initWithPathNotFoundError =
-    ( Finished <| Error PathNotFound, Cmd.none )
+initWithPathNotFoundError : Article -> Article -> ( Model, Cmd Msg )
+initWithPathNotFoundError source destination =
+    initWithError source destination PathNotFound
 
 
-initWithTooManyRequestsError : ( Model, Cmd Msg )
-initWithTooManyRequestsError =
-    ( Finished <| Error TooManyRequests, Cmd.none )
+initWithTooManyRequestsError : Article -> Article -> ( Model, Cmd Msg )
+initWithTooManyRequestsError source destination =
+    initWithError source destination TooManyRequests
+
+
+initWithError : Article -> Article -> Error -> ( Model, Cmd Msg )
+initWithError source destination error =
+    ( Finished <|
+        Error
+            { source = source
+            , destination = destination
+            , error = error
+            }
+    , Cmd.none
+    )
