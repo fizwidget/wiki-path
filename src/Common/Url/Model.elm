@@ -1,13 +1,13 @@
-module Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), buildUrl)
+module Common.Url.Model exposing (Url, QueryParam(KeyValue, Key), build)
 
 import Http
 
 
-buildUrl : BaseUrl -> List QueryParam -> Url
-buildUrl baseUrl queryParams =
+build : BaseUrl -> List QueryParam -> Url
+build baseUrl queryParams =
     let
         queryParamStrings =
-            List.map queryParamToString queryParams
+            List.map encode queryParams
 
         joinedQueryParams =
             String.join "&" queryParamStrings
@@ -15,8 +15,8 @@ buildUrl baseUrl queryParams =
         baseUrl ++ "?" ++ joinedQueryParams
 
 
-queryParamToString : QueryParam -> String
-queryParamToString queryParam =
+encode : QueryParam -> String
+encode queryParam =
     case queryParam of
         KeyValue ( key, value ) ->
             (Http.encodeUri key) ++ "=" ++ (Http.encodeUri value)

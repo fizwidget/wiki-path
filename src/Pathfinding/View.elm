@@ -11,6 +11,7 @@ import Common.Title.View as Title
 import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
+import Pathfinding.Constants as Constants
 import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
 
@@ -75,7 +76,7 @@ destinationContentWarning destination =
 
 pathCountWarning : Int -> Html msg
 pathCountWarning totalRequests =
-    if totalRequests > 100 then
+    if totalRequests > Constants.maxTotalRequests // 2 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
         text ""

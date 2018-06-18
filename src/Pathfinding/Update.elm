@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update, updateWithResult)
+module Pathfinding.Update exposing (update, updateWithResponse)
 
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
@@ -13,29 +13,29 @@ import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackT
 import Pathfinding.Model exposing (PathfindingModel)
 import Pathfinding.Fetch as Fetch
 import Pathfinding.Util as Util
+import Pathfinding.Constants as Constants
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
-        FetchArticleResponse currentPath articleResult ->
-            updateWithResult
-                (decrementPendingRequests model)
-                currentPath
-                articleResult
+        FetchArticleResponse pathToArticle articleResult ->
+            updateWithResponse (decrementPendingRequests model) pathToArticle articleResult
 
         BackToSetup ->
-            Setup.Init.initWithInput
-                (Title.value model.source.title)
-                (Title.value model.destination.title)
+            Setup.Init.initWithTitles
+                model.source.title
+                model.destination.title
 
 
-updateWithResult : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
-updateWithResult model currentPath articleResult =
+updateWithResponse : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
+updateWithResponse model currentPath articleResult =
     case articleResult of
         Ok article ->
             if hasReachedDestination model article then
-                destinationReached currentPath
+                Finished.Init.initWithPath currentPath
+            else if hasMadeTooManyRequests model then
+                Finished.Init.initWithTooManyRequestsError
             else
                 updateWithArticle model currentPath article
 
@@ -54,7 +54,7 @@ updateWithArticle model currentPath article =
         newPaths =
             candidateLinks
                 |> List.map (Util.extendPath currentPath model.destination)
-                |> Util.keepHighestPriorities
+                |> Util.discardLowPriorityPaths
 
         updatedModel =
             { model
@@ -78,7 +78,7 @@ followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
         maxPathsToRemove =
-            maxPendingRequests - model.pendingRequests
+            Constants.maxPendingRequests - model.pendingRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
             PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
@@ -99,15 +99,10 @@ followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            destinationReached pathToDestination
+            Finished.Init.initWithPath pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
-
-
-destinationReached : Path -> ( Model, Cmd Msg )
-destinationReached =
-    Finished.Init.initWithPath
 
 
 fetchNextArticles : PathfindingModel -> List Path -> ( Model, Cmd Msg )
@@ -119,10 +114,7 @@ fetchNextArticles model pathsToFollow =
         updatedModel =
             incrementRequests model (List.length requests)
     in
-        if hasMadeTooManyRequests updatedModel then
-            Finished.Init.initWithTooManyRequestsError
-        else
-            ( Model.Pathfinding updatedModel, Cmd.batch requests )
+        ( Model.Pathfinding updatedModel, Cmd.batch requests )
 
 
 fetchNextArticle : Path -> Cmd Msg
@@ -156,12 +148,7 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > 200
-
-
-maxPendingRequests : Int
-maxPendingRequests =
-    4
+    totalRequests > Constants.maxTotalRequests
 
 
 decrementPendingRequests : PathfindingModel -> PathfindingModel

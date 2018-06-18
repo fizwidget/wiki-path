@@ -49,6 +49,11 @@ namespace =
 
 error : Decoder ArticleError
 error =
+    at [ "error", "code" ] articleError
+
+
+articleError : Decoder ArticleError
+articleError =
     let
         toArticleError errorCode =
             case errorCode of
@@ -60,8 +65,5 @@ error =
 
                 _ ->
                     UnknownError errorCode
-
-        errorCode =
-            at [ "error", "code" ] string
     in
-        map toArticleError errorCode
+        map toArticleError string
