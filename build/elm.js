@@ -17885,18 +17885,24 @@ var _fizwidget$wiki_path$Messages$Setup = function (a) {
 	return {ctor: 'Setup', _0: a};
 };
 
-var _fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError = {
-	ctor: '_Tuple2',
-	_0: _fizwidget$wiki_path$Model$Finished(
-		_fizwidget$wiki_path$Finished_Model$Error(_fizwidget$wiki_path$Finished_Model$TooManyRequests)),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
-var _fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError = {
-	ctor: '_Tuple2',
-	_0: _fizwidget$wiki_path$Model$Finished(
-		_fizwidget$wiki_path$Finished_Model$Error(_fizwidget$wiki_path$Finished_Model$PathNotFound)),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
+var _fizwidget$wiki_path$Finished_Init$initWithError = F3(
+	function (source, destination, error) {
+		return {
+			ctor: '_Tuple2',
+			_0: _fizwidget$wiki_path$Model$Finished(
+				_fizwidget$wiki_path$Finished_Model$Error(
+					{source: source, destination: destination, error: error})),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError = F2(
+	function (source, destination) {
+		return A3(_fizwidget$wiki_path$Finished_Init$initWithError, source, destination, _fizwidget$wiki_path$Finished_Model$TooManyRequests);
+	});
+var _fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError = F2(
+	function (source, destination) {
+		return A3(_fizwidget$wiki_path$Finished_Init$initWithError, source, destination, _fizwidget$wiki_path$Finished_Model$PathNotFound);
+	});
 var _fizwidget$wiki_path$Finished_Init$initWithPath = function (pathToDestination) {
 	return {
 		ctor: '_Tuple2',
@@ -17940,7 +17946,7 @@ var _fizwidget$wiki_path$Finished_Update$update = F2(
 				_fizwidget$wiki_path$Common_Path_Model$beginning(_p3),
 				_fizwidget$wiki_path$Common_Path_Model$end(_p3));
 		} else {
-			return _fizwidget$wiki_path$Setup_Init$init;
+			return A2(_fizwidget$wiki_path$Setup_Init$initWithTitles, _p2._0.source.title, _p2._0.destination.title);
 		}
 	});
 
@@ -17977,32 +17983,64 @@ var _fizwidget$wiki_path$Finished_View$backButton = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wiki_path$Finished_View$errorView = function (error) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{
+var _fizwidget$wiki_path$Finished_View$errorView = F3(
+	function (source, destination, error) {
+		var baseErrorMessage = {
 			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-				{
+			_0: _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path from '),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(source.title),
+				_1: {
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: function () {
+					_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(destination.title),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Html_Styled$text(' 💀'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		};
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			function () {
 				var _p0 = error;
 				if (_p0.ctor === 'PathNotFound') {
-					return _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path 💀');
+					return baseErrorMessage;
 				} else {
-					return _rtfeldman$elm_css$Html_Styled$text('Sorry, we\'re making too many requests to Wikipedia! 😵');
+					return A2(
+						_elm_lang$core$List$append,
+						baseErrorMessage,
+						{
+							ctor: '::',
+							_0: A2(
+								_rtfeldman$elm_css$Html_Styled$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Html_Styled$text('We made too many requests to Wikipedia! 😵'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						});
 				}
-			}(),
-			_1: {ctor: '[]'}
-		});
-};
+			}());
+	});
 var _fizwidget$wiki_path$Finished_View$pathView = function (path) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
@@ -18063,7 +18101,7 @@ var _fizwidget$wiki_path$Finished_View$modelView = function (model) {
 	if (_p1.ctor === 'Success') {
 		return _fizwidget$wiki_path$Finished_View$successView(_p1._0);
 	} else {
-		return _fizwidget$wiki_path$Finished_View$errorView(_p1._0);
+		return A3(_fizwidget$wiki_path$Finished_View$errorView, _p1._0.source, _p1._0.destination, _p1._0.error);
 	}
 };
 var _fizwidget$wiki_path$Finished_View$view = function (model) {
@@ -18331,12 +18369,12 @@ var _fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination = F2(
 					hasPathReachedDestination(destination),
 					paths)));
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (currentPath) {
+var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (pathToFollow) {
 	var title = _fizwidget$wiki_path$Common_Title_Model$value(
-		_fizwidget$wiki_path$Common_Path_Model$nextStop(currentPath));
+		_fizwidget$wiki_path$Common_Path_Model$nextStop(pathToFollow));
 	var toMsg = function (_p4) {
 		return _fizwidget$wiki_path$Messages$Pathfinding(
-			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, currentPath, _p4));
+			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathToFollow, _p4));
 	};
 	return A2(_fizwidget$wiki_path$Pathfinding_Fetch$article, toMsg, title);
 };
@@ -18371,7 +18409,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPaths = functio
 		model,
 		{paths: updatedPriorityQueue});
 	var hasPathfindingFailed = _elm_lang$core$List$isEmpty(highestPriorityPaths) && _elm_lang$core$Native_Utils.eq(model.pendingRequests, 0);
-	return hasPathfindingFailed ? _fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError : A2(_fizwidget$wiki_path$Pathfinding_Update$followPaths, updatedModel, highestPriorityPaths);
+	return hasPathfindingFailed ? A2(_fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError, model.source, model.destination) : A2(_fizwidget$wiki_path$Pathfinding_Update$followPaths, updatedModel, highestPriorityPaths);
 };
 var _fizwidget$wiki_path$Pathfinding_Update$updateWithError = F2(
 	function (model, error) {
@@ -18383,7 +18421,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$updateWithError = F2(
 		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPaths(updatedModel);
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
-	function (model, currentPath, article) {
+	function (model, pathToArticle, article) {
 		var candidateLinks = A2(
 			_elm_lang$core$List$filter,
 			_fizwidget$wiki_path$Pathfinding_Util$isUnvisited(model.visitedTitles),
@@ -18391,7 +18429,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
 		var newPaths = _fizwidget$wiki_path$Pathfinding_Util$discardLowPriorityPaths(
 			A2(
 				_elm_lang$core$List$map,
-				A2(_fizwidget$wiki_path$Pathfinding_Util$extendPath, currentPath, model.destination),
+				A2(_fizwidget$wiki_path$Pathfinding_Util$extendPath, pathToArticle, model.destination),
 				candidateLinks));
 		var updatedModel = _elm_lang$core$Native_Utils.update(
 			model,
@@ -18402,11 +18440,11 @@ var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
 		return _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPaths(updatedModel);
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$updateWithResponse = F3(
-	function (model, currentPath, articleResult) {
+	function (model, pathToArticle, articleResult) {
 		var _p7 = articleResult;
 		if (_p7.ctor === 'Ok') {
 			var _p8 = _p7._0;
-			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, model, _p8) ? _fizwidget$wiki_path$Finished_Init$initWithPath(currentPath) : (_fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests(model) ? _fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, currentPath, _p8));
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, model, _p8) ? _fizwidget$wiki_path$Finished_Init$initWithPath(pathToArticle) : (_fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests(model) ? A2(_fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError, model.source, model.destination) : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, pathToArticle, _p8));
 		} else {
 			return A2(_fizwidget$wiki_path$Pathfinding_Update$updateWithError, model, _p7._0);
 		}
