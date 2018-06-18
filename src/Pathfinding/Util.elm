@@ -4,7 +4,7 @@ module Pathfinding.Util
         , isInteresting
         , isUnvisited
         , markVisited
-        , keepHighestPriorities
+        , discardLowPriorityPaths
         )
 
 import Set exposing (Set)
@@ -101,8 +101,8 @@ isInteresting link =
         link.doesExist && isInArticleNamespace && hasMinimumLength && not hasIgnoredPrefix
 
 
-keepHighestPriorities : List Path -> List Path
-keepHighestPriorities paths =
+discardLowPriorityPaths : List Path -> List Path
+discardLowPriorityPaths paths =
     -- This is really just a performance improvement to prevent the
     -- number of paths we're considering at any one time from increasing
     -- too rapidly. Articles can have *lots* of links.

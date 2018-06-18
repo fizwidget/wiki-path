@@ -1,6 +1,7 @@
-module Setup.Init exposing (init, initWithInput)
+module Setup.Init exposing (init, initWithTitles)
 
 import RemoteData exposing (RemoteData(NotAsked))
+import Common.Title.Model as Title exposing (Title)
 import Model exposing (Model(Setup))
 import Messages exposing (Msg)
 import Setup.Model exposing (SetupModel)
@@ -13,9 +14,9 @@ init =
     )
 
 
-initWithInput : String -> String -> ( Model, Cmd Msg )
-initWithInput sourceTitleInput destinationTitleInput =
-    ( Setup (initialModel sourceTitleInput destinationTitleInput)
+initWithTitles : Title -> Title -> ( Model, Cmd Msg )
+initWithTitles sourceTitleInput destinationTitleInput =
+    ( Setup (initialModel (Title.value sourceTitleInput) (Title.value destinationTitleInput))
     , Cmd.none
     )
 
