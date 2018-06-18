@@ -84,9 +84,12 @@ removeHighestPriorities priorityQueue howMany =
 
 isEmpty : PriorityQueue a -> Bool
 isEmpty priorityQueue =
-    getHighestPriority priorityQueue
-        |> Maybe.map (always False)
-        |> Maybe.withDefault True
+    case getHighestPriority priorityQueue of
+        Just _ ->
+            False
+
+        Nothing ->
+            True
 
 
 toSortedList : PriorityQueue a -> List a
