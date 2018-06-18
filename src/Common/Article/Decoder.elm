@@ -49,13 +49,8 @@ namespace =
 
 error : Decoder ArticleError
 error =
-    at [ "error", "code" ] articleError
-
-
-articleError : Decoder ArticleError
-articleError =
     let
-        toArticleError errorCode =
+        toError errorCode =
             case errorCode of
                 "missingtitle" ->
                     ArticleNotFound
@@ -65,5 +60,8 @@ articleError =
 
                 _ ->
                     UnknownError errorCode
+
+        errorCode =
+            at [ "error", "code" ] string
     in
-        map toArticleError string
+        map toError errorCode
