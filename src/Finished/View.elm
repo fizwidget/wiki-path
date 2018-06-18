@@ -5,6 +5,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, 
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
+import Common.Article.Model exposing (Article)
 import Common.Path.Model as Path exposing (Path)
 import Common.Title.View as Title
 import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
@@ -25,8 +26,8 @@ modelView model =
         Success pathToDestination ->
             successView pathToDestination
 
-        Error error ->
-            errorView error
+        Error { source, destination, error } ->
+            errorView source destination error
 
 
 successView : Path -> Html msg
@@ -56,16 +57,27 @@ pathView path =
         |> div []
 
 
-errorView : Error -> Html msg
-errorView error =
-    div [ css [ textAlign center ] ]
-        [ case error of
-            PathNotFound ->
-                text "Sorry, couldn't find a path 💀"
+errorView : Article -> Article -> Error -> Html msg
+errorView source destination error =
+    let
+        baseErrorMessage =
+            [ text "Sorry, couldn't find a path from "
+            , Title.viewAsLink source.title
+            , text " to "
+            , Title.viewAsLink destination.title
+            , text " 💀"
+            ]
+    in
+        div [ css [ textAlign center ] ]
+            (case error of
+                PathNotFound ->
+                    baseErrorMessage
 
-            TooManyRequests ->
-                text "Sorry, we're making too many requests to Wikipedia! 😵"
-        ]
+                TooManyRequests ->
+                    List.append
+                        baseErrorMessage
+                        [ div [] [ text "We made too many requests to Wikipedia! 😵" ] ]
+            )
 
 
 backButton : Html FinishedMsg
