@@ -44,7 +44,7 @@ onResponseReceived model pathToArticle articleResult =
 onArticleReceived : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 onArticleReceived model pathToArticle article =
     if hasReachedDestination model article then
-        onPathFound pathToArticle
+        destinationReached pathToArticle
     else
         processLinks model pathToArticle article
             |> continueSearch
@@ -98,7 +98,7 @@ explorePaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 explorePaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            onPathFound pathToDestination
+            destinationReached pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -153,8 +153,8 @@ hasMadeTooManyRequests { totalRequests } =
     totalRequests > Config.maxTotalRequests
 
 
-onPathFound : Path -> ( Model, Cmd Msg )
-onPathFound =
+destinationReached : Path -> ( Model, Cmd Msg )
+destinationReached =
     Finished.Init.initWithPath
 
 
