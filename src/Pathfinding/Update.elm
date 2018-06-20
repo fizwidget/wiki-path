@@ -13,7 +13,7 @@ import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackT
 import Pathfinding.Model exposing (PathfindingModel)
 import Pathfinding.Fetch as Fetch
 import Pathfinding.Util as Util
-import Pathfinding.Constants as Constants
+import Pathfinding.Config as Config
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
@@ -76,7 +76,7 @@ followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
         maxPathsToRemove =
-            Constants.maxPendingRequests - model.pendingRequests
+            Config.maxPendingRequests - model.pendingRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
             PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
@@ -149,7 +149,7 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > Constants.maxTotalRequests
+    totalRequests > Config.maxTotalRequests
 
 
 pathFound : Path -> ( Model, Cmd Msg )
