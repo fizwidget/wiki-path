@@ -1,11 +1,11 @@
-module Pathfinding.Config exposing (maxTotalRequests, maxPendingRequests)
+module Pathfinding.Config exposing (totalRequestsLimit, pendingRequestsLimit)
 
 
-maxTotalRequests : Int
-maxTotalRequests =
+totalRequestsLimit : Int
+totalRequestsLimit =
     400
 
 
-maxPendingRequests : Int
-maxPendingRequests =
+pendingRequestsLimit : Int
+pendingRequestsLimit =
     4

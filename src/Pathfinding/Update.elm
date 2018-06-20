@@ -76,22 +76,22 @@ processLinks model pathToArticle article =
 continueSearch : PathfindingModel -> ( Model, Cmd Msg )
 continueSearch model =
     let
-        maxNewRequests =
-            Config.maxPendingRequests - model.pendingRequests
+        maxPathsToRemove =
+            Config.pendingRequestsLimit - model.pendingRequests
 
-        ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.paths maxNewRequests
+        ( pathsToExplore, updatedPriorityQueue ) =
+            PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
 
         updatedModel =
             { model | paths = updatedPriorityQueue }
 
         areNoPathsAvailable =
-            List.isEmpty highestPriorityPaths && model.pendingRequests == 0
+            List.isEmpty pathsToExplore && model.pendingRequests == 0
     in
         if areNoPathsAvailable then
-            pathNotFoundError model
+            pathNotFoundError updatedModel
         else
-            explorePaths updatedModel highestPriorityPaths
+            explorePaths updatedModel pathsToExplore
 
 
 explorePaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
@@ -110,8 +110,11 @@ fetchNextArticles model pathsToFollow =
         requests =
             List.map fetchNextArticle pathsToFollow
 
+        requestCount =
+            List.length requests
+
         updatedModel =
-            incrementRequests model (List.length requests)
+            incrementRequests model requestCount
     in
         if hasMadeTooManyRequests updatedModel then
             tooManyRequestsError updatedModel
@@ -150,7 +153,7 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > Config.maxTotalRequests
+    totalRequests > Config.totalRequestsLimit
 
 
 destinationReached : Path -> ( Model, Cmd Msg )
