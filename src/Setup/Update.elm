@@ -1,7 +1,6 @@
 module Setup.Update exposing (update)
 
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Common.Article.Model exposing (RemoteArticle)
 import Common.Title.Model as Title exposing (Title, RemoteTitlePair)
 import Model exposing (Model)
 import Messages exposing (Msg)
