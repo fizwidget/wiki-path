@@ -10024,8 +10024,20 @@ var _fizwidget$wiki_path$Common_Title_Decoder$randomTitlesResponse = A2(
 	_elm_lang$core$Json_Decode$list(
 		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title_Decoder$title)));
 
-var _fizwidget$wiki_path$Common_Article_Decoder$articleError = function () {
-	var toArticleError = function (errorCode) {
+var _fizwidget$wiki_path$Common_Article_Decoder$error = function () {
+	var errorCode = A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'error',
+			_1: {
+				ctor: '::',
+				_0: 'code',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string);
+	var toError = function (errorCode) {
 		var _p0 = errorCode;
 		switch (_p0) {
 			case 'missingtitle':
@@ -10036,20 +10048,8 @@ var _fizwidget$wiki_path$Common_Article_Decoder$articleError = function () {
 				return _fizwidget$wiki_path$Common_Article_Model$UnknownError(errorCode);
 		}
 	};
-	return A2(_elm_lang$core$Json_Decode$map, toArticleError, _elm_lang$core$Json_Decode$string);
+	return A2(_elm_lang$core$Json_Decode$map, toError, errorCode);
 }();
-var _fizwidget$wiki_path$Common_Article_Decoder$error = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'error',
-		_1: {
-			ctor: '::',
-			_0: 'code',
-			_1: {ctor: '[]'}
-		}
-	},
-	_fizwidget$wiki_path$Common_Article_Decoder$articleError);
 var _fizwidget$wiki_path$Common_Article_Decoder$namespace = function () {
 	var toNamespace = function (namespaceId) {
 		return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace : _fizwidget$wiki_path$Common_Article_Model$NonArticleNamespace;
@@ -18204,96 +18204,14 @@ var _fizwidget$wiki_path$Pathfinding_Util$discardLowPriorityPaths = function (pa
 	return A2(
 		_elm_lang$core$List$take,
 		2,
-		_elm_lang$core$List$reverse(
-			A2(_elm_lang$core$List$sortBy, _fizwidget$wiki_path$Common_Path_Model$priority, paths)));
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p0) {
+				return _elm_lang$core$Basics$negate(
+					_fizwidget$wiki_path$Common_Path_Model$priority(_p0));
+			},
+			paths));
 };
-var _fizwidget$wiki_path$Pathfinding_Util$isInteresting = function (link) {
-	var isInArticleNamespace = function () {
-		var _p0 = link.namespace;
-		if (_p0.ctor === 'ArticleNamespace') {
-			return true;
-		} else {
-			return false;
-		}
-	}();
-	var titleValue = _fizwidget$wiki_path$Common_Title_Model$value(link.title);
-	var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$String$length(titleValue),
-		1) > 0;
-	var ignoredPrefixes = {
-		ctor: '::',
-		_0: 'ISBN',
-		_1: {
-			ctor: '::',
-			_0: 'International Standard Book Number',
-			_1: {
-				ctor: '::',
-				_0: 'Digital object identifier',
-				_1: {
-					ctor: '::',
-					_0: 'International Standard Serial Number',
-					_1: {
-						ctor: '::',
-						_0: 'PubMed',
-						_1: {
-							ctor: '::',
-							_0: 'JSTOR',
-							_1: {
-								ctor: '::',
-								_0: 'Bibcode',
-								_1: {
-									ctor: '::',
-									_0: 'Wayback Machine',
-									_1: {
-										ctor: '::',
-										_0: 'Virtual International Authority File',
-										_1: {
-											ctor: '::',
-											_0: 'Integrated Authority File',
-											_1: {
-												ctor: '::',
-												_0: 'Geographic coordinate system',
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	};
-	var hasIgnoredPrefix = A2(
-		_elm_lang$core$List$any,
-		function (prefix) {
-			return A2(_elm_lang$core$String$startsWith, prefix, titleValue);
-		},
-		ignoredPrefixes);
-	return link.doesExist && (isInArticleNamespace && (hasMinimumLength && (!hasIgnoredPrefix)));
-};
-var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
-	function (visitedTitles, newPaths) {
-		return A3(
-			_elm_lang$core$List$foldl,
-			_elm_lang$core$Set$insert,
-			visitedTitles,
-			A2(
-				_elm_lang$core$List$map,
-				function (_p1) {
-					return _fizwidget$wiki_path$Common_Title_Model$value(
-						_fizwidget$wiki_path$Common_Path_Model$nextStop(_p1));
-				},
-				newPaths));
-	});
-var _fizwidget$wiki_path$Pathfinding_Util$isUnvisited = F2(
-	function (visitedTitles, link) {
-		return !A2(
-			_elm_lang$core$Set$member,
-			_fizwidget$wiki_path$Common_Title_Model$value(link.title),
-			visitedTitles);
-	});
 var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
 	function (content, target) {
 		var occurencePattern = _elm_lang$core$Regex$caseInsensitive(
@@ -18310,7 +18228,7 @@ var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
 	});
 var _fizwidget$wiki_path$Pathfinding_Util$heuristic = F2(
 	function (destination, title) {
-		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 1000 : _elm_lang$core$Basics$toFloat(
+		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 10000 : _elm_lang$core$Basics$toFloat(
 			A2(
 				_fizwidget$wiki_path$Pathfinding_Util$countOccurences,
 				destination.content,
@@ -18328,9 +18246,81 @@ var _fizwidget$wiki_path$Pathfinding_Util$extendPath = F3(
 			link.title,
 			A3(_fizwidget$wiki_path$Pathfinding_Util$calculatePriority, destination, currentPath, link.title));
 	});
+var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
+	function (visitedTitles, newPaths) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			_elm_lang$core$Set$insert,
+			visitedTitles,
+			A2(
+				_elm_lang$core$List$map,
+				function (_p1) {
+					return _fizwidget$wiki_path$Common_Title_Model$value(
+						_fizwidget$wiki_path$Common_Path_Model$nextStop(_p1));
+				},
+				newPaths));
+	});
+var _fizwidget$wiki_path$Pathfinding_Util$isCandidate = F2(
+	function (visitedTitles, link) {
+		var isRegularArticle = _elm_lang$core$Native_Utils.eq(link.namespace, _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace);
+		var title = _fizwidget$wiki_path$Common_Title_Model$value(link.title);
+		var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$String$length(title),
+			1) > 0;
+		var isVisited = A2(_elm_lang$core$Set$member, title, visitedTitles);
+		var isBlacklisted = A2(
+			_elm_lang$core$List$member,
+			title,
+			{
+				ctor: '::',
+				_0: 'ISBN',
+				_1: {
+					ctor: '::',
+					_0: 'International Standard Book Number',
+					_1: {
+						ctor: '::',
+						_0: 'International Standard Serial Number',
+						_1: {
+							ctor: '::',
+							_0: 'Digital object identifier',
+							_1: {
+								ctor: '::',
+								_0: 'PubMed',
+								_1: {
+									ctor: '::',
+									_0: 'JSTOR',
+									_1: {
+										ctor: '::',
+										_0: 'Bibcode',
+										_1: {
+											ctor: '::',
+											_0: 'Wayback Machine',
+											_1: {
+												ctor: '::',
+												_0: 'Virtual International Authority File',
+												_1: {
+													ctor: '::',
+													_0: 'Integrated Authority File',
+													_1: {
+														ctor: '::',
+														_0: 'Geographic coordinate system',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+		return link.doesExist && (hasMinimumLength && (isRegularArticle && ((!isVisited) && (!isBlacklisted))));
+	});
 
-var _fizwidget$wiki_path$Pathfinding_Constants$maxPendingRequests = 4;
-var _fizwidget$wiki_path$Pathfinding_Constants$maxTotalRequests = 400;
+var _fizwidget$wiki_path$Pathfinding_Config$maxPendingRequests = 4;
+var _fizwidget$wiki_path$Pathfinding_Config$maxTotalRequests = 400;
 
 var _fizwidget$wiki_path$Pathfinding_Update$incrementRequests = F2(
 	function (model, requestCount) {
@@ -18343,14 +18333,23 @@ var _fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests = function 
 		model,
 		{pendingRequests: model.pendingRequests - 1});
 };
-var _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests = function (_p0) {
+var _fizwidget$wiki_path$Pathfinding_Update$pathNotFoundError = function (_p0) {
 	var _p1 = _p0;
-	return _elm_lang$core$Native_Utils.cmp(_p1.totalRequests, _fizwidget$wiki_path$Pathfinding_Constants$maxTotalRequests) > 0;
+	return A2(_fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError, _p1.source, _p1.destination);
+};
+var _fizwidget$wiki_path$Pathfinding_Update$tooManyRequestsError = function (_p2) {
+	var _p3 = _p2;
+	return A2(_fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError, _p3.source, _p3.destination);
+};
+var _fizwidget$wiki_path$Pathfinding_Update$pathFound = _fizwidget$wiki_path$Finished_Init$initWithPath;
+var _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests = function (_p4) {
+	var _p5 = _p4;
+	return _elm_lang$core$Native_Utils.cmp(_p5.totalRequests, _fizwidget$wiki_path$Pathfinding_Config$maxTotalRequests) > 0;
 };
 var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
-	function (_p2, nextArticle) {
-		var _p3 = _p2;
-		return _elm_lang$core$Native_Utils.eq(nextArticle.title, _p3.destination.title);
+	function (_p6, nextArticle) {
+		var _p7 = _p6;
+		return _elm_lang$core$Native_Utils.eq(nextArticle.title, _p7.destination.title);
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination = F2(
 	function (destination, paths) {
@@ -18370,11 +18369,13 @@ var _fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination = F2(
 					paths)));
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (pathToFollow) {
-	var title = _fizwidget$wiki_path$Common_Title_Model$value(
-		_fizwidget$wiki_path$Common_Path_Model$nextStop(pathToFollow));
-	var toMsg = function (_p4) {
+	var title = function (_p8) {
+		return _fizwidget$wiki_path$Common_Title_Model$value(
+			_fizwidget$wiki_path$Common_Path_Model$nextStop(_p8));
+	}(pathToFollow);
+	var toMsg = function (_p9) {
 		return _fizwidget$wiki_path$Messages$Pathfinding(
-			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathToFollow, _p4));
+			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathToFollow, _p9));
 	};
 	return A2(_fizwidget$wiki_path$Pathfinding_Fetch$article, toMsg, title);
 };
@@ -18385,7 +18386,7 @@ var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles = F2(
 			_fizwidget$wiki_path$Pathfinding_Update$incrementRequests,
 			model,
 			_elm_lang$core$List$length(requests));
-		return {
+		return _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests(updatedModel) ? _fizwidget$wiki_path$Pathfinding_Update$tooManyRequestsError(updatedModel) : {
 			ctor: '_Tuple2',
 			_0: _fizwidget$wiki_path$Model$Pathfinding(updatedModel),
 			_1: _elm_lang$core$Platform_Cmd$batch(requests)
@@ -18393,23 +18394,23 @@ var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles = F2(
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$followPaths = F2(
 	function (model, paths) {
-		var _p5 = A2(_fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination, model.destination, paths);
-		if (_p5.ctor === 'Just') {
-			return _fizwidget$wiki_path$Finished_Init$initWithPath(_p5._0);
+		var _p10 = A2(_fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination, model.destination, paths);
+		if (_p10.ctor === 'Just') {
+			return _fizwidget$wiki_path$Pathfinding_Update$pathFound(_p10._0);
 		} else {
 			return A2(_fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles, model, paths);
 		}
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$followHighestPriorityPaths = function (model) {
-	var maxPathsToRemove = _fizwidget$wiki_path$Pathfinding_Constants$maxPendingRequests - model.pendingRequests;
-	var _p6 = A2(_fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriorities, model.paths, maxPathsToRemove);
-	var highestPriorityPaths = _p6._0;
-	var updatedPriorityQueue = _p6._1;
+	var maxPathsToRemove = _fizwidget$wiki_path$Pathfinding_Config$maxPendingRequests - model.pendingRequests;
+	var _p11 = A2(_fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriorities, model.paths, maxPathsToRemove);
+	var highestPriorityPaths = _p11._0;
+	var updatedPriorityQueue = _p11._1;
 	var updatedModel = _elm_lang$core$Native_Utils.update(
 		model,
 		{paths: updatedPriorityQueue});
 	var hasPathfindingFailed = _elm_lang$core$List$isEmpty(highestPriorityPaths) && _elm_lang$core$Native_Utils.eq(model.pendingRequests, 0);
-	return hasPathfindingFailed ? A2(_fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError, model.source, model.destination) : A2(_fizwidget$wiki_path$Pathfinding_Update$followPaths, updatedModel, highestPriorityPaths);
+	return hasPathfindingFailed ? _fizwidget$wiki_path$Pathfinding_Update$pathNotFoundError(model) : A2(_fizwidget$wiki_path$Pathfinding_Update$followPaths, updatedModel, highestPriorityPaths);
 };
 var _fizwidget$wiki_path$Pathfinding_Update$updateWithError = F2(
 	function (model, error) {
@@ -18424,8 +18425,8 @@ var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
 	function (model, pathToArticle, article) {
 		var candidateLinks = A2(
 			_elm_lang$core$List$filter,
-			_fizwidget$wiki_path$Pathfinding_Util$isUnvisited(model.visitedTitles),
-			A2(_elm_lang$core$List$filter, _fizwidget$wiki_path$Pathfinding_Util$isInteresting, article.links));
+			_fizwidget$wiki_path$Pathfinding_Util$isCandidate(model.visitedTitles),
+			article.links);
 		var newPaths = _fizwidget$wiki_path$Pathfinding_Util$discardLowPriorityPaths(
 			A2(
 				_elm_lang$core$List$map,
@@ -18441,23 +18442,23 @@ var _fizwidget$wiki_path$Pathfinding_Update$updateWithArticle = F3(
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$updateWithResponse = F3(
 	function (model, pathToArticle, articleResult) {
-		var _p7 = articleResult;
-		if (_p7.ctor === 'Ok') {
-			var _p8 = _p7._0;
-			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, model, _p8) ? _fizwidget$wiki_path$Finished_Init$initWithPath(pathToArticle) : (_fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests(model) ? A2(_fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError, model.source, model.destination) : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, pathToArticle, _p8));
+		var _p12 = articleResult;
+		if (_p12.ctor === 'Ok') {
+			var _p13 = _p12._0;
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, model, _p13) ? _fizwidget$wiki_path$Pathfinding_Update$pathFound(pathToArticle) : A3(_fizwidget$wiki_path$Pathfinding_Update$updateWithArticle, model, pathToArticle, _p13);
 		} else {
-			return A2(_fizwidget$wiki_path$Pathfinding_Update$updateWithError, model, _p7._0);
+			return A2(_fizwidget$wiki_path$Pathfinding_Update$updateWithError, model, _p12._0);
 		}
 	});
 var _fizwidget$wiki_path$Pathfinding_Update$update = F2(
 	function (message, model) {
-		var _p9 = message;
-		if (_p9.ctor === 'FetchArticleResponse') {
+		var _p14 = message;
+		if (_p14.ctor === 'FetchArticleResponse') {
 			return A3(
 				_fizwidget$wiki_path$Pathfinding_Update$updateWithResponse,
 				_fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests(model),
-				_p9._0,
-				_p9._1);
+				_p14._0,
+				_p14._1);
 		} else {
 			return A2(_fizwidget$wiki_path$Setup_Init$initWithTitles, model.source.title, model.destination.title);
 		}
@@ -18548,18 +18549,6 @@ var _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding = function (model) {
 		};
 	}
 };
-var _fizwidget$wiki_path$Setup_Update$setDestinationArticle = F2(
-	function (model, destination) {
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{destination: destination});
-	});
-var _fizwidget$wiki_path$Setup_Update$setSourceArticle = F2(
-	function (model, source) {
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{source: source});
-	});
 var _fizwidget$wiki_path$Setup_Update$fetchArticles = function (model) {
 	var requests = {
 		ctor: '::',
@@ -18620,10 +18609,14 @@ var _fizwidget$wiki_path$Setup_Update$update = F2(
 				return _fizwidget$wiki_path$Setup_Update$fetchArticles(model);
 			case 'FetchSourceArticleResponse':
 				return _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding(
-					A2(_fizwidget$wiki_path$Setup_Update$setSourceArticle, model, _p3._0));
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{source: _p3._0}));
 			default:
 				return _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding(
-					A2(_fizwidget$wiki_path$Setup_Update$setDestinationArticle, model, _p3._0));
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{destination: _p3._0}));
 		}
 	});
 
@@ -19893,7 +19886,7 @@ var _fizwidget$wiki_path$Pathfinding_View$pathsView = function (paths) {
 			_fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority(paths)));
 };
 var _fizwidget$wiki_path$Pathfinding_View$pathCountWarning = function (totalRequests) {
-	return (_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Pathfinding_Constants$maxTotalRequests / 2) | 0) > 0) ? A2(
+	return (_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Pathfinding_Config$maxTotalRequests / 2) | 0) > 0) ? A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{ctor: '[]'},
 		{
