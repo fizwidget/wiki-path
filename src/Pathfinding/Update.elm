@@ -91,11 +91,11 @@ continueSearch model =
         if areNoPathsAvailable then
             pathNotFoundError model
         else
-            followPaths updatedModel highestPriorityPaths
+            explorePaths updatedModel highestPriorityPaths
 
 
-followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
-followPaths model paths =
+explorePaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
+explorePaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
             onPathFound pathToDestination
