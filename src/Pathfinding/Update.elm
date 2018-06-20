@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update, updateWithResponse)
+module Pathfinding.Update exposing (update, onArticleReceived)
 
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
@@ -20,7 +20,7 @@ update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         FetchArticleResponse pathToArticle articleResult ->
-            updateWithResponse
+            onResponseReceived
                 (decrementPendingRequests model)
                 pathToArticle
                 articleResult
@@ -31,21 +31,33 @@ update message model =
                 model.destination.title
 
 
-updateWithResponse : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
-updateWithResponse model pathToArticle articleResult =
+onResponseReceived : PathfindingModel -> Path -> ArticleResult -> ( Model, Cmd Msg )
+onResponseReceived model pathToArticle articleResult =
     case articleResult of
         Ok article ->
-            if hasReachedDestination model article then
-                pathFound pathToArticle
-            else
-                updateWithArticle model pathToArticle article
+            onArticleReceived model pathToArticle article
 
         Err error ->
-            updateWithError model error
+            onErrorReceived model error
 
 
-updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
-updateWithArticle model pathToArticle article =
+onArticleReceived : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
+onArticleReceived model pathToArticle article =
+    if hasReachedDestination model article then
+        onPathFound pathToArticle
+    else
+        processLinks model pathToArticle article
+            |> continueSearch
+
+
+onErrorReceived : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
+onErrorReceived model error =
+    { model | errors = error :: model.errors }
+        |> continueSearch
+
+
+processLinks : PathfindingModel -> Path -> Article -> PathfindingModel
+processLinks model pathToArticle article =
     let
         candidateLinks =
             List.filter (Util.isCandidate model.visitedTitles) article.links
@@ -54,41 +66,29 @@ updateWithArticle model pathToArticle article =
             candidateLinks
                 |> List.map (Util.extendPath pathToArticle model.destination)
                 |> Util.discardLowPriorityPaths
-
-        updatedModel =
-            { model
-                | paths = PriorityQueue.insert model.paths Path.priority newPaths
-                , visitedTitles = Util.markVisited model.visitedTitles newPaths
-            }
     in
-        followHighestPriorityPaths updatedModel
+        { model
+            | paths = PriorityQueue.insert model.paths Path.priority newPaths
+            , visitedTitles = Util.markVisited model.visitedTitles newPaths
+        }
 
 
-updateWithError : PathfindingModel -> ArticleError -> ( Model, Cmd Msg )
-updateWithError model error =
+continueSearch : PathfindingModel -> ( Model, Cmd Msg )
+continueSearch model =
     let
-        updatedModel =
-            { model | errors = error :: model.errors }
-    in
-        followHighestPriorityPaths updatedModel
-
-
-followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
-followHighestPriorityPaths model =
-    let
-        maxPathsToRemove =
+        maxNewRequests =
             Config.maxPendingRequests - model.pendingRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
+            PriorityQueue.removeHighestPriorities model.paths maxNewRequests
 
         updatedModel =
             { model | paths = updatedPriorityQueue }
 
-        hasPathfindingFailed =
+        areNoPathsAvailable =
             List.isEmpty highestPriorityPaths && model.pendingRequests == 0
     in
-        if hasPathfindingFailed then
+        if areNoPathsAvailable then
             pathNotFoundError model
         else
             followPaths updatedModel highestPriorityPaths
@@ -98,7 +98,7 @@ followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            pathFound pathToDestination
+            onPathFound pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -153,8 +153,8 @@ hasMadeTooManyRequests { totalRequests } =
     totalRequests > Config.maxTotalRequests
 
 
-pathFound : Path -> ( Model, Cmd Msg )
-pathFound =
+onPathFound : Path -> ( Model, Cmd Msg )
+onPathFound =
     Finished.Init.initWithPath
 
 

@@ -1,6 +1,8 @@
 # TODO
 
 * Backtrack from destination?
+* Figure out how to show pending requests?
+    * This is why pathfinding view is initially blank.
 * Split up Update module?
 * Favour longer string matches, and strings that match links.
 * Improve readability of `Pathfinding.Update` by combining `Path` and `Article` somehow?
