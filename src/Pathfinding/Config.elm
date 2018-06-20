@@ -1,4 +1,4 @@
-module Pathfinding.Constants exposing (maxTotalRequests, maxPendingRequests)
+module Pathfinding.Config exposing (maxTotalRequests, maxPendingRequests)
 
 
 maxTotalRequests : Int

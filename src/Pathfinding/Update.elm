@@ -7,20 +7,23 @@ import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Finished.Init as Finished
+import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
 import Pathfinding.Fetch as Fetch
 import Pathfinding.Util as Util
-import Pathfinding.Constants as Constants
+import Pathfinding.Config as Config
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         FetchArticleResponse pathToArticle articleResult ->
-            updateWithResponse (decrementPendingRequests model) pathToArticle articleResult
+            updateWithResponse
+                (decrementPendingRequests model)
+                pathToArticle
+                articleResult
 
         BackToSetup ->
             Setup.Init.initWithTitles
@@ -33,9 +36,7 @@ updateWithResponse model pathToArticle articleResult =
     case articleResult of
         Ok article ->
             if hasReachedDestination model article then
-                Finished.initWithPath pathToArticle
-            else if hasMadeTooManyRequests model then
-                Finished.initWithTooManyRequestsError model.source model.destination
+                pathFound pathToArticle
             else
                 updateWithArticle model pathToArticle article
 
@@ -47,9 +48,7 @@ updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 updateWithArticle model pathToArticle article =
     let
         candidateLinks =
-            article.links
-                |> List.filter Util.isInteresting
-                |> List.filter (Util.isUnvisited model.visitedTitles)
+            List.filter (Util.isCandidate model.visitedTitles) article.links
 
         newPaths =
             candidateLinks
@@ -78,7 +77,7 @@ followHighestPriorityPaths : PathfindingModel -> ( Model, Cmd Msg )
 followHighestPriorityPaths model =
     let
         maxPathsToRemove =
-            Constants.maxPendingRequests - model.pendingRequests
+            Config.maxPendingRequests - model.pendingRequests
 
         ( highestPriorityPaths, updatedPriorityQueue ) =
             PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
@@ -90,7 +89,7 @@ followHighestPriorityPaths model =
             List.isEmpty highestPriorityPaths && model.pendingRequests == 0
     in
         if hasPathfindingFailed then
-            Finished.initWithPathNotFoundError model.source model.destination
+            pathNotFoundError model
         else
             followPaths updatedModel highestPriorityPaths
 
@@ -99,7 +98,7 @@ followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
 followPaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            Finished.initWithPath pathToDestination
+            pathFound pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -114,7 +113,10 @@ fetchNextArticles model pathsToFollow =
         updatedModel =
             incrementRequests model (List.length requests)
     in
-        ( Model.Pathfinding updatedModel, Cmd.batch requests )
+        if hasMadeTooManyRequests updatedModel then
+            tooManyRequestsError updatedModel
+        else
+            ( Model.Pathfinding updatedModel, Cmd.batch requests )
 
 
 fetchNextArticle : Path -> Cmd Msg
@@ -124,7 +126,7 @@ fetchNextArticle pathToFollow =
             FetchArticleResponse pathToFollow >> Messages.Pathfinding
 
         title =
-            Title.value <| Path.nextStop pathToFollow
+            (Path.nextStop >> Title.value) pathToFollow
     in
         Fetch.article toMsg title
 
@@ -148,7 +150,22 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > Constants.maxTotalRequests
+    totalRequests > Config.maxTotalRequests
+
+
+pathFound : Path -> ( Model, Cmd Msg )
+pathFound =
+    Finished.Init.initWithPath
+
+
+tooManyRequestsError : PathfindingModel -> ( Model, Cmd Msg )
+tooManyRequestsError { source, destination } =
+    Finished.Init.initWithTooManyRequestsError source destination
+
+
+pathNotFoundError : PathfindingModel -> ( Model, Cmd Msg )
+pathNotFoundError { source, destination } =
+    Finished.Init.initWithPathNotFoundError source destination
 
 
 decrementPendingRequests : PathfindingModel -> PathfindingModel
