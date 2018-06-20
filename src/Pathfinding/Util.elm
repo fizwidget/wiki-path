@@ -1,9 +1,8 @@
 module Pathfinding.Util
     exposing
-        ( extendPath
-        , isInteresting
-        , isUnvisited
+        ( isCandidate
         , markVisited
+        , extendPath
         , discardLowPriorityPaths
         )
 
@@ -13,6 +12,50 @@ import Common.Article.Model exposing (Article, Link, Namespace(ArticleNamespace,
 import Common.Title.Model as Title exposing (Title)
 import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
+
+
+isCandidate : Set String -> Link -> Bool
+isCandidate visitedTitles link =
+    let
+        title =
+            Title.value link.title
+
+        hasMinimumLength =
+            String.length title > 1
+
+        isVisited =
+            Set.member title visitedTitles
+
+        isRegularArticle =
+            link.namespace == ArticleNamespace
+
+        isBlacklisted =
+            List.member title
+                [ "ISBN"
+                , "International Standard Book Number"
+                , "International Standard Serial Number"
+                , "Digital object identifier"
+                , "PubMed"
+                , "JSTOR"
+                , "Bibcode"
+                , "Wayback Machine"
+                , "Virtual International Authority File"
+                , "Integrated Authority File"
+                , "Geographic coordinate system"
+                ]
+    in
+        link.doesExist
+            && hasMinimumLength
+            && isRegularArticle
+            && not isVisited
+            && not isBlacklisted
+
+
+markVisited : Set String -> List Path -> Set String
+markVisited visitedTitles newPaths =
+    newPaths
+        |> List.map (Path.nextStop >> Title.value)
+        |> List.foldl Set.insert visitedTitles
 
 
 extendPath : Path -> Article -> Link -> Path
@@ -31,7 +74,7 @@ calculatePriority destination currentPath title =
 heuristic : Article -> Title -> Float
 heuristic destination title =
     if title == destination.title then
-        1000
+        10000
     else
         toFloat <| countOccurences destination.content (Title.value title)
 
@@ -48,65 +91,8 @@ countOccurences content target =
             |> List.length
 
 
-isUnvisited : Set String -> Link -> Bool
-isUnvisited visitedTitles link =
-    Set.member (Title.value link.title) visitedTitles
-        |> not
-
-
-markVisited : Set String -> List Path -> Set String
-markVisited visitedTitles newPaths =
-    newPaths
-        |> List.map (Path.nextStop >> Title.value)
-        |> List.foldl Set.insert visitedTitles
-
-
-isInteresting : Link -> Bool
-isInteresting link =
-    -- We're filtering out these commonly-occuring links because it's kinda
-    -- boring if the majority of paths go via the same links. They wouldn't
-    -- normally be followed when playing the Wikipedia game anyway.
-    let
-        ignoredPrefixes =
-            [ "ISBN"
-            , "International Standard Book Number"
-            , "Digital object identifier"
-            , "International Standard Serial Number"
-            , "PubMed"
-            , "JSTOR"
-            , "Bibcode"
-            , "Wayback Machine"
-            , "Virtual International Authority File"
-            , "Integrated Authority File"
-            , "Geographic coordinate system"
-            ]
-
-        titleValue =
-            Title.value link.title
-
-        hasIgnoredPrefix =
-            List.any (\prefix -> String.startsWith prefix titleValue) ignoredPrefixes
-
-        hasMinimumLength =
-            String.length titleValue > 1
-
-        isInArticleNamespace =
-            case link.namespace of
-                ArticleNamespace ->
-                    True
-
-                NonArticleNamespace ->
-                    False
-    in
-        link.doesExist && isInArticleNamespace && hasMinimumLength && not hasIgnoredPrefix
-
-
 discardLowPriorityPaths : List Path -> List Path
 discardLowPriorityPaths paths =
-    -- This is really just a performance improvement to prevent the
-    -- number of paths we're considering at any one time from increasing
-    -- too rapidly. Articles can have *lots* of links.
     paths
-        |> List.sortBy Path.priority
-        |> List.reverse
+        |> List.sortBy (Path.priority >> negate)
         |> List.take 2

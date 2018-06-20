@@ -47,10 +47,11 @@ updateWithResponse model pathToArticle articleResult =
 updateWithArticle : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 updateWithArticle model pathToArticle article =
     let
+        candidateLinks =
+            List.filter (Util.isCandidate model.visitedTitles) article.links
+
         newPaths =
-            article.links
-                |> List.filter Util.isInteresting
-                |> List.filter (Util.isUnvisited model.visitedTitles)
+            candidateLinks
                 |> List.map (Util.extendPath pathToArticle model.destination)
                 |> Util.discardLowPriorityPaths
 
