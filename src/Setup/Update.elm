@@ -30,11 +30,11 @@ update message model =
             fetchArticles model
 
         FetchSourceArticleResponse article ->
-            setSourceArticle model article
+            { model | source = article }
                 |> maybeBeginPathfinding
 
         FetchDestinationArticleResponse article ->
-            setDestinationArticle model article
+            { model | destination = article }
                 |> maybeBeginPathfinding
 
 
@@ -76,16 +76,6 @@ fetchArticles model =
             |> Cmd.batch
             |> Cmd.map Messages.Setup
         )
-
-
-setSourceArticle : SetupModel -> RemoteArticle -> SetupModel
-setSourceArticle model source =
-    { model | source = source }
-
-
-setDestinationArticle : SetupModel -> RemoteArticle -> SetupModel
-setDestinationArticle model destination =
-    { model | destination = destination }
 
 
 maybeBeginPathfinding : SetupModel -> ( Model, Cmd Msg )
