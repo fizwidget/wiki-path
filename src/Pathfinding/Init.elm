@@ -2,6 +2,7 @@ module Pathfinding.Init exposing (init)
 
 import Set exposing (Set)
 import Common.Article.Model exposing (Article)
+import Common.Title.Model as Title
 import Common.PriorityQueue.Model as PriorityQueue
 import Common.Path.Model as Path
 import Model exposing (Model(Pathfinding))
@@ -23,7 +24,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , paths = PriorityQueue.empty
-    , visitedTitles = Set.empty
+    , visitedTitles = Set.singleton (Title.value source.title)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
