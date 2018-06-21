@@ -44,7 +44,7 @@ onResponseReceived model pathToArticle articleResult =
 onArticleReceived : PathfindingModel -> Path -> Article -> ( Model, Cmd Msg )
 onArticleReceived model pathToArticle article =
     if hasReachedDestination model article then
-        onPathFound pathToArticle
+        destinationReached pathToArticle
     else
         processLinks model pathToArticle article
             |> continueSearch
@@ -76,29 +76,29 @@ processLinks model pathToArticle article =
 continueSearch : PathfindingModel -> ( Model, Cmd Msg )
 continueSearch model =
     let
-        maxNewRequests =
-            Config.maxPendingRequests - model.pendingRequests
+        maxPathsToRemove =
+            Config.pendingRequestsLimit - model.pendingRequests
 
-        ( highestPriorityPaths, updatedPriorityQueue ) =
-            PriorityQueue.removeHighestPriorities model.paths maxNewRequests
+        ( pathsToExplore, updatedPriorityQueue ) =
+            PriorityQueue.removeHighestPriorities model.paths maxPathsToRemove
 
         updatedModel =
             { model | paths = updatedPriorityQueue }
 
         areNoPathsAvailable =
-            List.isEmpty highestPriorityPaths && model.pendingRequests == 0
+            List.isEmpty pathsToExplore && model.pendingRequests == 0
     in
         if areNoPathsAvailable then
-            pathNotFoundError model
+            pathNotFoundError updatedModel
         else
-            followPaths updatedModel highestPriorityPaths
+            explorePaths updatedModel pathsToExplore
 
 
-followPaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
-followPaths model paths =
+explorePaths : PathfindingModel -> List Path -> ( Model, Cmd Msg )
+explorePaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            onPathFound pathToDestination
+            destinationReached pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -110,8 +110,11 @@ fetchNextArticles model pathsToFollow =
         requests =
             List.map fetchNextArticle pathsToFollow
 
+        requestCount =
+            List.length requests
+
         updatedModel =
-            incrementRequests model (List.length requests)
+            incrementRequests model requestCount
     in
         if hasMadeTooManyRequests updatedModel then
             tooManyRequestsError updatedModel
@@ -150,11 +153,11 @@ hasReachedDestination { destination } nextArticle =
 
 hasMadeTooManyRequests : PathfindingModel -> Bool
 hasMadeTooManyRequests { totalRequests } =
-    totalRequests > Config.maxTotalRequests
+    totalRequests > Config.totalRequestsLimit
 
 
-onPathFound : Path -> ( Model, Cmd Msg )
-onPathFound =
+destinationReached : Path -> ( Model, Cmd Msg )
+destinationReached =
     Finished.Init.initWithPath
 
 

@@ -76,7 +76,7 @@ destinationContentWarning destination =
 
 pathCountWarning : Int -> Html msg
 pathCountWarning totalRequests =
-    if totalRequests > Config.maxTotalRequests // 2 then
+    if totalRequests > Config.totalRequestsLimit // 2 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
         text ""

@@ -115,10 +115,10 @@ setRandomTitles model randomTitles =
 
 
 setTitleInputs : SetupModel -> ( Title, Title ) -> SetupModel
-setTitleInputs model ( titleA, titleB ) =
+setTitleInputs model ( source, destination ) =
     { model
         | source = NotAsked
-        , sourceTitleInput = Title.value titleA
         , destination = NotAsked
-        , destinationTitleInput = Title.value titleB
+        , sourceTitleInput = Title.value source
+        , destinationTitleInput = Title.value destination
     }
