@@ -1,31 +1,15 @@
-module Setup.Fetch exposing (article, randomTitlePair)
+module Common.Title.Fetch exposing (titlePair)
 
 import RemoteData exposing (WebData)
-import Common.Article.Model exposing (ArticleResult, RemoteArticle, ArticleError(HttpError))
-import Common.Article.Api as ArticleApi
 import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(HttpError, UnexpectedTitleCount))
 import Common.Title.Api as TitleApi
 
 
-article : (RemoteArticle -> msg) -> String -> Cmd msg
-article toMsg title =
-    ArticleApi.buildRequest title
-        |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticle >> toMsg)
-
-
-randomTitlePair : (RemoteTitlePair -> msg) -> Cmd msg
-randomTitlePair toMsg =
+titlePair : (RemoteTitlePair -> msg) -> Cmd msg
+titlePair toMsg =
     TitleApi.buildRandomTitleRequest 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteTitlePair >> toMsg)
-
-
-toRemoteArticle : WebData ArticleResult -> RemoteArticle
-toRemoteArticle webData =
-    webData
-        |> RemoteData.mapError Common.Article.Model.HttpError
-        |> RemoteData.andThen RemoteData.fromResult
 
 
 toRemoteTitlePair : WebData (List Title) -> RemoteTitlePair

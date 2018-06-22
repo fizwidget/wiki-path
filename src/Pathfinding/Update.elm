@@ -2,6 +2,7 @@ module Pathfinding.Update exposing (update, onArticleReceived)
 
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
+import Common.Article.Fetch as Fetch
 import Common.Title.Model as Title exposing (Title)
 import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
@@ -11,7 +12,6 @@ import Finished.Init
 import Setup.Init
 import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Pathfinding.Model exposing (PathfindingModel)
-import Pathfinding.Fetch as Fetch
 import Pathfinding.Util as Util
 import Pathfinding.Config as Config
 
@@ -131,7 +131,7 @@ fetchNextArticle pathToFollow =
         title =
             (Path.nextStop >> Title.value) pathToFollow
     in
-        Fetch.article toMsg title
+        Fetch.articleResult toMsg title
 
 
 containsPathToDestination : Article -> List Path -> Maybe Path
