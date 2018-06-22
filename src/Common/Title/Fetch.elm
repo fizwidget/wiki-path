@@ -2,12 +2,12 @@ module Common.Title.Fetch exposing (titlePair)
 
 import RemoteData exposing (WebData)
 import Common.Title.Model exposing (Title, RemoteTitlePair, TitleError(HttpError, UnexpectedTitleCount))
-import Common.Title.Api as TitleApi
+import Common.Title.Api as Api
 
 
 titlePair : (RemoteTitlePair -> msg) -> Cmd msg
 titlePair toMsg =
-    TitleApi.buildRandomTitleRequest 2
+    Api.buildRandomTitleRequest 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteTitlePair >> toMsg)
 
@@ -24,5 +24,5 @@ toRemoteTitlePair remoteTitles =
                     RemoteData.Failure UnexpectedTitleCount
     in
         remoteTitles
-            |> RemoteData.mapError Common.Title.Model.HttpError
+            |> RemoteData.mapError HttpError
             |> RemoteData.andThen toPair

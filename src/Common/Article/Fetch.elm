@@ -29,5 +29,5 @@ toArticleResult result =
 toRemoteArticle : WebData ArticleResult -> RemoteArticle
 toRemoteArticle webData =
     webData
-        |> RemoteData.mapError Common.Article.Model.HttpError
+        |> RemoteData.mapError HttpError
         |> RemoteData.andThen RemoteData.fromResult
