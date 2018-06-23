@@ -104,22 +104,22 @@ setRandomTitles model randomTitles =
     let
         updatedModel =
             { model | randomTitles = randomTitles }
-
-        updatedModelWithInputsSet =
-            randomTitles
-                |> RemoteData.map (setTitleInputs updatedModel)
-                |> RemoteData.withDefault updatedModel
+                |> copyRandomTitlesToInputFields
     in
-        ( Model.Setup updatedModelWithInputsSet
-        , Cmd.none
-        )
+        ( Model.Setup updatedModel, Cmd.none )
 
 
-setTitleInputs : SetupModel -> ( Title, Title ) -> SetupModel
-setTitleInputs model ( source, destination ) =
-    { model
-        | source = NotAsked
-        , destination = NotAsked
-        , sourceTitleInput = Title.value source
-        , destinationTitleInput = Title.value destination
-    }
+copyRandomTitlesToInputFields : SetupModel -> SetupModel
+copyRandomTitlesToInputFields model =
+    let
+        setInputFields ( source, destination ) =
+            { model
+                | source = NotAsked
+                , destination = NotAsked
+                , sourceTitleInput = Title.value source
+                , destinationTitleInput = Title.value destination
+            }
+    in
+        model.randomTitles
+            |> RemoteData.map setInputFields
+            |> RemoteData.withDefault model
