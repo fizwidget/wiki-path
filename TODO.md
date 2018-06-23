@@ -1,5 +1,14 @@
 # TODO
 
+* Revamp pathfinding view:
+    * Display list of visited titles.
+    * Fade in the top ones.
+    * Should look much less jarring?
+
+* Phantom types:
+    * For complete/incomplete paths?
+    * Canonical/non-canonical titles?
+
 * Backtrack from destination?
 * Figure out how to show pending requests?
     * This is why pathfinding view is initially blank.
