@@ -15,6 +15,9 @@
     * Canonical/non-canonical titles?
 
 ## Pathfinding
+* Use this query API to get link info for pathfinding?
+    * `api.php?action=query&generator=links&titles=Main%20Page&prop=info`
+    * https://en.wikipedia.org/w/api.php?action=help&modules=query%2Blinks
 * Backtrack from destination?
 * Favour longer string matches, and strings that match links.
 * Experiment with penalising longer paths.
