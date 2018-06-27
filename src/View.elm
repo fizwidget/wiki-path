@@ -5,9 +5,9 @@ import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Setup.View
-import Pathfinding.View
-import Finished.View
+import Setup.View as Setup
+import Pathfinding.View as Pathfinding
+import Finished.View as Finished
 
 
 view : Model -> Html Msg
@@ -45,13 +45,13 @@ viewModel : Model -> Html Msg
 viewModel model =
     case model of
         Model.Setup subModel ->
-            Setup.View.view subModel
+            Setup.view subModel
                 |> Html.map Messages.Setup
 
         Model.Pathfinding subModel ->
-            Pathfinding.View.view subModel
+            Pathfinding.view subModel
                 |> Html.map Messages.Pathfinding
 
         Model.Finished subModel ->
-            Finished.View.view subModel
+            Finished.view subModel
                 |> Html.map Messages.Finished
