@@ -5,9 +5,9 @@ import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Setup.View as Setup
-import Pathfinding.View as Pathfinding
-import Finished.View as Finished
+import Page.Setup.View as Setup
+import Page.Pathfinding.View as Pathfinding
+import Page.Finished.View as Finished
 
 
 view : Model -> Html Msg
