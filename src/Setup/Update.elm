@@ -15,19 +15,28 @@ update : SetupMsg -> SetupModel -> ( Model, Cmd Msg )
 update message model =
     case message of
         SourceArticleTitleChange value ->
-            setSourceTitle model value
+            { model | sourceTitleInput = value, source = NotAsked }
+                |> noMsg
+                |> inSetupPage
 
         DestinationArticleTitleChange value ->
-            setDestinationTitle model value
+            { model | destinationTitleInput = value, destination = NotAsked }
+                |> noMsg
+                |> inSetupPage
 
         FetchRandomTitlesRequest ->
-            fetchRandomTitles model
+            ( { model | randomTitles = Loading }, Fetch.titlePair FetchRandomTitlesResponse )
+                |> inSetupPage
 
-        FetchRandomTitlesResponse titles ->
-            setRandomTitles model titles
+        FetchRandomTitlesResponse response ->
+            { model | randomTitles = response }
+                |> randomizeInputFields
+                |> noMsg
+                |> inSetupPage
 
         FetchArticlesRequest ->
-            fetchArticles model
+            ( { model | source = Loading, destination = Loading }, fetchArticles model )
+                |> inSetupPage
 
         FetchSourceArticleResponse article ->
             { model | source = article }
@@ -38,44 +47,12 @@ update message model =
                 |> maybeBeginPathfinding
 
 
-setSourceTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
-setSourceTitle model sourceTitleInput =
-    ( Model.Setup
-        { model
-            | source = NotAsked
-            , sourceTitleInput = sourceTitleInput
-        }
-    , Cmd.none
-    )
-
-
-setDestinationTitle : SetupModel -> UserInput -> ( Model, Cmd Msg )
-setDestinationTitle model destinationTitleInput =
-    ( Model.Setup
-        { model
-            | destination = NotAsked
-            , destinationTitleInput = destinationTitleInput
-        }
-    , Cmd.none
-    )
-
-
-fetchArticles : SetupModel -> ( Model, Cmd Msg )
+fetchArticles : SetupModel -> Cmd SetupMsg
 fetchArticles model =
-    let
-        updatedModel =
-            { model | source = Loading, destination = Loading }
-
-        requests =
-            [ Fetch.remoteArticle FetchSourceArticleResponse model.sourceTitleInput
-            , Fetch.remoteArticle FetchDestinationArticleResponse model.destinationTitleInput
-            ]
-    in
-        ( Model.Setup updatedModel
-        , requests
-            |> Cmd.batch
-            |> Cmd.map Messages.Setup
-        )
+    Cmd.batch <|
+        [ Fetch.remoteArticle FetchSourceArticleResponse model.sourceTitleInput
+        , Fetch.remoteArticle FetchDestinationArticleResponse model.destinationTitleInput
+        ]
 
 
 maybeBeginPathfinding : SetupModel -> ( Model, Cmd Msg )
@@ -89,28 +66,11 @@ maybeBeginPathfinding model =
                 Pathfinding.Init.init source destination
 
             Nothing ->
-                ( Model.Setup model, Cmd.none )
+                model |> noMsg |> inSetupPage
 
 
-fetchRandomTitles : SetupModel -> ( Model, Cmd Msg )
-fetchRandomTitles model =
-    ( Model.Setup { model | randomTitles = Loading }
-    , Fetch.titlePair FetchRandomTitlesResponse |> Cmd.map Messages.Setup
-    )
-
-
-setRandomTitles : SetupModel -> RemoteTitlePair -> ( Model, Cmd Msg )
-setRandomTitles model randomTitles =
-    let
-        updatedModel =
-            { model | randomTitles = randomTitles }
-                |> copyRandomTitlesToInputFields
-    in
-        ( Model.Setup updatedModel, Cmd.none )
-
-
-copyRandomTitlesToInputFields : SetupModel -> SetupModel
-copyRandomTitlesToInputFields model =
+randomizeInputFields : SetupModel -> SetupModel
+randomizeInputFields model =
     let
         setInputFields ( source, destination ) =
             { model
@@ -123,3 +83,13 @@ copyRandomTitlesToInputFields model =
         model.randomTitles
             |> RemoteData.map setInputFields
             |> RemoteData.withDefault model
+
+
+noMsg : SetupModel -> ( SetupModel, Cmd SetupMsg )
+noMsg model =
+    ( model, Cmd.none )
+
+
+inSetupPage : ( SetupModel, Cmd SetupMsg ) -> ( Model, Cmd Msg )
+inSetupPage ( model, cmd ) =
+    ( Model.Setup model, Cmd.map Messages.Setup cmd )
