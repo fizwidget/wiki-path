@@ -1,10 +1,10 @@
-module Setup.Init exposing (init, initWithTitles)
+module Page.Setup.Init exposing (init, initWithTitles)
 
 import RemoteData exposing (RemoteData(NotAsked))
 import Common.Title.Model as Title exposing (Title)
 import Model exposing (Model(Setup))
 import Messages exposing (Msg)
-import Setup.Model exposing (SetupModel)
+import Page.Setup.Model exposing (SetupModel)
 
 
 init : ( Model, Cmd Msg )

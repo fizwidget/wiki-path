@@ -1,20 +1,20 @@
-module Finished.Update exposing (update)
+module Page.Finished.Update exposing (update)
 
-import Setup.Init
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Common.Path.Model as Path
-import Finished.Messages exposing (FinishedMsg(BackToSetup))
-import Finished.Model exposing (FinishedModel(Success, Error))
+import Page.Setup.Init as Setup
+import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
+import Page.Finished.Model exposing (FinishedModel(Success, Error))
 
 
 update : FinishedMsg -> FinishedModel -> ( Model, Cmd Msg )
 update BackToSetup model =
     case model of
         Success pathToDestination ->
-            Setup.Init.initWithTitles
+            Setup.initWithTitles
                 (Path.beginning pathToDestination)
                 (Path.end pathToDestination)
 
         Error { source, destination } ->
-            Setup.Init.initWithTitles source.title destination.title
+            Setup.initWithTitles source.title destination.title

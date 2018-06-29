@@ -1,10 +1,10 @@
-module Finished.Init exposing (initWithPath, initWithPathNotFoundError, initWithTooManyRequestsError)
+module Page.Finished.Init exposing (initWithPath, initWithPathNotFoundError, initWithTooManyRequestsError)
 
 import Common.Article.Model exposing (Article)
 import Common.Path.Model exposing (Path)
 import Model exposing (Model(Finished))
 import Messages exposing (Msg)
-import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
+import Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 
 
 initWithPath : Path -> ( Model, Cmd Msg )

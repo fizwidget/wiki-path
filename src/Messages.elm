@@ -1,8 +1,8 @@
 module Messages exposing (Msg(..))
 
-import Setup.Messages exposing (SetupMsg)
-import Pathfinding.Messages exposing (PathfindingMsg)
-import Finished.Messages exposing (FinishedMsg)
+import Page.Setup.Messages exposing (SetupMsg)
+import Page.Pathfinding.Messages exposing (PathfindingMsg)
+import Page.Finished.Messages exposing (FinishedMsg)
 
 
 type Msg

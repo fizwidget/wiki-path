@@ -1,4 +1,4 @@
-module Pathfinding.Config exposing (totalRequestsLimit, pendingRequestsLimit)
+module Page.Pathfinding.Config exposing (totalRequestsLimit, pendingRequestsLimit)
 
 
 totalRequestsLimit : Int

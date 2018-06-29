@@ -1,4 +1,4 @@
-module Setup.View exposing (view)
+module Page.Setup.View exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
@@ -12,8 +12,8 @@ import Common.Error.View as Error
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
 import Common.Article.View as Article
 import Common.Spinner.View as Spinner
-import Setup.Messages exposing (SetupMsg(..))
-import Setup.Model exposing (SetupModel, UserInput)
+import Page.Setup.Messages exposing (SetupMsg(..))
+import Page.Setup.Model exposing (SetupModel, UserInput)
 
 
 view : SetupModel -> Html SetupMsg

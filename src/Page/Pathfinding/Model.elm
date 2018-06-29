@@ -1,4 +1,4 @@
-module Pathfinding.Model exposing (PathfindingModel)
+module Page.Pathfinding.Model exposing (PathfindingModel)
 
 import Set exposing (Set)
 import Common.Article.Model exposing (Article, RemoteArticle, ArticleError)

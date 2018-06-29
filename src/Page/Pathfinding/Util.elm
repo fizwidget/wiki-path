@@ -1,4 +1,4 @@
-module Pathfinding.Util
+module Page.Pathfinding.Util
     exposing
         ( isCandidate
         , markVisited

@@ -1,4 +1,4 @@
-module Finished.View exposing (view)
+module Page.Finished.View exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, a)
@@ -8,8 +8,8 @@ import Common.Button.View as Button
 import Common.Article.Model exposing (Article)
 import Common.Path.Model as Path exposing (Path)
 import Common.Title.View as Title
-import Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
-import Finished.Messages exposing (FinishedMsg(BackToSetup))
+import Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
+import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
 
 
 view : FinishedModel -> Html FinishedMsg

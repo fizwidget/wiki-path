@@ -1,4 +1,4 @@
-module Pathfinding.View exposing (view)
+module Page.Pathfinding.View exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
@@ -11,9 +11,9 @@ import Common.Title.View as Title
 import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Common.Spinner.View as Spinner
-import Pathfinding.Config as Config
-import Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel)
+import Page.Pathfinding.Config as Config
+import Page.Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
+import Page.Pathfinding.Model exposing (PathfindingModel)
 
 
 view : PathfindingModel -> Html PathfindingMsg

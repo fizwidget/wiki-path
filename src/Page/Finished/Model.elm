@@ -1,4 +1,4 @@
-module Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
+module Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 
 import Common.Path.Model exposing (Path)
 import Common.Article.Model exposing (Article)

@@ -1,4 +1,4 @@
-module Pathfinding.Update exposing (update, onArticleReceived)
+module Page.Pathfinding.Update exposing (update, onArticleReceived)
 
 import Result exposing (Result(Ok, Err))
 import Common.Article.Model exposing (Article, ArticleResult, ArticleError)
@@ -8,12 +8,12 @@ import Common.Path.Model as Path exposing (Path)
 import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Finished.Init
-import Setup.Init
-import Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
-import Pathfinding.Model exposing (PathfindingModel)
-import Pathfinding.Util as Util
-import Pathfinding.Config as Config
+import Page.Finished.Init as Finished
+import Page.Setup.Init as Setup
+import Page.Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
+import Page.Pathfinding.Model exposing (PathfindingModel)
+import Page.Pathfinding.Util as Util
+import Page.Pathfinding.Config as Config
 
 
 update : PathfindingMsg -> PathfindingModel -> ( Model, Cmd Msg )
@@ -26,7 +26,7 @@ update message model =
                 articleResult
 
         BackToSetup ->
-            Setup.Init.initWithTitles
+            Setup.initWithTitles
                 model.source.title
                 model.destination.title
 
@@ -158,17 +158,17 @@ hasMadeTooManyRequests { totalRequests } =
 
 destinationReached : Path -> ( Model, Cmd Msg )
 destinationReached =
-    Finished.Init.initWithPath
+    Finished.initWithPath
 
 
 tooManyRequestsError : PathfindingModel -> ( Model, Cmd Msg )
 tooManyRequestsError { source, destination } =
-    Finished.Init.initWithTooManyRequestsError source destination
+    Finished.initWithTooManyRequestsError source destination
 
 
 pathNotFoundError : PathfindingModel -> ( Model, Cmd Msg )
 pathNotFoundError { source, destination } =
-    Finished.Init.initWithPathNotFoundError source destination
+    Finished.initWithPathNotFoundError source destination
 
 
 decrementPendingRequests : PathfindingModel -> PathfindingModel

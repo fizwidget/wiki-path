@@ -1,4 +1,4 @@
-module Pathfinding.Init exposing (init)
+module Page.Pathfinding.Init exposing (init)
 
 import Set exposing (Set)
 import Common.Article.Model exposing (Article)
@@ -7,8 +7,8 @@ import Common.PriorityQueue.Model as PriorityQueue
 import Common.Path.Model as Path
 import Model exposing (Model(Pathfinding))
 import Messages exposing (Msg(Pathfinding))
-import Pathfinding.Update exposing (onArticleReceived)
-import Pathfinding.Model exposing (PathfindingModel)
+import Page.Pathfinding.Update exposing (onArticleReceived)
+import Page.Pathfinding.Model exposing (PathfindingModel)
 
 
 init : Article -> Article -> ( Model, Cmd Msg )

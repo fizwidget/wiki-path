@@ -1,4 +1,4 @@
-module Setup.Update exposing (update)
+module Page.Setup.Update exposing (update)
 
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Common.Title.Model as Title exposing (Title, RemoteTitlePair)
@@ -6,9 +6,9 @@ import Common.Title.Fetch as Fetch
 import Common.Article.Fetch as Fetch
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Setup.Messages exposing (SetupMsg(..))
-import Setup.Model exposing (SetupModel, UserInput)
-import Pathfinding.Init
+import Page.Setup.Messages exposing (SetupMsg(..))
+import Page.Setup.Model exposing (SetupModel, UserInput)
+import Page.Pathfinding.Init as Pathfinding
 
 
 update : SetupMsg -> SetupModel -> ( Model, Cmd Msg )
@@ -63,7 +63,7 @@ maybeBeginPathfinding model =
     in
         case sourceAndDestination of
             Just ( source, destination ) ->
-                Pathfinding.Init.init source destination
+                Pathfinding.init source destination
 
             Nothing ->
                 model |> noMsg |> inSetupPage
