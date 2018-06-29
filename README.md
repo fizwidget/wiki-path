@@ -4,6 +4,6 @@
 
 [Have a play with it here!](https://fizwidget.github.io/wiki-path/index.html) (｡◕‿◕｡)
 
-## How does it find paths?
+## How does it work?
 
 The pathfinding algorithm is essentially an A* graph search with a non-admissible heuristic. This means it may not necessarily find the *optimal* path, but it usually finds *some* path in a relatively short amount of time (compared to an unguided breadth-first search).
