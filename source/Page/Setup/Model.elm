@@ -1,7 +1,7 @@
 module Page.Setup.Model exposing (SetupModel, UserInput)
 
 import Common.Article.Model exposing (RemoteArticle)
-import Common.Title.Model exposing (Title, RemoteTitlePair)
+import Common.Title.Model exposing (RemoteTitlePair)
 
 
 type alias SetupModel =
