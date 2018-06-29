@@ -4,6 +4,6 @@
 
 [Have a play with it here!](https://fizwidget.github.io/wiki-path/index.html) (｡◕‿◕｡)
 
-# Implementation notes
+## How does it find paths?
 
-An unguided breadth-first search would be very time-consuming, so a heuristic is used to guide the search. This greatly speeds things up, however it means the path found may not necessarily be the shortest possible one.
+The pathfinding algorithm is essentially an A* graph search with a non-admissible heuristic. This means it may not necessarily find the *optimal* path, but it usually finds *some* path in a relatively short amount of time (compared to an unguided breadth-first search).
