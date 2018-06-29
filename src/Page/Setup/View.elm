@@ -7,10 +7,10 @@ import RemoteData
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Button as ButtonOptions
-import View.Button as Button
-import View.Error as Error
+import Views.Button as Button
+import Views.Error as Error
 import Data.Article exposing (RemoteArticle, ArticleError(..))
-import View.Spinner as Spinner
+import Views.Spinner as Spinner
 import Page.Setup.Messages exposing (SetupMsg(..))
 import Page.Setup.Model exposing (SetupModel, UserInput)
 

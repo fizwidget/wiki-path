@@ -4,13 +4,13 @@ import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
-import View.Button as Button
+import Views.Button as Button
 import Data.Article exposing (Article, RemoteArticle, ArticleError)
-import View.Error as Error
-import View.Title as Title
+import Views.Error as Error
+import Views.Title as Title
 import Data.Path as Path exposing (Path)
 import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue)
-import View.Spinner as Spinner
+import Views.Spinner as Spinner
 import Page.Pathfinding.Config as Config
 import Page.Pathfinding.Messages exposing (PathfindingMsg(BackToSetup))
 import Page.Pathfinding.Model exposing (PathfindingModel)

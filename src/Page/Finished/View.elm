@@ -4,10 +4,10 @@ import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, a)
 import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
-import View.Button as Button
+import Views.Button as Button
 import Data.Article exposing (Article)
 import Data.Path as Path exposing (Path)
-import View.Title as Title
+import Views.Title as Title
 import Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
 import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
 

@@ -1,4 +1,4 @@
-module View.Title exposing (viewAsLink)
+module Views.Title exposing (viewAsLink)
 
 import Html.Styled exposing (Html, text, a)
 import Html.Styled.Attributes exposing (href)

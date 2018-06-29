@@ -1,4 +1,4 @@
-module View.Error exposing (genericError, articleError)
+module Views.Error exposing (genericError, articleError)
 
 import Html.Styled exposing (Html, div, pre, text)
 import Html.Styled.Attributes exposing (css)
