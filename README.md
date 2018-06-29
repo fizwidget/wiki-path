@@ -8,4 +8,4 @@
 
 The pathfinding algorithm is essentially an A* graph search with a non-admissible heuristic. This means it may not necessarily find the *optimal* path, but it usually finds *some* path in a relatively short amount of time.
 
-Everything is done client-side with requests to Wikipedia's REST API. This means an unguided breadth-first search would be impractical, as it would need to make too many requests.
+Pathfinding is done client-side, using requests to Wikipedia's REST API. An unguided breadth-first search would be impractical as too many network requests would be needed.
