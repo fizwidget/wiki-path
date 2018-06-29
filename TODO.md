@@ -1,5 +1,15 @@
 # TODO
 
+## Pathfinding
+* Backtrack from destination in addition to searching from origin.
+* Fetch multiple articles per network call.
+* Identify articles by ID instead of by title:
+    * `api.php?action=query&generator=links&titles=Main%20Page&prop=info`
+    * https://en.wikipedia.org/w/api.php?action=help&modules=query%2Blinks
+* Favour longer string matches, and strings that match links.
+* Experiment with penalising longer paths.
+* Come up with a better heuristic regex (current one doesn't handle quotes, trailing colon, etc).
+
 ## Views
 * Revamp pathfinding view:
     * Display list of visited titles instead of best path.
@@ -13,15 +23,6 @@
 * Phantom types:
     * For complete/incomplete paths?
     * Canonical/non-canonical titles?
-
-## Pathfinding
-* Use this query API to get link info for pathfinding?
-    * `api.php?action=query&generator=links&titles=Main%20Page&prop=info`
-    * https://en.wikipedia.org/w/api.php?action=help&modules=query%2Blinks
-* Backtrack from destination?
-* Favour longer string matches, and strings that match links.
-* Experiment with penalising longer paths.
-* Come up with a better heuristic regex (current one doesn't handle quotes, trailing colon, etc).
 
 ## Refactoring
 * Improve readability of `Pathfinding.Update` by combining `Path` and `Article` somehow?
