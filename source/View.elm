@@ -3,19 +3,15 @@ module View exposing (view)
 import Css exposing (..)
 import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Model exposing (Model)
+import Messages exposing (Msg)
 import Page.Setup.View as Setup
 import Page.Pathfinding.View as Pathfinding
 import Page.Finished.View as Finished
-import Model exposing (Model)
-import Messages exposing (Msg)
+
 
 view : Model -> Html Msg
-view model
-    pageFrame << viewModel
-
-
-pageFrame : Html Msg -> Html Msg
-pageFrame pageContent =
+view model =
     div
         [ css
             [ fontSize (px 24)
@@ -26,7 +22,7 @@ pageFrame pageContent =
             ]
         ]
         [ viewHeading
-        , pageContent
+        , viewModel model
         ]
 
 

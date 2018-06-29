@@ -20,5 +20,4 @@ update message model =
             Finished.update innerMsg innerModel
 
         ( _, _ ) ->
-            -- Ignore messages that didn't originate from the current page
             ( model, Cmd.none )

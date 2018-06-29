@@ -9,12 +9,14 @@ import Messages exposing (Msg)
 
 init : ( Model, Cmd Msg )
 init =
-    initWithTitles "" ""
+    ( Setup <| initialModel "" ""
+    , Cmd.none
+    )
 
 
 initWithTitles : Title -> Title -> ( Model, Cmd Msg )
 initWithTitles sourceTitleInput destinationTitleInput =
-    ( Setup (initialModel (Title.value sourceTitleInput) (Title.value destinationTitleInput))
+    ( Setup <| initialModel (Title.value sourceTitleInput) (Title.value destinationTitleInput)
     , Cmd.none
     )
 

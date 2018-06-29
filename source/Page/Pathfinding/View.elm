@@ -19,16 +19,16 @@ import Page.Pathfinding.Model exposing (PathfindingModel)
 view : PathfindingModel -> Html PathfindingMsg
 view { source, destination, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
-        [ heading source destination
-        , errorView errors
-        , warningView totalRequests destination
-        , backView
-        , pathsView paths
+        [ viewHeading source destination
+        , viewErrors errors
+        , viewWarnings totalRequests destination
+        , viewBackButton
+        , viewPaths paths
         ]
 
 
-heading : Article -> Article -> Html msg
-heading source destination =
+viewHeading : Article -> Article -> Html msg
+viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
         , Title.viewAsLink source.title
@@ -38,13 +38,13 @@ heading source destination =
         ]
 
 
-errorView : List ArticleError -> Html msg
-errorView errors =
+viewErrors : List ArticleError -> Html msg
+viewErrors errors =
     div [] <| List.map Article.viewError errors
 
 
-backView : Html PathfindingMsg
-backView =
+viewBackButton : Html PathfindingMsg
+viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view
             [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]
@@ -52,8 +52,8 @@ backView =
         ]
 
 
-warningView : Int -> Article -> Html msg
-warningView totalRequests destination =
+viewWarnings : Int -> Article -> Html msg
+viewWarnings totalRequests destination =
     div [ css [ textAlign center ] ]
         [ destinationContentWarning destination
         , pathCountWarning totalRequests
@@ -82,8 +82,8 @@ pathCountWarning totalRequests =
         text ""
 
 
-pathsView : PriorityQueue Path -> Html msg
-pathsView paths =
+viewPaths : PriorityQueue Path -> Html msg
+viewPaths paths =
     PriorityQueue.getHighestPriority paths
         |> Maybe.map pathView
         |> Maybe.withDefault (div [] [])

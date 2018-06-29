@@ -15,23 +15,23 @@ import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
 view : FinishedModel -> Html FinishedMsg
 view model =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
-        [ modelView model
-        , backButton
+        [ viewModel model
+        , viewBackButton
         ]
 
 
-modelView : FinishedModel -> Html msg
-modelView model =
+viewModel : FinishedModel -> Html msg
+viewModel model =
     case model of
         Success pathToDestination ->
-            successView pathToDestination
+            viewSuccess pathToDestination
 
         Error { source, destination, error } ->
-            errorView source destination error
+            viewError source destination error
 
 
-successView : Path -> Html msg
-successView pathToDestination =
+viewSuccess : Path -> Html msg
+viewSuccess pathToDestination =
     div [ css [ textAlign center ] ]
         [ headingView
         , subHeadingView
@@ -57,8 +57,8 @@ pathView path =
         |> div []
 
 
-errorView : Article -> Article -> Error -> Html msg
-errorView source destination error =
+viewError : Article -> Article -> Error -> Html msg
+viewError source destination error =
     let
         baseErrorMessage =
             [ text "Sorry, couldn't find a path from "
@@ -80,8 +80,8 @@ errorView source destination error =
             )
 
 
-backButton : Html FinishedMsg
-backButton =
+viewBackButton : Html FinishedMsg
+viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view
             [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]

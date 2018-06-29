@@ -10,6 +10,7 @@ import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
 import Common.Error.View as Error
 import Common.Article.Model exposing (RemoteArticle, ArticleError(..))
+import Common.Title.Model exposing (RemoteTitlePair)
 import Common.Article.View as Article
 import Common.Spinner.View as Spinner
 import Page.Setup.Messages exposing (SetupMsg(..))
@@ -20,16 +21,16 @@ view : SetupModel -> Html SetupMsg
 view model =
     form
         [ css [ displayFlex, alignItems center, flexDirection column ] ]
-        [ titleInputs model
-        , findPathButton model
-        , randomizeTitlesButton model
-        , showRandomizationError model
-        , showSpinnerIfLoading model
+        [ viewTitleInputs model
+        , viewFindPathButton model
+        , viewRandomizeTitlesButton model
+        , viewRandomizationError model
+        , viewLoadingSpinner model
         ]
 
 
-titleInputs : SetupModel -> Html SetupMsg
-titleInputs ({ sourceTitleInput, destinationTitleInput, source, destination } as model) =
+viewTitleInputs : SetupModel -> Html SetupMsg
+viewTitleInputs ({ sourceTitleInput, destinationTitleInput, source, destination } as model) =
     let
         inputStatus =
             if isLoading model then
@@ -41,11 +42,6 @@ titleInputs ({ sourceTitleInput, destinationTitleInput, source, destination } as
             [ viewSourceTitleInput sourceTitleInput source inputStatus
             , viewDestinationTitleInput destinationTitleInput destination inputStatus
             ]
-
-
-type InputStatus
-    = Enabled
-    | Disabled
 
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html SetupMsg
@@ -69,8 +65,14 @@ articleTitleInput placeholderText toMsg title article inputStatus =
                 Disabled ->
                     True
 
+        inputStyle =
+            if RemoteData.isFailure article then
+                [ Input.danger ]
+            else
+                []
+
         inputOptions =
-            getInputStatus article
+            inputStyle
                 ++ [ Input.large
                    , Input.onInput toMsg
                    , Input.value title
@@ -82,30 +84,14 @@ articleTitleInput placeholderText toMsg title article inputStatus =
             [ fromUnstyled <|
                 Form.group []
                     [ Input.text inputOptions
-                    , Form.invalidFeedback [] [ toUnstyled <| getErrorMessage article ]
+                    , Form.invalidFeedback [] [ toUnstyled <| viewArticleError article ]
                     , Form.validFeedback [] []
                     ]
             ]
 
 
-getInputStatus : RemoteArticle -> List (Input.Option msg)
-getInputStatus article =
-    case article of
-        RemoteData.NotAsked ->
-            []
-
-        RemoteData.Loading ->
-            []
-
-        RemoteData.Failure _ ->
-            [ Input.danger ]
-
-        RemoteData.Success _ ->
-            []
-
-
-findPathButton : SetupModel -> Html SetupMsg
-findPathButton model =
+viewFindPathButton : SetupModel -> Html SetupMsg
+viewFindPathButton model =
     div [ css [ padding (px 4) ] ]
         [ Button.view
             [ ButtonOptions.primary
@@ -117,8 +103,8 @@ findPathButton model =
         ]
 
 
-randomizeTitlesButton : SetupModel -> Html SetupMsg
-randomizeTitlesButton model =
+viewRandomizeTitlesButton : SetupModel -> Html SetupMsg
+viewRandomizeTitlesButton model =
     div [ css [ padding (px 12) ] ]
         [ Button.view
             [ ButtonOptions.large
@@ -128,16 +114,6 @@ randomizeTitlesButton model =
             ]
             [ text "Randomize" ]
         ]
-
-
-showRandomizationError : SetupModel -> Html msg
-showRandomizationError { randomTitles } =
-    case randomTitles of
-        RemoteData.Failure error ->
-            Error.view "Error randomizing titles 😵" (toString error)
-
-        _ ->
-            text ""
 
 
 shouldDisableLoadButton : SetupModel -> Bool
@@ -151,8 +127,8 @@ shouldDisableLoadButton model =
             || isBlank model.destinationTitleInput
 
 
-showSpinnerIfLoading : SetupModel -> Html msg
-showSpinnerIfLoading model =
+viewLoadingSpinner : SetupModel -> Html msg
+viewLoadingSpinner model =
     div
         [ css [ paddingTop (px 6) ] ]
         [ Spinner.view { isVisible = isLoading model } ]
@@ -172,11 +148,26 @@ isLoading { source, destination, randomTitles } =
         areArticlesLoading || areTitlesLoading
 
 
-getErrorMessage : RemoteArticle -> Html msg
-getErrorMessage remoteArticle =
+viewArticleError : RemoteArticle -> Html msg
+viewArticleError remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
             Article.viewError error
 
         _ ->
             text ""
+
+
+viewRandomizationError : SetupModel -> Html msg
+viewRandomizationError { randomTitles } =
+    case randomTitles of
+        RemoteData.Failure error ->
+            Error.view "Error randomizing titles 😵" (toString error)
+
+        _ ->
+            text ""
+
+
+type InputStatus
+    = Enabled
+    | Disabled

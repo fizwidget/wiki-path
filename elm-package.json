@@ -4,7 +4,7 @@
     "repository": "https://github.com/fizwidget/wiki-path.git",
     "license": "BSD3",
     "source-directories": [
-        "src"
+        "source"
     ],
     "exposed-modules": [],
     "dependencies": {

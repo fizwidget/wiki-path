@@ -1,4 +1,9 @@
-module Page.Finished.Init exposing (initWithPath, initWithPathNotFoundError, initWithTooManyRequestsError)
+module Page.Finished.Init
+    exposing
+        ( initWithPath
+        , initWithPathNotFoundError
+        , initWithTooManyRequestsError
+        )
 
 import Common.Article.Model exposing (Article)
 import Common.Path.Model exposing (Path)
@@ -9,26 +14,23 @@ import Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNo
 
 initWithPath : Path -> ( Model, Cmd Msg )
 initWithPath pathToDestination =
-    ( Finished <| Success pathToDestination, Cmd.none )
+    ( Finished <| Success pathToDestination
+    , Cmd.none
+    )
 
 
 initWithPathNotFoundError : Article -> Article -> ( Model, Cmd Msg )
-initWithPathNotFoundError source destination =
-    initWithError source destination PathNotFound
+initWithPathNotFoundError =
+    initWithError PathNotFound
 
 
 initWithTooManyRequestsError : Article -> Article -> ( Model, Cmd Msg )
-initWithTooManyRequestsError source destination =
-    initWithError source destination TooManyRequests
+initWithTooManyRequestsError =
+    initWithError TooManyRequests
 
 
-initWithError : Article -> Article -> Error -> ( Model, Cmd Msg )
-initWithError source destination error =
-    ( Finished <|
-        Error
-            { source = source
-            , destination = destination
-            , error = error
-            }
+initWithError : Error -> Article -> Article -> ( Model, Cmd Msg )
+initWithError error source destination =
+    ( Finished <| Error { source = source, destination = destination, error = error }
     , Cmd.none
     )
