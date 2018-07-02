@@ -3,7 +3,7 @@ module Page.Finished.Update exposing (update)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Common.Path.Model as Path
-import Page.Setup.Init as Setup
+import Page.Setup as Setup
 import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
 import Page.Finished.Model exposing (FinishedModel(Success, Error))
 

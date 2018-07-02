@@ -9,7 +9,7 @@ import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue)
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Page.Finished.Init as Finished
-import Page.Setup.Init as Setup
+import Page.Setup as Setup
 import Page.Pathfinding.Messages exposing (PathfindingMsg(FetchArticleResponse, BackToSetup))
 import Page.Pathfinding.Model exposing (PathfindingModel)
 import Page.Pathfinding.Util as Util

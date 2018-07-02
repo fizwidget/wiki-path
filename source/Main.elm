@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Html
 import Html.Styled exposing (toUnstyled)
-import Page.Setup.Init as Setup
+import Page.Setup as Setup
 import Model exposing (Model)
 import Messages exposing (Msg)
 import Update

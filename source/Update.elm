@@ -2,7 +2,7 @@ module Update exposing (update)
 
 import Model exposing (Model)
 import Messages exposing (Msg)
-import Page.Setup.Update as Setup
+import Page.Setup as Setup
 import Page.Pathfinding.Update as Pathfinding
 import Page.Finished.Update as Finished
 
