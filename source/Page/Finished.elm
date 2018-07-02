@@ -1,18 +1,68 @@
-module Page.Finished.View exposing (view)
+module Page.Finished
+    exposing
+        ( Model
+        , initWithPath
+        , initWithPathNotFoundError
+        , initWithTooManyRequestsError
+        , view
+        )
 
-import Css exposing (..)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, h2, h4, text, a)
-import Html.Styled.Attributes exposing (css)
 import Bootstrap.Button as ButtonOptions
 import Common.Button.View as Button
 import Common.Article.Model exposing (Article)
-import Common.Path.Model as Path exposing (Path)
 import Common.Title.View as Title
-import Page.Finished.Model exposing (FinishedModel(Success, Error), Error(PathNotFound, TooManyRequests))
-import Page.Finished.Messages exposing (FinishedMsg(BackToSetup))
+import Common.Path.Model as Path exposing (Path)
+import Css exposing (..)
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
+import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 
 
-view : FinishedModel -> Html FinishedMsg
+-- MODEL --
+
+
+type Model
+    = Success Path
+    | Error { source : Article, destination : Article, error : Error }
+
+
+type Error
+    = PathNotFound
+    | TooManyRequests
+
+
+
+-- INIT --
+
+
+initWithPath : Path -> ( Model, Cmd msg )
+initWithPath pathToDestination =
+    ( Success pathToDestination
+    , Cmd.none
+    )
+
+
+initWithPathNotFoundError : Article -> Article -> ( Model, Cmd msg )
+initWithPathNotFoundError =
+    initWithError PathNotFound
+
+
+initWithTooManyRequestsError : Article -> Article -> ( Model, Cmd msg )
+initWithTooManyRequestsError =
+    initWithError TooManyRequests
+
+
+initWithError : Error -> Article -> Article -> ( Model, Cmd msg )
+initWithError error source destination =
+    ( Error { source = source, destination = destination, error = error }
+    , Cmd.none
+    )
+
+
+
+-- VIEW --
+
+
+view : Model -> Html Msg
 view model =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
         [ viewModel model
@@ -20,7 +70,7 @@ view model =
         ]
 
 
-viewModel : FinishedModel -> Html msg
+viewModel : Model -> Html msg
 viewModel model =
     case model of
         Success pathToDestination ->
@@ -80,7 +130,7 @@ viewError source destination error =
             )
 
 
-viewBackButton : Html FinishedMsg
+viewBackButton : Html Msg
 viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view

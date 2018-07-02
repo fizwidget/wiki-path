@@ -1,4 +1,13 @@
-module Page.Setup exposing (Model, Msg, init, initWithTitles, update, view)
+module Page.Setup
+    exposing
+        ( Model
+        , Msg
+        , UpdateResult(..)
+        , init
+        , initWithTitles
+        , update
+        , view
+        )
 
 import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
@@ -77,38 +86,37 @@ initialModel sourceTitleInput destinationTitleInput =
 -- UPDATE --
 
 
-type alias Done =
-    { source : Article
-    , destination : Article
-    }
+type UpdateResult
+    = InSetup ( Model, Cmd Msg )
+    | Done Article Article
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe Done )
+update : Msg -> Model -> UpdateResult
 update message model =
     case message of
         SourceArticleTitleChange value ->
             { model | sourceTitleInput = value, source = NotAsked }
                 |> noMsg
-                |> noTransition
+                |> InSetup
 
         DestinationArticleTitleChange value ->
             { model | destinationTitleInput = value, destination = NotAsked }
                 |> noMsg
-                |> noTransition
+                |> InSetup
 
         FetchRandomTitlesRequest ->
             ( { model | randomTitles = Loading }, Fetch.titlePair FetchRandomTitlesResponse )
-                |> noTransition
+                |> InSetup
 
         FetchRandomTitlesResponse response ->
             { model | randomTitles = response }
                 |> randomizeInputFields
                 |> noMsg
-                |> noTransition
+                |> InSetup
 
         FetchArticlesRequest ->
             ( { model | source = Loading, destination = Loading }, fetchArticles model )
-                |> noTransition
+                |> InSetup
 
         FetchSourceArticleResponse article ->
             { model | source = article }
@@ -127,7 +135,7 @@ fetchArticles model =
         ]
 
 
-maybeBeginPathfinding : Model -> ( Model, Cmd Msg, Maybe Done )
+maybeBeginPathfinding : Model -> UpdateResult
 maybeBeginPathfinding model =
     let
         sourceAndDestination =
@@ -135,10 +143,10 @@ maybeBeginPathfinding model =
     in
         case sourceAndDestination of
             Just ( source, destination ) ->
-                ( model, Cmd.none, Just <| Done source destination )
+                Done source destination
 
             Nothing ->
-                model |> noMsg |> noTransition
+                model |> noMsg |> InSetup
 
 
 randomizeInputFields : Model -> Model
@@ -160,11 +168,6 @@ randomizeInputFields model =
 noMsg : Model -> ( Model, Cmd Msg )
 noMsg model =
     ( model, Cmd.none )
-
-
-noTransition : ( Model, Cmd Msg ) -> ( Model, Cmd Msg, Maybe Done )
-noTransition ( model, cmd ) =
-    ( model, cmd, Nothing )
 
 
 
