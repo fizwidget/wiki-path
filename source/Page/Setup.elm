@@ -12,14 +12,13 @@ module Page.Setup
 import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import Common.Article.Fetch as Fetch
-import Common.Article.Model exposing (Article, RemoteArticle, ArticleError(..))
-import Common.Article.View as Article
-import Common.Button.View as Button
-import Common.Error.View as Error
-import Common.Spinner.View as Spinner
-import Common.Title.Fetch as Fetch
-import Common.Title.Model as Title exposing (Title, RemoteTitlePair)
+import Common.Article as Fetch
+import Common.Article exposing (Article, RemoteArticle, ArticleError(..))
+import Common.Article as Article
+import Common.Button as Button
+import Common.Error as Error
+import Common.Spinner as Spinner
+import Common.Title as Title exposing (Title, RemoteTitlePair)
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
@@ -105,7 +104,7 @@ update message model =
                 |> InSetup
 
         FetchRandomTitlesRequest ->
-            ( { model | randomTitles = Loading }, Fetch.titlePair FetchRandomTitlesResponse )
+            ( { model | randomTitles = Loading }, Title.fetchPair FetchRandomTitlesResponse )
                 |> InSetup
 
         FetchRandomTitlesResponse response ->
@@ -130,8 +129,8 @@ update message model =
 fetchArticles : Model -> Cmd Msg
 fetchArticles model =
     Cmd.batch <|
-        [ Fetch.remoteArticle FetchSourceArticleResponse model.sourceTitleInput
-        , Fetch.remoteArticle FetchDestinationArticleResponse model.destinationTitleInput
+        [ Article.fetchRemoteArticle FetchSourceArticleResponse model.sourceTitleInput
+        , Article.fetchRemoteArticle FetchDestinationArticleResponse model.destinationTitleInput
         ]
 
 

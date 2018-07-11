@@ -9,15 +9,12 @@ module Page.Pathfinding
         )
 
 import Bootstrap.Button as ButtonOptions
-import Common.Article.Fetch as Fetch
-import Common.Article.Model exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
-import Common.Article.View as Article
-import Common.Button.View as Button
-import Common.Path.Model as Path exposing (Path)
-import Common.PriorityQueue.Model as PriorityQueue exposing (PriorityQueue, Priority)
-import Common.Spinner.View as Spinner
-import Common.Title.Model as Title exposing (Title)
-import Common.Title.View as Title
+import Common.Article as Article exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
+import Common.Button as Button
+import Common.Path as Path exposing (Path)
+import Common.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import Common.Spinner as Spinner
+import Common.Title as Title exposing (Title)
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
@@ -212,7 +209,7 @@ fetchNextArticle pathToFollow =
         title =
             (Path.nextStop >> Title.value) pathToFollow
     in
-        Fetch.articleResult toMsg title
+        Article.fetchArticleResult toMsg title
 
 
 containsPathToDestination : Article -> List Path -> Maybe Path

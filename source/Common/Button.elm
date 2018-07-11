@@ -1,4 +1,4 @@
-module Common.Button.View exposing (view)
+module Common.Button exposing (view)
 
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled)
 import Bootstrap.Button as BootstrapButton

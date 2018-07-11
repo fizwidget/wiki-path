@@ -6,10 +6,10 @@ module Page.Finished
         )
 
 import Bootstrap.Button as ButtonOptions
-import Common.Article.Model exposing (Article)
-import Common.Button.View as Button
-import Common.Path.Model as Path exposing (Path)
-import Common.Title.View as Title
+import Common.Article exposing (Article)
+import Common.Button as Button
+import Common.Path as Path exposing (Path)
+import Common.Title as Title
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)

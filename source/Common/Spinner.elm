@@ -1,4 +1,4 @@
-module Common.Spinner.View exposing (view)
+module Common.Spinner exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div)

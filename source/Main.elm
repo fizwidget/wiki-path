@@ -1,8 +1,8 @@
 module Main exposing (main)
 
 import Css exposing (..)
-import Html as CoreHtml
-import Html.Styled as Html exposing (Html, toUnstyled, div, h1, text)
+import Html exposing (program)
+import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
@@ -14,7 +14,7 @@ import Page.Setup as Setup
 
 main : Program Never Model Msg
 main =
-    CoreHtml.program
+    Html.program
         { init = initSetup
         , view = view >> toUnstyled
         , update = update
@@ -53,10 +53,12 @@ update message model =
             initSetup
 
         ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel |> onSetupUpdate
+            Setup.update innerMsg innerModel
+                |> onSetupUpdate
 
         ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel |> onPathfindingUpdate
+            Pathfinding.update innerMsg innerModel
+                |> onPathfindingUpdate
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -70,6 +72,11 @@ initSetup =
 inPage : (a -> Model) -> (b -> Msg) -> ( a, Cmd b ) -> ( Model, Cmd Msg )
 inPage toModel toMsg ( model, cmd ) =
     ( toModel model, Cmd.map toMsg cmd )
+
+
+noCmd : a -> ( a, Cmd Msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
@@ -86,19 +93,26 @@ onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
 onPathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.InPathfinding ( model, cmd ) ->
-            ( PathfindingPage model, Cmd.map PathfindingMsg cmd )
+            ( model, cmd )
+                |> inPage PathfindingPage PathfindingMsg
 
         Pathfinding.Done pathToDestination ->
-            ( FinishedPage <| Finished.Success pathToDestination, Cmd.none )
+            Finished.Success pathToDestination
+                |> noCmd
+                |> inPage FinishedPage identity
 
         Pathfinding.Back ->
             initSetup
 
         Pathfinding.PathNotFound source destination ->
-            ( FinishedPage <| Finished.Error { error = Finished.PathNotFound, source = source, destination = destination }, Cmd.none )
+            (Finished.Error { error = Finished.PathNotFound, source = source, destination = destination })
+                |> noCmd
+                |> inPage FinishedPage identity
 
         Pathfinding.TooManyRequests source destination ->
-            ( FinishedPage <| Finished.Error { error = Finished.TooManyRequests, source = source, destination = destination }, Cmd.none )
+            (Finished.Error { error = Finished.TooManyRequests, source = source, destination = destination })
+                |> noCmd
+                |> inPage FinishedPage identity
 
 
 
@@ -141,11 +155,11 @@ viewModel model =
     case model of
         SetupPage innerModel ->
             Setup.view innerModel
-                |> Html.map SetupMsg
+                |> StyledHtml.map SetupMsg
 
         PathfindingPage innerModel ->
             Pathfinding.view innerModel
-                |> Html.map PathfindingMsg
+                |> StyledHtml.map PathfindingMsg
 
         FinishedPage path ->
             Finished.view path BackToSetup
