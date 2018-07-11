@@ -1,17 +1,15 @@
 module Page.Finished
     exposing
-        ( Model
-        , initWithPath
-        , initWithPathNotFoundError
-        , initWithTooManyRequestsError
+        ( Model(Success, Error)
+        , Error(PathNotFound, TooManyRequests)
         , view
         )
 
 import Bootstrap.Button as ButtonOptions
-import Common.Button.View as Button
 import Common.Article.Model exposing (Article)
-import Common.Title.View as Title
+import Common.Button.View as Button
 import Common.Path.Model as Path exposing (Path)
+import Common.Title.View as Title
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
@@ -31,42 +29,14 @@ type Error
 
 
 
--- INIT --
-
-
-initWithPath : Path -> ( Model, Cmd msg )
-initWithPath pathToDestination =
-    ( Success pathToDestination
-    , Cmd.none
-    )
-
-
-initWithPathNotFoundError : Article -> Article -> ( Model, Cmd msg )
-initWithPathNotFoundError =
-    initWithError PathNotFound
-
-
-initWithTooManyRequestsError : Article -> Article -> ( Model, Cmd msg )
-initWithTooManyRequestsError =
-    initWithError TooManyRequests
-
-
-initWithError : Error -> Article -> Article -> ( Model, Cmd msg )
-initWithError error source destination =
-    ( Error { source = source, destination = destination, error = error }
-    , Cmd.none
-    )
-
-
-
 -- VIEW --
 
 
-view : Model -> Html Msg
-view model =
+view : Model -> backMsg -> Html backMsg
+view model backMsg =
     div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
         [ viewModel model
-        , viewBackButton
+        , viewBackButton backMsg
         ]
 
 
@@ -130,10 +100,10 @@ viewError source destination error =
             )
 
 
-viewBackButton : Html Msg
-viewBackButton =
+viewBackButton : msg -> Html msg
+viewBackButton msg =
     div [ css [ margin (px 20) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick msg ]
             [ text "Back" ]
         ]

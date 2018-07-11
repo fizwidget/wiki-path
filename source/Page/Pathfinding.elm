@@ -2,9 +2,10 @@ module Page.Pathfinding
     exposing
         ( Model
         , Msg
+        , UpdateResult(..)
         , init
         , update
-        , onArticleReceived
+        , view
         )
 
 import Bootstrap.Button as ButtonOptions
@@ -20,7 +21,6 @@ import Common.Title.View as Title
 import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
-import Page.Pathfinding.Util as Util
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Set exposing (Set)
@@ -95,8 +95,8 @@ type UpdateResult
     = InPathfinding ( Model, Cmd Msg )
     | Done Path
     | Back
-    | PathNotFound
-    | TooManyRequests
+    | PathNotFound Article Article
+    | TooManyRequests Article Article
 
 
 update : Msg -> Model -> UpdateResult
@@ -141,16 +141,16 @@ processLinks : Model -> Path -> Article -> Model
 processLinks model pathToArticle article =
     let
         candidateLinks =
-            List.filter (Util.isCandidate model.visitedTitles) article.links
+            List.filter (isCandidate model.visitedTitles) article.links
 
         newPaths =
             candidateLinks
-                |> List.map (Util.extendPath pathToArticle model.destination)
-                |> Util.discardLowPriorityPaths
+                |> List.map (extendPath pathToArticle model.destination)
+                |> discardLowPriorityPaths
     in
         { model
             | paths = PriorityQueue.insert model.paths Path.priority newPaths
-            , visitedTitles = Util.markVisited model.visitedTitles newPaths
+            , visitedTitles = markVisited model.visitedTitles newPaths
         }
 
 
@@ -170,7 +170,7 @@ continueSearch model =
             List.isEmpty pathsToExplore && model.pendingRequests == 0
     in
         if areNoPathsAvailable then
-            PathNotFound
+            PathNotFound updatedModel.source updatedModel.destination
         else
             explorePaths updatedModel pathsToExplore
 
@@ -198,7 +198,7 @@ fetchNextArticles model pathsToFollow =
             incrementRequests model requestCount
     in
         if hasMadeTooManyRequests updatedModel then
-            TooManyRequests
+            TooManyRequests updatedModel.source updatedModel.destination
         else
             InPathfinding ( updatedModel, Cmd.batch requests )
 

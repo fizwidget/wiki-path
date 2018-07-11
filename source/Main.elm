@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Css exposing (..)
-import Html
+import Html as CoreHtml
 import Html.Styled as Html exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
@@ -14,10 +14,10 @@ import Page.Setup as Setup
 
 main : Program Never Model Msg
 main =
-    Html.program
-        { init = Setup.init
-        , view = View.view >> toUnstyled
-        , update = Update.update
+    CoreHtml.program
+        { init = initSetup
+        , view = view >> toUnstyled
+        , update = update
         , subscriptions = \_ -> Sub.none
         }
 
@@ -27,9 +27,9 @@ main =
 
 
 type Model
-    = Setup Setup.Model
-    | Pathfinding Pathfinding.Model
-    | Finished Finished.Model
+    = SetupPage Setup.Model
+    | PathfindingPage Pathfinding.Model
+    | FinishedPage Finished.Model
 
 
 
@@ -37,8 +37,8 @@ type Model
 
 
 type Msg
-    = Setup Setup.Msg
-    | Pathfinding Pathfinding.Msg
+    = SetupMsg Setup.Msg
+    | PathfindingMsg Pathfinding.Msg
     | BackToSetup
 
 
@@ -49,33 +49,56 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
-        ( Messages.BackToSetup, _ ) ->
-            Setup.init
+        ( BackToSetup, _ ) ->
+            initSetup
 
-        ( Messages.Setup innerMsg, Model.Setup innerModel ) ->
-            case Setup.update innerMsg innerModel of
-                Setup.InSetup output ->
-                    output
+        ( SetupMsg innerMsg, SetupPage innerModel ) ->
+            Setup.update innerMsg innerModel |> onSetupUpdate
 
-                Setup.Done source destination ->
-                    Pathfinding.init source destination
-
-        ( Messages.Pathfinding innerMsg, Model.Pathfinding innerModel ) ->
-            case Pathfinding.update innerMsg innerModel of
-                Pathfinding.InPathfinding output ->
-                    output
-
-                Pathfinding.Done pathToDestination ->
-                    Finished.initWithPath pathToDestination
-
-                Pathfinding.Back ->
-                    Setup.init
-
-        ( Messages.Finished innerMsg, Model.Finished innerModel ) ->
-            Finished.update innerMsg innerModel
+        ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
+            Pathfinding.update innerMsg innerModel |> onPathfindingUpdate
 
         ( _, _ ) ->
             ( model, Cmd.none )
+
+
+initSetup : ( Model, Cmd Msg )
+initSetup =
+    inPage SetupPage SetupMsg Setup.init
+
+
+inPage : (a -> Model) -> (b -> Msg) -> ( a, Cmd b ) -> ( Model, Cmd Msg )
+inPage toModel toMsg ( model, cmd ) =
+    ( toModel model, Cmd.map toMsg cmd )
+
+
+onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+onSetupUpdate updateResult =
+    case updateResult of
+        Setup.InSetup ( model, cmd ) ->
+            ( SetupPage model, Cmd.map SetupMsg cmd )
+
+        Setup.Done source destination ->
+            Pathfinding.init source destination |> onPathfindingUpdate
+
+
+onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+onPathfindingUpdate updateResult =
+    case updateResult of
+        Pathfinding.InPathfinding ( model, cmd ) ->
+            ( PathfindingPage model, Cmd.map PathfindingMsg cmd )
+
+        Pathfinding.Done pathToDestination ->
+            ( FinishedPage <| Finished.Success pathToDestination, Cmd.none )
+
+        Pathfinding.Back ->
+            initSetup
+
+        Pathfinding.PathNotFound source destination ->
+            ( FinishedPage <| Finished.Error { error = Finished.PathNotFound, source = source, destination = destination }, Cmd.none )
+
+        Pathfinding.TooManyRequests source destination ->
+            ( FinishedPage <| Finished.Error { error = Finished.TooManyRequests, source = source, destination = destination }, Cmd.none )
 
 
 
@@ -116,12 +139,13 @@ viewHeading =
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
-        Model.Setup innerModel ->
+        SetupPage innerModel ->
             Setup.view innerModel
-                |> Html.map Messages.Setup
+                |> Html.map SetupMsg
 
-        Model.Pathfinding innerModel ->
+        PathfindingPage innerModel ->
             Pathfinding.view innerModel
+                |> Html.map PathfindingMsg
 
-        Model.Finished innerModel ->
-            Finished.view innerModel
+        FinishedPage path ->
+            Finished.view path BackToSetup
