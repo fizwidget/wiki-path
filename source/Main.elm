@@ -7,20 +7,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-
-
--- MAIN --
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = initSetup
-        , view = view >> toUnstyled
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        }
-
+import Util exposing (noCmd)
 
 
 -- MODEL --
@@ -53,66 +40,73 @@ update message model =
             initSetup
 
         ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel
-                |> onSetupUpdate
+            Setup.update innerMsg innerModel |> setupUpdate
 
         ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel
-                |> onPathfindingUpdate
+            Pathfinding.update innerMsg innerModel |> pathfindingUpdate
 
         ( _, _ ) ->
-            ( model, Cmd.none )
+            noCmd model
 
 
-initSetup : ( Model, Cmd Msg )
-initSetup =
-    inPage SetupPage SetupMsg Setup.init
-
-
-inPage : (a -> Model) -> (b -> Msg) -> ( a, Cmd b ) -> ( Model, Cmd Msg )
-inPage toModel toMsg ( model, cmd ) =
-    ( toModel model, Cmd.map toMsg cmd )
-
-
-noCmd : a -> ( a, Cmd Msg )
-noCmd model =
-    ( model, Cmd.none )
-
-
-onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
-onSetupUpdate updateResult =
+setupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+setupUpdate updateResult =
     case updateResult of
-        Setup.InSetup ( model, cmd ) ->
-            ( SetupPage model, Cmd.map SetupMsg cmd )
+        Setup.Continue ( model, cmd ) ->
+            inSetupPage ( model, cmd )
 
         Setup.Done source destination ->
-            Pathfinding.init source destination |> onPathfindingUpdate
+            Pathfinding.init source destination |> pathfindingUpdate
 
 
-onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
-onPathfindingUpdate updateResult =
+pathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+pathfindingUpdate updateResult =
     case updateResult of
-        Pathfinding.InPathfinding ( model, cmd ) ->
-            ( model, cmd )
-                |> inPage PathfindingPage PathfindingMsg
-
-        Pathfinding.Done pathToDestination ->
-            Finished.Success pathToDestination
-                |> noCmd
-                |> inPage FinishedPage identity
+        Pathfinding.Continue ( model, cmd ) ->
+            inPathfindingPage ( model, cmd )
 
         Pathfinding.Back ->
             initSetup
 
+        Pathfinding.PathFound path ->
+            Finished.Success path
+                |> noCmd
+                |> inFinishedPage
+
         Pathfinding.PathNotFound source destination ->
             (Finished.Error { error = Finished.PathNotFound, source = source, destination = destination })
                 |> noCmd
-                |> inPage FinishedPage identity
+                |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
             (Finished.Error { error = Finished.TooManyRequests, source = source, destination = destination })
                 |> noCmd
-                |> inPage FinishedPage identity
+                |> inFinishedPage
+
+
+inPage : (pageModel -> Model) -> (pageMsg -> Msg) -> ( pageModel, Cmd pageMsg ) -> ( Model, Cmd Msg )
+inPage toModel toMsg ( pageModel, pageCmd ) =
+    ( toModel pageModel, Cmd.map toMsg pageCmd )
+
+
+inSetupPage : ( Setup.Model, Cmd Setup.Msg ) -> ( Model, Cmd Msg )
+inSetupPage =
+    inPage SetupPage SetupMsg
+
+
+inPathfindingPage : ( Pathfinding.Model, Cmd Pathfinding.Msg ) -> ( Model, Cmd Msg )
+inPathfindingPage =
+    inPage PathfindingPage PathfindingMsg
+
+
+inFinishedPage : ( Finished.Model, Cmd Msg ) -> ( Model, Cmd Msg )
+inFinishedPage =
+    inPage FinishedPage identity
+
+
+initSetup : ( Model, Cmd Msg )
+initSetup =
+    inSetupPage Setup.init
 
 
 
@@ -163,3 +157,17 @@ viewModel model =
 
         FinishedPage path ->
             Finished.view path BackToSetup
+
+
+
+-- MAIN --
+
+
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = initSetup
+        , view = view >> toUnstyled
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        }

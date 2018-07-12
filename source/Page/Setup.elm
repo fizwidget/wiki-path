@@ -2,7 +2,7 @@ module Page.Setup
     exposing
         ( Model
         , Msg
-        , UpdateResult(..)
+        , UpdateResult(Continue, Done)
         , init
         , initWithTitles
         , update
@@ -86,7 +86,7 @@ initialModel sourceTitleInput destinationTitleInput =
 
 
 type UpdateResult
-    = InSetup ( Model, Cmd Msg )
+    = Continue ( Model, Cmd Msg )
     | Done Article Article
 
 
@@ -96,26 +96,26 @@ update message model =
         SourceArticleTitleChange value ->
             { model | sourceTitleInput = value, source = NotAsked }
                 |> noMsg
-                |> InSetup
+                |> Continue
 
         DestinationArticleTitleChange value ->
             { model | destinationTitleInput = value, destination = NotAsked }
                 |> noMsg
-                |> InSetup
+                |> Continue
 
         FetchRandomTitlesRequest ->
             ( { model | randomTitles = Loading }, Title.fetchPair FetchRandomTitlesResponse )
-                |> InSetup
+                |> Continue
 
         FetchRandomTitlesResponse response ->
             { model | randomTitles = response }
                 |> randomizeInputFields
                 |> noMsg
-                |> InSetup
+                |> Continue
 
         FetchArticlesRequest ->
             ( { model | source = Loading, destination = Loading }, fetchArticles model )
-                |> InSetup
+                |> Continue
 
         FetchSourceArticleResponse article ->
             { model | source = article }
@@ -145,7 +145,7 @@ maybeBeginPathfinding model =
                 Done source destination
 
             Nothing ->
-                model |> noMsg |> InSetup
+                model |> noMsg |> Continue
 
 
 randomizeInputFields : Model -> Model

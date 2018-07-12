@@ -49,6 +49,10 @@ type alias HtmlString =
     String
 
 
+
+-- API --
+
+
 type alias ArticleResult =
     Result ArticleError Article
 
@@ -62,10 +66,6 @@ type ArticleError
     | InvalidTitle
     | UnknownError String
     | HttpError Http.Error
-
-
-
--- API --
 
 
 fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
@@ -97,7 +97,7 @@ fetchRemoteArticle toMsg title =
 
 buildRequest : String -> Http.Request ArticleResult
 buildRequest title =
-    Http.get (buildArticleUrl title) articleResponse
+    Http.get (buildArticleUrl title) responseDecoder
 
 
 buildArticleUrl : String -> Url
@@ -119,37 +119,37 @@ buildArticleUrl title =
 -- DECODER --
 
 
-articleResponse : Decoder ArticleResult
-articleResponse =
+responseDecoder : Decoder ArticleResult
+responseDecoder =
     oneOf
-        [ map Ok success
-        , map Err error
+        [ map Ok successDecoder
+        , map Err errorDecoder
         ]
 
 
-success : Decoder Article
-success =
-    field "parse" article
+successDecoder : Decoder Article
+successDecoder =
+    field "parse" articleDecoder
 
 
-article : Decoder Article
-article =
+articleDecoder : Decoder Article
+articleDecoder =
     decode Article
-        |> required "title" Title.decoder
-        |> required "links" (list link)
+        |> required "title" Title.titleDecoder
+        |> required "links" (list linkDecoder)
         |> required "text" string
 
 
-link : Decoder Link
-link =
+linkDecoder : Decoder Link
+linkDecoder =
     decode Link
-        |> required "title" Title.decoder
-        |> required "ns" namespace
+        |> required "title" Title.titleDecoder
+        |> required "ns" namespaceDecoder
         |> required "exists" bool
 
 
-namespace : Decoder Namespace
-namespace =
+namespaceDecoder : Decoder Namespace
+namespaceDecoder =
     let
         toNamespace namespaceId =
             if namespaceId == 0 then
@@ -160,8 +160,8 @@ namespace =
         map toNamespace int
 
 
-error : Decoder ArticleError
-error =
+errorDecoder : Decoder ArticleError
+errorDecoder =
     let
         toError errorCode =
             case errorCode of

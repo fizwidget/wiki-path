@@ -6,7 +6,7 @@ module Common.Title
         , from
         , value
         , fetchPair
-        , decoder
+        , titleDecoder
         , viewAsLink
         )
 
@@ -36,6 +36,10 @@ value (Title title) =
     title
 
 
+
+-- API --
+
+
 type alias RemoteTitlePair =
     RemoteData TitleError ( Title, Title )
 
@@ -43,10 +47,6 @@ type alias RemoteTitlePair =
 type TitleError
     = UnexpectedTitleCount
     | HttpError Http.Error
-
-
-
--- API --
 
 
 fetchPair : (RemoteTitlePair -> msg) -> Cmd msg
@@ -74,7 +74,7 @@ toRemoteTitlePair remoteTitles =
 
 buildRandomTitleRequest : Int -> Http.Request (List Title)
 buildRandomTitleRequest titleCount =
-    Http.get (buildRandomTitlesUrl titleCount) randomTitlesResponse
+    Http.get (buildRandomTitlesUrl titleCount) randomTitlesResponseDecoder
 
 
 buildRandomTitlesUrl : Int -> Url
@@ -99,15 +99,15 @@ buildRandomTitlesUrl titleCount =
 -- DECODER --
 
 
-randomTitlesResponse : Decoder (List Title)
-randomTitlesResponse =
+randomTitlesResponseDecoder : Decoder (List Title)
+randomTitlesResponseDecoder =
     at
         [ "query", "random" ]
-        (list <| field "title" decoder)
+        (list <| field "title" titleDecoder)
 
 
-decoder : Decoder Title
-decoder =
+titleDecoder : Decoder Title
+titleDecoder =
     map from string
 
 

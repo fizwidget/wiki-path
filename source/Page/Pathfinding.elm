@@ -2,7 +2,13 @@ module Page.Pathfinding
     exposing
         ( Model
         , Msg
-        , UpdateResult(..)
+        , UpdateResult
+            ( Continue
+            , Back
+            , PathFound
+            , PathNotFound
+            , TooManyRequests
+            )
         , init
         , update
         , view
@@ -89,9 +95,9 @@ pendingRequestsLimit =
 
 
 type UpdateResult
-    = InPathfinding ( Model, Cmd Msg )
-    | Done Path
+    = Continue ( Model, Cmd Msg )
     | Back
+    | PathFound Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
 
@@ -122,7 +128,7 @@ onResponseReceived model pathToArticle articleResult =
 onArticleReceived : Model -> Path -> Article -> UpdateResult
 onArticleReceived model pathToArticle article =
     if hasReachedDestination model article then
-        Done pathToArticle
+        PathFound pathToArticle
     else
         processLinks model pathToArticle article
             |> continueSearch
@@ -176,7 +182,7 @@ explorePaths : Model -> List Path -> UpdateResult
 explorePaths model paths =
     case containsPathToDestination model.destination paths of
         Just pathToDestination ->
-            Done pathToDestination
+            PathFound pathToDestination
 
         Nothing ->
             fetchNextArticles model paths
@@ -197,7 +203,7 @@ fetchNextArticles model pathsToFollow =
         if hasMadeTooManyRequests updatedModel then
             TooManyRequests updatedModel.source updatedModel.destination
         else
-            InPathfinding ( updatedModel, Cmd.batch requests )
+            Continue ( updatedModel, Cmd.batch requests )
 
 
 fetchNextArticle : Path -> Cmd Msg
