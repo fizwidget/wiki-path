@@ -42,20 +42,6 @@ type alias UserInput =
 
 
 
--- MESSAGE --
-
-
-type Msg
-    = SourceArticleTitleChange UserInput
-    | DestinationArticleTitleChange UserInput
-    | FetchArticlesRequest
-    | FetchSourceArticleResponse RemoteArticle
-    | FetchDestinationArticleResponse RemoteArticle
-    | FetchRandomTitlesRequest
-    | FetchRandomTitlesResponse RemoteTitlePair
-
-
-
 -- INIT --
 
 
@@ -83,6 +69,16 @@ initialModel sourceTitleInput destinationTitleInput =
 
 
 -- UPDATE --
+
+
+type Msg
+    = SourceArticleTitleChange UserInput
+    | DestinationArticleTitleChange UserInput
+    | FetchArticlesRequest
+    | FetchSourceArticleResponse RemoteArticle
+    | FetchDestinationArticleResponse RemoteArticle
+    | FetchRandomTitlesRequest
+    | FetchRandomTitlesResponse RemoteTitlePair
 
 
 type UpdateResult

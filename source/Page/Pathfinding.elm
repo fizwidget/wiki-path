@@ -44,15 +44,6 @@ type alias Model =
 
 
 
--- MESSAGES --
-
-
-type Msg
-    = FetchArticleResponse Path ArticleResult
-    | BackToSetup
-
-
-
 -- INIT --
 
 
@@ -92,6 +83,11 @@ pendingRequestsLimit =
 
 
 -- UPDATE --
+
+
+type Msg
+    = FetchArticleResponse Path ArticleResult
+    | BackToSetup
 
 
 type UpdateResult
