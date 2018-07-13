@@ -9683,457 +9683,6 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
-var _fizwidget$wiki_path$Common_Url_Model$encode = function (queryParam) {
-	var _p0 = queryParam;
-	if (_p0.ctor === 'KeyValue') {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			_elm_lang$http$Http$encodeUri(_p0._0._0),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'=',
-				_elm_lang$http$Http$encodeUri(_p0._0._1)));
-	} else {
-		return _elm_lang$http$Http$encodeUri(_p0._0);
-	}
-};
-var _fizwidget$wiki_path$Common_Url_Model$build = F2(
-	function (baseUrl, queryParams) {
-		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Url_Model$encode, queryParams);
-		var joinedQueryParams = A2(_elm_lang$core$String$join, '&', queryParamStrings);
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			baseUrl,
-			A2(_elm_lang$core$Basics_ops['++'], '?', joinedQueryParams));
-	});
-var _fizwidget$wiki_path$Common_Url_Model$Key = function (a) {
-	return {ctor: 'Key', _0: a};
-};
-var _fizwidget$wiki_path$Common_Url_Model$KeyValue = function (a) {
-	return {ctor: 'KeyValue', _0: a};
-};
-
-var _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl = 'https://en.wikipedia.org/w/api.php';
-
-var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
-	var _p0 = data;
-	if (_p0.ctor === 'NotAsked') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var _krisajenkins$remotedata$RemoteData$isLoading = function (data) {
-	var _p1 = data;
-	if (_p1.ctor === 'Loading') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var _krisajenkins$remotedata$RemoteData$isFailure = function (data) {
-	var _p2 = data;
-	if (_p2.ctor === 'Failure') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var _krisajenkins$remotedata$RemoteData$isSuccess = function (data) {
-	var _p3 = data;
-	if (_p3.ctor === 'Success') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var _krisajenkins$remotedata$RemoteData$withDefault = F2(
-	function ($default, data) {
-		var _p4 = data;
-		if (_p4.ctor === 'Success') {
-			return _p4._0;
-		} else {
-			return $default;
-		}
-	});
-var _krisajenkins$remotedata$RemoteData$Success = function (a) {
-	return {ctor: 'Success', _0: a};
-};
-var _krisajenkins$remotedata$RemoteData$succeed = _krisajenkins$remotedata$RemoteData$Success;
-var _krisajenkins$remotedata$RemoteData$prism = {
-	reverseGet: _krisajenkins$remotedata$RemoteData$Success,
-	getOption: function (data) {
-		var _p5 = data;
-		if (_p5.ctor === 'Success') {
-			return _elm_lang$core$Maybe$Just(_p5._0);
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	}
-};
-var _krisajenkins$remotedata$RemoteData$Failure = function (a) {
-	return {ctor: 'Failure', _0: a};
-};
-var _krisajenkins$remotedata$RemoteData$fromResult = function (result) {
-	var _p6 = result;
-	if (_p6.ctor === 'Err') {
-		return _krisajenkins$remotedata$RemoteData$Failure(_p6._0);
-	} else {
-		return _krisajenkins$remotedata$RemoteData$Success(_p6._0);
-	}
-};
-var _krisajenkins$remotedata$RemoteData$asCmd = _elm_lang$core$Task$attempt(_krisajenkins$remotedata$RemoteData$fromResult);
-var _krisajenkins$remotedata$RemoteData$sendRequest = _elm_lang$http$Http$send(_krisajenkins$remotedata$RemoteData$fromResult);
-var _krisajenkins$remotedata$RemoteData$fromTask = function (_p7) {
-	return A2(
-		_elm_lang$core$Task$onError,
-		function (_p8) {
-			return _elm_lang$core$Task$succeed(
-				_krisajenkins$remotedata$RemoteData$Failure(_p8));
-		},
-		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p7));
-};
-var _krisajenkins$remotedata$RemoteData$Loading = {ctor: 'Loading'};
-var _krisajenkins$remotedata$RemoteData$NotAsked = {ctor: 'NotAsked'};
-var _krisajenkins$remotedata$RemoteData$map = F2(
-	function (f, data) {
-		var _p9 = data;
-		switch (_p9.ctor) {
-			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(
-					f(_p9._0));
-			case 'Loading':
-				return _krisajenkins$remotedata$RemoteData$Loading;
-			case 'NotAsked':
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-			default:
-				return _krisajenkins$remotedata$RemoteData$Failure(_p9._0);
-		}
-	});
-var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p10) {
-	return A2(
-		_krisajenkins$remotedata$RemoteData$withDefault,
-		_elm_lang$core$Maybe$Nothing,
-		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p10));
-};
-var _krisajenkins$remotedata$RemoteData$mapError = F2(
-	function (f, data) {
-		var _p11 = data;
-		switch (_p11.ctor) {
-			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(_p11._0);
-			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(
-					f(_p11._0));
-			case 'Loading':
-				return _krisajenkins$remotedata$RemoteData$Loading;
-			default:
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-		}
-	});
-var _krisajenkins$remotedata$RemoteData$mapBoth = F2(
-	function (successFn, errorFn) {
-		return function (_p12) {
-			return A2(
-				_krisajenkins$remotedata$RemoteData$mapError,
-				errorFn,
-				A2(_krisajenkins$remotedata$RemoteData$map, successFn, _p12));
-		};
-	});
-var _krisajenkins$remotedata$RemoteData$andThen = F2(
-	function (f, data) {
-		var _p13 = data;
-		switch (_p13.ctor) {
-			case 'Success':
-				return f(_p13._0);
-			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(_p13._0);
-			case 'NotAsked':
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-			default:
-				return _krisajenkins$remotedata$RemoteData$Loading;
-		}
-	});
-var _krisajenkins$remotedata$RemoteData$andMap = F2(
-	function (wrappedValue, wrappedFunction) {
-		var _p14 = {ctor: '_Tuple2', _0: wrappedFunction, _1: wrappedValue};
-		_v10_5:
-		do {
-			_v10_4:
-			do {
-				_v10_3:
-				do {
-					_v10_2:
-					do {
-						switch (_p14._0.ctor) {
-							case 'Success':
-								switch (_p14._1.ctor) {
-									case 'Success':
-										return _krisajenkins$remotedata$RemoteData$Success(
-											_p14._0._0(_p14._1._0));
-									case 'Failure':
-										break _v10_2;
-									case 'Loading':
-										break _v10_4;
-									default:
-										return _krisajenkins$remotedata$RemoteData$NotAsked;
-								}
-							case 'Failure':
-								return _krisajenkins$remotedata$RemoteData$Failure(_p14._0._0);
-							case 'Loading':
-								switch (_p14._1.ctor) {
-									case 'Failure':
-										break _v10_2;
-									case 'Loading':
-										break _v10_3;
-									case 'NotAsked':
-										break _v10_3;
-									default:
-										break _v10_3;
-								}
-							default:
-								switch (_p14._1.ctor) {
-									case 'Failure':
-										break _v10_2;
-									case 'Loading':
-										break _v10_4;
-									case 'NotAsked':
-										break _v10_5;
-									default:
-										break _v10_5;
-								}
-						}
-					} while(false);
-					return _krisajenkins$remotedata$RemoteData$Failure(_p14._1._0);
-				} while(false);
-				return _krisajenkins$remotedata$RemoteData$Loading;
-			} while(false);
-			return _krisajenkins$remotedata$RemoteData$Loading;
-		} while(false);
-		return _krisajenkins$remotedata$RemoteData$NotAsked;
-	});
-var _krisajenkins$remotedata$RemoteData$map2 = F3(
-	function (f, a, b) {
-		return A2(
-			_krisajenkins$remotedata$RemoteData$andMap,
-			b,
-			A2(_krisajenkins$remotedata$RemoteData$map, f, a));
-	});
-var _krisajenkins$remotedata$RemoteData$fromList = A2(
-	_elm_lang$core$List$foldr,
-	_krisajenkins$remotedata$RemoteData$map2(
-		F2(
-			function (x, y) {
-				return {ctor: '::', _0: x, _1: y};
-			})),
-	_krisajenkins$remotedata$RemoteData$Success(
-		{ctor: '[]'}));
-var _krisajenkins$remotedata$RemoteData$map3 = F4(
-	function (f, a, b, c) {
-		return A2(
-			_krisajenkins$remotedata$RemoteData$andMap,
-			c,
-			A2(
-				_krisajenkins$remotedata$RemoteData$andMap,
-				b,
-				A2(_krisajenkins$remotedata$RemoteData$map, f, a)));
-	});
-var _krisajenkins$remotedata$RemoteData$append = F2(
-	function (a, b) {
-		return A2(
-			_krisajenkins$remotedata$RemoteData$andMap,
-			b,
-			A2(
-				_krisajenkins$remotedata$RemoteData$map,
-				F2(
-					function (v0, v1) {
-						return {ctor: '_Tuple2', _0: v0, _1: v1};
-					}),
-				a));
-	});
-var _krisajenkins$remotedata$RemoteData$update = F2(
-	function (f, remoteData) {
-		var _p15 = remoteData;
-		switch (_p15.ctor) {
-			case 'Success':
-				var _p16 = f(_p15._0);
-				var first = _p16._0;
-				var second = _p16._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _krisajenkins$remotedata$RemoteData$Success(first),
-					_1: second
-				};
-			case 'NotAsked':
-				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$NotAsked, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'Loading':
-				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$Loading, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _krisajenkins$remotedata$RemoteData$Failure(_p15._0),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-
-var _fizwidget$wiki_path$Common_Title_Model$value = function (_p0) {
-	var _p1 = _p0;
-	return _p1._0;
-};
-var _fizwidget$wiki_path$Common_Title_Model$Title = function (a) {
-	return {ctor: 'Title', _0: a};
-};
-var _fizwidget$wiki_path$Common_Title_Model$from = _fizwidget$wiki_path$Common_Title_Model$Title;
-var _fizwidget$wiki_path$Common_Title_Model$HttpError = function (a) {
-	return {ctor: 'HttpError', _0: a};
-};
-var _fizwidget$wiki_path$Common_Title_Model$UnexpectedTitleCount = {ctor: 'UnexpectedTitleCount'};
-
-var _fizwidget$wiki_path$Common_Article_Model$Article = F3(
-	function (a, b, c) {
-		return {title: a, links: b, content: c};
-	});
-var _fizwidget$wiki_path$Common_Article_Model$Link = F3(
-	function (a, b, c) {
-		return {title: a, namespace: b, doesExist: c};
-	});
-var _fizwidget$wiki_path$Common_Article_Model$NonArticleNamespace = {ctor: 'NonArticleNamespace'};
-var _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace = {ctor: 'ArticleNamespace'};
-var _fizwidget$wiki_path$Common_Article_Model$HttpError = function (a) {
-	return {ctor: 'HttpError', _0: a};
-};
-var _fizwidget$wiki_path$Common_Article_Model$UnknownError = function (a) {
-	return {ctor: 'UnknownError', _0: a};
-};
-var _fizwidget$wiki_path$Common_Article_Model$InvalidTitle = {ctor: 'InvalidTitle'};
-var _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound = {ctor: 'ArticleNotFound'};
-
-var _fizwidget$wiki_path$Common_Title_Decoder$title = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title_Model$from, _elm_lang$core$Json_Decode$string);
-var _fizwidget$wiki_path$Common_Title_Decoder$randomTitlesResponse = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'query',
-		_1: {
-			ctor: '::',
-			_0: 'random',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$list(
-		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title_Decoder$title)));
-
-var _fizwidget$wiki_path$Common_Article_Decoder$error = function () {
-	var errorCode = A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'error',
-			_1: {
-				ctor: '::',
-				_0: 'code',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string);
-	var toError = function (errorCode) {
-		var _p0 = errorCode;
-		switch (_p0) {
-			case 'missingtitle':
-				return _fizwidget$wiki_path$Common_Article_Model$ArticleNotFound;
-			case 'invalidtitle':
-				return _fizwidget$wiki_path$Common_Article_Model$InvalidTitle;
-			default:
-				return _fizwidget$wiki_path$Common_Article_Model$UnknownError(errorCode);
-		}
-	};
-	return A2(_elm_lang$core$Json_Decode$map, toError, errorCode);
-}();
-var _fizwidget$wiki_path$Common_Article_Decoder$namespace = function () {
-	var toNamespace = function (namespaceId) {
-		return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace : _fizwidget$wiki_path$Common_Article_Model$NonArticleNamespace;
-	};
-	return A2(_elm_lang$core$Json_Decode$map, toNamespace, _elm_lang$core$Json_Decode$int);
-}();
-var _fizwidget$wiki_path$Common_Article_Decoder$link = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'exists',
-	_elm_lang$core$Json_Decode$bool,
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'ns',
-		_fizwidget$wiki_path$Common_Article_Decoder$namespace,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_fizwidget$wiki_path$Common_Title_Decoder$title,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Model$Link))));
-var _fizwidget$wiki_path$Common_Article_Decoder$article = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'text',
-	_elm_lang$core$Json_Decode$string,
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'links',
-		_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Article_Decoder$link),
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_fizwidget$wiki_path$Common_Title_Decoder$title,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article_Model$Article))));
-var _fizwidget$wiki_path$Common_Article_Decoder$success = A2(_elm_lang$core$Json_Decode$field, 'parse', _fizwidget$wiki_path$Common_Article_Decoder$article);
-var _fizwidget$wiki_path$Common_Article_Decoder$articleResponse = _elm_lang$core$Json_Decode$oneOf(
-	{
-		ctor: '::',
-		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Common_Article_Decoder$success),
-		_1: {
-			ctor: '::',
-			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Common_Article_Decoder$error),
-			_1: {ctor: '[]'}
-		}
-	});
-
-var _fizwidget$wiki_path$Common_Article_Api$buildArticleUrl = function (title) {
-	var queryParams = {
-		ctor: '::',
-		_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-			{ctor: '_Tuple2', _0: 'action', _1: 'parse'}),
-		_1: {
-			ctor: '::',
-			_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
-			_1: {
-				ctor: '::',
-				_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-					{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-						{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
-					_1: {
-						ctor: '::',
-						_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-							{ctor: '_Tuple2', _0: 'page', _1: title}),
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Common_Url_Model$Key('redirects'),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		}
-	};
-	return A2(_fizwidget$wiki_path$Common_Url_Model$build, _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl, queryParams);
-};
-var _fizwidget$wiki_path$Common_Article_Api$buildRequest = function (title) {
-	return A2(
-		_elm_lang$http$Http$get,
-		_fizwidget$wiki_path$Common_Article_Api$buildArticleUrl(title),
-		_fizwidget$wiki_path$Common_Article_Decoder$articleResponse);
-};
-
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
 	return A4(
 		_elm_lang$core$Regex$replace,
@@ -16013,7 +15562,7 @@ var _rtfeldman$elm_css$Html_Styled_Attributes$style = function (_p0) {
 		_elm_lang$virtual_dom$VirtualDom$style(_p0));
 };
 
-var _fizwidget$wiki_path$Common_Error_View$view = F2(
+var _fizwidget$wiki_path$Common_Error$view = F2(
 	function (generalDescription, serverErrorText) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$div,
@@ -16059,7 +15608,429 @@ var _fizwidget$wiki_path$Common_Error_View$view = F2(
 			});
 	});
 
-var _fizwidget$wiki_path$Common_Article_View$viewError = function (error) {
+var _fizwidget$wiki_path$Common_Url$encode = function (queryParam) {
+	var _p0 = queryParam;
+	if (_p0.ctor === 'KeyValue') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$http$Http$encodeUri(_p0._0._0),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'=',
+				_elm_lang$http$Http$encodeUri(_p0._0._1)));
+	} else {
+		return _elm_lang$http$Http$encodeUri(_p0._0);
+	}
+};
+var _fizwidget$wiki_path$Common_Url$build = F2(
+	function (baseUrl, queryParams) {
+		var queryParamStrings = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Url$encode, queryParams);
+		var joinedQueryParams = A2(_elm_lang$core$String$join, '&', queryParamStrings);
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			baseUrl,
+			A2(_elm_lang$core$Basics_ops['++'], '?', joinedQueryParams));
+	});
+var _fizwidget$wiki_path$Common_Url$Key = function (a) {
+	return {ctor: 'Key', _0: a};
+};
+var _fizwidget$wiki_path$Common_Url$KeyValue = function (a) {
+	return {ctor: 'KeyValue', _0: a};
+};
+
+var _fizwidget$wiki_path$Common_Wikipedia$apiBaseUrl = 'https://en.wikipedia.org/w/api.php';
+
+var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
+	var _p0 = data;
+	if (_p0.ctor === 'NotAsked') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isLoading = function (data) {
+	var _p1 = data;
+	if (_p1.ctor === 'Loading') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isFailure = function (data) {
+	var _p2 = data;
+	if (_p2.ctor === 'Failure') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isSuccess = function (data) {
+	var _p3 = data;
+	if (_p3.ctor === 'Success') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$withDefault = F2(
+	function ($default, data) {
+		var _p4 = data;
+		if (_p4.ctor === 'Success') {
+			return _p4._0;
+		} else {
+			return $default;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$Success = function (a) {
+	return {ctor: 'Success', _0: a};
+};
+var _krisajenkins$remotedata$RemoteData$succeed = _krisajenkins$remotedata$RemoteData$Success;
+var _krisajenkins$remotedata$RemoteData$prism = {
+	reverseGet: _krisajenkins$remotedata$RemoteData$Success,
+	getOption: function (data) {
+		var _p5 = data;
+		if (_p5.ctor === 'Success') {
+			return _elm_lang$core$Maybe$Just(_p5._0);
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	}
+};
+var _krisajenkins$remotedata$RemoteData$Failure = function (a) {
+	return {ctor: 'Failure', _0: a};
+};
+var _krisajenkins$remotedata$RemoteData$fromMaybe = F2(
+	function (error, maybe) {
+		var _p6 = maybe;
+		if (_p6.ctor === 'Nothing') {
+			return _krisajenkins$remotedata$RemoteData$Failure(error);
+		} else {
+			return _krisajenkins$remotedata$RemoteData$Success(_p6._0);
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$fromResult = function (result) {
+	var _p7 = result;
+	if (_p7.ctor === 'Err') {
+		return _krisajenkins$remotedata$RemoteData$Failure(_p7._0);
+	} else {
+		return _krisajenkins$remotedata$RemoteData$Success(_p7._0);
+	}
+};
+var _krisajenkins$remotedata$RemoteData$asCmd = _elm_lang$core$Task$attempt(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$sendRequest = _elm_lang$http$Http$send(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$fromTask = function (_p8) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		function (_p9) {
+			return _elm_lang$core$Task$succeed(
+				_krisajenkins$remotedata$RemoteData$Failure(_p9));
+		},
+		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p8));
+};
+var _krisajenkins$remotedata$RemoteData$Loading = {ctor: 'Loading'};
+var _krisajenkins$remotedata$RemoteData$NotAsked = {ctor: 'NotAsked'};
+var _krisajenkins$remotedata$RemoteData$map = F2(
+	function (f, data) {
+		var _p10 = data;
+		switch (_p10.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(
+					f(_p10._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			case 'NotAsked':
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				return _krisajenkins$remotedata$RemoteData$Failure(_p10._0);
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p11) {
+	return A2(
+		_krisajenkins$remotedata$RemoteData$withDefault,
+		_elm_lang$core$Maybe$Nothing,
+		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p11));
+};
+var _krisajenkins$remotedata$RemoteData$mapError = F2(
+	function (f, data) {
+		var _p12 = data;
+		switch (_p12.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(_p12._0);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(
+					f(_p12._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$mapBoth = F2(
+	function (successFn, errorFn) {
+		return function (_p13) {
+			return A2(
+				_krisajenkins$remotedata$RemoteData$mapError,
+				errorFn,
+				A2(_krisajenkins$remotedata$RemoteData$map, successFn, _p13));
+		};
+	});
+var _krisajenkins$remotedata$RemoteData$andThen = F2(
+	function (f, data) {
+		var _p14 = data;
+		switch (_p14.ctor) {
+			case 'Success':
+				return f(_p14._0);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(_p14._0);
+			case 'NotAsked':
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				return _krisajenkins$remotedata$RemoteData$Loading;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$andMap = F2(
+	function (wrappedValue, wrappedFunction) {
+		var _p15 = {ctor: '_Tuple2', _0: wrappedFunction, _1: wrappedValue};
+		_v11_5:
+		do {
+			_v11_4:
+			do {
+				_v11_3:
+				do {
+					_v11_2:
+					do {
+						switch (_p15._0.ctor) {
+							case 'Success':
+								switch (_p15._1.ctor) {
+									case 'Success':
+										return _krisajenkins$remotedata$RemoteData$Success(
+											_p15._0._0(_p15._1._0));
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_4;
+									default:
+										return _krisajenkins$remotedata$RemoteData$NotAsked;
+								}
+							case 'Failure':
+								return _krisajenkins$remotedata$RemoteData$Failure(_p15._0._0);
+							case 'Loading':
+								switch (_p15._1.ctor) {
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_3;
+									case 'NotAsked':
+										break _v11_3;
+									default:
+										break _v11_3;
+								}
+							default:
+								switch (_p15._1.ctor) {
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_4;
+									case 'NotAsked':
+										break _v11_5;
+									default:
+										break _v11_5;
+								}
+						}
+					} while(false);
+					return _krisajenkins$remotedata$RemoteData$Failure(_p15._1._0);
+				} while(false);
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			} while(false);
+			return _krisajenkins$remotedata$RemoteData$Loading;
+		} while(false);
+		return _krisajenkins$remotedata$RemoteData$NotAsked;
+	});
+var _krisajenkins$remotedata$RemoteData$map2 = F3(
+	function (f, a, b) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			b,
+			A2(_krisajenkins$remotedata$RemoteData$map, f, a));
+	});
+var _krisajenkins$remotedata$RemoteData$fromList = A2(
+	_elm_lang$core$List$foldr,
+	_krisajenkins$remotedata$RemoteData$map2(
+		F2(
+			function (x, y) {
+				return {ctor: '::', _0: x, _1: y};
+			})),
+	_krisajenkins$remotedata$RemoteData$Success(
+		{ctor: '[]'}));
+var _krisajenkins$remotedata$RemoteData$map3 = F4(
+	function (f, a, b, c) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			c,
+			A2(
+				_krisajenkins$remotedata$RemoteData$andMap,
+				b,
+				A2(_krisajenkins$remotedata$RemoteData$map, f, a)));
+	});
+var _krisajenkins$remotedata$RemoteData$append = F2(
+	function (a, b) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			b,
+			A2(
+				_krisajenkins$remotedata$RemoteData$map,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				a));
+	});
+var _krisajenkins$remotedata$RemoteData$update = F2(
+	function (f, remoteData) {
+		var _p16 = remoteData;
+		switch (_p16.ctor) {
+			case 'Success':
+				var _p17 = f(_p16._0);
+				var first = _p17._0;
+				var second = _p17._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _krisajenkins$remotedata$RemoteData$Success(first),
+					_1: second
+				};
+			case 'NotAsked':
+				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$NotAsked, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Loading':
+				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$Loading, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _krisajenkins$remotedata$RemoteData$Failure(_p16._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+
+var _fizwidget$wiki_path$Common_Title$buildRandomTitlesUrl = function (titleCount) {
+	var articleNamespace = '0';
+	var queryParams = {
+		ctor: '::',
+		_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+			{ctor: '_Tuple2', _0: 'action', _1: 'query'}),
+		_1: {
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+					{ctor: '_Tuple2', _0: 'list', _1: 'random'}),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+						{
+							ctor: '_Tuple2',
+							_0: 'rnlimit',
+							_1: _elm_lang$core$Basics$toString(titleCount)
+						}),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+							{ctor: '_Tuple2', _0: 'rnnamespace', _1: articleNamespace}),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+								{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	};
+	return A2(_fizwidget$wiki_path$Common_Url$build, _fizwidget$wiki_path$Common_Wikipedia$apiBaseUrl, queryParams);
+};
+var _fizwidget$wiki_path$Common_Title$value = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0;
+};
+var _fizwidget$wiki_path$Common_Title$toUrl = function (title) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'https://en.wikipedia.org/wiki/',
+		_fizwidget$wiki_path$Common_Title$value(title));
+};
+var _fizwidget$wiki_path$Common_Title$viewAsLink = function (title) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$a,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href(
+				_fizwidget$wiki_path$Common_Title$toUrl(title)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text(
+				_fizwidget$wiki_path$Common_Title$value(title)),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Common_Title$Title = function (a) {
+	return {ctor: 'Title', _0: a};
+};
+var _fizwidget$wiki_path$Common_Title$from = _fizwidget$wiki_path$Common_Title$Title;
+var _fizwidget$wiki_path$Common_Title$titleDecoder = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Common_Title$from, _elm_lang$core$Json_Decode$string);
+var _fizwidget$wiki_path$Common_Title$randomTitlesResponseDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'query',
+		_1: {
+			ctor: '::',
+			_0: 'random',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$list(
+		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Common_Title$titleDecoder)));
+var _fizwidget$wiki_path$Common_Title$buildRandomTitleRequest = function (titleCount) {
+	return A2(
+		_elm_lang$http$Http$get,
+		_fizwidget$wiki_path$Common_Title$buildRandomTitlesUrl(titleCount),
+		_fizwidget$wiki_path$Common_Title$randomTitlesResponseDecoder);
+};
+var _fizwidget$wiki_path$Common_Title$HttpError = function (a) {
+	return {ctor: 'HttpError', _0: a};
+};
+var _fizwidget$wiki_path$Common_Title$UnexpectedTitleCount = {ctor: 'UnexpectedTitleCount'};
+var _fizwidget$wiki_path$Common_Title$toRemoteTitlePair = function (remoteTitles) {
+	var toPair = function (titles) {
+		var _p2 = titles;
+		if ((_p2.ctor === '::') && (_p2._1.ctor === '::')) {
+			return _krisajenkins$remotedata$RemoteData$succeed(
+				{ctor: '_Tuple2', _0: _p2._0, _1: _p2._1._0});
+		} else {
+			return _krisajenkins$remotedata$RemoteData$Failure(_fizwidget$wiki_path$Common_Title$UnexpectedTitleCount);
+		}
+	};
+	return A2(
+		_krisajenkins$remotedata$RemoteData$andThen,
+		toPair,
+		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Title$HttpError, remoteTitles));
+};
+var _fizwidget$wiki_path$Common_Title$fetchPair = function (toMsg) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		function (_p3) {
+			return toMsg(
+				_fizwidget$wiki_path$Common_Title$toRemoteTitlePair(_p3));
+		},
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			_fizwidget$wiki_path$Common_Title$buildRandomTitleRequest(2)));
+};
+
+var _fizwidget$wiki_path$Common_Article$viewError = function (error) {
 	var errorView = function () {
 		var _p0 = error;
 		switch (_p0.ctor) {
@@ -16068,10 +16039,10 @@ var _fizwidget$wiki_path$Common_Article_View$viewError = function (error) {
 			case 'InvalidTitle':
 				return _rtfeldman$elm_css$Html_Styled$text('Not a valid article title :(');
 			case 'UnknownError':
-				return A2(_fizwidget$wiki_path$Common_Error_View$view, 'Unknown error 🤯', _p0._0);
+				return A2(_fizwidget$wiki_path$Common_Error$view, 'Unknown error 🤯', _p0._0);
 			default:
 				return A2(
-					_fizwidget$wiki_path$Common_Error_View$view,
+					_fizwidget$wiki_path$Common_Error$view,
 					'Network error 😭',
 					_elm_lang$core$Basics$toString(_p0._0));
 		}
@@ -16085,129 +16056,169 @@ var _fizwidget$wiki_path$Common_Article_View$viewError = function (error) {
 			_1: {ctor: '[]'}
 		});
 };
+var _fizwidget$wiki_path$Common_Article$buildArticleUrl = function (title) {
+	var queryParams = {
+		ctor: '::',
+		_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+			{ctor: '_Tuple2', _0: 'action', _1: 'parse'}),
+		_1: {
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+					{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+						{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Common_Url$KeyValue(
+							{ctor: '_Tuple2', _0: 'page', _1: title}),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Url$Key('redirects'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	};
+	return A2(_fizwidget$wiki_path$Common_Url$build, _fizwidget$wiki_path$Common_Wikipedia$apiBaseUrl, queryParams);
+};
+var _fizwidget$wiki_path$Common_Article$Article = F3(
+	function (a, b, c) {
+		return {title: a, links: b, content: c};
+	});
+var _fizwidget$wiki_path$Common_Article$Link = F3(
+	function (a, b, c) {
+		return {title: a, namespace: b, doesExist: c};
+	});
+var _fizwidget$wiki_path$Common_Article$NonArticleNamespace = {ctor: 'NonArticleNamespace'};
+var _fizwidget$wiki_path$Common_Article$ArticleNamespace = {ctor: 'ArticleNamespace'};
+var _fizwidget$wiki_path$Common_Article$namespaceDecoder = function () {
+	var toNamespace = function (namespaceId) {
+		return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Common_Article$ArticleNamespace : _fizwidget$wiki_path$Common_Article$NonArticleNamespace;
+	};
+	return A2(_elm_lang$core$Json_Decode$map, toNamespace, _elm_lang$core$Json_Decode$int);
+}();
+var _fizwidget$wiki_path$Common_Article$linkDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'exists',
+	_elm_lang$core$Json_Decode$bool,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'ns',
+		_fizwidget$wiki_path$Common_Article$namespaceDecoder,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'title',
+			_fizwidget$wiki_path$Common_Title$titleDecoder,
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article$Link))));
+var _fizwidget$wiki_path$Common_Article$articleDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'text',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'links',
+		_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Common_Article$linkDecoder),
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'title',
+			_fizwidget$wiki_path$Common_Title$titleDecoder,
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Common_Article$Article))));
+var _fizwidget$wiki_path$Common_Article$successDecoder = A2(_elm_lang$core$Json_Decode$field, 'parse', _fizwidget$wiki_path$Common_Article$articleDecoder);
+var _fizwidget$wiki_path$Common_Article$HttpError = function (a) {
+	return {ctor: 'HttpError', _0: a};
+};
+var _fizwidget$wiki_path$Common_Article$UnknownError = function (a) {
+	return {ctor: 'UnknownError', _0: a};
+};
+var _fizwidget$wiki_path$Common_Article$InvalidTitle = {ctor: 'InvalidTitle'};
+var _fizwidget$wiki_path$Common_Article$ArticleNotFound = {ctor: 'ArticleNotFound'};
+var _fizwidget$wiki_path$Common_Article$errorDecoder = function () {
+	var errorCode = A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'error',
+			_1: {
+				ctor: '::',
+				_0: 'code',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string);
+	var toError = function (errorCode) {
+		var _p1 = errorCode;
+		switch (_p1) {
+			case 'missingtitle':
+				return _fizwidget$wiki_path$Common_Article$ArticleNotFound;
+			case 'invalidtitle':
+				return _fizwidget$wiki_path$Common_Article$InvalidTitle;
+			default:
+				return _fizwidget$wiki_path$Common_Article$UnknownError(errorCode);
+		}
+	};
+	return A2(_elm_lang$core$Json_Decode$map, toError, errorCode);
+}();
+var _fizwidget$wiki_path$Common_Article$responseDecoder = _elm_lang$core$Json_Decode$oneOf(
+	{
+		ctor: '::',
+		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Common_Article$successDecoder),
+		_1: {
+			ctor: '::',
+			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Common_Article$errorDecoder),
+			_1: {ctor: '[]'}
+		}
+	});
+var _fizwidget$wiki_path$Common_Article$buildRequest = function (title) {
+	return A2(
+		_elm_lang$http$Http$get,
+		_fizwidget$wiki_path$Common_Article$buildArticleUrl(title),
+		_fizwidget$wiki_path$Common_Article$responseDecoder);
+};
+var _fizwidget$wiki_path$Common_Article$fetchArticleResult = F2(
+	function (toMsg, title) {
+		var toArticleResult = function (result) {
+			return A2(
+				_elm_lang$core$Result$andThen,
+				_elm_lang$core$Basics$identity,
+				A2(_elm_lang$core$Result$mapError, _fizwidget$wiki_path$Common_Article$HttpError, result));
+		};
+		return A2(
+			_elm_lang$http$Http$send,
+			function (_p2) {
+				return toMsg(
+					toArticleResult(_p2));
+			},
+			_fizwidget$wiki_path$Common_Article$buildRequest(title));
+	});
+var _fizwidget$wiki_path$Common_Article$fetchRemoteArticle = F2(
+	function (toMsg, title) {
+		var toRemoteArticle = function (webData) {
+			return A2(
+				_krisajenkins$remotedata$RemoteData$andThen,
+				_krisajenkins$remotedata$RemoteData$fromResult,
+				A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Article$HttpError, webData));
+		};
+		return A2(
+			_elm_lang$core$Platform_Cmd$map,
+			function (_p3) {
+				return toMsg(
+					toRemoteArticle(_p3));
+			},
+			_krisajenkins$remotedata$RemoteData$sendRequest(
+				_fizwidget$wiki_path$Common_Article$buildRequest(title)));
+	});
 
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption = function (align) {
-	var _p0 = align;
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption = function (size) {
+	var _p0 = size;
 	switch (_p0.ctor) {
-		case 'Left':
-			return 'start';
-		case 'Center':
-			return 'center';
-		case 'Right':
-			return 'end';
-		case 'Around':
-			return 'around';
-		default:
-			return 'between';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption = function (align) {
-	var _p1 = align;
-	switch (_p1.ctor) {
-		case 'Top':
-			return 'start';
-		case 'Middle':
-			return 'center';
-		default:
-			return 'end';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption = function (size) {
-	var _p2 = size;
-	switch (_p2.ctor) {
-		case 'Move0':
-			return '0';
-		case 'Move1':
-			return '1';
-		case 'Move2':
-			return '2';
-		case 'Move3':
-			return '3';
-		case 'Move4':
-			return '4';
-		case 'Move5':
-			return '5';
-		case 'Move6':
-			return '6';
-		case 'Move7':
-			return '7';
-		case 'Move8':
-			return '8';
-		case 'Move9':
-			return '9';
-		case 'Move10':
-			return '10';
-		case 'Move11':
-			return '11';
-		default:
-			return '12';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption = function (size) {
-	var _p3 = size;
-	switch (_p3.ctor) {
-		case 'Offset0':
-			return '0';
-		case 'Offset1':
-			return '1';
-		case 'Offset2':
-			return '2';
-		case 'Offset3':
-			return '3';
-		case 'Offset4':
-			return '4';
-		case 'Offset5':
-			return '5';
-		case 'Offset6':
-			return '6';
-		case 'Offset7':
-			return '7';
-		case 'Offset8':
-			return '8';
-		case 'Offset9':
-			return '9';
-		case 'Offset10':
-			return '10';
-		default:
-			return '11';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption = function (size) {
-	var _p4 = size;
-	switch (_p4.ctor) {
-		case 'Col':
-			return _elm_lang$core$Maybe$Nothing;
-		case 'Col1':
-			return _elm_lang$core$Maybe$Just('1');
-		case 'Col2':
-			return _elm_lang$core$Maybe$Just('2');
-		case 'Col3':
-			return _elm_lang$core$Maybe$Just('3');
-		case 'Col4':
-			return _elm_lang$core$Maybe$Just('4');
-		case 'Col5':
-			return _elm_lang$core$Maybe$Just('5');
-		case 'Col6':
-			return _elm_lang$core$Maybe$Just('6');
-		case 'Col7':
-			return _elm_lang$core$Maybe$Just('7');
-		case 'Col8':
-			return _elm_lang$core$Maybe$Just('8');
-		case 'Col9':
-			return _elm_lang$core$Maybe$Just('9');
-		case 'Col10':
-			return _elm_lang$core$Maybe$Just('10');
-		case 'Col11':
-			return _elm_lang$core$Maybe$Just('11');
-		case 'Col12':
-			return _elm_lang$core$Maybe$Just('12');
-		default:
-			return _elm_lang$core$Maybe$Just('auto');
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption = function (size) {
-	var _p5 = size;
-	switch (_p5.ctor) {
 		case 'XS':
 			return _elm_lang$core$Maybe$Nothing;
 		case 'SM':
@@ -16220,19 +16231,23 @@ var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption = function (s
 			return _elm_lang$core$Maybe$Just('xl');
 	}
 };
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString = function (screenSize) {
-	var _p6 = _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(screenSize);
-	if (_p6.ctor === 'Just') {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			'-',
-			A2(_elm_lang$core$Basics_ops['++'], _p6._0, '-'));
-	} else {
-		return '-';
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$horizontalAlignOption = function (align) {
+	var _p1 = align;
+	switch (_p1.ctor) {
+		case 'Left':
+			return 'start';
+		case 'Center':
+			return 'center';
+		case 'Right':
+			return 'end';
+		case 'Around':
+			return 'around';
+		default:
+			return 'between';
 	}
 };
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass = function (_p7) {
-	var _p8 = _p7;
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$hAlignClass = function (_p2) {
+	var _p3 = _p2;
 	return _elm_lang$html$Html_Attributes$class(
 		A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -16247,911 +16262,23 @@ var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass = function (_p7) {
 						function (v) {
 							return A2(_elm_lang$core$Basics_ops['++'], v, '-');
 						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p8.screenSize))),
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption(_p8.align))));
+						_rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(_p3.screenSize))),
+				_rundis$elm_bootstrap$Bootstrap_General_Internal$horizontalAlignOption(_p3.align))));
 };
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes = function (aligns) {
-	var align = function (a) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass, a);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, align, aligns));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass = F2(
-	function (prefix, _p9) {
-		var _p10 = _p9;
-		return _elm_lang$html$Html_Attributes$class(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				prefix,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
-						A2(
-							_elm_lang$core$Maybe$map,
-							function (v) {
-								return A2(_elm_lang$core$Basics_ops['++'], v, '-');
-							},
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p10.screenSize))),
-					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption(_p10.align))));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes = F2(
-	function (prefix, aligns) {
-		var align = function (a) {
-			return A2(
-				_elm_lang$core$Maybe$map,
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass(prefix),
-				a);
-		};
-		return A2(
-			_elm_lang$core$List$filterMap,
-			_elm_lang$core$Basics$identity,
-			A2(_elm_lang$core$List$map, align, aligns));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes = function (pushes) {
-	var push = function (m) {
-		var _p11 = m;
-		if (_p11.ctor === 'Just') {
-			return _elm_lang$core$Maybe$Just(
-				_elm_lang$html$Html_Attributes$class(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'push',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p11._0.screenSize),
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p11._0.moveCount)))));
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, push, pushes));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes = function (pulls) {
-	var pull = function (m) {
-		var _p12 = m;
-		if (_p12.ctor === 'Just') {
-			return _elm_lang$core$Maybe$Just(
-				_elm_lang$html$Html_Attributes$class(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'pull',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p12._0.screenSize),
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p12._0.moveCount)))));
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, pull, pulls));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass = function (_p13) {
-	var _p14 = _p13;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'offset',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p14.screenSize),
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption(_p14.offsetCount))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes = function (offsets) {
-	var offset = function (m) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass, m);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, offset, offsets));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass = function (_p15) {
-	var _p16 = _p15;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'col',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (v) {
-							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p16.screenSize))),
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (v) {
-							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption(_p16.columnCount))))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes = function (widths) {
-	var width = function (w) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass, w);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, width, widths));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions = {
-	attributes: {ctor: '[]'},
-	vAlignXs: _elm_lang$core$Maybe$Nothing,
-	vAlignSm: _elm_lang$core$Maybe$Nothing,
-	vAlignMd: _elm_lang$core$Maybe$Nothing,
-	vAlignLg: _elm_lang$core$Maybe$Nothing,
-	vAlignXl: _elm_lang$core$Maybe$Nothing,
-	hAlignXs: _elm_lang$core$Maybe$Nothing,
-	hAlignSm: _elm_lang$core$Maybe$Nothing,
-	hAlignMd: _elm_lang$core$Maybe$Nothing,
-	hAlignLg: _elm_lang$core$Maybe$Nothing,
-	hAlignXl: _elm_lang$core$Maybe$Nothing
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions = {
-	attributes: {ctor: '[]'},
-	widthXs: _elm_lang$core$Maybe$Nothing,
-	widthSm: _elm_lang$core$Maybe$Nothing,
-	widthMd: _elm_lang$core$Maybe$Nothing,
-	widthLg: _elm_lang$core$Maybe$Nothing,
-	widthXl: _elm_lang$core$Maybe$Nothing,
-	offsetXs: _elm_lang$core$Maybe$Nothing,
-	offsetSm: _elm_lang$core$Maybe$Nothing,
-	offsetMd: _elm_lang$core$Maybe$Nothing,
-	offsetLg: _elm_lang$core$Maybe$Nothing,
-	offsetXl: _elm_lang$core$Maybe$Nothing,
-	pullXs: _elm_lang$core$Maybe$Nothing,
-	pullSm: _elm_lang$core$Maybe$Nothing,
-	pullMd: _elm_lang$core$Maybe$Nothing,
-	pullLg: _elm_lang$core$Maybe$Nothing,
-	pullXl: _elm_lang$core$Maybe$Nothing,
-	pushXs: _elm_lang$core$Maybe$Nothing,
-	pushSm: _elm_lang$core$Maybe$Nothing,
-	pushMd: _elm_lang$core$Maybe$Nothing,
-	pushLg: _elm_lang$core$Maybe$Nothing,
-	pushXl: _elm_lang$core$Maybe$Nothing,
-	alignXs: _elm_lang$core$Maybe$Nothing,
-	alignSm: _elm_lang$core$Maybe$Nothing,
-	alignMd: _elm_lang$core$Maybe$Nothing,
-	alignLg: _elm_lang$core$Maybe$Nothing,
-	alignXl: _elm_lang$core$Maybe$Nothing
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign = F2(
-	function (align, options) {
-		var _p17 = align.screenSize;
-		switch (_p17.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign = F2(
-	function (align, options) {
-		var _p18 = align.screenSize;
-		switch (_p18.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption = F2(
-	function (modifier, options) {
-		var _p19 = modifier;
-		switch (_p19.ctor) {
-			case 'RowAttrs':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p19._0)
-					});
-			case 'RowVAlign':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign, _p19._0, options);
-			default:
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign, _p19._0, options);
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign = F2(
-	function (align, options) {
-		var _p20 = align.screenSize;
-		switch (_p20.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush = F2(
-	function (push, options) {
-		var _p21 = push.screenSize;
-		switch (_p21.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushXs: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushSm: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushMd: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushLg: _elm_lang$core$Maybe$Just(push)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushXl: _elm_lang$core$Maybe$Just(push)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull = F2(
-	function (pull, options) {
-		var _p22 = pull.screenSize;
-		switch (_p22.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullXs: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullSm: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullMd: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullLg: _elm_lang$core$Maybe$Just(pull)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullXl: _elm_lang$core$Maybe$Just(pull)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset = F2(
-	function (offset, options) {
-		var _p23 = offset.screenSize;
-		switch (_p23.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetXs: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetSm: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetMd: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetLg: _elm_lang$core$Maybe$Just(offset)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetXl: _elm_lang$core$Maybe$Just(offset)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth = F2(
-	function (width, options) {
-		var _p24 = width.screenSize;
-		switch (_p24.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthXs: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthSm: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthMd: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthLg: _elm_lang$core$Maybe$Just(width)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthXl: _elm_lang$core$Maybe$Just(width)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption = F2(
-	function (modifier, options) {
-		var _p25 = modifier;
-		switch (_p25.ctor) {
-			case 'ColAttrs':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p25._0)
-					});
-			case 'ColWidth':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth, _p25._0, options);
-			case 'ColOffset':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset, _p25._0, options);
-			case 'ColPull':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull, _p25._0, options);
-			case 'ColPush':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush, _p25._0, options);
-			default:
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign, _p25._0, options);
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions, modifiers);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('row'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
-				'align-items-',
-				{
-					ctor: '::',
-					_0: options.vAlignXs,
-					_1: {
-						ctor: '::',
-						_0: options.vAlignSm,
-						_1: {
-							ctor: '::',
-							_0: options.vAlignMd,
-							_1: {
-								ctor: '::',
-								_0: options.vAlignLg,
-								_1: {
-									ctor: '::',
-									_0: options.vAlignXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes(
-					{
-						ctor: '::',
-						_0: options.hAlignXs,
-						_1: {
-							ctor: '::',
-							_0: options.hAlignSm,
-							_1: {
-								ctor: '::',
-								_0: options.hAlignMd,
-								_1: {
-									ctor: '::',
-									_0: options.hAlignLg,
-									_1: {
-										ctor: '::',
-										_0: options.hAlignXl,
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				options.attributes)));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width = F2(
-	function (a, b) {
-		return {screenSize: a, columnCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset = F2(
-	function (a, b) {
-		return {screenSize: a, offsetCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull = F2(
-	function (a, b) {
-		return {screenSize: a, moveCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push = F2(
-	function (a, b) {
-		return {screenSize: a, moveCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign = F2(
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$HAlign = F2(
 	function (a, b) {
 		return {screenSize: a, align: b};
 	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign = F2(
-	function (a, b) {
-		return {screenSize: a, align: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOptions = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return function (l) {
-												return function (m) {
-													return function (n) {
-														return function (o) {
-															return function (p) {
-																return function (q) {
-																	return function (r) {
-																		return function (s) {
-																			return function (t) {
-																				return function (u) {
-																					return function (v) {
-																						return function (w) {
-																							return function (x) {
-																								return function (y) {
-																									return function (z) {
-																										return {attributes: a, widthXs: b, widthSm: c, widthMd: d, widthLg: e, widthXl: f, offsetXs: g, offsetSm: h, offsetMd: i, offsetLg: j, offsetXl: k, pullXs: l, pullSm: m, pullMd: n, pullLg: o, pullXl: p, pushXs: q, pushSm: r, pushMd: s, pushLg: t, pushXl: u, alignXs: v, alignSm: w, alignMd: x, alignLg: y, alignXl: z};
-																									};
-																								};
-																							};
-																						};
-																					};
-																				};
-																			};
-																		};
-																	};
-																};
-															};
-														};
-													};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowOptions = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return {attributes: a, vAlignXs: b, vAlignSm: c, vAlignMd: d, vAlignLg: e, vAlignXl: f, hAlignXs: g, hAlignSm: h, hAlignMd: i, hAlignLg: j, hAlignXl: k};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs = function (a) {
-	return {ctor: 'ColAttrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign = function (a) {
-	return {ctor: 'ColAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush = function (a) {
-	return {ctor: 'ColPush', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$push = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull = function (a) {
-	return {ctor: 'ColPull', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset = function (a) {
-	return {ctor: 'ColOffset', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth = function (a) {
-	return {ctor: 'ColWidth', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$width = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs = function (a) {
-	return {ctor: 'RowAttrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign = function (a) {
-	return {ctor: 'RowHAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign = function (a) {
-	return {ctor: 'RowVAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL = {ctor: 'XL'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG = {ctor: 'LG'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD = {ctor: 'MD'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM = {ctor: 'SM'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS = {ctor: 'XS'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto = {ctor: 'ColAuto'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12 = {ctor: 'Col12'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11 = {ctor: 'Col11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10 = {ctor: 'Col10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9 = {ctor: 'Col9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8 = {ctor: 'Col8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7 = {ctor: 'Col7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6 = {ctor: 'Col6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5 = {ctor: 'Col5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4 = {ctor: 'Col4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3 = {ctor: 'Col3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2 = {ctor: 'Col2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1 = {ctor: 'Col1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col = {ctor: 'Col'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions, modifiers);
-	var shouldAddDefaultXs = _elm_lang$core$Native_Utils.eq(
-		_elm_lang$core$List$length(
-			A2(
-				_elm_lang$core$List$filterMap,
-				_elm_lang$core$Basics$identity,
-				{
-					ctor: '::',
-					_0: options.widthXs,
-					_1: {
-						ctor: '::',
-						_0: options.widthSm,
-						_1: {
-							ctor: '::',
-							_0: options.widthMd,
-							_1: {
-								ctor: '::',
-								_0: options.widthLg,
-								_1: {
-									ctor: '::',
-									_0: options.widthXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				})),
-		0);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes(
-			{
-				ctor: '::',
-				_0: shouldAddDefaultXs ? _elm_lang$core$Maybe$Just(
-					A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col)) : options.widthXs,
-				_1: {
-					ctor: '::',
-					_0: options.widthSm,
-					_1: {
-						ctor: '::',
-						_0: options.widthMd,
-						_1: {
-							ctor: '::',
-							_0: options.widthLg,
-							_1: {
-								ctor: '::',
-								_0: options.widthXl,
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes(
-				{
-					ctor: '::',
-					_0: options.offsetXs,
-					_1: {
-						ctor: '::',
-						_0: options.offsetSm,
-						_1: {
-							ctor: '::',
-							_0: options.offsetMd,
-							_1: {
-								ctor: '::',
-								_0: options.offsetLg,
-								_1: {
-									ctor: '::',
-									_0: options.offsetXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes(
-					{
-						ctor: '::',
-						_0: options.pullXs,
-						_1: {
-							ctor: '::',
-							_0: options.pullSm,
-							_1: {
-								ctor: '::',
-								_0: options.pullMd,
-								_1: {
-									ctor: '::',
-									_0: options.pullLg,
-									_1: {
-										ctor: '::',
-										_0: options.pullXl,
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes(
-						{
-							ctor: '::',
-							_0: options.pushXs,
-							_1: {
-								ctor: '::',
-								_0: options.pushSm,
-								_1: {
-									ctor: '::',
-									_0: options.pushMd,
-									_1: {
-										ctor: '::',
-										_0: options.pushLg,
-										_1: {
-											ctor: '::',
-											_0: options.pushXl,
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						A2(
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
-							'align-self-',
-							{
-								ctor: '::',
-								_0: options.alignXs,
-								_1: {
-									ctor: '::',
-									_0: options.alignSm,
-									_1: {
-										ctor: '::',
-										_0: options.alignMd,
-										_1: {
-											ctor: '::',
-											_0: options.alignLg,
-											_1: {
-												ctor: '::',
-												_0: options.alignXl,
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}),
-						options.attributes)))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11 = {ctor: 'Offset11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10 = {ctor: 'Offset10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9 = {ctor: 'Offset9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8 = {ctor: 'Offset8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7 = {ctor: 'Offset7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6 = {ctor: 'Offset6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5 = {ctor: 'Offset5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4 = {ctor: 'Offset4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3 = {ctor: 'Offset3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2 = {ctor: 'Offset2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1 = {ctor: 'Offset1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0 = {ctor: 'Offset0'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12 = {ctor: 'Move12'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11 = {ctor: 'Move11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10 = {ctor: 'Move10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9 = {ctor: 'Move9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8 = {ctor: 'Move8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7 = {ctor: 'Move7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6 = {ctor: 'Move6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5 = {ctor: 'Move5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4 = {ctor: 'Move4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3 = {ctor: 'Move3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2 = {ctor: 'Move2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1 = {ctor: 'Move1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0 = {ctor: 'Move0'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom = {ctor: 'Bottom'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle = {ctor: 'Middle'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top = {ctor: 'Top'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between = {ctor: 'Between'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around = {ctor: 'Around'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right = {ctor: 'Right'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center = {ctor: 'Center'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left = {ctor: 'Left'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$Between = {ctor: 'Between'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$Around = {ctor: 'Around'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$Right = {ctor: 'Right'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$Center = {ctor: 'Center'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$Left = {ctor: 'Left'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$XL = {ctor: 'XL'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$LG = {ctor: 'LG'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$MD = {ctor: 'MD'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$SM = {ctor: 'SM'};
+var _rundis$elm_bootstrap$Bootstrap_General_Internal$XS = {ctor: 'XS'};
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
 	var _p0 = role;
@@ -17244,7 +16371,7 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes = function 
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			function () {
-				var _p2 = A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption, options.size);
+				var _p2 = A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption, options.size);
 				if (_p2.ctor === 'Just') {
 					return {
 						ctor: '::',
@@ -17359,8 +16486,8 @@ var _rundis$elm_bootstrap$Bootstrap_Button$secondary = _rundis$elm_bootstrap$Boo
 	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary));
 var _rundis$elm_bootstrap$Bootstrap_Button$primary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
 	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary));
-var _rundis$elm_bootstrap$Bootstrap_Button$large = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
-var _rundis$elm_bootstrap$Bootstrap_Button$small = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Button$large = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_Button$small = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$SM);
 var _rundis$elm_bootstrap$Bootstrap_Button$attrs = function (attrs) {
 	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Attrs(attrs);
 };
@@ -17473,7 +16600,7 @@ var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
 			children);
 	});
 
-var _fizwidget$wiki_path$Common_Button_View$view = F2(
+var _fizwidget$wiki_path$Common_Button$view = F2(
 	function (options, children) {
 		return _rtfeldman$elm_css$Html_Styled$fromUnstyled(
 			A2(
@@ -17570,33 +16697,33 @@ var _rhofour$elm_pairing_heap$PairingHeap$toSortedList = function (heap) {
 	}
 };
 
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$toSortedList = function (_p0) {
+var _fizwidget$wiki_path$Common_PriorityQueue$toSortedList = function (_p0) {
 	var _p1 = _p0;
 	return A2(
 		_elm_lang$core$List$map,
 		_elm_lang$core$Tuple$second,
 		_rhofour$elm_pairing_heap$PairingHeap$toSortedList(_p1._0));
 };
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority = function (_p2) {
+var _fizwidget$wiki_path$Common_PriorityQueue$getHighestPriority = function (_p2) {
 	var _p3 = _p2;
 	return A2(
 		_elm_lang$core$Maybe$map,
 		_elm_lang$core$Tuple$second,
 		_rhofour$elm_pairing_heap$PairingHeap$findMin(_p3._0));
 };
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$isEmpty = function (priorityQueue) {
-	var _p4 = _fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority(priorityQueue);
+var _fizwidget$wiki_path$Common_PriorityQueue$isEmpty = function (priorityQueue) {
+	var _p4 = _fizwidget$wiki_path$Common_PriorityQueue$getHighestPriority(priorityQueue);
 	if (_p4.ctor === 'Just') {
 		return false;
 	} else {
 		return true;
 	}
 };
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue = function (a) {
+var _fizwidget$wiki_path$Common_PriorityQueue$PriorityQueue = function (a) {
 	return {ctor: 'PriorityQueue', _0: a};
 };
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$empty = _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(_rhofour$elm_pairing_heap$PairingHeap$empty);
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$insert = F3(
+var _fizwidget$wiki_path$Common_PriorityQueue$empty = _fizwidget$wiki_path$Common_PriorityQueue$PriorityQueue(_rhofour$elm_pairing_heap$PairingHeap$empty);
+var _fizwidget$wiki_path$Common_PriorityQueue$insert = F3(
 	function (_p5, getPriority, values) {
 		var _p6 = _p5;
 		var getNegatedPriority = function (_p7) {
@@ -17611,13 +16738,13 @@ var _fizwidget$wiki_path$Common_PriorityQueue_Model$insert = F3(
 			};
 		};
 		var valuesWithNegatedPriorities = A2(_elm_lang$core$List$map, withNegatedPriority, values);
-		return _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(
+		return _fizwidget$wiki_path$Common_PriorityQueue$PriorityQueue(
 			A3(_elm_lang$core$List$foldl, _rhofour$elm_pairing_heap$PairingHeap$insert, _p6._0, valuesWithNegatedPriorities));
 	});
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority = function (_p8) {
+var _fizwidget$wiki_path$Common_PriorityQueue$removeHighestPriority = function (_p8) {
 	var _p9 = _p8;
 	var _p10 = _p9._0;
-	var updatedPriorityQueue = _fizwidget$wiki_path$Common_PriorityQueue_Model$PriorityQueue(
+	var updatedPriorityQueue = _fizwidget$wiki_path$Common_PriorityQueue$PriorityQueue(
 		_rhofour$elm_pairing_heap$PairingHeap$deleteMin(_p10));
 	var highestPriorityValue = A2(
 		_elm_lang$core$Maybe$map,
@@ -17625,14 +16752,14 @@ var _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority = func
 		_rhofour$elm_pairing_heap$PairingHeap$findMin(_p10));
 	return {ctor: '_Tuple2', _0: highestPriorityValue, _1: updatedPriorityQueue};
 };
-var _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriorities = F2(
+var _fizwidget$wiki_path$Common_PriorityQueue$removeHighestPriorities = F2(
 	function (priorityQueue, howMany) {
 		var helper = F3(
 			function (priorityQueue, howMany, removedValues) {
 				helper:
 				while (true) {
 					if (_elm_lang$core$Native_Utils.cmp(howMany, 0) > 0) {
-						var _p11 = _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriority(priorityQueue);
+						var _p11 = _fizwidget$wiki_path$Common_PriorityQueue$removeHighestPriority(priorityQueue);
 						var value = _p11._0;
 						var updatedPriorityQueue = _p11._1;
 						var _v5 = updatedPriorityQueue,
@@ -17657,39 +16784,39 @@ var _fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriorities = F2
 				{ctor: '[]'}));
 	});
 
-var _fizwidget$wiki_path$Common_Path_Model$nextStop = function (_p0) {
+var _fizwidget$wiki_path$Common_Path$nextStop = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0.nextStop;
 };
-var _fizwidget$wiki_path$Common_Path_Model$priority = function (_p2) {
+var _fizwidget$wiki_path$Common_Path$priority = function (_p2) {
 	var _p3 = _p2;
 	return _p3._0.priority;
 };
-var _fizwidget$wiki_path$Common_Path_Model$inReverseOrder = function (_p4) {
+var _fizwidget$wiki_path$Common_Path$inReverseOrder = function (_p4) {
 	var _p5 = _p4;
 	var _p6 = _p5._0;
 	return {ctor: '::', _0: _p6.nextStop, _1: _p6.previousStops};
 };
-var _fizwidget$wiki_path$Common_Path_Model$contains = F2(
+var _fizwidget$wiki_path$Common_Path$contains = F2(
 	function (title, path) {
 		return A2(
 			_elm_lang$core$List$member,
 			title,
-			_fizwidget$wiki_path$Common_Path_Model$inReverseOrder(path));
+			_fizwidget$wiki_path$Common_Path$inReverseOrder(path));
 	});
-var _fizwidget$wiki_path$Common_Path_Model$length = function (_p7) {
+var _fizwidget$wiki_path$Common_Path$length = function (_p7) {
 	return _elm_lang$core$List$length(
-		_fizwidget$wiki_path$Common_Path_Model$inReverseOrder(_p7));
+		_fizwidget$wiki_path$Common_Path$inReverseOrder(_p7));
 };
-var _fizwidget$wiki_path$Common_Path_Model$inOrder = function (_p8) {
+var _fizwidget$wiki_path$Common_Path$inOrder = function (_p8) {
 	return _elm_lang$core$List$reverse(
-		_fizwidget$wiki_path$Common_Path_Model$inReverseOrder(_p8));
+		_fizwidget$wiki_path$Common_Path$inReverseOrder(_p8));
 };
-var _fizwidget$wiki_path$Common_Path_Model$end = function (_p9) {
+var _fizwidget$wiki_path$Common_Path$end = function (_p9) {
 	var _p10 = _p9;
 	return _p10._0.nextStop;
 };
-var _fizwidget$wiki_path$Common_Path_Model$beginning = function (_p11) {
+var _fizwidget$wiki_path$Common_Path$beginning = function (_p11) {
 	var _p12 = _p11;
 	var _p13 = _p12._0;
 	return A2(
@@ -17698,22 +16825,22 @@ var _fizwidget$wiki_path$Common_Path_Model$beginning = function (_p11) {
 		_elm_lang$core$List$head(
 			_elm_lang$core$List$reverse(_p13.previousStops)));
 };
-var _fizwidget$wiki_path$Common_Path_Model$Path = function (a) {
+var _fizwidget$wiki_path$Common_Path$Path = function (a) {
 	return {ctor: 'Path', _0: a};
 };
-var _fizwidget$wiki_path$Common_Path_Model$beginningWith = function (articleTitle) {
-	return _fizwidget$wiki_path$Common_Path_Model$Path(
+var _fizwidget$wiki_path$Common_Path$beginningWith = function (articleTitle) {
+	return _fizwidget$wiki_path$Common_Path$Path(
 		{
 			nextStop: articleTitle,
 			previousStops: {ctor: '[]'},
 			priority: 0
 		});
 };
-var _fizwidget$wiki_path$Common_Path_Model$extend = F3(
+var _fizwidget$wiki_path$Common_Path$extend = F3(
 	function (_p14, nextArticleTitle, newPriority) {
 		var _p15 = _p14;
 		var _p16 = _p15._0;
-		return _fizwidget$wiki_path$Common_Path_Model$Path(
+		return _fizwidget$wiki_path$Common_Path$Path(
 			_elm_lang$core$Native_Utils.update(
 				_p16,
 				{
@@ -17723,7 +16850,7 @@ var _fizwidget$wiki_path$Common_Path_Model$extend = F3(
 				}));
 	});
 
-var _fizwidget$wiki_path$Common_Spinner_View$view = function (_p0) {
+var _fizwidget$wiki_path$Common_Spinner$view = function (_p0) {
 	var _p1 = _p0;
 	var visibilityValue = _p1.isVisible ? _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$visible) : _rtfeldman$elm_css$Css$visibility(_rtfeldman$elm_css$Css$hidden);
 	return A2(
@@ -17751,252 +16878,76 @@ var _fizwidget$wiki_path$Common_Spinner_View$view = function (_p0) {
 				{ctor: '[]'})));
 };
 
-var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl = function (titleCount) {
-	var articleNamespace = '0';
-	var queryParams = {
-		ctor: '::',
-		_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-			{ctor: '_Tuple2', _0: 'action', _1: 'query'}),
-		_1: {
-			ctor: '::',
-			_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-				{ctor: '_Tuple2', _0: 'format', _1: 'json'}),
-			_1: {
+var _fizwidget$wiki_path$Page_Finished$getDestination = function (model) {
+	var _p0 = model;
+	if (_p0.ctor === 'Success') {
+		return _fizwidget$wiki_path$Common_Path$end(_p0._0);
+	} else {
+		return _p0._0.destination.title;
+	}
+};
+var _fizwidget$wiki_path$Page_Finished$getSource = function (model) {
+	var _p1 = model;
+	if (_p1.ctor === 'Success') {
+		return _fizwidget$wiki_path$Common_Path$beginning(_p1._0);
+	} else {
+		return _p1._0.source.title;
+	}
+};
+var _fizwidget$wiki_path$Page_Finished$viewBackButton = F2(
+	function (model, toBackMsg) {
+		var onClick = A2(
+			toBackMsg,
+			_fizwidget$wiki_path$Page_Finished$getSource(model),
+			_fizwidget$wiki_path$Page_Finished$getDestination(model));
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-					{ctor: '_Tuple2', _0: 'list', _1: 'random'}),
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-						{
-							ctor: '_Tuple2',
-							_0: 'rnlimit',
-							_1: _elm_lang$core$Basics$toString(titleCount)
-						}),
-					_1: {
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
 						ctor: '::',
-						_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-							{ctor: '_Tuple2', _0: 'rnnamespace', _1: articleNamespace}),
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Common_Url_Model$KeyValue(
-								{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		}
-	};
-	return A2(_fizwidget$wiki_path$Common_Url_Model$build, _fizwidget$wiki_path$Common_Wikipedia_Api$apiBaseUrl, queryParams);
-};
-var _fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest = function (titleCount) {
-	return A2(
-		_elm_lang$http$Http$get,
-		_fizwidget$wiki_path$Common_Title_Api$buildRandomTitlesUrl(titleCount),
-		_fizwidget$wiki_path$Common_Title_Decoder$randomTitlesResponse);
-};
-
-var _fizwidget$wiki_path$Common_Title_View$toUrl = function (title) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		'https://en.wikipedia.org/wiki/',
-		_fizwidget$wiki_path$Common_Title_Model$value(title));
-};
-var _fizwidget$wiki_path$Common_Title_View$viewAsLink = function (title) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$a,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href(
-				_fizwidget$wiki_path$Common_Title_View$toUrl(title)),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text(
-				_fizwidget$wiki_path$Common_Title_Model$value(title)),
-			_1: {ctor: '[]'}
-		});
-};
-
-var _fizwidget$wiki_path$Setup_Model$SetupModel = F5(
-	function (a, b, c, d, e) {
-		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d, randomTitles: e};
-	});
-
-var _fizwidget$wiki_path$Pathfinding_Model$PathfindingModel = F7(
-	function (a, b, c, d, e, f, g) {
-		return {source: a, destination: b, paths: c, visitedTitles: d, errors: e, pendingRequests: f, totalRequests: g};
-	});
-
-var _fizwidget$wiki_path$Finished_Model$Error = function (a) {
-	return {ctor: 'Error', _0: a};
-};
-var _fizwidget$wiki_path$Finished_Model$Success = function (a) {
-	return {ctor: 'Success', _0: a};
-};
-var _fizwidget$wiki_path$Finished_Model$TooManyRequests = {ctor: 'TooManyRequests'};
-var _fizwidget$wiki_path$Finished_Model$PathNotFound = {ctor: 'PathNotFound'};
-
-var _fizwidget$wiki_path$Model$Finished = function (a) {
-	return {ctor: 'Finished', _0: a};
-};
-var _fizwidget$wiki_path$Model$Pathfinding = function (a) {
-	return {ctor: 'Pathfinding', _0: a};
-};
-var _fizwidget$wiki_path$Model$Setup = function (a) {
-	return {ctor: 'Setup', _0: a};
-};
-
-var _fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse = function (a) {
-	return {ctor: 'FetchRandomTitlesResponse', _0: a};
-};
-var _fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesRequest = {ctor: 'FetchRandomTitlesRequest'};
-var _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse = function (a) {
-	return {ctor: 'FetchDestinationArticleResponse', _0: a};
-};
-var _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse = function (a) {
-	return {ctor: 'FetchSourceArticleResponse', _0: a};
-};
-var _fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest = {ctor: 'FetchArticlesRequest'};
-var _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange = function (a) {
-	return {ctor: 'DestinationArticleTitleChange', _0: a};
-};
-var _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange = function (a) {
-	return {ctor: 'SourceArticleTitleChange', _0: a};
-};
-
-var _fizwidget$wiki_path$Pathfinding_Messages$BackToSetup = {ctor: 'BackToSetup'};
-var _fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse = F2(
-	function (a, b) {
-		return {ctor: 'FetchArticleResponse', _0: a, _1: b};
-	});
-
-var _fizwidget$wiki_path$Finished_Messages$BackToSetup = {ctor: 'BackToSetup'};
-
-var _fizwidget$wiki_path$Messages$Finished = function (a) {
-	return {ctor: 'Finished', _0: a};
-};
-var _fizwidget$wiki_path$Messages$Pathfinding = function (a) {
-	return {ctor: 'Pathfinding', _0: a};
-};
-var _fizwidget$wiki_path$Messages$Setup = function (a) {
-	return {ctor: 'Setup', _0: a};
-};
-
-var _fizwidget$wiki_path$Finished_Init$initWithError = F3(
-	function (source, destination, error) {
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Finished(
-				_fizwidget$wiki_path$Finished_Model$Error(
-					{source: source, destination: destination, error: error})),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
-	});
-var _fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError = F2(
-	function (source, destination) {
-		return A3(_fizwidget$wiki_path$Finished_Init$initWithError, source, destination, _fizwidget$wiki_path$Finished_Model$TooManyRequests);
-	});
-var _fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError = F2(
-	function (source, destination) {
-		return A3(_fizwidget$wiki_path$Finished_Init$initWithError, source, destination, _fizwidget$wiki_path$Finished_Model$PathNotFound);
-	});
-var _fizwidget$wiki_path$Finished_Init$initWithPath = function (pathToDestination) {
-	return {
-		ctor: '_Tuple2',
-		_0: _fizwidget$wiki_path$Model$Finished(
-			_fizwidget$wiki_path$Finished_Model$Success(pathToDestination)),
-		_1: _elm_lang$core$Platform_Cmd$none
-	};
-};
-
-var _fizwidget$wiki_path$Setup_Init$initialModel = F2(
-	function (sourceTitleInput, destinationTitleInput) {
-		return {sourceTitleInput: sourceTitleInput, destinationTitleInput: destinationTitleInput, source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
-	});
-var _fizwidget$wiki_path$Setup_Init$initWithTitles = F2(
-	function (sourceTitleInput, destinationTitleInput) {
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(
-				A2(
-					_fizwidget$wiki_path$Setup_Init$initialModel,
-					_fizwidget$wiki_path$Common_Title_Model$value(sourceTitleInput),
-					_fizwidget$wiki_path$Common_Title_Model$value(destinationTitleInput))),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
-	});
-var _fizwidget$wiki_path$Setup_Init$init = {
-	ctor: '_Tuple2',
-	_0: _fizwidget$wiki_path$Model$Setup(
-		A2(_fizwidget$wiki_path$Setup_Init$initialModel, '', '')),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
-
-var _fizwidget$wiki_path$Finished_Update$update = F2(
-	function (_p0, model) {
-		var _p1 = _p0;
-		var _p2 = model;
-		if (_p2.ctor === 'Success') {
-			var _p3 = _p2._0;
-			return A2(
-				_fizwidget$wiki_path$Setup_Init$initWithTitles,
-				_fizwidget$wiki_path$Common_Path_Model$beginning(_p3),
-				_fizwidget$wiki_path$Common_Path_Model$end(_p3));
-		} else {
-			return A2(_fizwidget$wiki_path$Setup_Init$initWithTitles, _p2._0.source.title, _p2._0.destination.title);
-		}
-	});
-
-var _fizwidget$wiki_path$Finished_View$backButton = A2(
-	_rtfeldman$elm_css$Html_Styled$div,
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Css$margin(
-					_rtfeldman$elm_css$Css$px(20)),
+						_0: _rtfeldman$elm_css$Css$margin(
+							_rtfeldman$elm_css$Css$px(20)),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_fizwidget$wiki_path$Common_Button_View$view,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Finished_Messages$BackToSetup),
-					_1: {ctor: '[]'}
-				}
 			},
 			{
 				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$text('Back'),
+				_0: A2(
+					_fizwidget$wiki_path$Common_Button$view,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(onClick),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$text('Back'),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
+			});
 	});
-var _fizwidget$wiki_path$Finished_View$errorView = F3(
+var _fizwidget$wiki_path$Page_Finished$viewError = F3(
 	function (source, destination, error) {
 		var baseErrorMessage = {
 			ctor: '::',
 			_0: _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path from '),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(source.title),
+				_0: _fizwidget$wiki_path$Common_Title$viewAsLink(source.title),
 				_1: {
 					ctor: '::',
 					_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(destination.title),
+						_0: _fizwidget$wiki_path$Common_Title$viewAsLink(destination.title),
 						_1: {
 							ctor: '::',
 							_0: _rtfeldman$elm_css$Html_Styled$text(' 💀'),
@@ -18019,8 +16970,8 @@ var _fizwidget$wiki_path$Finished_View$errorView = F3(
 				_1: {ctor: '[]'}
 			},
 			function () {
-				var _p0 = error;
-				if (_p0.ctor === 'PathNotFound') {
+				var _p2 = error;
+				if (_p2.ctor === 'PathNotFound') {
 					return baseErrorMessage;
 				} else {
 					return A2(
@@ -18041,7 +16992,7 @@ var _fizwidget$wiki_path$Finished_View$errorView = F3(
 				}
 			}());
 	});
-var _fizwidget$wiki_path$Finished_View$pathView = function (path) {
+var _fizwidget$wiki_path$Page_Finished$viewPath = function (path) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{ctor: '[]'},
@@ -18050,10 +17001,10 @@ var _fizwidget$wiki_path$Finished_View$pathView = function (path) {
 			_rtfeldman$elm_css$Html_Styled$text(' → '),
 			A2(
 				_elm_lang$core$List$map,
-				_fizwidget$wiki_path$Common_Title_View$viewAsLink,
-				_fizwidget$wiki_path$Common_Path_Model$inOrder(path))));
+				_fizwidget$wiki_path$Common_Title$viewAsLink,
+				_fizwidget$wiki_path$Common_Path$inOrder(path))));
 };
-var _fizwidget$wiki_path$Finished_View$subHeadingView = A2(
+var _fizwidget$wiki_path$Page_Finished$viewSubHeading = A2(
 	_rtfeldman$elm_css$Html_Styled$h4,
 	{ctor: '[]'},
 	{
@@ -18061,7 +17012,7 @@ var _fizwidget$wiki_path$Finished_View$subHeadingView = A2(
 		_0: _rtfeldman$elm_css$Html_Styled$text('Path was... '),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wiki_path$Finished_View$headingView = A2(
+var _fizwidget$wiki_path$Page_Finished$viewHeading = A2(
 	_rtfeldman$elm_css$Html_Styled$h2,
 	{ctor: '[]'},
 	{
@@ -18069,7 +17020,7 @@ var _fizwidget$wiki_path$Finished_View$headingView = A2(
 		_0: _rtfeldman$elm_css$Html_Styled$text('Success!'),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wiki_path$Finished_View$successView = function (pathToDestination) {
+var _fizwidget$wiki_path$Page_Finished$viewSuccess = function (pathToDestination) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -18084,27 +17035,72 @@ var _fizwidget$wiki_path$Finished_View$successView = function (pathToDestination
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Finished_View$headingView,
+			_0: _fizwidget$wiki_path$Page_Finished$viewHeading,
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Finished_View$subHeadingView,
+				_0: _fizwidget$wiki_path$Page_Finished$viewSubHeading,
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wiki_path$Finished_View$pathView(pathToDestination),
+					_0: _fizwidget$wiki_path$Page_Finished$viewPath(pathToDestination),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _fizwidget$wiki_path$Finished_View$modelView = function (model) {
-	var _p1 = model;
-	if (_p1.ctor === 'Success') {
-		return _fizwidget$wiki_path$Finished_View$successView(_p1._0);
+var _fizwidget$wiki_path$Page_Finished$viewModel = function (model) {
+	var _p3 = model;
+	if (_p3.ctor === 'Success') {
+		return _fizwidget$wiki_path$Page_Finished$viewSuccess(_p3._0);
 	} else {
-		return A3(_fizwidget$wiki_path$Finished_View$errorView, _p1._0.source, _p1._0.destination, _p1._0.error);
+		return A3(_fizwidget$wiki_path$Page_Finished$viewError, _p3._0.source, _p3._0.destination, _p3._0.error);
 	}
 };
-var _fizwidget$wiki_path$Finished_View$view = function (model) {
+var _fizwidget$wiki_path$Page_Finished$view = F2(
+	function (model, toBackMsg) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$displayFlex,
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Page_Finished$viewModel(model),
+				_1: {
+					ctor: '::',
+					_0: A2(_fizwidget$wiki_path$Page_Finished$viewBackButton, model, toBackMsg),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _fizwidget$wiki_path$Page_Finished$Error = function (a) {
+	return {ctor: 'Error', _0: a};
+};
+var _fizwidget$wiki_path$Page_Finished$Success = function (a) {
+	return {ctor: 'Success', _0: a};
+};
+var _fizwidget$wiki_path$Page_Finished$TooManyRequests = {ctor: 'TooManyRequests'};
+var _fizwidget$wiki_path$Page_Finished$PathNotFound = {ctor: 'PathNotFound'};
+
+var _fizwidget$wiki_path$Page_Pathfinding$viewPath = function (path) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -18112,107 +17108,164 @@ var _fizwidget$wiki_path$Finished_View$view = function (model) {
 			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
 				{
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$displayFlex,
-					_1: {
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
-						_1: {
-							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
-							_1: {
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
+					_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Finished_View$modelView(model),
-			_1: {
-				ctor: '::',
-				_0: _fizwidget$wiki_path$Finished_View$backButton,
-				_1: {ctor: '[]'}
-			}
+			_0: A2(
+				_rtfeldman$elm_css$Html_Styled$div,
+				{ctor: '[]'},
+				A2(
+					_elm_lang$core$List$map,
+					function (_p0) {
+						return A2(
+							_rtfeldman$elm_css$Html_Styled$div,
+							{ctor: '[]'},
+							_elm_lang$core$List$singleton(_p0));
+					},
+					A2(
+						_elm_lang$core$List$append,
+						{
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Spinner$view(
+								{isVisible: true}),
+							_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$List$append,
+							{
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Html_Styled$text('↑'),
+								_1: {ctor: '[]'}
+							},
+							A2(
+								_elm_lang$core$List$intersperse,
+								_rtfeldman$elm_css$Html_Styled$text('↑'),
+								A2(
+									_elm_lang$core$List$map,
+									_fizwidget$wiki_path$Common_Title$viewAsLink,
+									_fizwidget$wiki_path$Common_Path$inReverseOrder(path))))))),
+			_1: {ctor: '[]'}
 		});
 };
-
-var _fizwidget$wiki_path$Setup_Fetch$toRemoteTitlePair = function (remoteTitles) {
-	var toPair = function (titles) {
-		var _p0 = titles;
-		if ((_p0.ctor === '::') && (_p0._1.ctor === '::')) {
-			return _krisajenkins$remotedata$RemoteData$succeed(
-				{ctor: '_Tuple2', _0: _p0._0, _1: _p0._1._0});
-		} else {
-			return _krisajenkins$remotedata$RemoteData$Failure(_fizwidget$wiki_path$Common_Title_Model$UnexpectedTitleCount);
-		}
-	};
+var _fizwidget$wiki_path$Page_Pathfinding$viewPaths = function (paths) {
 	return A2(
-		_krisajenkins$remotedata$RemoteData$andThen,
-		toPair,
-		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Title_Model$HttpError, remoteTitles));
+		_elm_lang$core$Maybe$withDefault,
+		A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{ctor: '[]'},
+			{ctor: '[]'}),
+		A2(
+			_elm_lang$core$Maybe$map,
+			_fizwidget$wiki_path$Page_Pathfinding$viewPath,
+			_fizwidget$wiki_path$Common_PriorityQueue$getHighestPriority(paths)));
 };
-var _fizwidget$wiki_path$Setup_Fetch$toRemoteArticle = function (webData) {
+var _fizwidget$wiki_path$Page_Pathfinding$viewDestinationContentWarning = function (destination) {
+	var message = A2(_elm_lang$core$String$contains, 'disambigbox', destination.content) ? 'The destination article is a disambiguation page, so I probably won\'t be able to find a path to it 🤖' : ((_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$String$length(destination.content),
+		10000) < 0) ? 'The destination article is very short, so my pathfinding heuristic won\'t work well 🤖' : '');
 	return A2(
-		_krisajenkins$remotedata$RemoteData$andThen,
-		_krisajenkins$remotedata$RemoteData$fromResult,
-		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Common_Article_Model$HttpError, webData));
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text(message),
+			_1: {ctor: '[]'}
+		});
 };
-var _fizwidget$wiki_path$Setup_Fetch$randomTitlePair = function (toMsg) {
+var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = function (backMsg) {
 	return A2(
-		_elm_lang$core$Platform_Cmd$map,
-		function (_p1) {
-			return toMsg(
-				_fizwidget$wiki_path$Setup_Fetch$toRemoteTitlePair(_p1));
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$margin(
+						_rtfeldman$elm_css$Css$px(20)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
 		},
-		_krisajenkins$remotedata$RemoteData$sendRequest(
-			_fizwidget$wiki_path$Common_Title_Api$buildRandomTitleRequest(2)));
+		{
+			ctor: '::',
+			_0: A2(
+				_fizwidget$wiki_path$Common_Button$view,
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(backMsg),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled$text('Back'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
 };
-var _fizwidget$wiki_path$Setup_Fetch$article = F2(
-	function (toMsg, title) {
-		return A2(
-			_elm_lang$core$Platform_Cmd$map,
-			function (_p2) {
-				return toMsg(
-					_fizwidget$wiki_path$Setup_Fetch$toRemoteArticle(_p2));
-			},
-			_krisajenkins$remotedata$RemoteData$sendRequest(
-				_fizwidget$wiki_path$Common_Article_Api$buildRequest(title)));
-	});
-
-var _fizwidget$wiki_path$Pathfinding_Fetch$toArticleResult = function (result) {
+var _fizwidget$wiki_path$Page_Pathfinding$viewErrors = function (errors) {
 	return A2(
-		_elm_lang$core$Result$andThen,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$Result$mapError, _fizwidget$wiki_path$Common_Article_Model$HttpError, result));
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Article$viewError, errors));
 };
-var _fizwidget$wiki_path$Pathfinding_Fetch$article = F2(
-	function (toMsg, title) {
+var _fizwidget$wiki_path$Page_Pathfinding$viewHeading = F2(
+	function (source, destination) {
 		return A2(
-			_elm_lang$http$Http$send,
-			function (_p0) {
-				return toMsg(
-					_fizwidget$wiki_path$Pathfinding_Fetch$toArticleResult(_p0));
+			_rtfeldman$elm_css$Html_Styled$h3,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
 			},
-			_fizwidget$wiki_path$Common_Article_Api$buildRequest(title));
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled$text('Finding path from '),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Common_Title$viewAsLink(source.title),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Common_Title$viewAsLink(destination.title),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Html_Styled$text('...'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
 	});
-
-var _fizwidget$wiki_path$Pathfinding_Util$discardLowPriorityPaths = function (paths) {
+var _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorityPaths = function (paths) {
 	return A2(
 		_elm_lang$core$List$take,
 		2,
 		A2(
 			_elm_lang$core$List$sortBy,
-			function (_p0) {
+			function (_p1) {
 				return _elm_lang$core$Basics$negate(
-					_fizwidget$wiki_path$Common_Path_Model$priority(_p0));
+					_fizwidget$wiki_path$Common_Path$priority(_p1));
 			},
 			paths));
 };
-var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$countOccurences = F2(
 	function (content, target) {
 		var occurencePattern = _elm_lang$core$Regex$caseInsensitive(
 			_elm_lang$core$Regex$regex(
@@ -18226,27 +17279,27 @@ var _fizwidget$wiki_path$Pathfinding_Util$countOccurences = F2(
 		return _elm_lang$core$List$length(
 			A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, occurencePattern, content));
 	});
-var _fizwidget$wiki_path$Pathfinding_Util$heuristic = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$heuristic = F2(
 	function (destination, title) {
 		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 10000 : _elm_lang$core$Basics$toFloat(
 			A2(
-				_fizwidget$wiki_path$Pathfinding_Util$countOccurences,
+				_fizwidget$wiki_path$Page_Pathfinding$countOccurences,
 				destination.content,
-				_fizwidget$wiki_path$Common_Title_Model$value(title)));
+				_fizwidget$wiki_path$Common_Title$value(title)));
 	});
-var _fizwidget$wiki_path$Pathfinding_Util$calculatePriority = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$calculatePriority = F3(
 	function (destination, currentPath, title) {
-		return (_fizwidget$wiki_path$Common_Path_Model$priority(currentPath) * 0.8) + A2(_fizwidget$wiki_path$Pathfinding_Util$heuristic, destination, title);
+		return (_fizwidget$wiki_path$Common_Path$priority(currentPath) * 0.8) + A2(_fizwidget$wiki_path$Page_Pathfinding$heuristic, destination, title);
 	});
-var _fizwidget$wiki_path$Pathfinding_Util$extendPath = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$extendPath = F3(
 	function (currentPath, destination, link) {
 		return A3(
-			_fizwidget$wiki_path$Common_Path_Model$extend,
+			_fizwidget$wiki_path$Common_Path$extend,
 			currentPath,
 			link.title,
-			A3(_fizwidget$wiki_path$Pathfinding_Util$calculatePriority, destination, currentPath, link.title));
+			A3(_fizwidget$wiki_path$Page_Pathfinding$calculatePriority, destination, currentPath, link.title));
 	});
-var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$markVisited = F2(
 	function (visitedTitles, newPaths) {
 		return A3(
 			_elm_lang$core$List$foldl,
@@ -18254,16 +17307,16 @@ var _fizwidget$wiki_path$Pathfinding_Util$markVisited = F2(
 			visitedTitles,
 			A2(
 				_elm_lang$core$List$map,
-				function (_p1) {
-					return _fizwidget$wiki_path$Common_Title_Model$value(
-						_fizwidget$wiki_path$Common_Path_Model$nextStop(_p1));
+				function (_p2) {
+					return _fizwidget$wiki_path$Common_Title$value(
+						_fizwidget$wiki_path$Common_Path$nextStop(_p2));
 				},
 				newPaths));
 	});
-var _fizwidget$wiki_path$Pathfinding_Util$isCandidate = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$isCandidate = F2(
 	function (visitedTitles, link) {
-		var isRegularArticle = _elm_lang$core$Native_Utils.eq(link.namespace, _fizwidget$wiki_path$Common_Article_Model$ArticleNamespace);
-		var title = _fizwidget$wiki_path$Common_Title_Model$value(link.title);
+		var isRegularArticle = _elm_lang$core$Native_Utils.eq(link.namespace, _fizwidget$wiki_path$Common_Article$ArticleNamespace);
+		var title = _fizwidget$wiki_path$Common_Title$value(link.title);
 		var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$String$length(title),
 			1) > 0;
@@ -18318,657 +17371,1973 @@ var _fizwidget$wiki_path$Pathfinding_Util$isCandidate = F2(
 			});
 		return link.doesExist && (hasMinimumLength && (isRegularArticle && ((!isVisited) && (!isBlacklisted))));
 	});
-
-var _fizwidget$wiki_path$Pathfinding_Config$pendingRequestsLimit = 4;
-var _fizwidget$wiki_path$Pathfinding_Config$totalRequestsLimit = 400;
-
-var _fizwidget$wiki_path$Pathfinding_Update$incrementRequests = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$incrementRequests = F2(
 	function (model, requestCount) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{pendingRequests: model.pendingRequests + requestCount, totalRequests: model.totalRequests + requestCount});
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests = function (model) {
+var _fizwidget$wiki_path$Page_Pathfinding$decrementPendingRequests = function (model) {
 	return _elm_lang$core$Native_Utils.update(
 		model,
 		{pendingRequests: model.pendingRequests - 1});
 };
-var _fizwidget$wiki_path$Pathfinding_Update$pathNotFoundError = function (_p0) {
-	var _p1 = _p0;
-	return A2(_fizwidget$wiki_path$Finished_Init$initWithPathNotFoundError, _p1.source, _p1.destination);
-};
-var _fizwidget$wiki_path$Pathfinding_Update$tooManyRequestsError = function (_p2) {
-	var _p3 = _p2;
-	return A2(_fizwidget$wiki_path$Finished_Init$initWithTooManyRequestsError, _p3.source, _p3.destination);
-};
-var _fizwidget$wiki_path$Pathfinding_Update$destinationReached = _fizwidget$wiki_path$Finished_Init$initWithPath;
-var _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests = function (_p4) {
-	var _p5 = _p4;
-	return _elm_lang$core$Native_Utils.cmp(_p5.totalRequests, _fizwidget$wiki_path$Pathfinding_Config$totalRequestsLimit) > 0;
-};
-var _fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination = F2(
-	function (_p6, nextArticle) {
-		var _p7 = _p6;
-		return _elm_lang$core$Native_Utils.eq(nextArticle.title, _p7.destination.title);
+var _fizwidget$wiki_path$Page_Pathfinding$hasReachedDestination = F2(
+	function (_p3, nextArticle) {
+		var _p4 = _p3;
+		return _elm_lang$core$Native_Utils.eq(nextArticle.title, _p4.destination.title);
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$containsPathToDestination = F2(
 	function (destination, paths) {
 		var hasPathReachedDestination = F2(
 			function (destination, currentPath) {
 				return _elm_lang$core$Native_Utils.eq(
-					_fizwidget$wiki_path$Common_Path_Model$nextStop(currentPath),
+					_fizwidget$wiki_path$Common_Path$nextStop(currentPath),
 					destination.title);
 			});
 		return _elm_lang$core$List$head(
 			A2(
 				_elm_lang$core$List$sortBy,
-				_fizwidget$wiki_path$Common_Path_Model$length,
+				_fizwidget$wiki_path$Common_Path$length,
 				A2(
 					_elm_lang$core$List$filter,
 					hasPathReachedDestination(destination),
 					paths)));
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle = function (pathToFollow) {
-	var title = function (_p8) {
-		return _fizwidget$wiki_path$Common_Title_Model$value(
-			_fizwidget$wiki_path$Common_Path_Model$nextStop(_p8));
-	}(pathToFollow);
-	var toMsg = function (_p9) {
-		return _fizwidget$wiki_path$Messages$Pathfinding(
-			A2(_fizwidget$wiki_path$Pathfinding_Messages$FetchArticleResponse, pathToFollow, _p9));
-	};
-	return A2(_fizwidget$wiki_path$Pathfinding_Fetch$article, toMsg, title);
-};
-var _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles = F2(
-	function (model, pathsToFollow) {
-		var requests = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Pathfinding_Update$fetchNextArticle, pathsToFollow);
-		var requestCount = _elm_lang$core$List$length(requests);
-		var updatedModel = A2(_fizwidget$wiki_path$Pathfinding_Update$incrementRequests, model, requestCount);
-		return _fizwidget$wiki_path$Pathfinding_Update$hasMadeTooManyRequests(updatedModel) ? _fizwidget$wiki_path$Pathfinding_Update$tooManyRequestsError(updatedModel) : {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Pathfinding(updatedModel),
-			_1: _elm_lang$core$Platform_Cmd$batch(requests)
-		};
-	});
-var _fizwidget$wiki_path$Pathfinding_Update$explorePaths = F2(
-	function (model, paths) {
-		var _p10 = A2(_fizwidget$wiki_path$Pathfinding_Update$containsPathToDestination, model.destination, paths);
-		if (_p10.ctor === 'Just') {
-			return _fizwidget$wiki_path$Pathfinding_Update$destinationReached(_p10._0);
-		} else {
-			return A2(_fizwidget$wiki_path$Pathfinding_Update$fetchNextArticles, model, paths);
-		}
-	});
-var _fizwidget$wiki_path$Pathfinding_Update$continueSearch = function (model) {
-	var maxPathsToRemove = _fizwidget$wiki_path$Pathfinding_Config$pendingRequestsLimit - model.pendingRequests;
-	var _p11 = A2(_fizwidget$wiki_path$Common_PriorityQueue_Model$removeHighestPriorities, model.paths, maxPathsToRemove);
-	var pathsToExplore = _p11._0;
-	var updatedPriorityQueue = _p11._1;
-	var updatedModel = _elm_lang$core$Native_Utils.update(
-		model,
-		{paths: updatedPriorityQueue});
-	var areNoPathsAvailable = _elm_lang$core$List$isEmpty(pathsToExplore) && _elm_lang$core$Native_Utils.eq(model.pendingRequests, 0);
-	return areNoPathsAvailable ? _fizwidget$wiki_path$Pathfinding_Update$pathNotFoundError(updatedModel) : A2(_fizwidget$wiki_path$Pathfinding_Update$explorePaths, updatedModel, pathsToExplore);
-};
-var _fizwidget$wiki_path$Pathfinding_Update$processLinks = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$processLinks = F3(
 	function (model, pathToArticle, article) {
 		var candidateLinks = A2(
 			_elm_lang$core$List$filter,
-			_fizwidget$wiki_path$Pathfinding_Util$isCandidate(model.visitedTitles),
+			_fizwidget$wiki_path$Page_Pathfinding$isCandidate(model.visitedTitles),
 			article.links);
-		var newPaths = _fizwidget$wiki_path$Pathfinding_Util$discardLowPriorityPaths(
+		var newPaths = _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorityPaths(
 			A2(
 				_elm_lang$core$List$map,
-				A2(_fizwidget$wiki_path$Pathfinding_Util$extendPath, pathToArticle, model.destination),
+				A2(_fizwidget$wiki_path$Page_Pathfinding$extendPath, pathToArticle, model.destination),
 				candidateLinks));
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				paths: A3(_fizwidget$wiki_path$Common_PriorityQueue_Model$insert, model.paths, _fizwidget$wiki_path$Common_Path_Model$priority, newPaths),
-				visitedTitles: A2(_fizwidget$wiki_path$Pathfinding_Util$markVisited, model.visitedTitles, newPaths)
+				paths: A3(_fizwidget$wiki_path$Common_PriorityQueue$insert, model.paths, _fizwidget$wiki_path$Common_Path$priority, newPaths),
+				visitedTitles: A2(_fizwidget$wiki_path$Page_Pathfinding$markVisited, model.visitedTitles, newPaths)
 			});
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$onErrorReceived = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$initialModel = F2(
+	function (source, destination) {
+		return {
+			source: source,
+			destination: destination,
+			paths: _fizwidget$wiki_path$Common_PriorityQueue$empty,
+			visitedTitles: _elm_lang$core$Set$singleton(
+				_fizwidget$wiki_path$Common_Title$value(source.title)),
+			errors: {ctor: '[]'},
+			pendingRequests: 0,
+			totalRequests: 0
+		};
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$pendingRequestsLimit = 4;
+var _fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit = 400;
+var _fizwidget$wiki_path$Page_Pathfinding$hasMadeTooManyRequests = function (_p5) {
+	var _p6 = _p5;
+	return _elm_lang$core$Native_Utils.cmp(_p6.totalRequests, _fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit) > 0;
+};
+var _fizwidget$wiki_path$Page_Pathfinding$viewPathCountWarning = function (totalRequests) {
+	return (_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text('This isn\'t looking good. Try a different destination maybe? 😅'),
+			_1: {ctor: '[]'}
+		}) : _rtfeldman$elm_css$Html_Styled$text('');
+};
+var _fizwidget$wiki_path$Page_Pathfinding$viewWarnings = F2(
+	function (totalRequests, destination) {
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Page_Pathfinding$viewDestinationContentWarning(destination),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Page_Pathfinding$viewPathCountWarning(totalRequests),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$view = F2(
+	function (_p7, toBackMsg) {
+		var _p8 = _p7;
+		var _p10 = _p8.source;
+		var _p9 = _p8.destination;
+		return A2(
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$displayFlex,
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(_fizwidget$wiki_path$Page_Pathfinding$viewHeading, _p10, _p9),
+				_1: {
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Page_Pathfinding$viewErrors(_p8.errors),
+					_1: {
+						ctor: '::',
+						_0: A2(_fizwidget$wiki_path$Page_Pathfinding$viewWarnings, _p8.totalRequests, _p9),
+						_1: {
+							ctor: '::',
+							_0: _fizwidget$wiki_path$Page_Pathfinding$viewBackButton(
+								A2(toBackMsg, _p10.title, _p9.title)),
+							_1: {
+								ctor: '::',
+								_0: _fizwidget$wiki_path$Page_Pathfinding$viewPaths(_p8.paths),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {source: a, destination: b, paths: c, visitedTitles: d, errors: e, pendingRequests: f, totalRequests: g};
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$FetchArticleResponse = F2(
+	function (a, b) {
+		return {ctor: 'FetchArticleResponse', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$fetchNextArticle = function (pathToFollow) {
+	var title = function (_p11) {
+		return _fizwidget$wiki_path$Common_Title$value(
+			_fizwidget$wiki_path$Common_Path$nextStop(_p11));
+	}(pathToFollow);
+	var toMsg = _fizwidget$wiki_path$Page_Pathfinding$FetchArticleResponse(pathToFollow);
+	return A2(_fizwidget$wiki_path$Common_Article$fetchArticleResult, toMsg, title);
+};
+var _fizwidget$wiki_path$Page_Pathfinding$TooManyRequests = F2(
+	function (a, b) {
+		return {ctor: 'TooManyRequests', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$PathNotFound = F2(
+	function (a, b) {
+		return {ctor: 'PathNotFound', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$PathFound = function (a) {
+	return {ctor: 'PathFound', _0: a};
+};
+var _fizwidget$wiki_path$Page_Pathfinding$Continue = function (a) {
+	return {ctor: 'Continue', _0: a};
+};
+var _fizwidget$wiki_path$Page_Pathfinding$fetchNextArticles = F2(
+	function (model, pathsToFollow) {
+		var requests = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Page_Pathfinding$fetchNextArticle, pathsToFollow);
+		var requestCount = _elm_lang$core$List$length(requests);
+		var updatedModel = A2(_fizwidget$wiki_path$Page_Pathfinding$incrementRequests, model, requestCount);
+		return _fizwidget$wiki_path$Page_Pathfinding$hasMadeTooManyRequests(updatedModel) ? A2(_fizwidget$wiki_path$Page_Pathfinding$TooManyRequests, updatedModel.source, updatedModel.destination) : _fizwidget$wiki_path$Page_Pathfinding$Continue(
+			{
+				ctor: '_Tuple2',
+				_0: updatedModel,
+				_1: _elm_lang$core$Platform_Cmd$batch(requests)
+			});
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$explorePaths = F2(
+	function (model, paths) {
+		var _p12 = A2(_fizwidget$wiki_path$Page_Pathfinding$containsPathToDestination, model.destination, paths);
+		if (_p12.ctor === 'Just') {
+			return _fizwidget$wiki_path$Page_Pathfinding$PathFound(_p12._0);
+		} else {
+			return A2(_fizwidget$wiki_path$Page_Pathfinding$fetchNextArticles, model, paths);
+		}
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$continueSearch = function (model) {
+	var maxPathsToRemove = _fizwidget$wiki_path$Page_Pathfinding$pendingRequestsLimit - model.pendingRequests;
+	var _p13 = A2(_fizwidget$wiki_path$Common_PriorityQueue$removeHighestPriorities, model.paths, maxPathsToRemove);
+	var pathsToExplore = _p13._0;
+	var updatedPriorityQueue = _p13._1;
+	var updatedModel = _elm_lang$core$Native_Utils.update(
+		model,
+		{paths: updatedPriorityQueue});
+	var areNoPathsAvailable = _elm_lang$core$List$isEmpty(pathsToExplore) && _elm_lang$core$Native_Utils.eq(model.pendingRequests, 0);
+	return areNoPathsAvailable ? A2(_fizwidget$wiki_path$Page_Pathfinding$PathNotFound, updatedModel.source, updatedModel.destination) : A2(_fizwidget$wiki_path$Page_Pathfinding$explorePaths, updatedModel, pathsToExplore);
+};
+var _fizwidget$wiki_path$Page_Pathfinding$onArticleReceived = F3(
+	function (model, pathToArticle, article) {
+		return A2(_fizwidget$wiki_path$Page_Pathfinding$hasReachedDestination, model, article) ? _fizwidget$wiki_path$Page_Pathfinding$PathFound(pathToArticle) : _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
+			A3(_fizwidget$wiki_path$Page_Pathfinding$processLinks, model, pathToArticle, article));
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$init = F2(
+	function (source, destination) {
+		return A3(
+			_fizwidget$wiki_path$Page_Pathfinding$onArticleReceived,
+			A2(_fizwidget$wiki_path$Page_Pathfinding$initialModel, source, destination),
+			_fizwidget$wiki_path$Common_Path$beginningWith(source.title),
+			source);
+	});
+var _fizwidget$wiki_path$Page_Pathfinding$onErrorReceived = F2(
 	function (model, error) {
-		return _fizwidget$wiki_path$Pathfinding_Update$continueSearch(
+		return _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
 			_elm_lang$core$Native_Utils.update(
 				model,
 				{
 					errors: {ctor: '::', _0: error, _1: model.errors}
 				}));
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$onArticleReceived = F3(
-	function (model, pathToArticle, article) {
-		return A2(_fizwidget$wiki_path$Pathfinding_Update$hasReachedDestination, model, article) ? _fizwidget$wiki_path$Pathfinding_Update$destinationReached(pathToArticle) : _fizwidget$wiki_path$Pathfinding_Update$continueSearch(
-			A3(_fizwidget$wiki_path$Pathfinding_Update$processLinks, model, pathToArticle, article));
-	});
-var _fizwidget$wiki_path$Pathfinding_Update$onResponseReceived = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$onResponseReceived = F3(
 	function (model, pathToArticle, articleResult) {
-		var _p12 = articleResult;
-		if (_p12.ctor === 'Ok') {
-			return A3(_fizwidget$wiki_path$Pathfinding_Update$onArticleReceived, model, pathToArticle, _p12._0);
+		var _p14 = articleResult;
+		if (_p14.ctor === 'Ok') {
+			return A3(_fizwidget$wiki_path$Page_Pathfinding$onArticleReceived, model, pathToArticle, _p14._0);
 		} else {
-			return A2(_fizwidget$wiki_path$Pathfinding_Update$onErrorReceived, model, _p12._0);
+			return A2(_fizwidget$wiki_path$Page_Pathfinding$onErrorReceived, model, _p14._0);
 		}
 	});
-var _fizwidget$wiki_path$Pathfinding_Update$update = F2(
-	function (message, model) {
-		var _p13 = message;
-		if (_p13.ctor === 'FetchArticleResponse') {
-			return A3(
-				_fizwidget$wiki_path$Pathfinding_Update$onResponseReceived,
-				_fizwidget$wiki_path$Pathfinding_Update$decrementPendingRequests(model),
-				_p13._0,
-				_p13._1);
-		} else {
-			return A2(_fizwidget$wiki_path$Setup_Init$initWithTitles, model.source.title, model.destination.title);
-		}
-	});
-
-var _fizwidget$wiki_path$Pathfinding_Init$initialModel = F2(
-	function (source, destination) {
-		return {
-			source: source,
-			destination: destination,
-			paths: _fizwidget$wiki_path$Common_PriorityQueue_Model$empty,
-			visitedTitles: _elm_lang$core$Set$singleton(
-				_fizwidget$wiki_path$Common_Title_Model$value(source.title)),
-			errors: {ctor: '[]'},
-			pendingRequests: 0,
-			totalRequests: 0
-		};
-	});
-var _fizwidget$wiki_path$Pathfinding_Init$init = F2(
-	function (source, destination) {
+var _fizwidget$wiki_path$Page_Pathfinding$update = F2(
+	function (_p15, model) {
+		var _p16 = _p15;
 		return A3(
-			_fizwidget$wiki_path$Pathfinding_Update$onArticleReceived,
-			A2(_fizwidget$wiki_path$Pathfinding_Init$initialModel, source, destination),
-			_fizwidget$wiki_path$Common_Path_Model$beginningWith(source.title),
-			source);
+			_fizwidget$wiki_path$Page_Pathfinding$onResponseReceived,
+			_fizwidget$wiki_path$Page_Pathfinding$decrementPendingRequests(model),
+			_p16._0,
+			_p16._1);
 	});
 
-var _fizwidget$wiki_path$Setup_Update$setTitleInputs = F2(
-	function (model, _p0) {
-		var _p1 = _p0;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				source: _krisajenkins$remotedata$RemoteData$NotAsked,
-				destination: _krisajenkins$remotedata$RemoteData$NotAsked,
-				sourceTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p1._0),
-				destinationTitleInput: _fizwidget$wiki_path$Common_Title_Model$value(_p1._1)
-			});
-	});
-var _fizwidget$wiki_path$Setup_Update$setRandomTitles = F2(
-	function (model, randomTitles) {
-		var updatedModel = _elm_lang$core$Native_Utils.update(
-			model,
-			{randomTitles: randomTitles});
-		var updatedModelWithInputsSet = A2(
-			_krisajenkins$remotedata$RemoteData$withDefault,
-			updatedModel,
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$toClass = F2(
+	function (prefix, role) {
+		return _elm_lang$html$Html_Attributes$class(
 			A2(
-				_krisajenkins$remotedata$RemoteData$map,
-				_fizwidget$wiki_path$Setup_Update$setTitleInputs(updatedModel),
-				randomTitles));
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(updatedModelWithInputsSet),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+				_elm_lang$core$Basics_ops['++'],
+				prefix,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'-',
+					function () {
+						var _p0 = role;
+						switch (_p0.ctor) {
+							case 'Primary':
+								return 'primary';
+							case 'Secondary':
+								return 'secondary';
+							case 'Success':
+								return 'success';
+							case 'Info':
+								return 'info';
+							case 'Warning':
+								return 'warning';
+							case 'Danger':
+								return 'danger';
+							case 'Light':
+								return 'light';
+							default:
+								return 'dark';
+						}
+					}())));
 	});
-var _fizwidget$wiki_path$Setup_Update$fetchRandomTitles = function (model) {
-	return {
-		ctor: '_Tuple2',
-		_0: _fizwidget$wiki_path$Model$Setup(
-			_elm_lang$core$Native_Utils.update(
-				model,
-				{randomTitles: _krisajenkins$remotedata$RemoteData$Loading})),
-		_1: A2(
-			_elm_lang$core$Platform_Cmd$map,
-			_fizwidget$wiki_path$Messages$Setup,
-			_fizwidget$wiki_path$Setup_Fetch$randomTitlePair(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesResponse))
-	};
-};
-var _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding = function (model) {
-	var sourceAndDestination = _krisajenkins$remotedata$RemoteData$toMaybe(
-		A3(
-			_krisajenkins$remotedata$RemoteData$map2,
-			F2(
-				function (v0, v1) {
-					return {ctor: '_Tuple2', _0: v0, _1: v1};
-				}),
-			model.source,
-			model.destination));
-	var _p2 = sourceAndDestination;
-	if (_p2.ctor === 'Just') {
-		return A2(_fizwidget$wiki_path$Pathfinding_Init$init, _p2._0._0, _p2._0._1);
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Dark = {ctor: 'Dark'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Light = {ctor: 'Light'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Danger = {ctor: 'Danger'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Warning = {ctor: 'Warning'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Info = {ctor: 'Info'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Success = {ctor: 'Success'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Secondary = {ctor: 'Secondary'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Primary = {ctor: 'Primary'};
+
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textColorClass = function (color) {
+	var _p0 = color;
+	if (_p0.ctor === 'White') {
+		return _elm_lang$html$Html_Attributes$class('text-white');
 	} else {
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(model),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+		return A2(_rundis$elm_bootstrap$Bootstrap_Internal_Role$toClass, 'text', _p0._0);
 	}
 };
-var _fizwidget$wiki_path$Setup_Update$fetchArticles = function (model) {
-	var requests = {
-		ctor: '::',
-		_0: A2(_fizwidget$wiki_path$Setup_Fetch$article, _fizwidget$wiki_path$Setup_Messages$FetchSourceArticleResponse, model.sourceTitleInput),
-		_1: {
-			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Setup_Fetch$article, _fizwidget$wiki_path$Setup_Messages$FetchDestinationArticleResponse, model.destinationTitleInput),
-			_1: {ctor: '[]'}
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption = function (dir) {
+	var _p1 = dir;
+	switch (_p1.ctor) {
+		case 'Center':
+			return 'center';
+		case 'Left':
+			return 'left';
+		default:
+			return 'right';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignClass = function (_p2) {
+	var _p3 = _p2;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'text',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'-',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (s) {
+							return A2(
+								_elm_lang$core$Basics_ops['++'],
+								'-',
+								A2(_elm_lang$core$Basics_ops['++'], s, '-'));
+						},
+						_rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(_p3.size))),
+				_rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption(_p3.dir))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$HAlign = F2(
+	function (a, b) {
+		return {dir: a, size: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Right = {ctor: 'Right'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Center = {ctor: 'Center'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Left = {ctor: 'Left'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$White = {ctor: 'White'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role = function (a) {
+	return {ctor: 'Role', _0: a};
+};
+
+var _rundis$elm_bootstrap$Bootstrap_Text$dark = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Dark);
+var _rundis$elm_bootstrap$Bootstrap_Text$light = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Light);
+var _rundis$elm_bootstrap$Bootstrap_Text$danger = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Text$warning = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Text$info = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Info);
+var _rundis$elm_bootstrap$Bootstrap_Text$success = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Success);
+var _rundis$elm_bootstrap$Bootstrap_Text$secondary = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Secondary);
+var _rundis$elm_bootstrap$Bootstrap_Text$primary = _rundis$elm_bootstrap$Bootstrap_Internal_Text$Role(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Primary);
+var _rundis$elm_bootstrap$Bootstrap_Text$white = _rundis$elm_bootstrap$Bootstrap_Internal_Text$White;
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXl = function (dir) {
+	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_General_Internal$XL};
+};
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXlRight = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXlCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXlLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignLg = function (dir) {
+	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_General_Internal$LG};
+};
+var _rundis$elm_bootstrap$Bootstrap_Text$alignLgRight = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignLgCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignLgLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignMd = function (dir) {
+	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_General_Internal$MD};
+};
+var _rundis$elm_bootstrap$Bootstrap_Text$alignMdRight = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignMdCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignMdLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignSm = function (dir) {
+	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_General_Internal$SM};
+};
+var _rundis$elm_bootstrap$Bootstrap_Text$alignSmRight = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignSmCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignSmLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXs = function (dir) {
+	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_General_Internal$XS};
+};
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXsRight = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXsCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
+var _rundis$elm_bootstrap$Bootstrap_Text$alignXsLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption = function (align) {
+	var _p0 = align;
+	switch (_p0.ctor) {
+		case 'Top':
+			return 'start';
+		case 'Middle':
+			return 'center';
+		default:
+			return 'end';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$orderColOption = function (size) {
+	var _p1 = size;
+	switch (_p1.ctor) {
+		case 'OrderFirst':
+			return 'first';
+		case 'Order1':
+			return '1';
+		case 'Order2':
+			return '2';
+		case 'Order3':
+			return '3';
+		case 'Order4':
+			return '4';
+		case 'Order5':
+			return '5';
+		case 'Order6':
+			return '6';
+		case 'Order7':
+			return '7';
+		case 'Order8':
+			return '8';
+		case 'Order9':
+			return '9';
+		case 'Order10':
+			return '10';
+		case 'Order11':
+			return '11';
+		case 'Order12':
+			return '12';
+		default:
+			return 'last';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption = function (size) {
+	var _p2 = size;
+	switch (_p2.ctor) {
+		case 'Move0':
+			return '0';
+		case 'Move1':
+			return '1';
+		case 'Move2':
+			return '2';
+		case 'Move3':
+			return '3';
+		case 'Move4':
+			return '4';
+		case 'Move5':
+			return '5';
+		case 'Move6':
+			return '6';
+		case 'Move7':
+			return '7';
+		case 'Move8':
+			return '8';
+		case 'Move9':
+			return '9';
+		case 'Move10':
+			return '10';
+		case 'Move11':
+			return '11';
+		default:
+			return '12';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption = function (size) {
+	var _p3 = size;
+	switch (_p3.ctor) {
+		case 'Offset0':
+			return '0';
+		case 'Offset1':
+			return '1';
+		case 'Offset2':
+			return '2';
+		case 'Offset3':
+			return '3';
+		case 'Offset4':
+			return '4';
+		case 'Offset5':
+			return '5';
+		case 'Offset6':
+			return '6';
+		case 'Offset7':
+			return '7';
+		case 'Offset8':
+			return '8';
+		case 'Offset9':
+			return '9';
+		case 'Offset10':
+			return '10';
+		default:
+			return '11';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption = function (size) {
+	var _p4 = size;
+	switch (_p4.ctor) {
+		case 'Col':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'Col1':
+			return _elm_lang$core$Maybe$Just('1');
+		case 'Col2':
+			return _elm_lang$core$Maybe$Just('2');
+		case 'Col3':
+			return _elm_lang$core$Maybe$Just('3');
+		case 'Col4':
+			return _elm_lang$core$Maybe$Just('4');
+		case 'Col5':
+			return _elm_lang$core$Maybe$Just('5');
+		case 'Col6':
+			return _elm_lang$core$Maybe$Just('6');
+		case 'Col7':
+			return _elm_lang$core$Maybe$Just('7');
+		case 'Col8':
+			return _elm_lang$core$Maybe$Just('8');
+		case 'Col9':
+			return _elm_lang$core$Maybe$Just('9');
+		case 'Col10':
+			return _elm_lang$core$Maybe$Just('10');
+		case 'Col11':
+			return _elm_lang$core$Maybe$Just('11');
+		case 'Col12':
+			return _elm_lang$core$Maybe$Just('12');
+		default:
+			return _elm_lang$core$Maybe$Just('auto');
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString = function (screenSize) {
+	var _p5 = _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(screenSize);
+	if (_p5.ctor === 'Just') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'-',
+			A2(_elm_lang$core$Basics_ops['++'], _p5._0, '-'));
+	} else {
+		return '-';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes = function (aligns) {
+	var align = function (a) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_General_Internal$hAlignClass, a);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, align, aligns));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass = F2(
+	function (prefix, _p6) {
+		var _p7 = _p6;
+		return _elm_lang$html$Html_Attributes$class(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				prefix,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(
+							_elm_lang$core$Maybe$map,
+							function (v) {
+								return A2(_elm_lang$core$Basics_ops['++'], v, '-');
+							},
+							_rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(_p7.screenSize))),
+					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption(_p7.align))));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes = F2(
+	function (prefix, aligns) {
+		var align = function (a) {
+			return A2(
+				_elm_lang$core$Maybe$map,
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass(prefix),
+				a);
+		};
+		return A2(
+			_elm_lang$core$List$filterMap,
+			_elm_lang$core$Basics$identity,
+			A2(_elm_lang$core$List$map, align, aligns));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$orderToAttributes = function (orders) {
+	var order = function (m) {
+		var _p8 = m;
+		if (_p8.ctor === 'Just') {
+			return _elm_lang$core$Maybe$Just(
+				_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'order',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p8._0.screenSize),
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$orderColOption(_p8._0.moveCount)))));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
 		}
 	};
-	var updatedModel = _elm_lang$core$Native_Utils.update(
-		model,
-		{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading});
-	return {
-		ctor: '_Tuple2',
-		_0: _fizwidget$wiki_path$Model$Setup(updatedModel),
-		_1: A2(
-			_elm_lang$core$Platform_Cmd$map,
-			_fizwidget$wiki_path$Messages$Setup,
-			_elm_lang$core$Platform_Cmd$batch(requests))
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, order, orders));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes = function (pushes) {
+	var push = function (m) {
+		var _p9 = m;
+		if (_p9.ctor === 'Just') {
+			return _elm_lang$core$Maybe$Just(
+				_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'push',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p9._0.screenSize),
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p9._0.moveCount)))));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, push, pushes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes = function (pulls) {
+	var pull = function (m) {
+		var _p10 = m;
+		if (_p10.ctor === 'Just') {
+			return _elm_lang$core$Maybe$Just(
+				_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'pull',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p10._0.screenSize),
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p10._0.moveCount)))));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, pull, pulls));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass = function (_p11) {
+	var _p12 = _p11;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'offset',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p12.screenSize),
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption(_p12.offsetCount))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes = function (offsets) {
+	var offset = function (m) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass, m);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, offset, offsets));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass = function (_p13) {
+	var _p14 = _p13;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'col',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (v) {
+							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
+						},
+						_rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(_p14.screenSize))),
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (v) {
+							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
+						},
+						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption(_p14.columnCount))))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes = function (widths) {
+	var width = function (w) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass, w);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, width, widths));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions = {
+	attributes: {ctor: '[]'},
+	vAlignXs: _elm_lang$core$Maybe$Nothing,
+	vAlignSm: _elm_lang$core$Maybe$Nothing,
+	vAlignMd: _elm_lang$core$Maybe$Nothing,
+	vAlignLg: _elm_lang$core$Maybe$Nothing,
+	vAlignXl: _elm_lang$core$Maybe$Nothing,
+	hAlignXs: _elm_lang$core$Maybe$Nothing,
+	hAlignSm: _elm_lang$core$Maybe$Nothing,
+	hAlignMd: _elm_lang$core$Maybe$Nothing,
+	hAlignLg: _elm_lang$core$Maybe$Nothing,
+	hAlignXl: _elm_lang$core$Maybe$Nothing
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions = {
+	attributes: {ctor: '[]'},
+	textAlign: _elm_lang$core$Maybe$Nothing,
+	widthXs: _elm_lang$core$Maybe$Nothing,
+	widthSm: _elm_lang$core$Maybe$Nothing,
+	widthMd: _elm_lang$core$Maybe$Nothing,
+	widthLg: _elm_lang$core$Maybe$Nothing,
+	widthXl: _elm_lang$core$Maybe$Nothing,
+	offsetXs: _elm_lang$core$Maybe$Nothing,
+	offsetSm: _elm_lang$core$Maybe$Nothing,
+	offsetMd: _elm_lang$core$Maybe$Nothing,
+	offsetLg: _elm_lang$core$Maybe$Nothing,
+	offsetXl: _elm_lang$core$Maybe$Nothing,
+	pullXs: _elm_lang$core$Maybe$Nothing,
+	pullSm: _elm_lang$core$Maybe$Nothing,
+	pullMd: _elm_lang$core$Maybe$Nothing,
+	pullLg: _elm_lang$core$Maybe$Nothing,
+	pullXl: _elm_lang$core$Maybe$Nothing,
+	pushXs: _elm_lang$core$Maybe$Nothing,
+	pushSm: _elm_lang$core$Maybe$Nothing,
+	pushMd: _elm_lang$core$Maybe$Nothing,
+	pushLg: _elm_lang$core$Maybe$Nothing,
+	pushXl: _elm_lang$core$Maybe$Nothing,
+	orderXs: _elm_lang$core$Maybe$Nothing,
+	orderSm: _elm_lang$core$Maybe$Nothing,
+	orderMd: _elm_lang$core$Maybe$Nothing,
+	orderLg: _elm_lang$core$Maybe$Nothing,
+	orderXl: _elm_lang$core$Maybe$Nothing,
+	alignXs: _elm_lang$core$Maybe$Nothing,
+	alignSm: _elm_lang$core$Maybe$Nothing,
+	alignMd: _elm_lang$core$Maybe$Nothing,
+	alignLg: _elm_lang$core$Maybe$Nothing,
+	alignXl: _elm_lang$core$Maybe$Nothing
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign = F2(
+	function (align, options) {
+		var _p15 = align.screenSize;
+		switch (_p15.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign = F2(
+	function (align, options) {
+		var _p16 = align.screenSize;
+		switch (_p16.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption = F2(
+	function (modifier, options) {
+		var _p17 = modifier;
+		switch (_p17.ctor) {
+			case 'RowAttrs':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p17._0)
+					});
+			case 'RowVAlign':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign, _p17._0, options);
+			default:
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign, _p17._0, options);
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign = F2(
+	function (align, options) {
+		var _p18 = align.screenSize;
+		switch (_p18.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOrder = F2(
+	function (order, options) {
+		var _p19 = order.screenSize;
+		switch (_p19.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						orderXs: _elm_lang$core$Maybe$Just(order)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						orderSm: _elm_lang$core$Maybe$Just(order)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						orderMd: _elm_lang$core$Maybe$Just(order)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						orderLg: _elm_lang$core$Maybe$Just(order)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						orderXl: _elm_lang$core$Maybe$Just(order)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush = F2(
+	function (push, options) {
+		var _p20 = push.screenSize;
+		switch (_p20.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushXs: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushSm: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushMd: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushLg: _elm_lang$core$Maybe$Just(push)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushXl: _elm_lang$core$Maybe$Just(push)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull = F2(
+	function (pull, options) {
+		var _p21 = pull.screenSize;
+		switch (_p21.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullXs: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullSm: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullMd: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullLg: _elm_lang$core$Maybe$Just(pull)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullXl: _elm_lang$core$Maybe$Just(pull)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset = F2(
+	function (offset, options) {
+		var _p22 = offset.screenSize;
+		switch (_p22.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetXs: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetSm: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetMd: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetLg: _elm_lang$core$Maybe$Just(offset)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetXl: _elm_lang$core$Maybe$Just(offset)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth = F2(
+	function (width, options) {
+		var _p23 = width.screenSize;
+		switch (_p23.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthXs: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthSm: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthMd: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthLg: _elm_lang$core$Maybe$Just(width)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthXl: _elm_lang$core$Maybe$Just(width)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption = F2(
+	function (modifier, options) {
+		var _p24 = modifier;
+		switch (_p24.ctor) {
+			case 'ColAttrs':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p24._0)
+					});
+			case 'ColWidth':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth, _p24._0, options);
+			case 'ColOffset':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset, _p24._0, options);
+			case 'ColPull':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull, _p24._0, options);
+			case 'ColPush':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush, _p24._0, options);
+			case 'ColOrder':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOrder, _p24._0, options);
+			case 'ColAlign':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign, _p24._0, options);
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						textAlign: _elm_lang$core$Maybe$Just(_p24._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('row'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
+				'align-items-',
+				{
+					ctor: '::',
+					_0: options.vAlignXs,
+					_1: {
+						ctor: '::',
+						_0: options.vAlignSm,
+						_1: {
+							ctor: '::',
+							_0: options.vAlignMd,
+							_1: {
+								ctor: '::',
+								_0: options.vAlignLg,
+								_1: {
+									ctor: '::',
+									_0: options.vAlignXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes(
+					{
+						ctor: '::',
+						_0: options.hAlignXs,
+						_1: {
+							ctor: '::',
+							_0: options.hAlignSm,
+							_1: {
+								ctor: '::',
+								_0: options.hAlignMd,
+								_1: {
+									ctor: '::',
+									_0: options.hAlignLg,
+									_1: {
+										ctor: '::',
+										_0: options.hAlignXl,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				options.attributes)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width = F2(
+	function (a, b) {
+		return {screenSize: a, columnCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset = F2(
+	function (a, b) {
+		return {screenSize: a, offsetCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull = F2(
+	function (a, b) {
+		return {screenSize: a, moveCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push = F2(
+	function (a, b) {
+		return {screenSize: a, moveCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order = F2(
+	function (a, b) {
+		return {screenSize: a, moveCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign = F2(
+	function (a, b) {
+		return {screenSize: a, align: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOptions = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return function (s) {
+																			return function (t) {
+																				return function (u) {
+																					return function (v) {
+																						return function (w) {
+																							return function (x) {
+																								return function (y) {
+																									return function (z) {
+																										return function (_1) {
+																											return function (_2) {
+																												return function (_3) {
+																													return function (_4) {
+																														return function (_5) {
+																															return function (_6) {
+																																return {attributes: a, textAlign: b, widthXs: c, widthSm: d, widthMd: e, widthLg: f, widthXl: g, offsetXs: h, offsetSm: i, offsetMd: j, offsetLg: k, offsetXl: l, pullXs: m, pullSm: n, pullMd: o, pullLg: p, pullXl: q, pushXs: r, pushSm: s, pushMd: t, pushLg: u, pushXl: v, orderXs: w, orderSm: x, orderMd: y, orderLg: z, orderXl: _1, alignXs: _2, alignSm: _3, alignMd: _4, alignLg: _5, alignXl: _6};
+																															};
+																														};
+																													};
+																												};
+																											};
+																										};
+																									};
+																								};
+																							};
+																						};
+																					};
+																				};
+																			};
+																		};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
 	};
 };
-var _fizwidget$wiki_path$Setup_Update$setDestinationTitle = F2(
-	function (model, destinationTitleInput) {
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{destination: _krisajenkins$remotedata$RemoteData$NotAsked, destinationTitleInput: destinationTitleInput})),
-			_1: _elm_lang$core$Platform_Cmd$none
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowOptions = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {attributes: a, vAlignXs: b, vAlignSm: c, vAlignMd: d, vAlignLg: e, vAlignXl: f, hAlignXs: g, hAlignSm: h, hAlignMd: i, hAlignLg: j, hAlignXl: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
 		};
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$TextAlign = function (a) {
+	return {ctor: 'TextAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs = function (a) {
+	return {ctor: 'ColAttrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign = function (a) {
+	return {ctor: 'ColAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
 	});
-var _fizwidget$wiki_path$Setup_Update$setSourceTitle = F2(
-	function (model, sourceTitleInput) {
-		return {
-			ctor: '_Tuple2',
-			_0: _fizwidget$wiki_path$Model$Setup(
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{source: _krisajenkins$remotedata$RemoteData$NotAsked, sourceTitleInput: sourceTitleInput})),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOrder = function (a) {
+	return {ctor: 'ColOrder', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$order = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOrder(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order, size, count));
 	});
-var _fizwidget$wiki_path$Setup_Update$update = F2(
-	function (message, model) {
-		var _p3 = message;
-		switch (_p3.ctor) {
-			case 'SourceArticleTitleChange':
-				return A2(_fizwidget$wiki_path$Setup_Update$setSourceTitle, model, _p3._0);
-			case 'DestinationArticleTitleChange':
-				return A2(_fizwidget$wiki_path$Setup_Update$setDestinationTitle, model, _p3._0);
-			case 'FetchRandomTitlesRequest':
-				return _fizwidget$wiki_path$Setup_Update$fetchRandomTitles(model);
-			case 'FetchRandomTitlesResponse':
-				return A2(_fizwidget$wiki_path$Setup_Update$setRandomTitles, model, _p3._0);
-			case 'FetchArticlesRequest':
-				return _fizwidget$wiki_path$Setup_Update$fetchArticles(model);
-			case 'FetchSourceArticleResponse':
-				return _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding(
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{source: _p3._0}));
-			default:
-				return _fizwidget$wiki_path$Setup_Update$maybeBeginPathfinding(
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{destination: _p3._0}));
-		}
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush = function (a) {
+	return {ctor: 'ColPush', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$push = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push, size, count));
 	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull = function (a) {
+	return {ctor: 'ColPull', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset = function (a) {
+	return {ctor: 'ColOffset', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth = function (a) {
+	return {ctor: 'ColWidth', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$width = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs = function (a) {
+	return {ctor: 'RowAttrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign = function (a) {
+	return {ctor: 'RowHAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_General_Internal$HAlign, size, align));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign = function (a) {
+	return {ctor: 'RowVAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto = {ctor: 'ColAuto'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12 = {ctor: 'Col12'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11 = {ctor: 'Col11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10 = {ctor: 'Col10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9 = {ctor: 'Col9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8 = {ctor: 'Col8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7 = {ctor: 'Col7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6 = {ctor: 'Col6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5 = {ctor: 'Col5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4 = {ctor: 'Col4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3 = {ctor: 'Col3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2 = {ctor: 'Col2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1 = {ctor: 'Col1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col = {ctor: 'Col'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions, modifiers);
+	var shouldAddDefaultXs = _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: options.widthXs,
+					_1: {
+						ctor: '::',
+						_0: options.widthSm,
+						_1: {
+							ctor: '::',
+							_0: options.widthMd,
+							_1: {
+								ctor: '::',
+								_0: options.widthLg,
+								_1: {
+									ctor: '::',
+									_0: options.widthXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				})),
+		0);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes(
+			{
+				ctor: '::',
+				_0: shouldAddDefaultXs ? _elm_lang$core$Maybe$Just(
+					A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col)) : options.widthXs,
+				_1: {
+					ctor: '::',
+					_0: options.widthSm,
+					_1: {
+						ctor: '::',
+						_0: options.widthMd,
+						_1: {
+							ctor: '::',
+							_0: options.widthLg,
+							_1: {
+								ctor: '::',
+								_0: options.widthXl,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes(
+				{
+					ctor: '::',
+					_0: options.offsetXs,
+					_1: {
+						ctor: '::',
+						_0: options.offsetSm,
+						_1: {
+							ctor: '::',
+							_0: options.offsetMd,
+							_1: {
+								ctor: '::',
+								_0: options.offsetLg,
+								_1: {
+									ctor: '::',
+									_0: options.offsetXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes(
+					{
+						ctor: '::',
+						_0: options.pullXs,
+						_1: {
+							ctor: '::',
+							_0: options.pullSm,
+							_1: {
+								ctor: '::',
+								_0: options.pullMd,
+								_1: {
+									ctor: '::',
+									_0: options.pullLg,
+									_1: {
+										ctor: '::',
+										_0: options.pullXl,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes(
+						{
+							ctor: '::',
+							_0: options.pushXs,
+							_1: {
+								ctor: '::',
+								_0: options.pushSm,
+								_1: {
+									ctor: '::',
+									_0: options.pushMd,
+									_1: {
+										ctor: '::',
+										_0: options.pushLg,
+										_1: {
+											ctor: '::',
+											_0: options.pushXl,
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$orderToAttributes(
+							{
+								ctor: '::',
+								_0: options.orderXs,
+								_1: {
+									ctor: '::',
+									_0: options.orderSm,
+									_1: {
+										ctor: '::',
+										_0: options.orderMd,
+										_1: {
+											ctor: '::',
+											_0: options.orderLg,
+											_1: {
+												ctor: '::',
+												_0: options.orderXl,
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(
+								_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
+								'align-self-',
+								{
+									ctor: '::',
+									_0: options.alignXs,
+									_1: {
+										ctor: '::',
+										_0: options.alignSm,
+										_1: {
+											ctor: '::',
+											_0: options.alignMd,
+											_1: {
+												ctor: '::',
+												_0: options.alignLg,
+												_1: {
+													ctor: '::',
+													_0: options.alignXl,
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
+							function () {
+								var _p25 = options.textAlign;
+								if (_p25.ctor === 'Just') {
+									return {
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignClass(_p25._0),
+										_1: {ctor: '[]'}
+									};
+								} else {
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										{ctor: '[]'},
+										options.attributes);
+								}
+							}()))))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11 = {ctor: 'Offset11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10 = {ctor: 'Offset10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9 = {ctor: 'Offset9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8 = {ctor: 'Offset8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7 = {ctor: 'Offset7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6 = {ctor: 'Offset6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5 = {ctor: 'Offset5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4 = {ctor: 'Offset4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3 = {ctor: 'Offset3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2 = {ctor: 'Offset2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1 = {ctor: 'Offset1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0 = {ctor: 'Offset0'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12 = {ctor: 'Move12'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11 = {ctor: 'Move11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10 = {ctor: 'Move10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9 = {ctor: 'Move9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8 = {ctor: 'Move8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7 = {ctor: 'Move7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6 = {ctor: 'Move6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5 = {ctor: 'Move5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4 = {ctor: 'Move4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3 = {ctor: 'Move3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2 = {ctor: 'Move2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1 = {ctor: 'Move1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0 = {ctor: 'Move0'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast = {ctor: 'OrderLast'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12 = {ctor: 'Order12'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11 = {ctor: 'Order11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10 = {ctor: 'Order10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9 = {ctor: 'Order9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8 = {ctor: 'Order8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7 = {ctor: 'Order7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6 = {ctor: 'Order6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5 = {ctor: 'Order5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4 = {ctor: 'Order4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3 = {ctor: 'Order3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2 = {ctor: 'Order2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1 = {ctor: 'Order1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst = {ctor: 'OrderFirst'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom = {ctor: 'Bottom'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle = {ctor: 'Middle'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top = {ctor: 'Top'};
 
-var _fizwidget$wiki_path$Update$update = F2(
-	function (message, model) {
-		var _p0 = {ctor: '_Tuple2', _0: message, _1: model};
-		_v0_3:
-		do {
-			switch (_p0._0.ctor) {
-				case 'Setup':
-					if (_p0._1.ctor === 'Setup') {
-						return A2(_fizwidget$wiki_path$Setup_Update$update, _p0._0._0, _p0._1._0);
-					} else {
-						break _v0_3;
-					}
-				case 'Pathfinding':
-					if (_p0._1.ctor === 'Pathfinding') {
-						return A2(_fizwidget$wiki_path$Pathfinding_Update$update, _p0._0._0, _p0._1._0);
-					} else {
-						break _v0_3;
-					}
-				default:
-					if (_p0._1.ctor === 'Finished') {
-						return A2(_fizwidget$wiki_path$Finished_Update$update, _p0._0._0, _p0._1._0);
-					} else {
-						break _v0_3;
-					}
-			}
-		} while(false);
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_General_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_General_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_General_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_General_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$betweenXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_General_Internal$Between);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_General_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_General_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_General_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_General_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$aroundXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_General_Internal$Around);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_General_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_General_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_General_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_General_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$rightXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_General_Internal$Right);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_General_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_General_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_General_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_General_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$centerXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_General_Internal$Center);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_General_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_General_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_General_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_General_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$leftXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_General_Internal$Left);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Row$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
 var _rundis$elm_bootstrap$Bootstrap_Grid_Row$attrs = function (attrs) {
 	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs(attrs);
 };
 
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xlAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lgAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$mdAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$smAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xsAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
-var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXlLast = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXlFirst = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLgLast = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderLgFirst = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMdLast = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderMdFirst = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSmLast = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderSmFirst = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXsLast = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderLast);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Order1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$orderXsFirst = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$order, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$OrderFirst);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pushXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$push, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$pullXs0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXl0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm0 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetXs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xlAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lgAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$mdAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$md = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$smAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xsAuto = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs12 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs11 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs10 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs9 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs8 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs7 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs6 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs5 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs4 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs3 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs2 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs1 = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$xs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$width, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$bottomXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$middleXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXl = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XL, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topLg = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$LG, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topMd = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$MD, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topSm = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$SM, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$topXs = A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign, _rundis$elm_bootstrap$Bootstrap_General_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top);
+var _rundis$elm_bootstrap$Bootstrap_Grid_Col$textAlign = function (align) {
+	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$TextAlign(align);
+};
 var _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs = function (attrs) {
 	return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs(attrs);
 };
@@ -19210,7 +19579,7 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Input$sizeAttribute = function (size) {
 			return _elm_lang$html$Html_Attributes$class(
 				A2(_elm_lang$core$Basics_ops['++'], 'form-control-', s));
 		},
-		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
+		_rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption(size));
 };
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$applyModifier = F2(
 	function (modifier, options) {
@@ -19374,8 +19743,8 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Input$id = function (id) {
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$Size = function (a) {
 	return {ctor: 'Size', _0: a};
 };
-var _rundis$elm_bootstrap$Bootstrap_Form_Input$small = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
-var _rundis$elm_bootstrap$Bootstrap_Form_Input$large = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$small = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$large = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$LG);
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$Color = {ctor: 'Color'};
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$Tel = {ctor: 'Tel'};
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$Search = {ctor: 'Search'};
@@ -19485,31 +19854,47 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Input$search = _rundis$elm_bootstrap$Bo
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$tel = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Tel);
 var _rundis$elm_bootstrap$Bootstrap_Form_Input$color = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Color);
 
-var _fizwidget$wiki_path$Setup_View$getErrorMessage = function (remoteArticle) {
-	var _p0 = remoteArticle;
-	if (_p0.ctor === 'Failure') {
-		return _fizwidget$wiki_path$Common_Article_View$viewError(_p0._0);
+var _fizwidget$wiki_path$Util$noCmd = function (model) {
+	return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+};
+
+var _fizwidget$wiki_path$Page_Setup$viewRandomizationError = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = _p1.randomTitles;
+	if (_p2.ctor === 'Failure') {
+		return A2(
+			_fizwidget$wiki_path$Common_Error$view,
+			'Error randomizing titles 😵',
+			_elm_lang$core$Basics$toString(_p2._0));
 	} else {
 		return _rtfeldman$elm_css$Html_Styled$text('');
 	}
 };
-var _fizwidget$wiki_path$Setup_View$isLoading = function (_p1) {
-	var _p2 = _p1;
-	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomTitles);
+var _fizwidget$wiki_path$Page_Setup$viewArticleError = function (remoteArticle) {
+	var _p3 = remoteArticle;
+	if (_p3.ctor === 'Failure') {
+		return _fizwidget$wiki_path$Common_Article$viewError(_p3._0);
+	} else {
+		return _rtfeldman$elm_css$Html_Styled$text('');
+	}
+};
+var _fizwidget$wiki_path$Page_Setup$isLoading = function (_p4) {
+	var _p5 = _p4;
+	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p5.randomTitles);
 	var areArticlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(
 		_krisajenkins$remotedata$RemoteData$fromList(
 			{
 				ctor: '::',
-				_0: _p2.source,
+				_0: _p5.source,
 				_1: {
 					ctor: '::',
-					_0: _p2.destination,
+					_0: _p5.destination,
 					_1: {ctor: '[]'}
 				}
 			}));
 	return areArticlesLoading || areTitlesLoading;
 };
-var _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading = function (model) {
+var _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19525,142 +19910,30 @@ var _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Common_Spinner_View$view(
+			_0: _fizwidget$wiki_path$Common_Spinner$view(
 				{
-					isVisible: _fizwidget$wiki_path$Setup_View$isLoading(model)
+					isVisible: _fizwidget$wiki_path$Page_Setup$isLoading(model)
 				}),
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wiki_path$Setup_View$shouldDisableLoadButton = function (model) {
-	var isBlank = function (_p3) {
+var _fizwidget$wiki_path$Page_Setup$shouldDisableLoadButton = function (model) {
+	var isBlank = function (_p6) {
 		return _elm_lang$core$String$isEmpty(
-			_elm_lang$core$String$trim(_p3));
+			_elm_lang$core$String$trim(_p6));
 	};
-	return _fizwidget$wiki_path$Setup_View$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
+	return _fizwidget$wiki_path$Page_Setup$isLoading(model) || (isBlank(model.sourceTitleInput) || isBlank(model.destinationTitleInput));
 };
-var _fizwidget$wiki_path$Setup_View$showRandomizationError = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5.randomTitles;
-	if (_p6.ctor === 'Failure') {
-		return A2(
-			_fizwidget$wiki_path$Common_Error_View$view,
-			'Error randomizing titles 😵',
-			_elm_lang$core$Basics$toString(_p6._0));
-	} else {
-		return _rtfeldman$elm_css$Html_Styled$text('');
-	}
-};
-var _fizwidget$wiki_path$Setup_View$randomizeTitlesButton = function (model) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$padding(
-						_rtfeldman$elm_css$Css$px(12)),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_fizwidget$wiki_path$Common_Button_View$view,
-				{
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
-					_1: {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$light,
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-								_fizwidget$wiki_path$Setup_View$isLoading(model)),
-							_1: {
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$FetchRandomTitlesRequest),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Html_Styled$text('Randomize'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Setup_View$findPathButton = function (model) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$padding(
-						_rtfeldman$elm_css$Css$px(4)),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_fizwidget$wiki_path$Common_Button_View$view,
-				{
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-					_1: {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-								_fizwidget$wiki_path$Setup_View$shouldDisableLoadButton(model)),
-							_1: {
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Setup_Messages$FetchArticlesRequest),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Html_Styled$text('Find path'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Setup_View$getInputStatus = function (article) {
-	var _p7 = article;
-	switch (_p7.ctor) {
-		case 'NotAsked':
-			return {ctor: '[]'};
-		case 'Loading':
-			return {ctor: '[]'};
-		case 'Failure':
-			return {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$danger,
-				_1: {ctor: '[]'}
-			};
-		default:
-			return {ctor: '[]'};
-	}
-};
-var _fizwidget$wiki_path$Setup_View$articleTitleInput = F5(
+var _fizwidget$wiki_path$Page_Setup$viewTitleInput = F5(
 	function (placeholderText, toMsg, title, article, inputStatus) {
+		var inputStyle = _krisajenkins$remotedata$RemoteData$isFailure(article) ? {
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$danger,
+			_1: {ctor: '[]'}
+		} : {ctor: '[]'};
 		var isDisabled = function () {
-			var _p8 = inputStatus;
-			if (_p8.ctor === 'Enabled') {
+			var _p7 = inputStatus;
+			if (_p7.ctor === 'Enabled') {
 				return false;
 			} else {
 				return true;
@@ -19668,7 +19941,7 @@ var _fizwidget$wiki_path$Setup_View$articleTitleInput = F5(
 		}();
 		var inputOptions = A2(
 			_elm_lang$core$Basics_ops['++'],
-			_fizwidget$wiki_path$Setup_View$getInputStatus(article),
+			inputStyle,
 			{
 				ctor: '::',
 				_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$large,
@@ -19727,7 +20000,7 @@ var _fizwidget$wiki_path$Setup_View$articleTitleInput = F5(
 									{
 										ctor: '::',
 										_0: _rtfeldman$elm_css$Html_Styled$toUnstyled(
-											_fizwidget$wiki_path$Setup_View$getErrorMessage(article)),
+											_fizwidget$wiki_path$Page_Setup$viewArticleError(article)),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -19743,13 +20016,249 @@ var _fizwidget$wiki_path$Setup_View$articleTitleInput = F5(
 				_1: {ctor: '[]'}
 			});
 	});
-var _fizwidget$wiki_path$Setup_View$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'To...', _fizwidget$wiki_path$Setup_Messages$DestinationArticleTitleChange);
-var _fizwidget$wiki_path$Setup_View$viewSourceTitleInput = A2(_fizwidget$wiki_path$Setup_View$articleTitleInput, 'From...', _fizwidget$wiki_path$Setup_Messages$SourceArticleTitleChange);
-var _fizwidget$wiki_path$Setup_View$Disabled = {ctor: 'Disabled'};
-var _fizwidget$wiki_path$Setup_View$Enabled = {ctor: 'Enabled'};
-var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p9) {
-	var _p10 = _p9;
-	var inputStatus = _fizwidget$wiki_path$Setup_View$isLoading(_p10) ? _fizwidget$wiki_path$Setup_View$Disabled : _fizwidget$wiki_path$Setup_View$Enabled;
+var _fizwidget$wiki_path$Page_Setup$copyRandomTitlesToInputFields = function (model) {
+	var setInputFields = function (_p8) {
+		var _p9 = _p8;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				source: _krisajenkins$remotedata$RemoteData$NotAsked,
+				destination: _krisajenkins$remotedata$RemoteData$NotAsked,
+				sourceTitleInput: _fizwidget$wiki_path$Common_Title$value(_p9._0),
+				destinationTitleInput: _fizwidget$wiki_path$Common_Title$value(_p9._1)
+			});
+	};
+	return A2(
+		_krisajenkins$remotedata$RemoteData$withDefault,
+		model,
+		A2(_krisajenkins$remotedata$RemoteData$map, setInputFields, model.randomTitles));
+};
+var _fizwidget$wiki_path$Page_Setup$initialModel = F2(
+	function (sourceTitleInput, destinationTitleInput) {
+		return {sourceTitleInput: sourceTitleInput, destinationTitleInput: destinationTitleInput, source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+	});
+var _fizwidget$wiki_path$Page_Setup$initWithTitles = F2(
+	function (source, destination) {
+		return {
+			ctor: '_Tuple2',
+			_0: A2(
+				_fizwidget$wiki_path$Page_Setup$initialModel,
+				_fizwidget$wiki_path$Common_Title$value(source),
+				_fizwidget$wiki_path$Common_Title$value(destination)),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _fizwidget$wiki_path$Page_Setup$init = {
+	ctor: '_Tuple2',
+	_0: A2(_fizwidget$wiki_path$Page_Setup$initialModel, '', ''),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _fizwidget$wiki_path$Page_Setup$Model = F5(
+	function (a, b, c, d, e) {
+		return {sourceTitleInput: a, destinationTitleInput: b, source: c, destination: d, randomTitles: e};
+	});
+var _fizwidget$wiki_path$Page_Setup$FetchRandomTitlesResponse = function (a) {
+	return {ctor: 'FetchRandomTitlesResponse', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$FetchRandomTitlesRequest = {ctor: 'FetchRandomTitlesRequest'};
+var _fizwidget$wiki_path$Page_Setup$viewRandomizeTitlesButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(12)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_fizwidget$wiki_path$Common_Button$view,
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$light,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+								_fizwidget$wiki_path$Page_Setup$isLoading(model)),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Page_Setup$FetchRandomTitlesRequest),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled$text('Randomize'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Page_Setup$FetchDestinationArticleResponse = function (a) {
+	return {ctor: 'FetchDestinationArticleResponse', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$FetchSourceArticleResponse = function (a) {
+	return {ctor: 'FetchSourceArticleResponse', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$fetchArticles = function (model) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		{
+			ctor: '::',
+			_0: A2(_fizwidget$wiki_path$Common_Article$fetchRemoteArticle, _fizwidget$wiki_path$Page_Setup$FetchSourceArticleResponse, model.sourceTitleInput),
+			_1: {
+				ctor: '::',
+				_0: A2(_fizwidget$wiki_path$Common_Article$fetchRemoteArticle, _fizwidget$wiki_path$Page_Setup$FetchDestinationArticleResponse, model.destinationTitleInput),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fizwidget$wiki_path$Page_Setup$FetchArticlesRequest = {ctor: 'FetchArticlesRequest'};
+var _fizwidget$wiki_path$Page_Setup$viewFindPathButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$padding(
+						_rtfeldman$elm_css$Css$px(4)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_fizwidget$wiki_path$Common_Button$view,
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$large,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+								_fizwidget$wiki_path$Page_Setup$shouldDisableLoadButton(model)),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Page_Setup$FetchArticlesRequest),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Html_Styled$text('Find path'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Page_Setup$DestinationArticleTitleChange = function (a) {
+	return {ctor: 'DestinationArticleTitleChange', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Page_Setup$viewTitleInput, 'To...', _fizwidget$wiki_path$Page_Setup$DestinationArticleTitleChange);
+var _fizwidget$wiki_path$Page_Setup$SourceArticleTitleChange = function (a) {
+	return {ctor: 'SourceArticleTitleChange', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$viewSourceTitleInput = A2(_fizwidget$wiki_path$Page_Setup$viewTitleInput, 'From...', _fizwidget$wiki_path$Page_Setup$SourceArticleTitleChange);
+var _fizwidget$wiki_path$Page_Setup$Done = F2(
+	function (a, b) {
+		return {ctor: 'Done', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Setup$Continue = function (a) {
+	return {ctor: 'Continue', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$maybeBeginPathfinding = function (model) {
+	var sourceAndDestination = _krisajenkins$remotedata$RemoteData$toMaybe(
+		A3(
+			_krisajenkins$remotedata$RemoteData$map2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			model.source,
+			model.destination));
+	var _p10 = sourceAndDestination;
+	if (_p10.ctor === 'Just') {
+		return A2(_fizwidget$wiki_path$Page_Setup$Done, _p10._0._0, _p10._0._1);
+	} else {
+		return _fizwidget$wiki_path$Page_Setup$Continue(
+			_fizwidget$wiki_path$Util$noCmd(model));
+	}
+};
+var _fizwidget$wiki_path$Page_Setup$update = F2(
+	function (message, model) {
+		var _p11 = message;
+		switch (_p11.ctor) {
+			case 'SourceArticleTitleChange':
+				return _fizwidget$wiki_path$Page_Setup$Continue(
+					_fizwidget$wiki_path$Util$noCmd(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{sourceTitleInput: _p11._0, source: _krisajenkins$remotedata$RemoteData$NotAsked})));
+			case 'DestinationArticleTitleChange':
+				return _fizwidget$wiki_path$Page_Setup$Continue(
+					_fizwidget$wiki_path$Util$noCmd(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{destinationTitleInput: _p11._0, destination: _krisajenkins$remotedata$RemoteData$NotAsked})));
+			case 'FetchRandomTitlesRequest':
+				return _fizwidget$wiki_path$Page_Setup$Continue(
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{randomTitles: _krisajenkins$remotedata$RemoteData$Loading}),
+						_1: _fizwidget$wiki_path$Common_Title$fetchPair(_fizwidget$wiki_path$Page_Setup$FetchRandomTitlesResponse)
+					});
+			case 'FetchRandomTitlesResponse':
+				return _fizwidget$wiki_path$Page_Setup$Continue(
+					_fizwidget$wiki_path$Util$noCmd(
+						_fizwidget$wiki_path$Page_Setup$copyRandomTitlesToInputFields(
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{randomTitles: _p11._0}))));
+			case 'FetchArticlesRequest':
+				return _fizwidget$wiki_path$Page_Setup$Continue(
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading}),
+						_1: _fizwidget$wiki_path$Page_Setup$fetchArticles(model)
+					});
+			case 'FetchSourceArticleResponse':
+				return _fizwidget$wiki_path$Page_Setup$maybeBeginPathfinding(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{source: _p11._0}));
+			default:
+				return _fizwidget$wiki_path$Page_Setup$maybeBeginPathfinding(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{destination: _p11._0}));
+		}
+	});
+var _fizwidget$wiki_path$Page_Setup$Disabled = {ctor: 'Disabled'};
+var _fizwidget$wiki_path$Page_Setup$Enabled = {ctor: 'Enabled'};
+var _fizwidget$wiki_path$Page_Setup$viewTitleInputs = function (_p12) {
+	var _p13 = _p12;
+	var inputStatus = _fizwidget$wiki_path$Page_Setup$isLoading(_p13) ? _fizwidget$wiki_path$Page_Setup$Disabled : _fizwidget$wiki_path$Page_Setup$Enabled;
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -19772,15 +20281,15 @@ var _fizwidget$wiki_path$Setup_View$titleInputs = function (_p9) {
 		},
 		{
 			ctor: '::',
-			_0: A3(_fizwidget$wiki_path$Setup_View$viewSourceTitleInput, _p10.sourceTitleInput, _p10.source, inputStatus),
+			_0: A3(_fizwidget$wiki_path$Page_Setup$viewSourceTitleInput, _p13.sourceTitleInput, _p13.source, inputStatus),
 			_1: {
 				ctor: '::',
-				_0: A3(_fizwidget$wiki_path$Setup_View$viewDestinationTitleInput, _p10.destinationTitleInput, _p10.destination, inputStatus),
+				_0: A3(_fizwidget$wiki_path$Page_Setup$viewDestinationTitleInput, _p13.destinationTitleInput, _p13.destination, inputStatus),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _fizwidget$wiki_path$Setup_View$view = function (model) {
+var _fizwidget$wiki_path$Page_Setup$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$form,
 		{
@@ -19803,19 +20312,19 @@ var _fizwidget$wiki_path$Setup_View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Setup_View$titleInputs(model),
+			_0: _fizwidget$wiki_path$Page_Setup$viewTitleInputs(model),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Setup_View$findPathButton(model),
+				_0: _fizwidget$wiki_path$Page_Setup$viewFindPathButton(model),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wiki_path$Setup_View$randomizeTitlesButton(model),
+					_0: _fizwidget$wiki_path$Page_Setup$viewRandomizeTitlesButton(model),
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wiki_path$Setup_View$showRandomizationError(model),
+						_0: _fizwidget$wiki_path$Page_Setup$viewRandomizationError(model),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wiki_path$Setup_View$showSpinnerIfLoading(model),
+							_0: _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner(model),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -19824,258 +20333,7 @@ var _fizwidget$wiki_path$Setup_View$view = function (model) {
 		});
 };
 
-var _fizwidget$wiki_path$Pathfinding_View$pathView = function (path) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_rtfeldman$elm_css$Html_Styled$div,
-				{ctor: '[]'},
-				A2(
-					_elm_lang$core$List$map,
-					function (_p0) {
-						return A2(
-							_rtfeldman$elm_css$Html_Styled$div,
-							{ctor: '[]'},
-							_elm_lang$core$List$singleton(_p0));
-					},
-					A2(
-						_elm_lang$core$List$append,
-						{
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Common_Spinner_View$view(
-								{isVisible: true}),
-							_1: {ctor: '[]'}
-						},
-						A2(
-							_elm_lang$core$List$append,
-							{
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Html_Styled$text('↑'),
-								_1: {ctor: '[]'}
-							},
-							A2(
-								_elm_lang$core$List$intersperse,
-								_rtfeldman$elm_css$Html_Styled$text('↑'),
-								A2(
-									_elm_lang$core$List$map,
-									_fizwidget$wiki_path$Common_Title_View$viewAsLink,
-									_fizwidget$wiki_path$Common_Path_Model$inReverseOrder(path))))))),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Pathfinding_View$pathsView = function (paths) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		A2(
-			_rtfeldman$elm_css$Html_Styled$div,
-			{ctor: '[]'},
-			{ctor: '[]'}),
-		A2(
-			_elm_lang$core$Maybe$map,
-			_fizwidget$wiki_path$Pathfinding_View$pathView,
-			_fizwidget$wiki_path$Common_PriorityQueue_Model$getHighestPriority(paths)));
-};
-var _fizwidget$wiki_path$Pathfinding_View$pathCountWarning = function (totalRequests) {
-	return (_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Pathfinding_Config$totalRequestsLimit / 2) | 0) > 0) ? A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text('This isn\'t looking good. Try a different destination maybe? 😅'),
-			_1: {ctor: '[]'}
-		}) : _rtfeldman$elm_css$Html_Styled$text('');
-};
-var _fizwidget$wiki_path$Pathfinding_View$destinationContentWarning = function (destination) {
-	var message = A2(_elm_lang$core$String$contains, 'disambigbox', destination.content) ? 'The destination article is a disambiguation page, so I probably won\'t be able to find a path to it 🤖' : ((_elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$String$length(destination.content),
-		10000) < 0) ? 'The destination article is very short, so my pathfinding heuristic won\'t work well 🤖' : '');
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text(message),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Pathfinding_View$warningView = F2(
-	function (totalRequests, destination) {
-		return A2(
-			_rtfeldman$elm_css$Html_Styled$div,
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-					{
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _fizwidget$wiki_path$Pathfinding_View$destinationContentWarning(destination),
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wiki_path$Pathfinding_View$pathCountWarning(totalRequests),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _fizwidget$wiki_path$Pathfinding_View$backView = A2(
-	_rtfeldman$elm_css$Html_Styled$div,
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Css$margin(
-					_rtfeldman$elm_css$Css$px(20)),
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_fizwidget$wiki_path$Common_Button_View$view,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Pathfinding_Messages$BackToSetup),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$text('Back'),
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	});
-var _fizwidget$wiki_path$Pathfinding_View$errorView = function (errors) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Common_Article_View$viewError, errors));
-};
-var _fizwidget$wiki_path$Pathfinding_View$heading = F2(
-	function (source, destination) {
-		return A2(
-			_rtfeldman$elm_css$Html_Styled$h3,
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-					{
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled$text('Finding path from '),
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(source.title),
-					_1: {
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Common_Title_View$viewAsLink(destination.title),
-							_1: {
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Html_Styled$text('...'),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			});
-	});
-var _fizwidget$wiki_path$Pathfinding_View$view = function (_p1) {
-	var _p2 = _p1;
-	var _p3 = _p2.destination;
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-				{
-					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$displayFlex,
-					_1: {
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
-						_1: {
-							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Pathfinding_View$heading, _p2.source, _p3),
-			_1: {
-				ctor: '::',
-				_0: _fizwidget$wiki_path$Pathfinding_View$errorView(_p2.errors),
-				_1: {
-					ctor: '::',
-					_0: A2(_fizwidget$wiki_path$Pathfinding_View$warningView, _p2.totalRequests, _p3),
-					_1: {
-						ctor: '::',
-						_0: _fizwidget$wiki_path$Pathfinding_View$backView,
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Pathfinding_View$pathsView(_p2.paths),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-};
-
-var _fizwidget$wiki_path$View$viewModel = function (model) {
-	var _p0 = model;
-	switch (_p0.ctor) {
-		case 'Setup':
-			return A2(
-				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wiki_path$Messages$Setup,
-				_fizwidget$wiki_path$Setup_View$view(_p0._0));
-		case 'Pathfinding':
-			return A2(
-				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wiki_path$Messages$Pathfinding,
-				_fizwidget$wiki_path$Pathfinding_View$view(_p0._0));
-		default:
-			return A2(
-				_rtfeldman$elm_css$Html_Styled$map,
-				_fizwidget$wiki_path$Messages$Finished,
-				_fizwidget$wiki_path$Finished_View$view(_p0._0));
-	}
-};
-var _fizwidget$wiki_path$View$viewHeading = A2(
+var _fizwidget$wiki_path$Main$viewHeading = A2(
 	_rtfeldman$elm_css$Html_Styled$h1,
 	{
 		ctor: '::',
@@ -20116,7 +20374,116 @@ var _fizwidget$wiki_path$View$viewHeading = A2(
 		_0: _rtfeldman$elm_css$Html_Styled$text('WikiPath'),
 		_1: {ctor: '[]'}
 	});
-var _fizwidget$wiki_path$View$view = function (model) {
+var _fizwidget$wiki_path$Main$inPage = F3(
+	function (toModel, toMsg, _p0) {
+		var _p1 = _p0;
+		return {
+			ctor: '_Tuple2',
+			_0: toModel(_p1._0),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, toMsg, _p1._1)
+		};
+	});
+var _fizwidget$wiki_path$Main$FinishedPage = function (a) {
+	return {ctor: 'FinishedPage', _0: a};
+};
+var _fizwidget$wiki_path$Main$inFinishedPage = A2(_fizwidget$wiki_path$Main$inPage, _fizwidget$wiki_path$Main$FinishedPage, _elm_lang$core$Basics$identity);
+var _fizwidget$wiki_path$Main$PathfindingPage = function (a) {
+	return {ctor: 'PathfindingPage', _0: a};
+};
+var _fizwidget$wiki_path$Main$SetupPage = function (a) {
+	return {ctor: 'SetupPage', _0: a};
+};
+var _fizwidget$wiki_path$Main$BackToSetup = F2(
+	function (a, b) {
+		return {ctor: 'BackToSetup', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Main$PathfindingMsg = function (a) {
+	return {ctor: 'PathfindingMsg', _0: a};
+};
+var _fizwidget$wiki_path$Main$inPathfindingPage = A2(_fizwidget$wiki_path$Main$inPage, _fizwidget$wiki_path$Main$PathfindingPage, _fizwidget$wiki_path$Main$PathfindingMsg);
+var _fizwidget$wiki_path$Main$onPathfindingUpdate = function (updateResult) {
+	var _p2 = updateResult;
+	switch (_p2.ctor) {
+		case 'Continue':
+			return _fizwidget$wiki_path$Main$inPathfindingPage(
+				{ctor: '_Tuple2', _0: _p2._0._0, _1: _p2._0._1});
+		case 'PathFound':
+			return _fizwidget$wiki_path$Main$inFinishedPage(
+				_fizwidget$wiki_path$Util$noCmd(
+					_fizwidget$wiki_path$Page_Finished$Success(_p2._0)));
+		case 'PathNotFound':
+			return _fizwidget$wiki_path$Main$inFinishedPage(
+				_fizwidget$wiki_path$Util$noCmd(
+					_fizwidget$wiki_path$Page_Finished$Error(
+						{error: _fizwidget$wiki_path$Page_Finished$PathNotFound, source: _p2._0, destination: _p2._1})));
+		default:
+			return _fizwidget$wiki_path$Main$inFinishedPage(
+				_fizwidget$wiki_path$Util$noCmd(
+					_fizwidget$wiki_path$Page_Finished$Error(
+						{error: _fizwidget$wiki_path$Page_Finished$TooManyRequests, source: _p2._0, destination: _p2._1})));
+	}
+};
+var _fizwidget$wiki_path$Main$SetupMsg = function (a) {
+	return {ctor: 'SetupMsg', _0: a};
+};
+var _fizwidget$wiki_path$Main$inSetupPage = A2(_fizwidget$wiki_path$Main$inPage, _fizwidget$wiki_path$Main$SetupPage, _fizwidget$wiki_path$Main$SetupMsg);
+var _fizwidget$wiki_path$Main$onSetupUpdate = function (updateResult) {
+	var _p3 = updateResult;
+	if (_p3.ctor === 'Continue') {
+		return _fizwidget$wiki_path$Main$inSetupPage(
+			{ctor: '_Tuple2', _0: _p3._0._0, _1: _p3._0._1});
+	} else {
+		return _fizwidget$wiki_path$Main$onPathfindingUpdate(
+			A2(_fizwidget$wiki_path$Page_Pathfinding$init, _p3._0, _p3._1));
+	}
+};
+var _fizwidget$wiki_path$Main$initSetup = _fizwidget$wiki_path$Main$inSetupPage(_fizwidget$wiki_path$Page_Setup$init);
+var _fizwidget$wiki_path$Main$initSetupWithSourceAndDestination = F2(
+	function (source, destination) {
+		return _fizwidget$wiki_path$Main$inSetupPage(
+			A2(_fizwidget$wiki_path$Page_Setup$initWithTitles, source, destination));
+	});
+var _fizwidget$wiki_path$Main$update = F2(
+	function (message, model) {
+		var _p4 = {ctor: '_Tuple2', _0: message, _1: model};
+		_v3_3:
+		do {
+			switch (_p4._0.ctor) {
+				case 'BackToSetup':
+					return A2(_fizwidget$wiki_path$Main$initSetupWithSourceAndDestination, _p4._0._0, _p4._0._1);
+				case 'SetupMsg':
+					if (_p4._1.ctor === 'SetupPage') {
+						return _fizwidget$wiki_path$Main$onSetupUpdate(
+							A2(_fizwidget$wiki_path$Page_Setup$update, _p4._0._0, _p4._1._0));
+					} else {
+						break _v3_3;
+					}
+				default:
+					if (_p4._1.ctor === 'PathfindingPage') {
+						return _fizwidget$wiki_path$Main$onPathfindingUpdate(
+							A2(_fizwidget$wiki_path$Page_Pathfinding$update, _p4._0._0, _p4._1._0));
+					} else {
+						break _v3_3;
+					}
+			}
+		} while(false);
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _fizwidget$wiki_path$Main$viewModel = function (model) {
+	var _p5 = model;
+	switch (_p5.ctor) {
+		case 'SetupPage':
+			return A2(
+				_rtfeldman$elm_css$Html_Styled$map,
+				_fizwidget$wiki_path$Main$SetupMsg,
+				_fizwidget$wiki_path$Page_Setup$view(_p5._0));
+		case 'PathfindingPage':
+			return A2(_fizwidget$wiki_path$Page_Pathfinding$view, _p5._0, _fizwidget$wiki_path$Main$BackToSetup);
+		default:
+			return A2(_fizwidget$wiki_path$Page_Finished$view, _p5._0, _fizwidget$wiki_path$Main$BackToSetup);
+	}
+};
+var _fizwidget$wiki_path$Main$view = function (model) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -20150,24 +20517,23 @@ var _fizwidget$wiki_path$View$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$View$viewHeading,
+			_0: _fizwidget$wiki_path$Main$viewHeading,
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wiki_path$View$viewModel(model),
+				_0: _fizwidget$wiki_path$Main$viewModel(model),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-
 var _fizwidget$wiki_path$Main$main = _elm_lang$html$Html$program(
 	{
-		init: _fizwidget$wiki_path$Setup_Init$init,
-		view: function (_p0) {
+		init: _fizwidget$wiki_path$Main$initSetup,
+		view: function (_p6) {
 			return _rtfeldman$elm_css$Html_Styled$toUnstyled(
-				_fizwidget$wiki_path$View$view(_p0));
+				_fizwidget$wiki_path$Main$view(_p6));
 		},
-		update: _fizwidget$wiki_path$Update$update,
-		subscriptions: function (_p1) {
+		update: _fizwidget$wiki_path$Main$update,
+		subscriptions: function (_p7) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
