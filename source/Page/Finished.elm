@@ -15,12 +15,16 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, i
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 
 
--- MODEL --
+-- Model
 
 
 type Model
     = Success Path
-    | Error { source : Article, destination : Article, error : Error }
+    | Error
+        { error : Error
+        , source : Article
+        , destination : Article
+        }
 
 
 type Error
@@ -29,7 +33,7 @@ type Error
 
 
 
--- VIEW --
+-- View
 
 
 view : Model -> backMsg -> Html backMsg
@@ -53,24 +57,24 @@ viewModel model =
 viewSuccess : Path -> Html msg
 viewSuccess pathToDestination =
     div [ css [ textAlign center ] ]
-        [ headingView
-        , subHeadingView
-        , pathView pathToDestination
+        [ viewHeading
+        , viewSubHeading
+        , viewPath pathToDestination
         ]
 
 
-headingView : Html msg
-headingView =
+viewHeading : Html msg
+viewHeading =
     h2 [] [ text "Success!" ]
 
 
-subHeadingView : Html msg
-subHeadingView =
+viewSubHeading : Html msg
+viewSubHeading =
     h4 [] [ text "Path was... " ]
 
 
-pathView : Path -> Html msg
-pathView path =
+viewPath : Path -> Html msg
+viewPath path =
     Path.inOrder path
         |> List.map Title.viewAsLink
         |> List.intersperse (text " → ")

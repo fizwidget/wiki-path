@@ -11,15 +11,15 @@ module Common.Title
         )
 
 import Common.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Json.Decode exposing (Decoder, field, at, map, string, list)
 import Common.Wikipedia as Wikipedia
 import Html.Styled exposing (Html, text, a)
 import Html.Styled.Attributes exposing (href)
 import Http
+import Json.Decode exposing (Decoder, field, at, map, string, list)
 import RemoteData exposing (RemoteData, WebData)
 
 
--- MODEL --
+-- Model
 
 
 type Title
@@ -37,7 +37,7 @@ value (Title title) =
 
 
 
--- API --
+-- API
 
 
 type alias RemoteTitlePair =
@@ -96,7 +96,7 @@ buildRandomTitlesUrl titleCount =
 
 
 
--- DECODER --
+-- Decoder
 
 
 randomTitlesResponseDecoder : Decoder (List Title)
@@ -112,7 +112,7 @@ titleDecoder =
 
 
 
--- VIEW --
+-- View
 
 
 viewAsLink : Title -> Html msg

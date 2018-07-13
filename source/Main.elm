@@ -10,7 +10,7 @@ import Page.Setup as Setup
 import Util exposing (noCmd)
 
 
--- MODEL --
+-- Model
 
 
 type Model
@@ -20,7 +20,7 @@ type Model
 
 
 
--- MESSAGES --
+-- Update
 
 
 type Msg
@@ -29,44 +29,37 @@ type Msg
     | BackToSetup
 
 
-
--- UPDATE --
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
         ( BackToSetup, _ ) ->
             initSetup
 
-        ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel |> setupUpdate
+        ( SetupMsg msg, SetupPage model ) ->
+            Setup.update msg model |> onSetupUpdate
 
-        ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel |> pathfindingUpdate
+        ( PathfindingMsg msg, PathfindingPage model ) ->
+            Pathfinding.update msg model |> onPathfindingUpdate
 
         ( _, _ ) ->
-            noCmd model
+            ( model, Cmd.none )
 
 
-setupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
-setupUpdate updateResult =
+onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+onSetupUpdate updateResult =
     case updateResult of
         Setup.Continue ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
         Setup.Done source destination ->
-            Pathfinding.init source destination |> pathfindingUpdate
+            Pathfinding.init source destination |> onPathfindingUpdate
 
 
-pathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
-pathfindingUpdate updateResult =
+onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+onPathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.Continue ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
-
-        Pathfinding.Back ->
-            initSetup
 
         Pathfinding.PathFound path ->
             Finished.Success path
@@ -74,12 +67,14 @@ pathfindingUpdate updateResult =
                 |> inFinishedPage
 
         Pathfinding.PathNotFound source destination ->
-            (Finished.Error { error = Finished.PathNotFound, source = source, destination = destination })
+            { error = Finished.PathNotFound, source = source, destination = destination }
+                |> Finished.Error
                 |> noCmd
                 |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
-            (Finished.Error { error = Finished.TooManyRequests, source = source, destination = destination })
+            { error = Finished.TooManyRequests, source = source, destination = destination }
+                |> Finished.Error
                 |> noCmd
                 |> inFinishedPage
 
@@ -110,7 +105,7 @@ initSetup =
 
 
 
--- VIEW --
+-- View
 
 
 view : Model -> Html Msg
@@ -147,20 +142,18 @@ viewHeading =
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
-        SetupPage innerModel ->
-            Setup.view innerModel
-                |> StyledHtml.map SetupMsg
+        SetupPage model ->
+            Setup.view model |> StyledHtml.map SetupMsg
 
-        PathfindingPage innerModel ->
-            Pathfinding.view innerModel
-                |> StyledHtml.map PathfindingMsg
+        PathfindingPage model ->
+            Pathfinding.view model BackToSetup
 
-        FinishedPage path ->
-            Finished.view path BackToSetup
+        FinishedPage model ->
+            Finished.view model BackToSetup
 
 
 
--- MAIN --
+-- Main
 
 
 main : Program Never Model Msg

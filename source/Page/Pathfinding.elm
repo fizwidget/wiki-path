@@ -4,7 +4,6 @@ module Page.Pathfinding
         , Msg
         , UpdateResult
             ( Continue
-            , Back
             , PathFound
             , PathNotFound
             , TooManyRequests
@@ -29,7 +28,7 @@ import Result exposing (Result(Ok, Err))
 import Set exposing (Set)
 
 
--- MODEL --
+-- Model
 
 
 type alias Model =
@@ -44,7 +43,21 @@ type alias Model =
 
 
 
--- INIT --
+-- Config
+
+
+totalRequestsLimit : Int
+totalRequestsLimit =
+    400
+
+
+pendingRequestsLimit : Int
+pendingRequestsLimit =
+    4
+
+
+
+-- Init
 
 
 init : Article -> Article -> UpdateResult
@@ -68,47 +81,26 @@ initialModel source destination =
 
 
 
--- CONFIG --
-
-
-totalRequestsLimit : Int
-totalRequestsLimit =
-    400
-
-
-pendingRequestsLimit : Int
-pendingRequestsLimit =
-    4
-
-
-
--- UPDATE --
+-- Update
 
 
 type Msg
     = FetchArticleResponse Path ArticleResult
-    | BackToSetup
 
 
 type UpdateResult
     = Continue ( Model, Cmd Msg )
-    | Back
     | PathFound Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
 
 
 update : Msg -> Model -> UpdateResult
-update message model =
-    case message of
-        FetchArticleResponse pathToArticle articleResult ->
-            onResponseReceived
-                (decrementPendingRequests model)
-                pathToArticle
-                articleResult
-
-        BackToSetup ->
-            Back
+update (FetchArticleResponse pathToArticle articleResult) model =
+    onResponseReceived
+        (decrementPendingRequests model)
+        pathToArticle
+        articleResult
 
 
 onResponseReceived : Model -> Path -> ArticleResult -> UpdateResult
@@ -250,7 +242,7 @@ incrementRequests model requestCount =
 
 
 
--- UTIL --
+-- Util
 
 
 isCandidate : Set String -> Link -> Bool
@@ -338,16 +330,16 @@ discardLowPriorityPaths paths =
 
 
 
--- VIEW --
+-- View
 
 
-view : Model -> Html Msg
-view { source, destination, paths, errors, totalRequests } =
+view : Model -> backMsg -> Html backMsg
+view { source, destination, paths, errors, totalRequests } backMsg =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ viewHeading source destination
         , viewErrors errors
         , viewWarnings totalRequests destination
-        , viewBackButton
+        , viewBackButton backMsg
         , viewPaths paths
         ]
 
@@ -368,11 +360,11 @@ viewErrors errors =
     div [] <| List.map Article.viewError errors
 
 
-viewBackButton : Html Msg
-viewBackButton =
+viewBackButton : backMsg -> Html backMsg
+viewBackButton backMsg =
     div [ css [ margin (px 20) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick BackToSetup ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick backMsg ]
             [ text "Back" ]
         ]
 
@@ -380,13 +372,13 @@ viewBackButton =
 viewWarnings : Int -> Article -> Html msg
 viewWarnings totalRequests destination =
     div [ css [ textAlign center ] ]
-        [ destinationContentWarning destination
-        , pathCountWarning totalRequests
+        [ viewDestinationContentWarning destination
+        , viewPathCountWarning totalRequests
         ]
 
 
-destinationContentWarning : Article -> Html msg
-destinationContentWarning destination =
+viewDestinationContentWarning : Article -> Html msg
+viewDestinationContentWarning destination =
     let
         message =
             if String.contains "disambigbox" destination.content then
@@ -399,8 +391,8 @@ destinationContentWarning destination =
         div [] [ text message ]
 
 
-pathCountWarning : Int -> Html msg
-pathCountWarning totalRequests =
+viewPathCountWarning : Int -> Html msg
+viewPathCountWarning totalRequests =
     if totalRequests > totalRequestsLimit // 2 then
         div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
     else
@@ -410,12 +402,12 @@ pathCountWarning totalRequests =
 viewPaths : PriorityQueue Path -> Html msg
 viewPaths paths =
     PriorityQueue.getHighestPriority paths
-        |> Maybe.map pathView
+        |> Maybe.map viewPath
         |> Maybe.withDefault (div [] [])
 
 
-pathView : Path -> Html msg
-pathView path =
+viewPath : Path -> Html msg
+viewPath path =
     div [ css [ textAlign center ] ]
         [ Path.inReverseOrder path
             |> List.map Title.viewAsLink

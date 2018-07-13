@@ -2,10 +2,15 @@ module Common.Article
     exposing
         ( Article
         , Link
-        , Namespace(..)
+        , Namespace(ArticleNamespace, NonArticleNamespace)
         , ArticleResult
         , RemoteArticle
-        , ArticleError(..)
+        , ArticleError
+            ( ArticleNotFound
+            , InvalidTitle
+            , UnknownError
+            , HttpError
+            )
         , fetchArticleResult
         , fetchRemoteArticle
         , viewError
@@ -23,7 +28,7 @@ import RemoteData exposing (RemoteData)
 import RemoteData exposing (WebData)
 
 
--- MODEL --
+-- Model
 
 
 type alias Article =
@@ -50,7 +55,7 @@ type alias HtmlString =
 
 
 
--- API --
+-- API
 
 
 type alias ArticleResult =
@@ -116,7 +121,7 @@ buildArticleUrl title =
 
 
 
--- DECODER --
+-- Decoder
 
 
 responseDecoder : Decoder ArticleResult
@@ -181,7 +186,7 @@ errorDecoder =
 
 
 
--- VIEW --
+-- View
 
 
 viewError : ArticleError -> Html msg
