@@ -6,13 +6,14 @@ module Page.Finished
         )
 
 import Bootstrap.Button as ButtonOptions
-import Common.Article exposing (Article)
-import Common.Button as Button
-import Common.Path as Path exposing (Path)
-import Common.Title as Title exposing (Title)
 import Css exposing (..)
+import Data.Article exposing (Article)
+import Data.Path as Path exposing (Path)
+import Data.Title as Title exposing (Title)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
+import View.Button as Button
+import View.Link as Link
 
 
 -- Model
@@ -76,7 +77,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Title.viewAsLink
+        |> List.map Link.view
         |> List.intersperse (text " → ")
         |> div []
 
@@ -86,9 +87,9 @@ viewError source destination error =
     let
         baseErrorMessage =
             [ text "Sorry, couldn't find a path from "
-            , Title.viewAsLink source.title
+            , Link.view source.title
             , text " to "
-            , Title.viewAsLink destination.title
+            , Link.view destination.title
             , text " 💀"
             ]
     in

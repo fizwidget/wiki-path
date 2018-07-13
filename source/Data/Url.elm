@@ -1,4 +1,4 @@
-module Common.Url exposing (Url, QueryParam(KeyValue, Key), build)
+module Data.Url exposing (Url, QueryParam(KeyValue, Key), build)
 
 import Http
 

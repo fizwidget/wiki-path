@@ -1,4 +1,4 @@
-module Common.Article
+module Data.Article
     exposing
         ( Article
         , Link
@@ -13,14 +13,11 @@ module Common.Article
             )
         , fetchArticleResult
         , fetchRemoteArticle
-        , viewError
         )
 
-import Common.Error as Error
-import Common.Title as Title exposing (Title)
-import Common.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Common.Wikipedia as Wikipedia
-import Html.Styled exposing (Html, div, text)
+import Data.Title as Title exposing (Title)
+import Data.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Data.Wikipedia as Wikipedia
 import Http
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
@@ -183,27 +180,3 @@ errorDecoder =
             at [ "error", "code" ] string
     in
         map toError errorCode
-
-
-
--- View
-
-
-viewError : ArticleError -> Html msg
-viewError error =
-    let
-        errorView =
-            case error of
-                ArticleNotFound ->
-                    text "Couldn't find that article :("
-
-                InvalidTitle ->
-                    text "Not a valid article title :("
-
-                UnknownError errorCode ->
-                    Error.view "Unknown error \x1F92F" errorCode
-
-                HttpError error ->
-                    Error.view "Network error 😭" (toString error)
-    in
-        div [] [ errorView ]

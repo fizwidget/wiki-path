@@ -1,4 +1,4 @@
-module Common.Title
+module Data.Title
     exposing
         ( Title
         , RemoteTitlePair
@@ -7,13 +7,10 @@ module Common.Title
         , value
         , fetchPair
         , titleDecoder
-        , viewAsLink
         )
 
-import Common.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Common.Wikipedia as Wikipedia
-import Html.Styled exposing (Html, text, a)
-import Html.Styled.Attributes exposing (href)
+import Data.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Data.Wikipedia as Wikipedia
 import Http
 import Json.Decode exposing (Decoder, field, at, map, string, list)
 import RemoteData exposing (RemoteData, WebData)
@@ -109,19 +106,3 @@ randomTitlesResponseDecoder =
 titleDecoder : Decoder Title
 titleDecoder =
     map from string
-
-
-
--- View
-
-
-viewAsLink : Title -> Html msg
-viewAsLink title =
-    a
-        [ href (toUrl title) ]
-        [ text (value title) ]
-
-
-toUrl : Title -> String
-toUrl title =
-    "https://en.wikipedia.org/wiki/" ++ (value title)

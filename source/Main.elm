@@ -1,7 +1,7 @@
 module Main exposing (main)
 
-import Common.Title exposing (Title)
 import Css exposing (..)
+import Data.Title exposing (Title)
 import Html exposing (program)
 import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)

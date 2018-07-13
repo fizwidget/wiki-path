@@ -14,18 +14,20 @@ module Page.Pathfinding
         )
 
 import Bootstrap.Button as ButtonOptions
-import Common.Article as Article exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
-import Common.Button as Button
-import Common.Path as Path exposing (Path)
-import Common.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
-import Common.Spinner as Spinner
-import Common.Title as Title exposing (Title)
 import Css exposing (..)
+import Data.Article as Article exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
+import Data.Path as Path exposing (Path)
+import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import Data.Title as Title exposing (Title)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Set exposing (Set)
+import View.Button as Button
+import View.Error as Error
+import View.Spinner as Spinner
+import View.Link as Link
 
 
 -- Model
@@ -348,16 +350,16 @@ viewHeading : Article -> Article -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Title.viewAsLink source.title
+        , Link.view source.title
         , text " to "
-        , Title.viewAsLink destination.title
+        , Link.view destination.title
         , text "..."
         ]
 
 
 viewErrors : List ArticleError -> Html msg
 viewErrors errors =
-    div [] <| List.map Article.viewError errors
+    div [] <| List.map Error.viewArticleError errors
 
 
 viewBackButton : backMsg -> Html backMsg
@@ -410,7 +412,7 @@ viewPath : Path -> Html msg
 viewPath path =
     div [ css [ textAlign center ] ]
         [ Path.inReverseOrder path
-            |> List.map Title.viewAsLink
+            |> List.map Link.view
             |> List.intersperse (text "↑")
             |> List.append [ text "↑" ]
             |> List.append [ Spinner.view { isVisible = True } ]
