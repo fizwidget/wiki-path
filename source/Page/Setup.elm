@@ -12,9 +12,7 @@ module Page.Setup
 import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import Common.Article as Fetch
-import Common.Article exposing (Article, RemoteArticle, ArticleError(..))
-import Common.Article as Article
+import Common.Article as Article exposing (Article, RemoteArticle, ArticleError(..))
 import Common.Button as Button
 import Common.Error as Error
 import Common.Spinner as Spinner
@@ -23,9 +21,10 @@ import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
+import Util exposing (noCmd)
 
 
--- MODEL --
+-- Model
 
 
 type alias Model =
@@ -42,7 +41,7 @@ type alias UserInput =
 
 
 
--- INIT --
+-- Init
 
 
 init : ( Model, Cmd Msg )
@@ -68,7 +67,7 @@ initialModel sourceTitleInput destinationTitleInput =
 
 
 
--- UPDATE --
+-- Update
 
 
 type Msg
@@ -91,12 +90,12 @@ update message model =
     case message of
         SourceArticleTitleChange value ->
             { model | sourceTitleInput = value, source = NotAsked }
-                |> noMsg
+                |> noCmd
                 |> Continue
 
         DestinationArticleTitleChange value ->
             { model | destinationTitleInput = value, destination = NotAsked }
-                |> noMsg
+                |> noCmd
                 |> Continue
 
         FetchRandomTitlesRequest ->
@@ -105,8 +104,8 @@ update message model =
 
         FetchRandomTitlesResponse response ->
             { model | randomTitles = response }
-                |> randomizeInputFields
-                |> noMsg
+                |> copyRandomTitlesToInputFields
+                |> noCmd
                 |> Continue
 
         FetchArticlesRequest ->
@@ -141,11 +140,11 @@ maybeBeginPathfinding model =
                 Done source destination
 
             Nothing ->
-                model |> noMsg |> Continue
+                model |> noCmd |> Continue
 
 
-randomizeInputFields : Model -> Model
-randomizeInputFields model =
+copyRandomTitlesToInputFields : Model -> Model
+copyRandomTitlesToInputFields model =
     let
         setInputFields ( source, destination ) =
             { model
@@ -160,13 +159,8 @@ randomizeInputFields model =
             |> RemoteData.withDefault model
 
 
-noMsg : Model -> ( Model, Cmd Msg )
-noMsg model =
-    ( model, Cmd.none )
 
-
-
--- VIEW --
+-- View
 
 
 view : Model -> Html Msg
@@ -198,16 +192,16 @@ viewTitleInputs ({ sourceTitleInput, destinationTitleInput, source, destination 
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewSourceTitleInput =
-    articleTitleInput "From..." SourceArticleTitleChange
+    viewTitleInput "From..." SourceArticleTitleChange
 
 
 viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewDestinationTitleInput =
-    articleTitleInput "To..." DestinationArticleTitleChange
+    viewTitleInput "To..." DestinationArticleTitleChange
 
 
-articleTitleInput : String -> (UserInput -> Msg) -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
-articleTitleInput placeholderText toMsg title article inputStatus =
+viewTitleInput : String -> (UserInput -> Msg) -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
+viewTitleInput placeholderText toMsg title article inputStatus =
     let
         isDisabled =
             case inputStatus of
