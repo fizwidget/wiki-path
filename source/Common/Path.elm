@@ -1,4 +1,4 @@
-module Common.Path.Model
+module Common.Path
     exposing
         ( Path
         , beginningWith
@@ -13,8 +13,8 @@ module Common.Path.Model
         , length
         )
 
-import Common.PriorityQueue.Model exposing (Priority)
-import Common.Title.Model exposing (Title)
+import Common.PriorityQueue exposing (Priority)
+import Common.Title exposing (Title)
 
 
 beginningWith : Title -> Path
