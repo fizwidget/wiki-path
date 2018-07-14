@@ -4,6 +4,7 @@ module Page.Pathfinding
         , Msg
         , UpdateResult
             ( Continue
+            , Abort
             , PathFound
             , PathNotFound
             , TooManyRequests
@@ -88,6 +89,7 @@ initialModel source destination =
 
 type Msg
     = FetchArticleResponse Path ArticleResult
+    | AbortRequested
 
 
 type UpdateResult
@@ -95,14 +97,20 @@ type UpdateResult
     | PathFound Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
+    | Abort Article Article
 
 
 update : Msg -> Model -> UpdateResult
-update (FetchArticleResponse pathToArticle articleResult) model =
-    onResponseReceived
-        (decrementPendingRequests model)
-        pathToArticle
-        articleResult
+update msg model =
+    case msg of
+        FetchArticleResponse pathToArticle articleResult ->
+            onResponseReceived
+                (decrementPendingRequests model)
+                pathToArticle
+                articleResult
+
+        AbortRequested ->
+            Abort model.source model.destination
 
 
 onResponseReceived : Model -> Path -> ArticleResult -> UpdateResult
@@ -335,13 +343,13 @@ discardLowPriorityPaths paths =
 -- View
 
 
-view : Model -> (Title -> Title -> backMsg) -> Html backMsg
-view { source, destination, paths, errors, totalRequests } toBackMsg =
+view : Model -> Html Msg
+view { source, destination, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ viewHeading source destination
         , viewErrors errors
         , viewWarnings totalRequests destination
-        , viewBackButton (toBackMsg source.title destination.title)
+        , viewBackButton
         , viewPaths paths
         ]
 
@@ -362,11 +370,11 @@ viewErrors errors =
     div [] <| List.map Error.viewArticleError errors
 
 
-viewBackButton : backMsg -> Html backMsg
-viewBackButton backMsg =
+viewBackButton : Html Msg
+viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick backMsg ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequested ]
             [ text "Back" ]
         ]
 

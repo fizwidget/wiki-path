@@ -62,6 +62,9 @@ onPathfindingUpdate updateResult =
         Pathfinding.Continue ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
 
+        Pathfinding.Abort source destination ->
+            initSetupWithSourceAndDestination source.title destination.title
+
         Pathfinding.PathFound path ->
             Finished.Success path
                 |> noCmd
@@ -152,7 +155,7 @@ viewModel model =
             Setup.view model |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model BackToSetup
+            Pathfinding.view model |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup
