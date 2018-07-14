@@ -5,13 +5,13 @@ module Page.Finished
         , view
         )
 
-import Bootstrap.Button as ButtonOptions
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
+import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
+import Bootstrap.Button as ButtonOptions
 import Data.Article exposing (Article)
 import Data.Path as Path exposing (Path)
 import Data.Title as Title exposing (Title)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
-import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import View.Button as Button
 import View.Link as Link
 

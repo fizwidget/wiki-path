@@ -15,14 +15,13 @@ module Data.Article
         , fetchRemoteArticle
         )
 
+import Http
+import RemoteData exposing (RemoteData, WebData)
+import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Data.Title as Title exposing (Title)
 import Data.Url as Url exposing (Url, QueryParam(KeyValue, Key))
 import Data.Wikipedia as Wikipedia
-import Http
-import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
-import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import RemoteData exposing (RemoteData)
-import RemoteData exposing (WebData)
 
 
 -- Model

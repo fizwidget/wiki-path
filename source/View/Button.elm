@@ -1,7 +1,7 @@
 module View.Button exposing (view)
 
-import Bootstrap.Button as BootstrapButton
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled)
+import Bootstrap.Button as BootstrapButton
 
 
 view : List (BootstrapButton.Option msg) -> List (Html msg) -> Html msg

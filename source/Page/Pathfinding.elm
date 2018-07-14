@@ -14,17 +14,17 @@ module Page.Pathfinding
         , view
         )
 
-import Bootstrap.Button as ButtonOptions
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
+import Html.Styled.Attributes exposing (css)
 import Css exposing (..)
+import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
+import Result exposing (Result(Ok, Err))
+import Set exposing (Set)
+import Bootstrap.Button as ButtonOptions
 import Data.Article as Article exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 import Data.Path as Path exposing (Path)
 import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 import Data.Title as Title exposing (Title)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
-import Html.Styled.Attributes exposing (css)
-import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
-import Result exposing (Result(Ok, Err))
-import Set exposing (Set)
 import View.Button as Button
 import View.Error as Error
 import View.Spinner as Spinner

@@ -1,8 +1,8 @@
 module View.Link exposing (view)
 
-import Data.Title as Title exposing (Title)
 import Html.Styled exposing (Html, a, text)
 import Html.Styled.Attributes exposing (href)
+import Data.Title as Title exposing (Title)
 
 
 view : Title -> Html msg

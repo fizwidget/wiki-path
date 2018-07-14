@@ -9,11 +9,11 @@ module Data.Title
         , titleDecoder
         )
 
+import Http
+import RemoteData exposing (RemoteData, WebData)
+import Json.Decode exposing (Decoder, field, at, map, string, list)
 import Data.Url as Url exposing (Url, QueryParam(KeyValue, Key))
 import Data.Wikipedia as Wikipedia
-import Http
-import Json.Decode exposing (Decoder, field, at, map, string, list)
-import RemoteData exposing (RemoteData, WebData)
 
 
 -- Model

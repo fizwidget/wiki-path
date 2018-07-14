@@ -9,16 +9,16 @@ module Page.Setup
         , view
         )
 
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
+import Html.Styled.Attributes exposing (css, value, type_, placeholder)
+import Css exposing (..)
 import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import Css exposing (..)
-import Data.Article as Article exposing (Article, RemoteArticle, ArticleError(..))
-import Data.Title as Title exposing (Title, RemoteTitlePair)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
-import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Util exposing (noCmd)
+import Data.Article as Article exposing (Article, RemoteArticle, ArticleError(..))
+import Data.Title as Title exposing (Title, RemoteTitlePair)
 import View.Button as Button
 import View.Error as Error
 import View.Spinner as Spinner

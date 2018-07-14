@@ -1,5 +1,7 @@
 module View.Error exposing (viewGeneralError, viewArticleError)
 
+import Html.Styled exposing (Html, div, pre, text)
+import Html.Styled.Attributes exposing (css)
 import Css exposing (textAlign, center, fontSize, px)
 import Data.Article
     exposing
@@ -10,8 +12,6 @@ import Data.Article
             , HttpError
             )
         )
-import Html.Styled exposing (Html, div, pre, text)
-import Html.Styled.Attributes exposing (css)
 
 
 viewGeneralError : String -> String -> Html msg

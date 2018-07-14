@@ -1,14 +1,14 @@
 module Main exposing (main)
 
-import Css exposing (..)
-import Data.Title exposing (Title)
 import Html exposing (program)
 import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Css exposing (..)
+import Util exposing (noCmd)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Util exposing (noCmd)
+import Data.Title exposing (Title)
 
 
 -- Model
