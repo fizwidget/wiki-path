@@ -17,8 +17,10 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Util exposing (noCmd)
-import Data.Article as Article exposing (Article, RemoteArticle, ArticleError(..))
-import Data.Title as Title exposing (Title, RemoteTitlePair)
+import Request.Article as Article exposing (RemoteArticle, ArticleError(..))
+import Request.Title as Title exposing (RemoteTitlePair)
+import Data.Article as Article exposing (Article)
+import Data.Title as Title exposing (Title)
 import View.Button as Button
 import View.Error as Error
 import View.Spinner as Spinner

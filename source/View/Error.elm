@@ -3,7 +3,7 @@ module View.Error exposing (viewGeneralError, viewArticleError)
 import Html.Styled exposing (Html, div, pre, text)
 import Html.Styled.Attributes exposing (css)
 import Css exposing (textAlign, center, fontSize, px)
-import Data.Article
+import Request.Article
     exposing
         ( ArticleError
             ( ArticleNotFound
