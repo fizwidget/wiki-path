@@ -1,9 +1,6 @@
-module Common.Article
+module Request.Article
     exposing
-        ( Article
-        , Link
-        , Namespace(ArticleNamespace, NonArticleNamespace)
-        , ArticleResult
+        ( ArticleResult
         , RemoteArticle
         , ArticleError
             ( ArticleNotFound
@@ -13,49 +10,16 @@ module Common.Article
             )
         , fetchArticleResult
         , fetchRemoteArticle
-        , viewError
         )
 
-import Common.Error as Error
-import Common.Title as Title exposing (Title)
-import Common.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Common.Wikipedia as Wikipedia
-import Html.Styled exposing (Html, div, text)
 import Http
+import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import RemoteData exposing (RemoteData)
-import RemoteData exposing (WebData)
-
-
--- Model
-
-
-type alias Article =
-    { title : Title
-    , links : List Link
-    , content : HtmlString
-    }
-
-
-type alias Link =
-    { title : Title
-    , namespace : Namespace
-    , doesExist : Bool
-    }
-
-
-type Namespace
-    = ArticleNamespace
-    | NonArticleNamespace
-
-
-type alias HtmlString =
-    String
-
-
-
--- API
+import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Request.Wikipedia as Wikipedia
+import Request.Title as Title
+import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 
 
 type alias ArticleResult =
@@ -120,10 +84,6 @@ buildArticleUrl title =
         Url.build Wikipedia.apiBaseUrl queryParams
 
 
-
--- Decoder
-
-
 responseDecoder : Decoder ArticleResult
 responseDecoder =
     oneOf
@@ -183,27 +143,3 @@ errorDecoder =
             at [ "error", "code" ] string
     in
         map toError errorCode
-
-
-
--- View
-
-
-viewError : ArticleError -> Html msg
-viewError error =
-    let
-        errorView =
-            case error of
-                ArticleNotFound ->
-                    text "Couldn't find that article :("
-
-                InvalidTitle ->
-                    text "Not a valid article title :("
-
-                UnknownError errorCode ->
-                    Error.view "Unknown error \x1F92F" errorCode
-
-                HttpError error ->
-                    Error.view "Network error 😭" (toString error)
-    in
-        div [] [ errorView ]

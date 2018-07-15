@@ -1,4 +1,4 @@
-module Common.Path
+module Data.Path
     exposing
         ( Path
         , beginningWith
@@ -13,8 +13,8 @@ module Common.Path
         , length
         )
 
-import Common.PriorityQueue exposing (Priority)
-import Common.Title exposing (Title)
+import Data.PriorityQueue exposing (Priority)
+import Data.Title exposing (Title)
 
 
 beginningWith : Title -> Path

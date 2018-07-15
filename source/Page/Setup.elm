@@ -9,19 +9,21 @@ module Page.Setup
         , view
         )
 
+import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
+import Html.Styled.Attributes exposing (css, value, type_, placeholder)
+import Css exposing (..)
 import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
-import Common.Article as Article exposing (Article, RemoteArticle, ArticleError(..))
-import Common.Button as Button
-import Common.Error as Error
-import Common.Spinner as Spinner
-import Common.Title as Title exposing (Title, RemoteTitlePair)
-import Css exposing (..)
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
-import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Util exposing (noCmd)
+import Request.Article as Article exposing (RemoteArticle, ArticleError(..))
+import Request.Title as Title exposing (RemoteTitlePair)
+import Data.Article as Article exposing (Article)
+import Data.Title as Title exposing (Title)
+import View.Button as Button
+import View.Error as Error
+import View.Spinner as Spinner
 
 
 -- Model
@@ -114,11 +116,11 @@ update message model =
 
         FetchSourceArticleResponse article ->
             { model | source = article }
-                |> maybeBeginPathfinding
+                |> doneIfArticlesLoaded
 
         FetchDestinationArticleResponse article ->
             { model | destination = article }
-                |> maybeBeginPathfinding
+                |> doneIfArticlesLoaded
 
 
 fetchArticles : Model -> Cmd Msg
@@ -129,8 +131,8 @@ fetchArticles model =
         ]
 
 
-maybeBeginPathfinding : Model -> UpdateResult
-maybeBeginPathfinding model =
+doneIfArticlesLoaded : Model -> UpdateResult
+doneIfArticlesLoaded model =
     let
         sourceAndDestination =
             RemoteData.toMaybe <| RemoteData.map2 (,) model.source model.destination
@@ -192,16 +194,16 @@ viewTitleInputs ({ sourceTitleInput, destinationTitleInput, source, destination 
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewSourceTitleInput =
-    viewTitleInput "From..." SourceArticleTitleChange
+    viewTitleInput SourceArticleTitleChange "From..."
 
 
 viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewDestinationTitleInput =
-    viewTitleInput "To..." DestinationArticleTitleChange
+    viewTitleInput DestinationArticleTitleChange "To..."
 
 
-viewTitleInput : String -> (UserInput -> Msg) -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
-viewTitleInput placeholderText toMsg title article inputStatus =
+viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
+viewTitleInput toMsg placeholder title article inputStatus =
     let
         isDisabled =
             case inputStatus of
@@ -222,7 +224,7 @@ viewTitleInput placeholderText toMsg title article inputStatus =
                 ++ [ Input.large
                    , Input.onInput toMsg
                    , Input.value title
-                   , Input.placeholder placeholderText
+                   , Input.placeholder placeholder
                    , Input.disabled isDisabled
                    ]
     in
@@ -253,8 +255,8 @@ viewRandomizeTitlesButton : Model -> Html Msg
 viewRandomizeTitlesButton model =
     div [ css [ padding (px 12) ] ]
         [ Button.view
-            [ ButtonOptions.large
-            , ButtonOptions.light
+            [ ButtonOptions.light
+            , ButtonOptions.large
             , ButtonOptions.disabled (isLoading model)
             , ButtonOptions.onClick FetchRandomTitlesRequest
             ]
@@ -298,7 +300,7 @@ viewArticleError : RemoteArticle -> Html msg
 viewArticleError remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            Article.viewError error
+            Error.viewArticleError error
 
         _ ->
             text ""
@@ -308,7 +310,7 @@ viewRandomizationError : Model -> Html msg
 viewRandomizationError { randomTitles } =
     case randomTitles of
         RemoteData.Failure error ->
-            Error.view "Error randomizing titles 😵" (toString error)
+            Error.viewGeneralError "Error randomizing titles 😵" (toString error)
 
         _ ->
             text ""

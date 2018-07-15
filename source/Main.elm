@@ -1,14 +1,14 @@
 module Main exposing (main)
 
-import Common.Title exposing (Title)
-import Css exposing (..)
 import Html exposing (program)
 import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Css exposing (..)
+import Util exposing (noCmd)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Util exposing (noCmd)
+import Data.Title exposing (Title)
 
 
 -- Model
@@ -61,6 +61,9 @@ onPathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.Continue ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
+
+        Pathfinding.Abort source destination ->
+            initSetupWithSourceAndDestination source.title destination.title
 
         Pathfinding.PathFound path ->
             Finished.Success path
@@ -152,7 +155,7 @@ viewModel model =
             Setup.view model |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model BackToSetup
+            Pathfinding.view model |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup

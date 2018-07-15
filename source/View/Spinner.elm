@@ -1,8 +1,8 @@
-module Common.Spinner exposing (view)
+module View.Spinner exposing (view)
 
-import Css exposing (..)
 import Html.Styled exposing (Html, div)
 import Html.Styled.Attributes exposing (css, class)
+import Css exposing (..)
 
 
 view : { isVisible : Bool } -> Html msg

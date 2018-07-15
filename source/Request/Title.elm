@@ -1,43 +1,17 @@
-module Common.Title
+module Request.Title
     exposing
-        ( Title
-        , RemoteTitlePair
-        , TitleError(..)
-        , from
-        , value
+        ( RemoteTitlePair
+        , TitleError(UnexpectedTitleCount, HttpError)
         , fetchPair
         , titleDecoder
-        , viewAsLink
         )
 
-import Common.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Common.Wikipedia as Wikipedia
-import Html.Styled exposing (Html, text, a)
-import Html.Styled.Attributes exposing (href)
 import Http
-import Json.Decode exposing (Decoder, field, at, map, string, list)
 import RemoteData exposing (RemoteData, WebData)
-
-
--- Model
-
-
-type Title
-    = Title String
-
-
-from : String -> Title
-from =
-    Title
-
-
-value : Title -> String
-value (Title title) =
-    title
-
-
-
--- API
+import Json.Decode exposing (Decoder, field, at, map, string, list)
+import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Request.Wikipedia as Wikipedia
+import Data.Title as Title exposing (Title)
 
 
 type alias RemoteTitlePair =
@@ -95,10 +69,6 @@ buildRandomTitlesUrl titleCount =
         Url.build Wikipedia.apiBaseUrl queryParams
 
 
-
--- Decoder
-
-
 randomTitlesResponseDecoder : Decoder (List Title)
 randomTitlesResponseDecoder =
     at
@@ -108,20 +78,4 @@ randomTitlesResponseDecoder =
 
 titleDecoder : Decoder Title
 titleDecoder =
-    map from string
-
-
-
--- View
-
-
-viewAsLink : Title -> Html msg
-viewAsLink title =
-    a
-        [ href (toUrl title) ]
-        [ text (value title) ]
-
-
-toUrl : Title -> String
-toUrl title =
-    "https://en.wikipedia.org/wiki/" ++ (value title)
+    map Title.from string

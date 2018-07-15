@@ -4,6 +4,7 @@ module Page.Pathfinding
         , Msg
         , UpdateResult
             ( Continue
+            , Abort
             , PathFound
             , PathNotFound
             , TooManyRequests
@@ -13,19 +14,22 @@ module Page.Pathfinding
         , view
         )
 
-import Bootstrap.Button as ButtonOptions
-import Common.Article as Article exposing (Article, RemoteArticle, ArticleResult, ArticleError, Link, Namespace(ArticleNamespace, NonArticleNamespace))
-import Common.Button as Button
-import Common.Path as Path exposing (Path)
-import Common.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
-import Common.Spinner as Spinner
-import Common.Title as Title exposing (Title)
-import Css exposing (..)
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
+import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Set exposing (Set)
+import Bootstrap.Button as ButtonOptions
+import Request.Article as Article exposing (RemoteArticle, ArticleResult, ArticleError)
+import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
+import Data.Path as Path exposing (Path)
+import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import Data.Title as Title exposing (Title)
+import View.Button as Button
+import View.Error as Error
+import View.Spinner as Spinner
+import View.Link as Link
 
 
 -- Model
@@ -86,6 +90,7 @@ initialModel source destination =
 
 type Msg
     = FetchArticleResponse Path ArticleResult
+    | AbortRequested
 
 
 type UpdateResult
@@ -93,14 +98,20 @@ type UpdateResult
     | PathFound Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
+    | Abort Article Article
 
 
 update : Msg -> Model -> UpdateResult
-update (FetchArticleResponse pathToArticle articleResult) model =
-    onResponseReceived
-        (decrementPendingRequests model)
-        pathToArticle
-        articleResult
+update msg model =
+    case msg of
+        FetchArticleResponse pathToArticle articleResult ->
+            onResponseReceived
+                (decrementPendingRequests model)
+                pathToArticle
+                articleResult
+
+        AbortRequested ->
+            Abort model.source model.destination
 
 
 onResponseReceived : Model -> Path -> ArticleResult -> UpdateResult
@@ -333,13 +344,13 @@ discardLowPriorityPaths paths =
 -- View
 
 
-view : Model -> (Title -> Title -> backMsg) -> Html backMsg
-view { source, destination, paths, errors, totalRequests } toBackMsg =
+view : Model -> Html Msg
+view { source, destination, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ viewHeading source destination
         , viewErrors errors
         , viewWarnings totalRequests destination
-        , viewBackButton (toBackMsg source.title destination.title)
+        , viewBackButton
         , viewPaths paths
         ]
 
@@ -348,23 +359,23 @@ viewHeading : Article -> Article -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Title.viewAsLink source.title
+        , Link.view source.title
         , text " to "
-        , Title.viewAsLink destination.title
+        , Link.view destination.title
         , text "..."
         ]
 
 
 viewErrors : List ArticleError -> Html msg
 viewErrors errors =
-    div [] <| List.map Article.viewError errors
+    div [] <| List.map Error.viewArticleError errors
 
 
-viewBackButton : backMsg -> Html backMsg
-viewBackButton backMsg =
+viewBackButton : Html Msg
+viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick backMsg ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequested ]
             [ text "Back" ]
         ]
 
@@ -410,7 +421,7 @@ viewPath : Path -> Html msg
 viewPath path =
     div [ css [ textAlign center ] ]
         [ Path.inReverseOrder path
-            |> List.map Title.viewAsLink
+            |> List.map Link.view
             |> List.intersperse (text "↑")
             |> List.append [ text "↑" ]
             |> List.append [ Spinner.view { isVisible = True } ]
