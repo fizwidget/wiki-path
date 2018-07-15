@@ -1,7 +1,9 @@
 module Page.Finished
     exposing
-        ( Model(Success, Error)
-        , Error(PathNotFound, TooManyRequests)
+        ( Model
+        , initWithPath
+        , initWithPathNotFoundError
+        , initWithTooManyRequestsError
         , view
         )
 
@@ -31,6 +33,30 @@ type Model
 type Error
     = PathNotFound
     | TooManyRequests
+
+
+
+-- Init
+
+
+initWithPath : Path -> Model
+initWithPath =
+    Success
+
+
+initWithPathNotFoundError : Article -> Article -> Model
+initWithPathNotFoundError =
+    initWithError PathNotFound
+
+
+initWithTooManyRequestsError : Article -> Article -> Model
+initWithTooManyRequestsError =
+    initWithError TooManyRequests
+
+
+initWithError : Error -> Article -> Article -> Model
+initWithError error source destination =
+    Error { error = error, source = source, destination = destination }
 
 
 

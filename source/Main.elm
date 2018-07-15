@@ -34,7 +34,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model ) of
         ( BackToSetup source destination, _ ) ->
-            initSetupWithSourceAndDestination source destination
+            initSetupWithTitles source destination
 
         ( SetupMsg msg, SetupPage model ) ->
             Setup.update msg model |> onSetupUpdate
@@ -63,29 +63,22 @@ onPathfindingUpdate updateResult =
             inPathfindingPage ( model, cmd )
 
         Pathfinding.Abort source destination ->
-            initSetupWithSourceAndDestination source.title destination.title
+            initSetupWithTitles source.title destination.title
 
         Pathfinding.PathFound path ->
-            Finished.Success path
+            Finished.initWithPath path
                 |> noCmd
                 |> inFinishedPage
 
         Pathfinding.PathNotFound source destination ->
-            { error = Finished.PathNotFound, source = source, destination = destination }
-                |> Finished.Error
+            Finished.initWithPathNotFoundError source destination
                 |> noCmd
                 |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
-            { error = Finished.TooManyRequests, source = source, destination = destination }
-                |> Finished.Error
+            Finished.initWithTooManyRequestsError source destination
                 |> noCmd
                 |> inFinishedPage
-
-
-inPage : (pageModel -> Model) -> (pageMsg -> Msg) -> ( pageModel, Cmd pageMsg ) -> ( Model, Cmd Msg )
-inPage toModel toMsg ( pageModel, pageCmd ) =
-    ( toModel pageModel, Cmd.map toMsg pageCmd )
 
 
 inSetupPage : ( Setup.Model, Cmd Setup.Msg ) -> ( Model, Cmd Msg )
@@ -103,13 +96,18 @@ inFinishedPage =
     inPage FinishedPage identity
 
 
+inPage : (pageModel -> Model) -> (pageMsg -> Msg) -> ( pageModel, Cmd pageMsg ) -> ( Model, Cmd Msg )
+inPage toModel toMsg ( pageModel, pageCmd ) =
+    ( toModel pageModel, Cmd.map toMsg pageCmd )
+
+
 initSetup : ( Model, Cmd Msg )
 initSetup =
     inSetupPage Setup.init
 
 
-initSetupWithSourceAndDestination : Title -> Title -> ( Model, Cmd Msg )
-initSetupWithSourceAndDestination source destination =
+initSetupWithTitles : Title -> Title -> ( Model, Cmd Msg )
+initSetupWithTitles source destination =
     Setup.initWithTitles source destination |> inSetupPage
 
 
