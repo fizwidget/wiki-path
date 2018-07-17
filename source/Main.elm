@@ -91,12 +91,12 @@ inPathfindingPage =
     inPage PathfindingPage PathfindingMsg
 
 
-inFinishedPage : ( Finished.Model, Cmd Msg ) -> ( Model, Cmd Msg )
+inFinishedPage : ( Finished.Model, Cmd msg ) -> ( Model, Cmd msg )
 inFinishedPage =
     inPage FinishedPage identity
 
 
-inPage : (pageModel -> Model) -> (pageMsg -> Msg) -> ( pageModel, Cmd pageMsg ) -> ( Model, Cmd Msg )
+inPage : (pageModel -> model) -> (pageMsg -> msg) -> ( pageModel, Cmd pageMsg ) -> ( model, Cmd msg )
 inPage toModel toMsg ( pageModel, pageCmd ) =
     ( toModel pageModel, Cmd.map toMsg pageCmd )
 
@@ -150,10 +150,12 @@ viewModel : Model -> Html Msg
 viewModel model =
     case model of
         SetupPage model ->
-            Setup.view model |> StyledHtml.map SetupMsg
+            Setup.view model
+                |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model |> StyledHtml.map PathfindingMsg
+            Pathfinding.view model
+                |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup
