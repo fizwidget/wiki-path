@@ -4,6 +4,7 @@ import Html exposing (program)
 import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Css exposing (..)
+import Css.Media as Media exposing (withMedia)
 import Util exposing (noCmd)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
@@ -131,19 +132,34 @@ view model =
         ]
 
 
+
+-- [ withMedia [ only screen [ Media.minWidth (px 300), Media.maxWidth (px 800) ] ]
+--        [ Css.maxWidth (px 300) ]
+
+
 viewHeading : Html msg
 viewHeading =
-    h1
-        [ css
-            [ fontSize (vh 10)
-            , fontWeight (int 900)
-            , fontFamily serif
-            , textAlign center
-            , marginTop (px 50)
-            , marginBottom (px 34)
+    let
+        desktopFontSize =
+            fontSize (px 80)
+
+        mobileFontStyle =
+            withMedia
+                [ Media.all [ Media.maxWidth (px 420) ] ]
+                [ fontSize (vw 20) ]
+    in
+        h1
+            [ css
+                [ desktopFontSize
+                , mobileFontStyle
+                , fontWeight (int 900)
+                , fontFamily serif
+                , textAlign center
+                , marginTop (px 50)
+                , marginBottom (px 34)
+                ]
             ]
-        ]
-        [ text "WikiPath" ]
+            [ text "WikiPath" ]
 
 
 viewModel : Model -> Html Msg
