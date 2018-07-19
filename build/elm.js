@@ -9848,9 +9848,9 @@ var _fizwidget$wiki_path$Data_PriorityQueue$removeHighestPriority = function (_p
 };
 var _fizwidget$wiki_path$Data_PriorityQueue$removeHighestPriorities = F2(
 	function (priorityQueue, howMany) {
-		var helper = F3(
+		var remove = F3(
 			function (priorityQueue, howMany, removedValues) {
-				helper:
+				remove:
 				while (true) {
 					if (_elm_lang$core$Native_Utils.cmp(howMany, 0) > 0) {
 						var _p11 = _fizwidget$wiki_path$Data_PriorityQueue$removeHighestPriority(priorityQueue);
@@ -9862,7 +9862,7 @@ var _fizwidget$wiki_path$Data_PriorityQueue$removeHighestPriorities = F2(
 						priorityQueue = _v5;
 						howMany = _v6;
 						removedValues = _v7;
-						continue helper;
+						continue remove;
 					} else {
 						return {ctor: '_Tuple2', _0: removedValues, _1: priorityQueue};
 					}
@@ -9872,7 +9872,7 @@ var _fizwidget$wiki_path$Data_PriorityQueue$removeHighestPriorities = F2(
 			_elm_lang$core$Tuple$mapFirst,
 			_elm_lang$core$List$filterMap(_elm_lang$core$Basics$identity),
 			A3(
-				helper,
+				remove,
 				priorityQueue,
 				howMany,
 				{ctor: '[]'}));
@@ -11115,6 +11115,11 @@ var _rtfeldman$hex$Hex$fromString = function (str) {
 	}
 };
 
+var _rtfeldman$elm_css$Css$stroke = {value: 'stroke', pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$painted = {value: 'painted', pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$visibleStroke = {value: 'visibleStroke', pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$visibleFill = {value: 'visibleFill', pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$visiblePainted = {value: 'visiblePainted', pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$manipulation = {value: 'manipulation', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$pinchZoom = {value: 'pinch-zoom', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$panDown = {value: 'pan-down', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
@@ -11123,7 +11128,6 @@ var _rtfeldman$elm_css$Css$panY = {value: 'pan-y', touchAction: _rtfeldman$elm_c
 var _rtfeldman$elm_css$Css$panRight = {value: 'pan-right', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$panLeft = {value: 'pan-left', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$panX = {value: 'pan-x', touchAction: _rtfeldman$elm_css$Css_Structure$Compatible};
-var _rtfeldman$elm_css$Css$asPairsDEPRECATED = _rtfeldman$elm_css$Css_Preprocess$toPropertyPairs;
 var _rtfeldman$elm_css$Css$stringsToValue = function (list) {
 	return _elm_lang$core$List$isEmpty(list) ? {value: 'none'} : {
 		value: A2(
@@ -11283,6 +11287,8 @@ var _rtfeldman$elm_css$Css$propertyWithWarnings = F3(
 	});
 var _rtfeldman$elm_css$Css$property = _rtfeldman$elm_css$Css$propertyWithWarnings(
 	{ctor: '[]'});
+var _rtfeldman$elm_css$Css$pointerEventsFill = A2(_rtfeldman$elm_css$Css$property, 'pointer-events', 'fill');
+var _rtfeldman$elm_css$Css$pointerEventsAll = A2(_rtfeldman$elm_css$Css$property, 'pointer-events', 'all');
 var _rtfeldman$elm_css$Css$batch = _rtfeldman$elm_css$Css_Preprocess$ApplyStyles;
 var _rtfeldman$elm_css$Css$animationNames = function (identifiers) {
 	var value = A2(
@@ -11966,6 +11972,7 @@ var _rtfeldman$elm_css$Css$textDecorationStyle = _rtfeldman$elm_css$Css$prop1('t
 var _rtfeldman$elm_css$Css$zIndex = _rtfeldman$elm_css$Css$prop1('z-index');
 var _rtfeldman$elm_css$Css$touchAction = _rtfeldman$elm_css$Css$prop1('touch-action');
 var _rtfeldman$elm_css$Css$tableLayout = _rtfeldman$elm_css$Css$prop1('table-layout');
+var _rtfeldman$elm_css$Css$pointerEvents = _rtfeldman$elm_css$Css$prop1('pointer-events');
 var _rtfeldman$elm_css$Css$position = _rtfeldman$elm_css$Css$prop1('position');
 var _rtfeldman$elm_css$Css$textBottom = _rtfeldman$elm_css$Css$prop1('text-bottom');
 var _rtfeldman$elm_css$Css$textTop = _rtfeldman$elm_css$Css$prop1('text-top');
@@ -11974,8 +11981,8 @@ var _rtfeldman$elm_css$Css$sub = _rtfeldman$elm_css$Css$prop1('sub');
 var _rtfeldman$elm_css$Css$baseline = _rtfeldman$elm_css$Css$prop1('baseline');
 var _rtfeldman$elm_css$Css$middle = _rtfeldman$elm_css$Css$prop1('middle');
 var _rtfeldman$elm_css$Css$noWrap = {value: 'nowrap', whiteSpace: _rtfeldman$elm_css$Css_Structure$Compatible, flexWrap: _rtfeldman$elm_css$Css_Structure$Compatible, flexDirectionOrWrap: _rtfeldman$elm_css$Css_Structure$Compatible};
-var _rtfeldman$elm_css$Css$auto = {value: 'auto', cursor: _rtfeldman$elm_css$Css_Structure$Compatible, flexBasis: _rtfeldman$elm_css$Css_Structure$Compatible, overflow: _rtfeldman$elm_css$Css_Structure$Compatible, textRendering: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css_Structure$Compatible, alignItemsOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css_Structure$Compatible, justifyContentOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, intOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, touchAction: _rtfeldman$elm_css$Css_Structure$Compatible, tableLayout: _rtfeldman$elm_css$Css_Structure$Compatible};
-var _rtfeldman$elm_css$Css$none = {value: 'none', cursor: _rtfeldman$elm_css$Css_Structure$Compatible, none: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNone: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNoneOrMinMaxDimension: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css_Structure$Compatible, textDecorationLine: _rtfeldman$elm_css$Css_Structure$Compatible, listStyleType: _rtfeldman$elm_css$Css_Structure$Compatible, listStyleTypeOrPositionOrImage: _rtfeldman$elm_css$Css_Structure$Compatible, display: _rtfeldman$elm_css$Css_Structure$Compatible, outline: _rtfeldman$elm_css$Css_Structure$Compatible, resize: _rtfeldman$elm_css$Css_Structure$Compatible, transform: _rtfeldman$elm_css$Css_Structure$Compatible, borderStyle: _rtfeldman$elm_css$Css_Structure$Compatible, backgroundImage: _rtfeldman$elm_css$Css_Structure$Compatible, textTransform: _rtfeldman$elm_css$Css_Structure$Compatible, touchAction: _rtfeldman$elm_css$Css_Structure$Compatible, updateFrequency: _rtfeldman$elm_css$Css_Structure$Compatible, blockAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible, inlineAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible, pointerDevice: _rtfeldman$elm_css$Css_Structure$Compatible, hoverCapability: _rtfeldman$elm_css$Css_Structure$Compatible, scriptingSupport: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$auto = {value: 'auto', cursor: _rtfeldman$elm_css$Css_Structure$Compatible, flexBasis: _rtfeldman$elm_css$Css_Structure$Compatible, overflow: _rtfeldman$elm_css$Css_Structure$Compatible, textRendering: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css_Structure$Compatible, alignItemsOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css_Structure$Compatible, justifyContentOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, intOrAuto: _rtfeldman$elm_css$Css_Structure$Compatible, pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible, touchAction: _rtfeldman$elm_css$Css_Structure$Compatible, tableLayout: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$none = {value: 'none', cursor: _rtfeldman$elm_css$Css_Structure$Compatible, none: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNone: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNoneOrMinMaxDimension: _rtfeldman$elm_css$Css_Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css_Structure$Compatible, textDecorationLine: _rtfeldman$elm_css$Css_Structure$Compatible, listStyleType: _rtfeldman$elm_css$Css_Structure$Compatible, listStyleTypeOrPositionOrImage: _rtfeldman$elm_css$Css_Structure$Compatible, display: _rtfeldman$elm_css$Css_Structure$Compatible, outline: _rtfeldman$elm_css$Css_Structure$Compatible, pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible, resize: _rtfeldman$elm_css$Css_Structure$Compatible, transform: _rtfeldman$elm_css$Css_Structure$Compatible, borderStyle: _rtfeldman$elm_css$Css_Structure$Compatible, backgroundImage: _rtfeldman$elm_css$Css_Structure$Compatible, textTransform: _rtfeldman$elm_css$Css_Structure$Compatible, touchAction: _rtfeldman$elm_css$Css_Structure$Compatible, updateFrequency: _rtfeldman$elm_css$Css_Structure$Compatible, blockAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible, inlineAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible, pointerDevice: _rtfeldman$elm_css$Css_Structure$Compatible, hoverCapability: _rtfeldman$elm_css$Css_Structure$Compatible, scriptingSupport: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$inlineListItem = {value: 'inline-list-item', display: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$listItem = {value: 'list-item', display: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$tableFooterGroup = {value: 'table-footer-group', display: _rtfeldman$elm_css$Css_Structure$Compatible};
@@ -12425,7 +12432,7 @@ var _rtfeldman$elm_css$Css$horizontal = {value: 'horizontal', resize: _rtfeldman
 var _rtfeldman$elm_css$Css$both = {value: 'both', resize: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$breakWord = {value: 'break-word', overflowWrap: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$scroll = {value: 'scroll', scroll: _rtfeldman$elm_css$Css_Structure$Compatible, overflow: _rtfeldman$elm_css$Css_Structure$Compatible, backgroundAttachment: _rtfeldman$elm_css$Css_Structure$Compatible, blockAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible, inlineAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible};
-var _rtfeldman$elm_css$Css$visible = {value: 'visible', overflow: _rtfeldman$elm_css$Css_Structure$Compatible, visibility: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css$visible = {value: 'visible', overflow: _rtfeldman$elm_css$Css_Structure$Compatible, visibility: _rtfeldman$elm_css$Css_Structure$Compatible, pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible};
 var _rtfeldman$elm_css$Css$currentColor = {
 	value: 'currentColor',
 	color: _rtfeldman$elm_css$Css_Structure$Compatible,
@@ -13501,7 +13508,9 @@ var _rtfeldman$elm_css$Css$BasicProperty = function (a) {
 																																																		return function (_25) {
 																																																			return function (_26) {
 																																																				return function (_27) {
-																																																					return {value: a, all: b, alignItems: c, borderStyle: d, boxSizing: e, color: f, cursor: g, display: h, flexBasis: i, flexWrap: j, flexDirection: k, flexDirectionOrWrap: l, justifyContent: m, none: n, number: o, outline: p, overflow: q, visibility: r, textDecorationLine: s, textRendering: t, textIndent: u, textDecorationStyle: v, textTransform: w, length: x, lengthOrAuto: y, lengthOrNone: z, lengthOrNumber: _1, lengthOrMinMaxDimension: _2, lengthOrNoneOrMinMaxDimension: _3, lengthOrNumberOrAutoOrNoneOrContent: _4, listStyleType: _5, listStylePosition: _6, listStyleTypeOrPositionOrImage: _7, fontFamily: _8, fontSize: _9, fontStyle: _10, fontWeight: _11, fontVariant: _12, units: _13, numericValue: _14, unitLabel: _15, warnings: _16, backgroundRepeat: _17, backgroundRepeatShorthand: _18, backgroundAttachment: _19, backgroundBlendMode: _20, backgroundOrigin: _21, backgroundImage: _22, lengthOrAutoOrCoverOrContain: _23, intOrAuto: _24, touchAction: _25, whiteSpace: _26, tableLayout: _27};
+																																																					return function (_28) {
+																																																						return {value: a, all: b, alignItems: c, borderStyle: d, boxSizing: e, color: f, cursor: g, display: h, flexBasis: i, flexWrap: j, flexDirection: k, flexDirectionOrWrap: l, justifyContent: m, none: n, number: o, outline: p, overflow: q, pointerEvents: r, visibility: s, textDecorationLine: t, textRendering: u, textIndent: v, textDecorationStyle: w, textTransform: x, length: y, lengthOrAuto: z, lengthOrNone: _1, lengthOrNumber: _2, lengthOrMinMaxDimension: _3, lengthOrNoneOrMinMaxDimension: _4, lengthOrNumberOrAutoOrNoneOrContent: _5, listStyleType: _6, listStylePosition: _7, listStyleTypeOrPositionOrImage: _8, fontFamily: _9, fontSize: _10, fontStyle: _11, fontWeight: _12, fontVariant: _13, units: _14, numericValue: _15, unitLabel: _16, warnings: _17, backgroundRepeat: _18, backgroundRepeatShorthand: _19, backgroundAttachment: _20, backgroundBlendMode: _21, backgroundOrigin: _22, backgroundImage: _23, lengthOrAutoOrCoverOrContain: _24, intOrAuto: _25, touchAction: _26, whiteSpace: _27, tableLayout: _28};
+																																																					};
 																																																				};
 																																																			};
 																																																		};
@@ -13660,6 +13669,7 @@ var _rtfeldman$elm_css$Css$initial = {
 	fontWeight: _rtfeldman$elm_css$Css_Structure$Compatible,
 	fontVariant: _rtfeldman$elm_css$Css_Structure$Compatible,
 	outline: _rtfeldman$elm_css$Css_Structure$Compatible,
+	pointerEvents: _rtfeldman$elm_css$Css_Structure$Compatible,
 	units: _rtfeldman$elm_css$Css$IncompatibleUnits,
 	numericValue: 0,
 	unitLabel: '',
@@ -15823,6 +15833,278 @@ var _rtfeldman$elm_css$Html_Styled_Attributes$style = function (_p0) {
 		_elm_lang$virtual_dom$VirtualDom$style(_p0));
 };
 
+var _rtfeldman$elm_css$Css_Media$unparameterizedFeature = function (key) {
+	return {feature: key, value: _elm_lang$core$Maybe$Nothing};
+};
+var _rtfeldman$elm_css$Css_Media$feature = F2(
+	function (key, _p0) {
+		var _p1 = _p0;
+		return {
+			feature: key,
+			value: _elm_lang$core$Maybe$Just(_p1.value)
+		};
+	});
+var _rtfeldman$elm_css$Css_Media$scripting = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'scripting', value);
+};
+var _rtfeldman$elm_css$Css_Media$enabled = {value: 'enabled', scriptingSupport: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$initialOnly = {value: 'initial-only', scriptingSupport: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$anyHover = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'any-hover', value);
+};
+var _rtfeldman$elm_css$Css_Media$hover = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'hover', value);
+};
+var _rtfeldman$elm_css$Css_Media$canHover = {value: 'hover', hoverCapability: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$anyPointer = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'any-pointer', value);
+};
+var _rtfeldman$elm_css$Css_Media$pointer = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'pointer', value);
+};
+var _rtfeldman$elm_css$Css_Media$coarse = {value: 'coarse', pointerDevice: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$fine = {value: 'fine', pointerDevice: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$colorGamut = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'color-gamut', value);
+};
+var _rtfeldman$elm_css$Css_Media$rec2020 = {value: 'rec2020', colorGamut: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$p3 = {value: 'p3', colorGamut: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$srgb = {value: 'srgb', colorGamut: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$maxColorIndex = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-color-index', value);
+};
+var _rtfeldman$elm_css$Css_Media$minColorIndex = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-color-index', value);
+};
+var _rtfeldman$elm_css$Css_Media$colorIndex = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'color-index', value);
+};
+var _rtfeldman$elm_css$Css_Media$maxMonochrome = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-monochrome', value);
+};
+var _rtfeldman$elm_css$Css_Media$minMonochrome = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-monochrome', value);
+};
+var _rtfeldman$elm_css$Css_Media$monochrome = _rtfeldman$elm_css$Css_Media$unparameterizedFeature('monochrome');
+var _rtfeldman$elm_css$Css_Media$maxColor = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-color', value);
+};
+var _rtfeldman$elm_css$Css_Media$color = _rtfeldman$elm_css$Css_Media$unparameterizedFeature('color');
+var _rtfeldman$elm_css$Css_Media$minColor = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-color', value);
+};
+var _rtfeldman$elm_css$Css_Media$bits = function (value) {
+	return {
+		value: _elm_lang$core$Basics$toString(value),
+		bits: _rtfeldman$elm_css$Css_Structure$Compatible
+	};
+};
+var _rtfeldman$elm_css$Css_Media$overflowInline = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'overflow-inline', value);
+};
+var _rtfeldman$elm_css$Css_Media$overflowBlock = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'overflow-block', value);
+};
+var _rtfeldman$elm_css$Css_Media$optionalPaged = {value: 'optional-paged', blockAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$paged = {value: 'paged', blockAxisOverflow: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$update = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'update', value);
+};
+var _rtfeldman$elm_css$Css_Media$fast = {value: 'fast', updateFrequency: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$slow = {value: 'slow', updateFrequency: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$grid = _rtfeldman$elm_css$Css_Media$unparameterizedFeature('grid');
+var _rtfeldman$elm_css$Css_Media$scan = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'scan', value);
+};
+var _rtfeldman$elm_css$Css_Media$interlace = {value: 'interlace', scanningProcess: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$progressive = {value: 'progressive', scanningProcess: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$maxResolution = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-resolution', value);
+};
+var _rtfeldman$elm_css$Css_Media$resolution = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'resolution', value);
+};
+var _rtfeldman$elm_css$Css_Media$minResolution = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-resolution', value);
+};
+var _rtfeldman$elm_css$Css_Media$dppx = function (value) {
+	return {
+		value: A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(value),
+			'dppx'),
+		resolution: _rtfeldman$elm_css$Css_Structure$Compatible
+	};
+};
+var _rtfeldman$elm_css$Css_Media$dpcm = function (value) {
+	return {
+		value: A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(value),
+			'dpcm'),
+		resolution: _rtfeldman$elm_css$Css_Structure$Compatible
+	};
+};
+var _rtfeldman$elm_css$Css_Media$dpi = function (value) {
+	return {
+		value: A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(value),
+			'dpi'),
+		resolution: _rtfeldman$elm_css$Css_Structure$Compatible
+	};
+};
+var _rtfeldman$elm_css$Css_Media$orientation = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'orientation', value);
+};
+var _rtfeldman$elm_css$Css_Media$portrait = {value: 'portrait', orientation: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$landscape = {value: 'landscape', orientation: _rtfeldman$elm_css$Css_Structure$Compatible};
+var _rtfeldman$elm_css$Css_Media$maxAspectRatio = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-aspect-ratio', value);
+};
+var _rtfeldman$elm_css$Css_Media$aspectRatio = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'aspect-ratio', value);
+};
+var _rtfeldman$elm_css$Css_Media$minAspectRatio = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-aspect-ratio', value);
+};
+var _rtfeldman$elm_css$Css_Media$ratio = F2(
+	function (numerator, denominator) {
+		return {
+			value: A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(numerator),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'/',
+					_elm_lang$core$Basics$toString(denominator))),
+			ratio: _rtfeldman$elm_css$Css_Structure$Compatible
+		};
+	});
+var _rtfeldman$elm_css$Css_Media$maxHeight = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-height', value);
+};
+var _rtfeldman$elm_css$Css_Media$height = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'height', value);
+};
+var _rtfeldman$elm_css$Css_Media$minHeight = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-height', value);
+};
+var _rtfeldman$elm_css$Css_Media$maxWidth = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'max-width', value);
+};
+var _rtfeldman$elm_css$Css_Media$width = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'width', value);
+};
+var _rtfeldman$elm_css$Css_Media$minWidth = function (value) {
+	return A2(_rtfeldman$elm_css$Css_Media$feature, 'min-width', value);
+};
+var _rtfeldman$elm_css$Css_Media$speech = _rtfeldman$elm_css$Css_Structure$Speech;
+var _rtfeldman$elm_css$Css_Media$screen = _rtfeldman$elm_css$Css_Structure$Screen;
+var _rtfeldman$elm_css$Css_Media$print = _rtfeldman$elm_css$Css_Structure$Print;
+var _rtfeldman$elm_css$Css_Media$connectWith = F2(
+	function (connect, queries) {
+		var _p2 = queries;
+		if (_p2.ctor === '[]') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var _p4 = _p2._0;
+			var _p3 = A2(_rtfeldman$elm_css$Css_Media$connectWith, connect, _p2._1);
+			if (_p3.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Just(_p4);
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					A2(connect, _p4, _p3._0));
+			}
+		}
+	});
+var _rtfeldman$elm_css$Css_Media$not = _rtfeldman$elm_css$Css_Structure$NotQuery;
+var _rtfeldman$elm_css$Css_Media$only = _rtfeldman$elm_css$Css_Structure$OnlyQuery;
+var _rtfeldman$elm_css$Css_Media$all = _rtfeldman$elm_css$Css_Structure$AllQuery;
+var _rtfeldman$elm_css$Css_Media$withMediaQuery = function (queries) {
+	return _rtfeldman$elm_css$Css_Preprocess$WithMedia(
+		A2(_elm_lang$core$List$map, _rtfeldman$elm_css$Css_Structure$CustomQuery, queries));
+};
+var _rtfeldman$elm_css$Css_Media$withMedia = function (queries) {
+	return _rtfeldman$elm_css$Css_Preprocess$WithMedia(queries);
+};
+var _rtfeldman$elm_css$Css_Media$Ratio = F2(
+	function (a, b) {
+		return {value: a, ratio: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Landscape = F2(
+	function (a, b) {
+		return {value: a, orientation: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Portrait = F2(
+	function (a, b) {
+		return {value: a, orientation: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Resolution = F2(
+	function (a, b) {
+		return {value: a, resolution: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Progressive = F2(
+	function (a, b) {
+		return {value: a, scanningProcess: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Interlace = F2(
+	function (a, b) {
+		return {value: a, scanningProcess: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Slow = F2(
+	function (a, b) {
+		return {value: a, updateFrequency: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Fast = F2(
+	function (a, b) {
+		return {value: a, updateFrequency: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Paged = F2(
+	function (a, b) {
+		return {value: a, blockAxisOverflow: b};
+	});
+var _rtfeldman$elm_css$Css_Media$OptionalPaged = F2(
+	function (a, b) {
+		return {value: a, blockAxisOverflow: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Bits = F2(
+	function (a, b) {
+		return {value: a, bits: b};
+	});
+var _rtfeldman$elm_css$Css_Media$SRGB = F2(
+	function (a, b) {
+		return {value: a, colorGamut: b};
+	});
+var _rtfeldman$elm_css$Css_Media$P3 = F2(
+	function (a, b) {
+		return {value: a, colorGamut: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Rec2020 = F2(
+	function (a, b) {
+		return {value: a, colorGamut: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Fine = F2(
+	function (a, b) {
+		return {value: a, pointerDevice: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Coarse = F2(
+	function (a, b) {
+		return {value: a, pointerDevice: b};
+	});
+var _rtfeldman$elm_css$Css_Media$CanHover = F2(
+	function (a, b) {
+		return {value: a, hoverCapability: b};
+	});
+var _rtfeldman$elm_css$Css_Media$InitialOnly = F2(
+	function (a, b) {
+		return {value: a, scriptingSupport: b};
+	});
+var _rtfeldman$elm_css$Css_Media$Enabled = F2(
+	function (a, b) {
+		return {value: a, scriptingSupport: b};
+	});
+
 var _fizwidget$wiki_path$Util$noCmd = function (model) {
 	return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 };
@@ -16459,11 +16741,19 @@ var _fizwidget$wiki_path$Page_Finished$view = F2(
 var _fizwidget$wiki_path$Page_Finished$Error = function (a) {
 	return {ctor: 'Error', _0: a};
 };
+var _fizwidget$wiki_path$Page_Finished$initWithError = F3(
+	function (error, source, destination) {
+		return _fizwidget$wiki_path$Page_Finished$Error(
+			{error: error, source: source, destination: destination});
+	});
 var _fizwidget$wiki_path$Page_Finished$Success = function (a) {
 	return {ctor: 'Success', _0: a};
 };
+var _fizwidget$wiki_path$Page_Finished$initWithPath = _fizwidget$wiki_path$Page_Finished$Success;
 var _fizwidget$wiki_path$Page_Finished$TooManyRequests = {ctor: 'TooManyRequests'};
+var _fizwidget$wiki_path$Page_Finished$initWithTooManyRequestsError = _fizwidget$wiki_path$Page_Finished$initWithError(_fizwidget$wiki_path$Page_Finished$TooManyRequests);
 var _fizwidget$wiki_path$Page_Finished$PathNotFound = {ctor: 'PathNotFound'};
+var _fizwidget$wiki_path$Page_Finished$initWithPathNotFoundError = _fizwidget$wiki_path$Page_Finished$initWithError(_fizwidget$wiki_path$Page_Finished$PathNotFound);
 
 var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
 	var _p0 = data;
@@ -17382,7 +17672,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$processLinks = F3(
 			_elm_lang$core$List$filter,
 			_fizwidget$wiki_path$Page_Pathfinding$isCandidate(model.visitedTitles),
 			article.links);
-		var newPaths = _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorityPaths(
+		var extendedPaths = _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorityPaths(
 			A2(
 				_elm_lang$core$List$map,
 				A2(_fizwidget$wiki_path$Page_Pathfinding$extendPath, pathToArticle, model.destination),
@@ -17390,8 +17680,8 @@ var _fizwidget$wiki_path$Page_Pathfinding$processLinks = F3(
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				paths: A3(_fizwidget$wiki_path$Data_PriorityQueue$insert, model.paths, _fizwidget$wiki_path$Data_Path$priority, newPaths),
-				visitedTitles: A2(_fizwidget$wiki_path$Page_Pathfinding$markVisited, model.visitedTitles, newPaths)
+				paths: A3(_fizwidget$wiki_path$Data_PriorityQueue$insert, model.paths, _fizwidget$wiki_path$Data_Path$priority, extendedPaths),
+				visitedTitles: A2(_fizwidget$wiki_path$Page_Pathfinding$markVisited, model.visitedTitles, extendedPaths)
 			});
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$initialModel = F2(
@@ -17451,7 +17741,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$Model = F7(
 	function (a, b, c, d, e, f, g) {
 		return {source: a, destination: b, paths: c, visitedTitles: d, errors: e, pendingRequests: f, totalRequests: g};
 	});
-var _fizwidget$wiki_path$Page_Pathfinding$AbortRequested = {ctor: 'AbortRequested'};
+var _fizwidget$wiki_path$Page_Pathfinding$AbortRequest = {ctor: 'AbortRequest'};
 var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = A2(
 	_rtfeldman$elm_css$Html_Styled$div,
 	{
@@ -17474,7 +17764,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = A2(
 				_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
 				_1: {
 					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Page_Pathfinding$AbortRequested),
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_fizwidget$wiki_path$Page_Pathfinding$AbortRequest),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -17563,8 +17853,10 @@ var _fizwidget$wiki_path$Page_Pathfinding$Continue = function (a) {
 var _fizwidget$wiki_path$Page_Pathfinding$fetchNextArticles = F2(
 	function (model, pathsToFollow) {
 		var requests = A2(_elm_lang$core$List$map, _fizwidget$wiki_path$Page_Pathfinding$fetchNextArticle, pathsToFollow);
-		var requestCount = _elm_lang$core$List$length(requests);
-		var updatedModel = A2(_fizwidget$wiki_path$Page_Pathfinding$incrementRequests, model, requestCount);
+		var updatedModel = A2(
+			_fizwidget$wiki_path$Page_Pathfinding$incrementRequests,
+			model,
+			_elm_lang$core$List$length(requests));
 		return _fizwidget$wiki_path$Page_Pathfinding$hasMadeTooManyRequests(updatedModel) ? A2(_fizwidget$wiki_path$Page_Pathfinding$TooManyRequests, updatedModel.source, updatedModel.destination) : _fizwidget$wiki_path$Page_Pathfinding$Continue(
 			{
 				ctor: '_Tuple2',
@@ -17592,7 +17884,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$continueSearch = function (model) {
 	var areNoPathsAvailable = _elm_lang$core$List$isEmpty(pathsToExplore) && _elm_lang$core$Native_Utils.eq(model.pendingRequests, 0);
 	return areNoPathsAvailable ? A2(_fizwidget$wiki_path$Page_Pathfinding$PathNotFound, updatedModel.source, updatedModel.destination) : A2(_fizwidget$wiki_path$Page_Pathfinding$explorePaths, updatedModel, pathsToExplore);
 };
-var _fizwidget$wiki_path$Page_Pathfinding$onArticleReceived = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$articleReceived = F3(
 	function (model, pathToArticle, article) {
 		return A2(_fizwidget$wiki_path$Page_Pathfinding$hasReachedDestination, model, article) ? _fizwidget$wiki_path$Page_Pathfinding$PathFound(pathToArticle) : _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
 			A3(_fizwidget$wiki_path$Page_Pathfinding$processLinks, model, pathToArticle, article));
@@ -17600,12 +17892,12 @@ var _fizwidget$wiki_path$Page_Pathfinding$onArticleReceived = F3(
 var _fizwidget$wiki_path$Page_Pathfinding$init = F2(
 	function (source, destination) {
 		return A3(
-			_fizwidget$wiki_path$Page_Pathfinding$onArticleReceived,
+			_fizwidget$wiki_path$Page_Pathfinding$articleReceived,
 			A2(_fizwidget$wiki_path$Page_Pathfinding$initialModel, source, destination),
 			_fizwidget$wiki_path$Data_Path$beginningWith(source.title),
 			source);
 	});
-var _fizwidget$wiki_path$Page_Pathfinding$onErrorReceived = F2(
+var _fizwidget$wiki_path$Page_Pathfinding$errorReceived = F2(
 	function (model, error) {
 		return _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
 			_elm_lang$core$Native_Utils.update(
@@ -17614,13 +17906,13 @@ var _fizwidget$wiki_path$Page_Pathfinding$onErrorReceived = F2(
 					errors: {ctor: '::', _0: error, _1: model.errors}
 				}));
 	});
-var _fizwidget$wiki_path$Page_Pathfinding$onResponseReceived = F3(
+var _fizwidget$wiki_path$Page_Pathfinding$responseReceived = F3(
 	function (model, pathToArticle, articleResult) {
 		var _p13 = articleResult;
 		if (_p13.ctor === 'Ok') {
-			return A3(_fizwidget$wiki_path$Page_Pathfinding$onArticleReceived, model, pathToArticle, _p13._0);
+			return A3(_fizwidget$wiki_path$Page_Pathfinding$articleReceived, model, pathToArticle, _p13._0);
 		} else {
-			return A2(_fizwidget$wiki_path$Page_Pathfinding$onErrorReceived, model, _p13._0);
+			return A2(_fizwidget$wiki_path$Page_Pathfinding$errorReceived, model, _p13._0);
 		}
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$update = F2(
@@ -17628,7 +17920,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$update = F2(
 		var _p14 = msg;
 		if (_p14.ctor === 'FetchArticleResponse') {
 			return A3(
-				_fizwidget$wiki_path$Page_Pathfinding$onResponseReceived,
+				_fizwidget$wiki_path$Page_Pathfinding$responseReceived,
 				_fizwidget$wiki_path$Page_Pathfinding$decrementPendingRequests(model),
 				_p14._0,
 				_p14._1);
@@ -20340,47 +20632,73 @@ var _fizwidget$wiki_path$Page_Setup$view = function (model) {
 		});
 };
 
-var _fizwidget$wiki_path$Main$viewHeading = A2(
-	_rtfeldman$elm_css$Html_Styled$h1,
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Css$fontSize(
-					_rtfeldman$elm_css$Css$vh(10)),
-				_1: {
+var _fizwidget$wiki_path$Main$viewHeading = function () {
+	var mobileFontStyle = A2(
+		_rtfeldman$elm_css$Css_Media$withMedia,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Css_Media$all(
+				{
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$fontWeight(
-						_rtfeldman$elm_css$Css$int(900)),
+					_0: _rtfeldman$elm_css$Css_Media$maxWidth(
+						_rtfeldman$elm_css$Css$px(420)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Css$fontSize(
+				_rtfeldman$elm_css$Css$vw(20)),
+			_1: {ctor: '[]'}
+		});
+	var desktopFontSize = _rtfeldman$elm_css$Css$fontSize(
+		_rtfeldman$elm_css$Css$px(80));
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$h1,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: desktopFontSize,
 					_1: {
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$fontFamily(_rtfeldman$elm_css$Css$serif),
+						_0: mobileFontStyle,
 						_1: {
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+							_0: _rtfeldman$elm_css$Css$fontWeight(
+								_rtfeldman$elm_css$Css$int(900)),
 							_1: {
 								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$marginTop(
-									_rtfeldman$elm_css$Css$px(50)),
+								_0: _rtfeldman$elm_css$Css$fontFamily(_rtfeldman$elm_css$Css$serif),
 								_1: {
 									ctor: '::',
-									_0: _rtfeldman$elm_css$Css$marginBottom(
-										_rtfeldman$elm_css$Css$px(34)),
-									_1: {ctor: '[]'}
+									_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+									_1: {
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Css$marginTop(
+											_rtfeldman$elm_css$Css$px(50)),
+										_1: {
+											ctor: '::',
+											_0: _rtfeldman$elm_css$Css$marginBottom(
+												_rtfeldman$elm_css$Css$px(34)),
+											_1: {ctor: '[]'}
+										}
+									}
 								}
 							}
 						}
 					}
-				}
-			}),
-		_1: {ctor: '[]'}
-	},
-	{
-		ctor: '::',
-		_0: _rtfeldman$elm_css$Html_Styled$text('WikiPath'),
-		_1: {ctor: '[]'}
-	});
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text('WikiPath'),
+			_1: {ctor: '[]'}
+		});
+}();
 var _fizwidget$wiki_path$Main$inPage = F3(
 	function (toModel, toMsg, _p0) {
 		var _p1 = _p0;
@@ -20413,7 +20731,7 @@ var _fizwidget$wiki_path$Main$SetupMsg = function (a) {
 };
 var _fizwidget$wiki_path$Main$inSetupPage = A2(_fizwidget$wiki_path$Main$inPage, _fizwidget$wiki_path$Main$SetupPage, _fizwidget$wiki_path$Main$SetupMsg);
 var _fizwidget$wiki_path$Main$initSetup = _fizwidget$wiki_path$Main$inSetupPage(_fizwidget$wiki_path$Page_Setup$init);
-var _fizwidget$wiki_path$Main$initSetupWithSourceAndDestination = F2(
+var _fizwidget$wiki_path$Main$initSetupWithTitles = F2(
 	function (source, destination) {
 		return _fizwidget$wiki_path$Main$inSetupPage(
 			A2(_fizwidget$wiki_path$Page_Setup$initWithTitles, source, destination));
@@ -20425,21 +20743,19 @@ var _fizwidget$wiki_path$Main$onPathfindingUpdate = function (updateResult) {
 			return _fizwidget$wiki_path$Main$inPathfindingPage(
 				{ctor: '_Tuple2', _0: _p2._0._0, _1: _p2._0._1});
 		case 'Abort':
-			return A2(_fizwidget$wiki_path$Main$initSetupWithSourceAndDestination, _p2._0.title, _p2._1.title);
+			return A2(_fizwidget$wiki_path$Main$initSetupWithTitles, _p2._0.title, _p2._1.title);
 		case 'PathFound':
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Util$noCmd(
-					_fizwidget$wiki_path$Page_Finished$Success(_p2._0)));
+					_fizwidget$wiki_path$Page_Finished$initWithPath(_p2._0)));
 		case 'PathNotFound':
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Util$noCmd(
-					_fizwidget$wiki_path$Page_Finished$Error(
-						{error: _fizwidget$wiki_path$Page_Finished$PathNotFound, source: _p2._0, destination: _p2._1})));
+					A2(_fizwidget$wiki_path$Page_Finished$initWithPathNotFoundError, _p2._0, _p2._1)));
 		default:
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Util$noCmd(
-					_fizwidget$wiki_path$Page_Finished$Error(
-						{error: _fizwidget$wiki_path$Page_Finished$TooManyRequests, source: _p2._0, destination: _p2._1})));
+					A2(_fizwidget$wiki_path$Page_Finished$initWithTooManyRequestsError, _p2._0, _p2._1)));
 	}
 };
 var _fizwidget$wiki_path$Main$onSetupUpdate = function (updateResult) {
@@ -20459,7 +20775,7 @@ var _fizwidget$wiki_path$Main$update = F2(
 		do {
 			switch (_p4._0.ctor) {
 				case 'BackToSetup':
-					return A2(_fizwidget$wiki_path$Main$initSetupWithSourceAndDestination, _p4._0._0, _p4._0._1);
+					return A2(_fizwidget$wiki_path$Main$initSetupWithTitles, _p4._0._0, _p4._0._1);
 				case 'SetupMsg':
 					if (_p4._1.ctor === 'SetupPage') {
 						return _fizwidget$wiki_path$Main$onSetupUpdate(
