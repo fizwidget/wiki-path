@@ -19,12 +19,12 @@ import Html.Styled.Attributes exposing (css)
 import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
-import Set exposing (Set)
 import Bootstrap.Button as ButtonOptions
 import Request.Article as Article exposing (RemoteArticle, ArticleResult, ArticleError)
 import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 import Data.Path as Path exposing (Path)
 import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import Data.OrderedSet as OrderedSet exposing (OrderedSet)
 import Data.Title as Title exposing (Title)
 import View.Button as Button
 import View.Error as Error
@@ -39,7 +39,7 @@ type alias Model =
     { source : Article
     , destination : Article
     , paths : PriorityQueue Path
-    , visitedTitles : Set String
+    , visitedTitles : OrderedSet String
     , errors : List ArticleError
     , pendingRequests : Int
     , totalRequests : Int
@@ -77,7 +77,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , paths = PriorityQueue.empty
-    , visitedTitles = Set.singleton (Title.value source.title)
+    , visitedTitles = OrderedSet.singleton (Title.value source.title)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
@@ -253,7 +253,7 @@ incrementRequests model requestCount =
 -- Util
 
 
-isCandidate : Set String -> Link -> Bool
+isCandidate : OrderedSet String -> Link -> Bool
 isCandidate visitedTitles link =
     let
         title =
@@ -263,7 +263,7 @@ isCandidate visitedTitles link =
             String.length title > 1
 
         isVisited =
-            Set.member title visitedTitles
+            OrderedSet.member title visitedTitles
 
         isRegularArticle =
             link.namespace == ArticleNamespace
@@ -290,11 +290,11 @@ isCandidate visitedTitles link =
             && not isBlacklisted
 
 
-markVisited : Set String -> List Path -> Set String
+markVisited : OrderedSet String -> List Path -> OrderedSet String
 markVisited visitedTitles newPaths =
     newPaths
         |> List.map (Path.nextStop >> Title.value)
-        |> List.foldl Set.insert visitedTitles
+        |> List.foldl OrderedSet.insert visitedTitles
 
 
 extendPath : Path -> Article -> Link -> Path
@@ -342,13 +342,13 @@ discardLowPriorityPaths paths =
 
 
 view : Model -> Html Msg
-view { source, destination, paths, errors, totalRequests } =
+view { source, destination, visitedTitles, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ viewHeading source destination
         , viewErrors errors
         , viewWarnings totalRequests destination
         , viewBackButton
-        , viewPaths paths
+        , viewVisited visitedTitles
         ]
 
 
@@ -407,21 +407,11 @@ viewPathCountWarning totalRequests =
         text ""
 
 
-viewPaths : PriorityQueue Path -> Html msg
-viewPaths paths =
-    PriorityQueue.getHighestPriority paths
-        |> Maybe.map viewPath
-        |> Maybe.withDefault (div [] [])
-
-
-viewPath : Path -> Html msg
-viewPath path =
+viewVisited : OrderedSet String -> Html msg
+viewVisited visited =
     div [ css [ textAlign center ] ]
-        [ Path.inReverseOrder path
-            |> List.map Link.view
-            |> List.intersperse (text "↑")
-            |> List.append [ text "↑" ]
+        (OrderedSet.toList visited
+            |> List.map (Title.from >> Link.view)
             |> List.append [ Spinner.view { isVisible = True } ]
-            |> List.map (List.singleton >> div [])
-            |> div []
-        ]
+            |> List.map (List.singleton >> (div []))
+        )
