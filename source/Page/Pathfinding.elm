@@ -66,7 +66,7 @@ pendingRequestsLimit =
 
 init : Article -> Article -> UpdateResult
 init source destination =
-    onArticleReceived
+    articleReceived
         (initialModel source destination)
         (Path.beginningWith source.title)
         source
@@ -90,7 +90,7 @@ initialModel source destination =
 
 type Msg
     = FetchArticleResponse Path ArticleResult
-    | AbortRequested
+    | AbortRequest
 
 
 type UpdateResult
@@ -105,27 +105,27 @@ update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
         FetchArticleResponse pathToArticle articleResult ->
-            onResponseReceived
+            responseReceived
                 (decrementPendingRequests model)
                 pathToArticle
                 articleResult
 
-        AbortRequested ->
+        AbortRequest ->
             Abort model.source model.destination
 
 
-onResponseReceived : Model -> Path -> ArticleResult -> UpdateResult
-onResponseReceived model pathToArticle articleResult =
+responseReceived : Model -> Path -> ArticleResult -> UpdateResult
+responseReceived model pathToArticle articleResult =
     case articleResult of
         Ok article ->
-            onArticleReceived model pathToArticle article
+            articleReceived model pathToArticle article
 
         Err error ->
-            onErrorReceived model error
+            errorReceived model error
 
 
-onArticleReceived : Model -> Path -> Article -> UpdateResult
-onArticleReceived model pathToArticle article =
+articleReceived : Model -> Path -> Article -> UpdateResult
+articleReceived model pathToArticle article =
     if hasReachedDestination model article then
         PathFound pathToArticle
     else
@@ -133,8 +133,8 @@ onArticleReceived model pathToArticle article =
             |> continueSearch
 
 
-onErrorReceived : Model -> ArticleError -> UpdateResult
-onErrorReceived model error =
+errorReceived : Model -> ArticleError -> UpdateResult
+errorReceived model error =
     { model | errors = error :: model.errors }
         |> continueSearch
 
@@ -145,14 +145,14 @@ processLinks model pathToArticle article =
         candidateLinks =
             List.filter (isCandidate model.visitedTitles) article.links
 
-        newPaths =
+        extendedPaths =
             candidateLinks
                 |> List.map (extendPath pathToArticle model.destination)
                 |> discardLowPriorityPaths
     in
         { model
-            | paths = PriorityQueue.insert model.paths Path.priority newPaths
-            , visitedTitles = markVisited model.visitedTitles newPaths
+            | paths = PriorityQueue.insert model.paths Path.priority extendedPaths
+            , visitedTitles = markVisited model.visitedTitles extendedPaths
         }
 
 
@@ -193,11 +193,8 @@ fetchNextArticles model pathsToFollow =
         requests =
             List.map fetchNextArticle pathsToFollow
 
-        requestCount =
-            List.length requests
-
         updatedModel =
-            incrementRequests model requestCount
+            incrementRequests model (List.length requests)
     in
         if hasMadeTooManyRequests updatedModel then
             TooManyRequests updatedModel.source updatedModel.destination
@@ -375,7 +372,7 @@ viewBackButton : Html Msg
 viewBackButton =
     div [ css [ margin (px 20) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequested ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequest ]
             [ text "Back" ]
         ]
 

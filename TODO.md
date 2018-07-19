@@ -17,7 +17,6 @@
     * Should look much less jarring?
 * Figure out how to show pending requests?
     * This is why pathfinding view is initially blank.
-* Fix heading font size for mobile devices.
 
 ## Type safety
 * Phantom types:

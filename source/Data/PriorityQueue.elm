@@ -68,17 +68,17 @@ removeHighestPriority (PriorityQueue pairingHeap) =
 removeHighestPriorities : PriorityQueue a -> Int -> ( List a, PriorityQueue a )
 removeHighestPriorities priorityQueue howMany =
     let
-        helper priorityQueue howMany removedValues =
+        remove priorityQueue howMany removedValues =
             if howMany > 0 then
                 let
                     ( value, updatedPriorityQueue ) =
                         removeHighestPriority priorityQueue
                 in
-                    helper updatedPriorityQueue (howMany - 1) (value :: removedValues)
+                    remove updatedPriorityQueue (howMany - 1) (value :: removedValues)
             else
                 ( removedValues, priorityQueue )
     in
-        helper priorityQueue howMany []
+        remove priorityQueue howMany []
             |> Tuple.mapFirst (List.filterMap identity)
 
 
