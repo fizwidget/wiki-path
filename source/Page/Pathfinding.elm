@@ -30,6 +30,7 @@ import View.Button as Button
 import View.Error as Error
 import View.Spinner as Spinner
 import View.Link as Link
+import View.Fade as Fade
 
 
 -- Model
@@ -370,7 +371,7 @@ viewErrors errors =
 
 viewBackButton : Html Msg
 viewBackButton =
-    div [ css [ margin (px 20) ] ]
+    div [ css [ marginTop (px 10) ] ]
         [ Button.view
             [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequest ]
             [ text "Back" ]
@@ -409,9 +410,12 @@ viewPathCountWarning totalRequests =
 
 viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
-    div [ css [ textAlign center ] ]
-        (OrderedSet.toList visited
-            |> List.map (Title.from >> Link.view)
-            |> List.append [ Spinner.view { isVisible = True } ]
-            |> List.map (List.singleton >> (div []))
+    Fade.view
+        (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
+            (OrderedSet.toList visited
+                |> List.take 10
+                |> List.map (Title.from >> Link.view)
+                |> List.append [ Spinner.view { isVisible = True } ]
+                |> List.map (List.singleton >> (div []))
+            )
         )
