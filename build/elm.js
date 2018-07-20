@@ -17425,7 +17425,7 @@ var _fizwidget$wiki_path$View_Spinner$view = function (_p0) {
 				{ctor: '[]'})));
 };
 
-var _fizwidget$wiki_path$Page_Pathfinding$viewVisited = function (visited) {
+var _fizwidget$wiki_path$View_Fade$view = function (content) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -17433,34 +17433,115 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewVisited = function (visited) {
 			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
 				{
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
-					_1: {ctor: '[]'}
+					_0: _rtfeldman$elm_css$Css$position(_rtfeldman$elm_css$Css$relative),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$after(
+							{
+								ctor: '::',
+								_0: A2(_rtfeldman$elm_css$Css$property, 'content', '\'\''),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css$position(_rtfeldman$elm_css$Css$absolute),
+									_1: {
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Css$top(
+											_rtfeldman$elm_css$Css$px(0)),
+										_1: {
+											ctor: '::',
+											_0: _rtfeldman$elm_css$Css$bottom(
+												_rtfeldman$elm_css$Css$px(0)),
+											_1: {
+												ctor: '::',
+												_0: _rtfeldman$elm_css$Css$left(
+													_rtfeldman$elm_css$Css$px(0)),
+												_1: {
+													ctor: '::',
+													_0: _rtfeldman$elm_css$Css$right(
+														_rtfeldman$elm_css$Css$px(0)),
+													_1: {
+														ctor: '::',
+														_0: _rtfeldman$elm_css$Css$backgroundImage(
+															A3(
+																_rtfeldman$elm_css$Css$linearGradient,
+																A2(
+																	_rtfeldman$elm_css$Css$stop2,
+																	A4(_rtfeldman$elm_css$Css$rgba, 255, 255, 255, 0),
+																	_rtfeldman$elm_css$Css$pct(70)),
+																A2(
+																	_rtfeldman$elm_css$Css$stop2,
+																	A4(_rtfeldman$elm_css$Css$rgba, 255, 255, 255, 1),
+																	_rtfeldman$elm_css$Css$pct(100)),
+																{ctor: '[]'})),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}),
 			_1: {ctor: '[]'}
 		},
+		{
+			ctor: '::',
+			_0: content,
+			_1: {ctor: '[]'}
+		});
+};
+
+var _fizwidget$wiki_path$Page_Pathfinding$viewVisited = function (visited) {
+	return _fizwidget$wiki_path$View_Fade$view(
 		A2(
-			_elm_lang$core$List$map,
-			function (_p0) {
-				return A2(
-					_rtfeldman$elm_css$Html_Styled$div,
-					{ctor: '[]'},
-					_elm_lang$core$List$singleton(_p0));
+			_rtfeldman$elm_css$Html_Styled$div,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+					{
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$height(
+								_rtfeldman$elm_css$Css$px(300)),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$overflow(_rtfeldman$elm_css$Css$hidden),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
 			},
 			A2(
-				_elm_lang$core$List$append,
-				{
-					ctor: '::',
-					_0: _fizwidget$wiki_path$View_Spinner$view(
-						{isVisible: true}),
-					_1: {ctor: '[]'}
+				_elm_lang$core$List$map,
+				function (_p0) {
+					return A2(
+						_rtfeldman$elm_css$Html_Styled$div,
+						{ctor: '[]'},
+						_elm_lang$core$List$singleton(_p0));
 				},
 				A2(
-					_elm_lang$core$List$map,
-					function (_p1) {
-						return _fizwidget$wiki_path$View_Link$view(
-							_fizwidget$wiki_path$Data_Title$from(_p1));
+					_elm_lang$core$List$append,
+					{
+						ctor: '::',
+						_0: _fizwidget$wiki_path$View_Spinner$view(
+							{isVisible: true}),
+						_1: {ctor: '[]'}
 					},
-					_fizwidget$wiki_path$Data_OrderedSet$toList(visited)))));
+					A2(
+						_elm_lang$core$List$map,
+						function (_p1) {
+							return _fizwidget$wiki_path$View_Link$view(
+								_fizwidget$wiki_path$Data_Title$from(_p1));
+						},
+						A2(
+							_elm_lang$core$List$take,
+							10,
+							_fizwidget$wiki_path$Data_OrderedSet$toList(visited)))))));
 };
 var _fizwidget$wiki_path$Page_Pathfinding$viewDestinationContentWarning = function (destination) {
 	var message = A2(_elm_lang$core$String$contains, 'disambigbox', destination.content) ? 'The destination article is a disambiguation page, so I probably won\'t be able to find a path to it 🤖' : ((_elm_lang$core$Native_Utils.cmp(
@@ -17751,8 +17832,8 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = A2(
 		_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
 			{
 				ctor: '::',
-				_0: _rtfeldman$elm_css$Css$margin(
-					_rtfeldman$elm_css$Css$px(20)),
+				_0: _rtfeldman$elm_css$Css$marginTop(
+					_rtfeldman$elm_css$Css$px(10)),
 				_1: {ctor: '[]'}
 			}),
 		_1: {ctor: '[]'}
