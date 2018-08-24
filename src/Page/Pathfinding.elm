@@ -414,7 +414,7 @@ viewVisited visited =
         (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
             (OrderedSet.toList visited
                 |> List.take 10
-                |> List.map (Title.from >> Link.view)
+                |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]
                 |> List.map (List.singleton >> (div []))
             )
