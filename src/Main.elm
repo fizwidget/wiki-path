@@ -32,39 +32,39 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
-    case ( message, model ) of
+update msg model =
+    case ( msg, model ) of
+        ( SetupMsg innerMsg, SetupPage innerModel ) ->
+            Setup.update innerMsg innerModel |> handleSetupUpdate
+
+        ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
+            Pathfinding.update innerMsg innerModel |> handlePathfindingUpdate
+
         ( BackToSetup source destination, _ ) ->
-            initSetupWithTitles source destination
-
-        ( SetupMsg msg, SetupPage model ) ->
-            Setup.update msg model |> onSetupUpdate
-
-        ( PathfindingMsg msg, PathfindingPage model ) ->
-            Pathfinding.update msg model |> onPathfindingUpdate
+            initSetupPageWithTitles source destination
 
         ( _, _ ) ->
             ( model, Cmd.none )
 
 
-onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
-onSetupUpdate updateResult =
+handleSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+handleSetupUpdate updateResult =
     case updateResult of
         Setup.Continue ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
         Setup.Done source destination ->
-            Pathfinding.init source destination |> onPathfindingUpdate
+            Pathfinding.init source destination |> handlePathfindingUpdate
 
 
-onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
-onPathfindingUpdate updateResult =
+handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+handlePathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.Continue ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
 
         Pathfinding.Abort source destination ->
-            initSetupWithTitles source.title destination.title
+            initSetupPageWithTitles source.title destination.title
 
         Pathfinding.PathFound path ->
             Finished.initWithPath path
@@ -97,18 +97,18 @@ inFinishedPage =
     inPage FinishedPage identity
 
 
-inPage : (pageModel -> model) -> (pageMsg -> msg) -> ( pageModel, Cmd pageMsg ) -> ( model, Cmd msg )
-inPage toModel toMsg ( pageModel, pageCmd ) =
-    ( toModel pageModel, Cmd.map toMsg pageCmd )
+inPage : (innerModel -> model) -> (innerMsg -> msg) -> ( innerModel, Cmd innerMsg ) -> ( model, Cmd msg )
+inPage toModel toMsg ( innerModel, innerCmd ) =
+    ( toModel innerModel, Cmd.map toMsg innerCmd )
 
 
-initSetup : ( Model, Cmd Msg )
-initSetup =
+initSetupPage : ( Model, Cmd Msg )
+initSetupPage =
     inSetupPage Setup.init
 
 
-initSetupWithTitles : Title -> Title -> ( Model, Cmd Msg )
-initSetupWithTitles source destination =
+initSetupPageWithTitles : Title -> Title -> ( Model, Cmd Msg )
+initSetupPageWithTitles source destination =
     Setup.initWithTitles source destination |> inSetupPage
 
 
@@ -161,12 +161,10 @@ viewModel : Model -> Html Msg
 viewModel model =
     case model of
         SetupPage model ->
-            Setup.view model
-                |> StyledHtml.map SetupMsg
+            Setup.view model |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model
-                |> StyledHtml.map PathfindingMsg
+            Pathfinding.view model |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup
@@ -179,8 +177,8 @@ viewModel model =
 main : Program Never Model Msg
 main =
     Html.program
-        { init = initSetup
+        { init = initSetupPage
         , view = view >> toUnstyled
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = always Sub.none
         }
