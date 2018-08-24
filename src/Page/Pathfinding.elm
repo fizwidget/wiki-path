@@ -20,7 +20,7 @@ import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Bootstrap.Button as ButtonOptions
-import Request.Article as Article exposing (RemoteArticle, ArticleResult, ArticleError)
+import Request.Article as Article exposing (ArticleResult, ArticleError)
 import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 import Data.Path as Path exposing (Path)
 import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)

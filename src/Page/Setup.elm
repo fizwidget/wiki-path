@@ -30,8 +30,8 @@ import View.Spinner as Spinner
 
 
 type alias Model =
-    { sourceTitleInput : UserInput
-    , destinationTitleInput : UserInput
+    { sourceTitle : UserInput
+    , destinationTitle : UserInput
     , source : RemoteArticle
     , destination : RemoteArticle
     , randomTitles : RemoteTitlePair
@@ -59,9 +59,9 @@ initWithTitles source destination =
 
 
 initialModel : String -> String -> Model
-initialModel sourceTitleInput destinationTitleInput =
-    { sourceTitleInput = sourceTitleInput
-    , destinationTitleInput = destinationTitleInput
+initialModel sourceTitle destinationTitle =
+    { sourceTitle = sourceTitle
+    , destinationTitle = destinationTitle
     , source = NotAsked
     , destination = NotAsked
     , randomTitles = NotAsked
@@ -88,15 +88,15 @@ type UpdateResult
 
 
 update : Msg -> Model -> UpdateResult
-update message model =
-    case message of
-        SourceArticleTitleChange value ->
-            { model | sourceTitleInput = value, source = NotAsked }
+update msg model =
+    case msg of
+        SourceArticleTitleChange title ->
+            { model | sourceTitle = title, source = NotAsked }
                 |> noCmd
                 |> Continue
 
-        DestinationArticleTitleChange value ->
-            { model | destinationTitleInput = value, destination = NotAsked }
+        DestinationArticleTitleChange title ->
+            { model | destinationTitle = title, destination = NotAsked }
                 |> noCmd
                 |> Continue
 
@@ -106,7 +106,7 @@ update message model =
 
         FetchRandomTitlesResponse response ->
             { model | randomTitles = response }
-                |> copyRandomTitlesToInputFields
+                |> displayRandomTitles
                 |> noCmd
                 |> Continue
 
@@ -116,44 +116,36 @@ update message model =
 
         FetchSourceArticleResponse article ->
             { model | source = article }
-                |> doneIfArticlesLoaded
+                |> doneIfBothLoaded
 
         FetchDestinationArticleResponse article ->
             { model | destination = article }
-                |> doneIfArticlesLoaded
+                |> doneIfBothLoaded
 
 
 fetchArticles : Model -> Cmd Msg
-fetchArticles model =
+fetchArticles { sourceTitle, destinationTitle } =
     Cmd.batch <|
-        [ Article.fetchRemoteArticle FetchSourceArticleResponse model.sourceTitleInput
-        , Article.fetchRemoteArticle FetchDestinationArticleResponse model.destinationTitleInput
+        [ Article.fetchRemoteArticle FetchSourceArticleResponse sourceTitle
+        , Article.fetchRemoteArticle FetchDestinationArticleResponse destinationTitle
         ]
 
 
-doneIfArticlesLoaded : Model -> UpdateResult
-doneIfArticlesLoaded model =
-    let
-        sourceAndDestination =
-            RemoteData.toMaybe <| RemoteData.map2 (,) model.source model.destination
-    in
-        case sourceAndDestination of
-            Just ( source, destination ) ->
-                Done source destination
-
-            Nothing ->
-                model |> noCmd |> Continue
+doneIfBothLoaded : Model -> UpdateResult
+doneIfBothLoaded ({ source, destination } as model) =
+    RemoteData.map2 Done source destination
+        |> RemoteData.withDefault (model |> noCmd |> Continue)
 
 
-copyRandomTitlesToInputFields : Model -> Model
-copyRandomTitlesToInputFields model =
+displayRandomTitles : Model -> Model
+displayRandomTitles model =
     let
         setInputFields ( source, destination ) =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceTitleInput = Title.value source
-                , destinationTitleInput = Title.value destination
+                , sourceTitle = Title.value source
+                , destinationTitle = Title.value destination
             }
     in
         model.randomTitles
@@ -172,24 +164,25 @@ view model =
         [ viewTitleInputs model
         , viewFindPathButton model
         , viewRandomizeTitlesButton model
-        , viewRandomizationError model
+        , viewRandomizeTitlesError model
         , viewLoadingSpinner model
         ]
 
 
 viewTitleInputs : Model -> Html Msg
-viewTitleInputs ({ sourceTitleInput, destinationTitleInput, source, destination } as model) =
-    let
-        inputStatus =
-            if isLoading model then
-                Disabled
-            else
-                Enabled
-    in
-        div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-            [ viewSourceTitleInput sourceTitleInput source inputStatus
-            , viewDestinationTitleInput destinationTitleInput destination inputStatus
-            ]
+viewTitleInputs ({ sourceTitle, destinationTitle, source, destination } as model) =
+    div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
+        [ viewSourceTitleInput sourceTitle source (getInputStatus model)
+        , viewDestinationTitleInput destinationTitle destination (getInputStatus model)
+        ]
+
+
+getInputStatus : Model -> InputStatus
+getInputStatus model =
+    if isLoading model then
+        Disabled
+    else
+        Enabled
 
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
@@ -266,13 +259,14 @@ viewRandomizeTitlesButton model =
 
 shouldDisableLoadButton : Model -> Bool
 shouldDisableLoadButton model =
-    let
-        isBlank =
-            String.trim >> String.isEmpty
-    in
-        isLoading model
-            || isBlank model.sourceTitleInput
-            || isBlank model.destinationTitleInput
+    isLoading model
+        || isBlank model.sourceTitle
+        || isBlank model.destinationTitle
+
+
+isBlank : String -> Bool
+isBlank =
+    String.trim >> String.isEmpty
 
 
 viewLoadingSpinner : Model -> Html msg
@@ -286,9 +280,7 @@ isLoading : Model -> Bool
 isLoading { source, destination, randomTitles } =
     let
         areArticlesLoading =
-            [ source, destination ]
-                |> RemoteData.fromList
-                |> RemoteData.isLoading
+            List.any RemoteData.isLoading [ source, destination ]
 
         areTitlesLoading =
             RemoteData.isLoading randomTitles
@@ -306,8 +298,8 @@ viewArticleError remoteArticle =
             text ""
 
 
-viewRandomizationError : Model -> Html msg
-viewRandomizationError { randomTitles } =
+viewRandomizeTitlesError : Model -> Html msg
+viewRandomizeTitlesError { randomTitles } =
     case randomTitles of
         RemoteData.Failure error ->
             Error.viewGeneralError "Error randomizing titles 😵" (toString error)
