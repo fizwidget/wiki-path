@@ -19,7 +19,7 @@ view content =
                 , right (px 0)
                 , backgroundImage
                     (linearGradient
-                        (stop2 (rgba 255 255 255 0) (pct 70))
+                        (stop2 (rgba 255 255 255 0) (pct 60))
                         (stop2 (rgba 255 255 255 1) (pct 100))
                         []
                     )

@@ -56,7 +56,11 @@ initWithTooManyRequestsError =
 
 initWithError : Error -> Article -> Article -> Model
 initWithError error source destination =
-    Error { error = error, source = source, destination = destination }
+    Error
+        { error = error
+        , source = source
+        , destination = destination
+        }
 
 
 
