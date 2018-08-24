@@ -22,6 +22,21 @@ type Model
 
 
 
+-- INIT
+
+
+initSetupPage : ( Model, Cmd Msg )
+initSetupPage =
+    inSetupPage Setup.init
+
+
+initSetupPageWithTitles : Title -> Title -> ( Model, Cmd Msg )
+initSetupPageWithTitles source destination =
+    Setup.initWithTitles source destination
+        |> inSetupPage
+
+
+
 -- UPDATE
 
 
@@ -35,10 +50,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
         ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel |> handleSetupUpdate
+            Setup.update innerMsg innerModel
+                |> handleSetupUpdate
 
         ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel |> handlePathfindingUpdate
+            Pathfinding.update innerMsg innerModel
+                |> handlePathfindingUpdate
 
         ( BackToSetup source destination, _ ) ->
             initSetupPageWithTitles source destination
@@ -54,7 +71,8 @@ handleSetupUpdate updateResult =
             inSetupPage ( model, cmd )
 
         Setup.Done source destination ->
-            Pathfinding.init source destination |> handlePathfindingUpdate
+            Pathfinding.init source destination
+                |> handlePathfindingUpdate
 
 
 handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
@@ -100,16 +118,6 @@ inFinishedPage =
 inPage : (innerModel -> model) -> (innerMsg -> msg) -> ( innerModel, Cmd innerMsg ) -> ( model, Cmd msg )
 inPage toModel toMsg ( innerModel, innerCmd ) =
     ( toModel innerModel, Cmd.map toMsg innerCmd )
-
-
-initSetupPage : ( Model, Cmd Msg )
-initSetupPage =
-    inSetupPage Setup.init
-
-
-initSetupPageWithTitles : Title -> Title -> ( Model, Cmd Msg )
-initSetupPageWithTitles source destination =
-    Setup.initWithTitles source destination |> inSetupPage
 
 
 
@@ -161,10 +169,12 @@ viewModel : Model -> Html Msg
 viewModel model =
     case model of
         SetupPage model ->
-            Setup.view model |> StyledHtml.map SetupMsg
+            Setup.view model
+                |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model |> StyledHtml.map PathfindingMsg
+            Pathfinding.view model
+                |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup

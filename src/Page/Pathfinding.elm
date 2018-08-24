@@ -50,7 +50,7 @@ type alias RequestCount =
 
 
 
--- Config
+-- CONFIG
 
 
 totalRequestsLimit : RequestCount
