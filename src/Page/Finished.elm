@@ -18,7 +18,7 @@ import View.Button as Button
 import View.Link as Link
 
 
--- Model
+-- MODEL
 
 
 type Model
@@ -36,7 +36,7 @@ type Error
 
 
 
--- Init
+-- INIT
 
 
 initWithPath : Path -> Model
@@ -56,11 +56,15 @@ initWithTooManyRequestsError =
 
 initWithError : Error -> Article -> Article -> Model
 initWithError error source destination =
-    Error { error = error, source = source, destination = destination }
+    Error
+        { error = error
+        , source = source
+        , destination = destination
+        }
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> (Title -> Title -> backMsg) -> Html backMsg

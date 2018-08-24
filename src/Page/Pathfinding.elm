@@ -2,13 +2,7 @@ module Page.Pathfinding
     exposing
         ( Model
         , Msg
-        , UpdateResult
-            ( Continue
-            , Abort
-            , PathFound
-            , PathNotFound
-            , TooManyRequests
-            )
+        , UpdateResult(..)
         , init
         , update
         , view
@@ -20,7 +14,7 @@ import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Bootstrap.Button as ButtonOptions
-import Request.Article as Article exposing (RemoteArticle, ArticleResult, ArticleError)
+import Request.Article as Article exposing (ArticleResult, ArticleError)
 import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 import Data.Path as Path exposing (Path)
 import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
@@ -33,44 +27,52 @@ import View.Link as Link
 import View.Fade as Fade
 
 
--- Model
+-- MODEL
 
 
 type alias Model =
     { source : Article
     , destination : Article
     , paths : PriorityQueue Path
-    , visitedTitles : OrderedSet String
+    , visitedTitles : VisitedTitles
     , errors : List ArticleError
-    , pendingRequests : Int
-    , totalRequests : Int
+    , pendingRequests : RequestCount
+    , totalRequests : RequestCount
     }
+
+
+type alias VisitedTitles =
+    OrderedSet String
+
+
+type alias RequestCount =
+    Int
 
 
 
 -- Config
 
 
-totalRequestsLimit : Int
+totalRequestsLimit : RequestCount
 totalRequestsLimit =
     400
 
 
-pendingRequestsLimit : Int
+pendingRequestsLimit : RequestCount
 pendingRequestsLimit =
     4
 
 
 
--- Init
+-- INIT
 
 
 init : Article -> Article -> UpdateResult
 init source destination =
     articleReceived
-        (initialModel source destination)
         (Path.beginningWith source.title)
         source
+        (initialModel source destination)
 
 
 initialModel : Article -> Article -> Model
@@ -86,11 +88,11 @@ initialModel source destination =
 
 
 
--- Update
+-- UPDATE
 
 
 type Msg
-    = FetchArticleResponse Path ArticleResult
+    = ArticleResponse Path ArticleResult
     | AbortRequest
 
 
@@ -105,55 +107,53 @@ type UpdateResult
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        FetchArticleResponse pathToArticle articleResult ->
-            responseReceived
-                (decrementPendingRequests model)
-                pathToArticle
-                articleResult
+        ArticleResponse pathToArticle articleResult ->
+            model
+                |> decrementPendingRequests
+                |> responseReceived pathToArticle articleResult
 
         AbortRequest ->
             Abort model.source model.destination
 
 
-responseReceived : Model -> Path -> ArticleResult -> UpdateResult
-responseReceived model pathToArticle articleResult =
+responseReceived : Path -> ArticleResult -> Model -> UpdateResult
+responseReceived pathToArticle articleResult model =
     case articleResult of
         Ok article ->
-            articleReceived model pathToArticle article
+            articleReceived pathToArticle article model
 
         Err error ->
-            errorReceived model error
+            errorReceived error model
 
 
-articleReceived : Model -> Path -> Article -> UpdateResult
-articleReceived model pathToArticle article =
-    if hasReachedDestination model article then
+articleReceived : Path -> Article -> Model -> UpdateResult
+articleReceived pathToArticle article model =
+    if hasReachedDestination article model then
         PathFound pathToArticle
     else
-        processLinks model pathToArticle article
+        model
+            |> processLinks pathToArticle article
             |> continueSearch
 
 
-errorReceived : Model -> ArticleError -> UpdateResult
-errorReceived model error =
+errorReceived : ArticleError -> Model -> UpdateResult
+errorReceived error model =
     { model | errors = error :: model.errors }
         |> continueSearch
 
 
-processLinks : Model -> Path -> Article -> Model
-processLinks model pathToArticle article =
+processLinks : Path -> Article -> Model -> Model
+processLinks pathToArticle article model =
     let
-        candidateLinks =
-            List.filter (isCandidate model.visitedTitles) article.links
-
-        extendedPaths =
-            candidateLinks
+        newPaths =
+            article.links
+                |> List.filter (isCandidate model.visitedTitles)
                 |> List.map (extendPath pathToArticle model.destination)
-                |> discardLowPriorityPaths
+                |> discardLowPriorities
     in
         { model
-            | paths = PriorityQueue.insert model.paths Path.priority extendedPaths
-            , visitedTitles = markVisited model.visitedTitles extendedPaths
+            | paths = PriorityQueue.insert model.paths Path.priority newPaths
+            , visitedTitles = markVisited model.visitedTitles newPaths
         }
 
 
@@ -169,23 +169,23 @@ continueSearch model =
         updatedModel =
             { model | paths = updatedPriorityQueue }
 
-        areNoPathsAvailable =
+        isDeadEnd =
             List.isEmpty pathsToExplore && model.pendingRequests == 0
     in
-        if areNoPathsAvailable then
+        if isDeadEnd then
             PathNotFound updatedModel.source updatedModel.destination
         else
             explorePaths updatedModel pathsToExplore
 
 
 explorePaths : Model -> List Path -> UpdateResult
-explorePaths model paths =
-    case containsPathToDestination model.destination paths of
+explorePaths model pathsToFollow =
+    case containsPathToDestination pathsToFollow model.destination of
         Just pathToDestination ->
             PathFound pathToDestination
 
         Nothing ->
-            fetchNextArticles model paths
+            fetchNextArticles model pathsToFollow
 
 
 fetchNextArticles : Model -> List Path -> UpdateResult
@@ -197,7 +197,7 @@ fetchNextArticles model pathsToFollow =
         updatedModel =
             incrementRequests model (List.length requests)
     in
-        if hasMadeTooManyRequests updatedModel then
+        if updatedModel.totalRequests > totalRequestsLimit then
             TooManyRequests updatedModel.source updatedModel.destination
         else
             Continue ( updatedModel, Cmd.batch requests )
@@ -206,17 +206,16 @@ fetchNextArticles model pathsToFollow =
 fetchNextArticle : Path -> Cmd Msg
 fetchNextArticle pathToFollow =
     let
-        toMsg =
-            FetchArticleResponse pathToFollow
-
-        title =
-            (Path.nextStop >> Title.value) pathToFollow
+        articleTitle =
+            pathToFollow
+                |> Path.nextStop
+                |> Title.value
     in
-        Article.fetchArticleResult toMsg title
+        Article.fetchArticleResult (ArticleResponse pathToFollow) articleTitle
 
 
-containsPathToDestination : Article -> List Path -> Maybe Path
-containsPathToDestination destination paths =
+containsPathToDestination : List Path -> Article -> Maybe Path
+containsPathToDestination paths destination =
     let
         hasPathReachedDestination destination currentPath =
             Path.nextStop currentPath == destination.title
@@ -227,14 +226,9 @@ containsPathToDestination destination paths =
             |> List.head
 
 
-hasReachedDestination : Model -> Article -> Bool
-hasReachedDestination { destination } nextArticle =
-    nextArticle.title == destination.title
-
-
-hasMadeTooManyRequests : Model -> Bool
-hasMadeTooManyRequests { totalRequests } =
-    totalRequests > totalRequestsLimit
+hasReachedDestination : Article -> Model -> Bool
+hasReachedDestination article { destination } =
+    article.title == destination.title
 
 
 decrementPendingRequests : Model -> Model
@@ -242,7 +236,7 @@ decrementPendingRequests model =
     { model | pendingRequests = model.pendingRequests - 1 }
 
 
-incrementRequests : Model -> Int -> Model
+incrementRequests : Model -> RequestCount -> Model
 incrementRequests model requestCount =
     { model
         | pendingRequests = model.pendingRequests + requestCount
@@ -251,7 +245,7 @@ incrementRequests model requestCount =
 
 
 
--- Util
+-- UTIL
 
 
 isCandidate : OrderedSet String -> Link -> Bool
@@ -331,15 +325,15 @@ countOccurences content target =
             |> List.length
 
 
-discardLowPriorityPaths : List Path -> List Path
-discardLowPriorityPaths paths =
+discardLowPriorities : List Path -> List Path
+discardLowPriorities paths =
     paths
         |> List.sortBy (Path.priority >> negate)
         |> List.take 2
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -366,7 +360,7 @@ viewHeading source destination =
 
 viewErrors : List ArticleError -> Html msg
 viewErrors errors =
-    div [] <| List.map Error.viewArticleError errors
+    div [] (List.map Error.viewArticleError errors)
 
 
 viewBackButton : Html Msg
@@ -414,7 +408,7 @@ viewVisited visited =
         (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
             (OrderedSet.toList visited
                 |> List.take 10
-                |> List.map (Title.from >> Link.view)
+                |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]
                 |> List.map (List.singleton >> (div []))
             )
