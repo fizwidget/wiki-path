@@ -26,7 +26,7 @@ import View.Error as Error
 import View.Spinner as Spinner
 
 
--- Model
+-- MODEL
 
 
 type alias Model =
@@ -43,7 +43,7 @@ type alias UserInput =
 
 
 
--- Init
+-- INIT
 
 
 init : ( Model, Cmd Msg )
@@ -69,7 +69,7 @@ initialModel sourceTitleInput destinationTitleInput =
 
 
 
--- Update
+-- UPDATE
 
 
 type Msg
@@ -162,7 +162,7 @@ copyRandomTitlesToInputFields model =
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> Html Msg

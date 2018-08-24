@@ -18,7 +18,7 @@ import View.Button as Button
 import View.Link as Link
 
 
--- Model
+-- MODEL
 
 
 type Model
@@ -36,7 +36,7 @@ type Error
 
 
 
--- Init
+-- INIT
 
 
 initWithPath : Path -> Model
@@ -60,7 +60,7 @@ initWithError error source destination =
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> (Title -> Title -> backMsg) -> Html backMsg

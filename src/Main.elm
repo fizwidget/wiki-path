@@ -12,7 +12,7 @@ import Page.Setup as Setup
 import Data.Title exposing (Title)
 
 
--- Model
+-- MODEL
 
 
 type Model
@@ -22,7 +22,7 @@ type Model
 
 
 
--- Update
+-- UPDATE
 
 
 type Msg
@@ -113,7 +113,7 @@ initSetupWithTitles source destination =
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -130,11 +130,6 @@ view model =
         [ viewHeading
         , viewModel model
         ]
-
-
-
--- [ withMedia [ only screen [ Media.minWidth (px 300), Media.maxWidth (px 800) ] ]
---        [ Css.maxWidth (px 300) ]
 
 
 viewHeading : Html msg
@@ -178,7 +173,7 @@ viewModel model =
 
 
 
--- Main
+-- MAIN
 
 
 main : Program Never Model Msg

@@ -33,7 +33,7 @@ import View.Link as Link
 import View.Fade as Fade
 
 
--- Model
+-- MODEL
 
 
 type alias Model =
@@ -62,7 +62,7 @@ pendingRequestsLimit =
 
 
 
--- Init
+-- INIT
 
 
 init : Article -> Article -> UpdateResult
@@ -86,7 +86,7 @@ initialModel source destination =
 
 
 
--- Update
+-- UPDATE
 
 
 type Msg
@@ -339,7 +339,7 @@ discardLowPriorityPaths paths =
 
 
 
--- View
+-- VIEW
 
 
 view : Model -> Html Msg
