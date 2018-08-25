@@ -11,6 +11,7 @@
 * Come up with a better heuristic regex (current one doesn't handle quotes, trailing colon, etc).
 
 ## Views
+* Remove dependency on Bootstrap library. Use Bootstrap CSS instead?
 * Revamp pathfinding view:
     * Display list of visited titles instead of best path.
     * Fade in the top ones.
