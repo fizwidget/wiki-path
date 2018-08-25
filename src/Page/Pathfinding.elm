@@ -21,7 +21,7 @@ import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
 import Data.OrderedSet as OrderedSet exposing (OrderedSet)
 import Data.Title as Title exposing (Title)
 import View.Button as Button
-import View.Error as Error
+import View.ArticleError as ArticleError
 import View.Spinner as Spinner
 import View.Link as Link
 import View.FadeOut as FadeOut
@@ -84,7 +84,7 @@ initialModel source destination =
 
 
 type Msg
-    = ArticleResponse Path ArticleResult
+    = ArticleLoaded Path ArticleResult
     | CancelPathfinding
 
 
@@ -99,7 +99,7 @@ type UpdateResult
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        ArticleResponse pathToArticle articleResult ->
+        ArticleLoaded pathToArticle articleResult ->
             model
                 |> decrementPendingRequests
                 |> responseReceived pathToArticle articleResult
@@ -120,7 +120,7 @@ responseReceived pathToArticle articleResult model =
 
 articleReceived : Path -> Article -> Model -> UpdateResult
 articleReceived pathToArticle article model =
-    if hasReachedDestination article model then
+    if article.title == model.destination.title then
         Complete pathToArticle
     else
         model
@@ -203,24 +203,19 @@ fetchNextArticle pathToFollow =
                 |> Path.nextStop
                 |> Title.value
     in
-        Article.fetchArticleResult (ArticleResponse pathToFollow) articleTitle
+        Article.fetchArticleResult (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article -> Maybe Path
 containsPathToDestination paths destination =
     let
-        hasPathReachedDestination destination currentPath =
-            Path.nextStop currentPath == destination.title
+        hasReachedDestination path =
+            Path.nextStop path == destination.title
     in
         paths
-            |> List.filter (hasPathReachedDestination destination)
+            |> List.filter hasReachedDestination
             |> List.sortBy Path.length
             |> List.head
-
-
-hasReachedDestination : Article -> Model -> Bool
-hasReachedDestination article { destination } =
-    article.title == destination.title
 
 
 decrementPendingRequests : Model -> Model
@@ -237,7 +232,7 @@ incrementRequests model requestCount =
 
 
 
--- UTIL
+-- PATHFINDING UTILS
 
 
 isCandidate : OrderedSet String -> Link -> Bool
@@ -352,7 +347,10 @@ viewHeading source destination =
 
 viewErrors : List ArticleError -> Html msg
 viewErrors errors =
-    div [] (List.map Error.viewArticleError errors)
+    errors
+        |> List.head
+        |> Maybe.map ArticleError.view
+        |> Maybe.withDefault (text "")
 
 
 viewBackButton : Html Msg

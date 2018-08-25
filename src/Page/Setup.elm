@@ -21,7 +21,7 @@ import Request.Title as Title exposing (RemoteTitlePair)
 import Data.Article exposing (Article)
 import Data.Title as Title exposing (Title)
 import View.Button as Button
-import View.Error as Error
+import View.ArticleError as ArticleError
 import View.Spinner as Spinner
 
 
@@ -168,7 +168,7 @@ view model =
         [ viewTitleInputs model
         , viewFindPathButton model
         , viewRandomizeTitlesButton model
-        , viewRandomizeTitlesError model
+        , viewTitleRandomizationError model
         , viewLoadingSpinner model
         ]
 
@@ -296,17 +296,17 @@ viewArticleError : RemoteArticle -> Html msg
 viewArticleError remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            Error.viewArticleError error
+            ArticleError.view error
 
         _ ->
             text ""
 
 
-viewRandomizeTitlesError : Model -> Html msg
-viewRandomizeTitlesError { randomTitles } =
+viewTitleRandomizationError : Model -> Html msg
+viewTitleRandomizationError { randomTitles } =
     case randomTitles of
-        RemoteData.Failure error ->
-            Error.viewGeneralError "Error randomizing titles 😵" (toString error)
+        RemoteData.Failure _ ->
+            text "Sorry, an error occured 😵"
 
         _ ->
             text ""

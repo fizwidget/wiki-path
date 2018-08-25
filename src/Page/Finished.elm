@@ -23,11 +23,14 @@ import View.Link as Link
 
 type Model
     = Success Path
-    | Error
-        { error : Error
-        , source : Article
-        , destination : Article
-        }
+    | Error ErrorDetails
+
+
+type alias ErrorDetails =
+    { error : Error
+    , source : Article
+    , destination : Article
+    }
 
 
 type Error
@@ -69,7 +72,14 @@ initWithError error source destination =
 
 view : Model -> (Title -> Title -> backMsg) -> Html backMsg
 view model toBackMsg =
-    div [ css [ displayFlex, alignItems center, justifyContent center, flexDirection column ] ]
+    div
+        [ css
+            [ displayFlex
+            , alignItems center
+            , justifyContent center
+            , flexDirection column
+            ]
+        ]
         [ viewModel model
         , viewBackButton model toBackMsg
         ]
@@ -81,8 +91,8 @@ viewModel model =
         Success pathToDestination ->
             viewSuccess pathToDestination
 
-        Error { source, destination, error } ->
-            viewError source destination error
+        Error errorDetails ->
+            viewError errorDetails
 
 
 viewSuccess : Path -> Html msg
@@ -112,10 +122,10 @@ viewPath path =
         |> div []
 
 
-viewError : Article -> Article -> Error -> Html msg
-viewError source destination error =
+viewError : ErrorDetails -> Html msg
+viewError { source, destination, error } =
     let
-        baseErrorMessage =
+        pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
             , Link.view source.title
             , text " to "
@@ -126,11 +136,11 @@ viewError source destination error =
         div [ css [ textAlign center ] ]
             (case error of
                 PathNotFound ->
-                    baseErrorMessage
+                    pathNotFoundMessage
 
                 TooManyRequests ->
                     List.append
-                        baseErrorMessage
+                        pathNotFoundMessage
                         [ div [] [ text "We made too many requests to Wikipedia! 😵" ] ]
             )
 
@@ -139,7 +149,7 @@ viewBackButton : Model -> (Title -> Title -> backMsg) -> Html backMsg
 viewBackButton model toBackMsg =
     let
         onClick =
-            toBackMsg (getSource model) (getDestination model)
+            toBackMsg (getSourceTitle model) (getDestinationTitle model)
     in
         div [ css [ margin (px 20) ] ]
             [ Button.view
@@ -148,8 +158,8 @@ viewBackButton model toBackMsg =
             ]
 
 
-getSource : Model -> Title
-getSource model =
+getSourceTitle : Model -> Title
+getSourceTitle model =
     case model of
         Success path ->
             Path.beginning path
@@ -158,8 +168,8 @@ getSource model =
             source.title
 
 
-getDestination : Model -> Title
-getDestination model =
+getDestinationTitle : Model -> Title
+getDestinationTitle model =
     case model of
         Success path ->
             Path.end path
