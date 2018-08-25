@@ -73,7 +73,7 @@ randomTitlesResponseDecoder : Decoder (List Title)
 randomTitlesResponseDecoder =
     at
         [ "query", "random" ]
-        (list <| field "title" titleDecoder)
+        (field "title" (list titleDecoder))
 
 
 titleDecoder : Decoder Title

@@ -39,29 +39,31 @@ type ArticleError
 
 fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
 fetchArticleResult toMsg title =
-    let
-        toArticleResult : Result Http.Error ArticleResult -> ArticleResult
-        toArticleResult result =
-            result
-                |> Result.mapError HttpError
-                |> Result.andThen identity
-    in
-        buildRequest title
-            |> Http.send (toArticleResult >> toMsg)
+    title
+        |> buildRequest
+        |> Http.send (toArticleResult >> toMsg)
+
+
+toArticleResult : Result Http.Error ArticleResult -> ArticleResult
+toArticleResult result =
+    result
+        |> Result.mapError HttpError
+        |> Result.andThen identity
 
 
 fetchRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
 fetchRemoteArticle toMsg title =
-    let
-        toRemoteArticle : WebData ArticleResult -> RemoteArticle
-        toRemoteArticle webData =
-            webData
-                |> RemoteData.mapError HttpError
-                |> RemoteData.andThen RemoteData.fromResult
-    in
-        buildRequest title
-            |> RemoteData.sendRequest
-            |> Cmd.map (toRemoteArticle >> toMsg)
+    title
+        |> buildRequest
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle webData =
+    webData
+        |> RemoteData.mapError HttpError
+        |> RemoteData.andThen RemoteData.fromResult
 
 
 buildRequest : String -> Http.Request ArticleResult

@@ -7,13 +7,21 @@ import Css exposing (..)
 
 view : { isVisible : Bool } -> Html msg
 view { isVisible } =
-    let
-        visibilityValue =
-            if isVisible then
-                visibility visible
-            else
-                visibility hidden
-    in
-        div
-            [ class "lds-ellipsis", css [ visibilityValue ] ]
-            (List.repeat 4 <| div [] [])
+    div
+        [ class "lds-ellipsis" -- Styles live in top-level CSS file
+        , css [ visibilityStyle isVisible ]
+        ]
+        (List.repeat 4 emptyDiv)
+
+
+visibilityStyle : Bool -> Style
+visibilityStyle isVisible =
+    if isVisible then
+        visibility visible
+    else
+        visibility hidden
+
+
+emptyDiv : Html msg
+emptyDiv =
+    div [] []
