@@ -5,7 +5,7 @@ import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, string, list)
 import Html.Styled exposing (Html, a, text)
 import Html.Styled.Attributes exposing (href)
-import Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Url exposing (Url, QueryParam(KeyValue, Key))
 
 
 type Title

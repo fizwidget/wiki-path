@@ -178,7 +178,7 @@ viewModel model =
 main : Program Never Model Msg
 main =
     Html.program
-        { init = Setup.init |> inSetupPage
+        { init = inSetupPage Setup.init
         , view = view >> toUnstyled
         , update = update
         , subscriptions = always Sub.none

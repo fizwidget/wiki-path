@@ -13,15 +13,14 @@ import Html.Styled.Attributes exposing (css)
 import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
-import Bootstrap.Button as ButtonOptions
-import Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace), ArticleResult, ArticleError)
-import Path as Path exposing (Path)
-import PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
-import OrderedSet as OrderedSet exposing (OrderedSet)
-import Title as Title exposing (Title)
-import Button as Button
-import Spinner as Spinner
-import FadeOut as FadeOut
+import Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace), ArticleResult, ArticleError)
+import Path exposing (Path)
+import PriorityQueue exposing (PriorityQueue, Priority)
+import OrderedSet exposing (OrderedSet)
+import Title exposing (Title)
+import Button
+import Spinner
+import FadeOut
 
 
 -- MODEL
@@ -353,9 +352,10 @@ viewErrors errors =
 viewBackButton : Html Msg
 viewBackButton =
     div [ css [ marginTop (px 10) ] ]
-        [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick CancelPathfinding ]
-            [ text "Back" ]
+        [ Button.view "Back"
+            [ Button.Secondary
+            , Button.OnClick CancelPathfinding
+            ]
         ]
 
 

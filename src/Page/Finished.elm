@@ -10,11 +10,10 @@ module Page.Finished
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
-import Bootstrap.Button as ButtonOptions
 import Article exposing (Article)
-import Path as Path exposing (Path)
-import Title as Title exposing (Title)
-import Button as Button
+import Path exposing (Path)
+import Title exposing (Title)
+import Button
 
 
 -- MODEL
@@ -151,9 +150,10 @@ viewBackButton model toBackMsg =
             toBackMsg (getSourceTitle model) (getDestinationTitle model)
     in
         div [ css [ margin (px 20) ] ]
-            [ Button.view
-                [ ButtonOptions.secondary, ButtonOptions.onClick onClick ]
-                [ text "Back" ]
+            [ Button.view "Back"
+                [ Button.Secondary
+                , Button.OnClick onClick
+                ]
             ]
 
 
