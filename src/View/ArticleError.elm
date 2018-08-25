@@ -1,7 +1,7 @@
 module View.ArticleError exposing (view)
 
 import Html.Styled exposing (Html, div, text)
-import Request.Article exposing (ArticleError(..))
+import Api.Article exposing (ArticleError(..))
 
 
 view : ArticleError -> Html msg

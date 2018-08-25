@@ -1,4 +1,4 @@
-module Request.Article
+module Api.Article
     exposing
         ( ArticleResult
         , RemoteArticle
@@ -16,9 +16,9 @@ import Http
 import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Request.Wikipedia as Wikipedia
-import Request.Title as Title
+import Api.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Api.Wikipedia as Wikipedia
+import Api.Title as Title
 import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
 
 

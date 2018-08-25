@@ -1,4 +1,4 @@
-module Request.Title
+module Api.Title
     exposing
         ( RemoteTitlePair
         , TitleError(UnexpectedTitleCount, HttpError)
@@ -9,8 +9,8 @@ module Request.Title
 import Http
 import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, string, list)
-import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Request.Wikipedia as Wikipedia
+import Api.Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Api.Wikipedia as Wikipedia
 import Data.Title as Title exposing (Title)
 
 

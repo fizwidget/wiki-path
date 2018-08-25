@@ -16,8 +16,8 @@ import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Request.Article as Article exposing (RemoteArticle)
-import Request.Title as Title exposing (RemoteTitlePair)
+import Api.Article as Article exposing (RemoteArticle)
+import Api.Title as Title exposing (RemoteTitlePair)
 import Data.Article exposing (Article)
 import Data.Title as Title exposing (Title)
 import View.Button as Button
