@@ -163,62 +163,45 @@ view model =
         [ css [ displayFlex, alignItems center, flexDirection column ] ]
         [ viewTitleInputs model
         , viewFindPathButton model
-        , viewRandomizeTitlesButton model
+        , viewRandomizeTitlesButton (isLoading model)
         , viewTitleRandomizationError model.randomTitles
-        , viewLoadingSpinner model
+        , viewLoadingSpinner (isLoading model)
         ]
 
 
 viewTitleInputs : Model -> Html Msg
 viewTitleInputs ({ sourceInput, destinationInput, source, destination } as model) =
     div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-        [ viewSourceTitleInput sourceInput source (getInputStatus model)
-        , viewDestinationTitleInput destinationInput destination (getInputStatus model)
+        [ viewSourceTitleInput sourceInput source (isLoading model)
+        , viewDestinationTitleInput destinationInput destination (isLoading model)
         ]
 
 
-getInputStatus : Model -> InputStatus
-getInputStatus model =
-    if isLoading model then
-        Disabled
-    else
-        Enabled
-
-
-viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
+viewSourceTitleInput : UserInput -> RemoteArticle -> Bool -> Html Msg
 viewSourceTitleInput =
     viewTitleInput SourceInputChange "From..."
 
 
-viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
+viewDestinationTitleInput : UserInput -> RemoteArticle -> Bool -> Html Msg
 viewDestinationTitleInput =
     viewTitleInput DestinationInputChange "To..."
 
 
-viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
-viewTitleInput toMsg placeholder title article inputStatus =
-    let
-        isDisabled =
-            case inputStatus of
-                Enabled ->
-                    False
-
-                Disabled ->
-                    True
-    in
-        div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
-            [ Form.group
-                (Input.text
-                    [ Input.Large
-                    , Input.OnInput toMsg
-                    , Input.Value title
-                    , Input.Placeholder placeholder
-                    , Input.Disabled isDisabled
-                    , Input.Error (RemoteData.isFailure article)
-                    ]
-                )
-                (viewArticleError article)
-            ]
+viewTitleInput : (UserInput -> Msg) -> String -> String -> RemoteArticle -> Bool -> Html Msg
+viewTitleInput toMsg placeholder title article isDisabled =
+    div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
+        [ Form.group
+            (Input.text
+                [ Input.Large
+                , Input.OnInput toMsg
+                , Input.Value title
+                , Input.Placeholder placeholder
+                , Input.Disabled isDisabled
+                , Input.Error (RemoteData.isFailure article)
+                ]
+            )
+            (viewArticleError article)
+        ]
 
 
 viewFindPathButton : Model -> Html Msg
@@ -233,47 +216,16 @@ viewFindPathButton model =
         ]
 
 
-viewRandomizeTitlesButton : Model -> Html Msg
-viewRandomizeTitlesButton model =
+viewRandomizeTitlesButton : Bool -> Html Msg
+viewRandomizeTitlesButton isDisabled =
     div [ css [ padding (px 12) ] ]
         [ Button.view "Randomize"
             [ Button.Light
             , Button.Large
-            , Button.Disabled (isLoading model)
+            , Button.Disabled isDisabled
             , Button.OnClick RandomizeTitlesRequest
             ]
         ]
-
-
-shouldDisableLoadButton : Model -> Bool
-shouldDisableLoadButton model =
-    isLoading model
-        || isBlank model.sourceInput
-        || isBlank model.destinationInput
-
-
-isBlank : String -> Bool
-isBlank =
-    String.trim >> String.isEmpty
-
-
-viewLoadingSpinner : Model -> Html msg
-viewLoadingSpinner model =
-    div
-        [ css [ paddingTop (px 6) ] ]
-        [ Spinner.view { isVisible = isLoading model } ]
-
-
-isLoading : Model -> Bool
-isLoading { source, destination, randomTitles } =
-    let
-        areArticlesLoading =
-            List.any RemoteData.isLoading [ source, destination ]
-
-        areTitlesLoading =
-            RemoteData.isLoading randomTitles
-    in
-        areArticlesLoading || areTitlesLoading
 
 
 viewArticleError : RemoteArticle -> Html msg
@@ -294,6 +246,32 @@ viewTitleRandomizationError randomTitles =
         text ""
 
 
-type InputStatus
-    = Enabled
-    | Disabled
+viewLoadingSpinner : Bool -> Html msg
+viewLoadingSpinner isVisible =
+    div
+        [ css [ paddingTop (px 6) ] ]
+        [ Spinner.view { isVisible = isVisible } ]
+
+
+shouldDisableLoadButton : Model -> Bool
+shouldDisableLoadButton model =
+    isLoading model
+        || isBlank model.sourceInput
+        || isBlank model.destinationInput
+
+
+isBlank : String -> Bool
+isBlank =
+    String.trim >> String.isEmpty
+
+
+isLoading : Model -> Bool
+isLoading { source, destination, randomTitles } =
+    let
+        areArticlesLoading =
+            List.any RemoteData.isLoading [ source, destination ]
+
+        areTitlesLoading =
+            RemoteData.isLoading randomTitles
+    in
+        areArticlesLoading || areTitlesLoading
