@@ -8,7 +8,7 @@ import Css.Media as Media exposing (withMedia)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Data.Title exposing (Title)
+import Title exposing (Title)
 
 
 -- MODEL

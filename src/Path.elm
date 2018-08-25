@@ -1,4 +1,4 @@
-module Data.Path
+module Path
     exposing
         ( Path
         , beginningAt
@@ -12,8 +12,8 @@ module Data.Path
         , length
         )
 
-import Data.PriorityQueue exposing (Priority)
-import Data.Title exposing (Title)
+import PriorityQueue exposing (Priority)
+import Title exposing (Title)
 
 
 type Path

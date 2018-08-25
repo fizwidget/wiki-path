@@ -11,11 +11,10 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, i
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import Bootstrap.Button as ButtonOptions
-import Data.Article exposing (Article)
-import Data.Path as Path exposing (Path)
-import Data.Title as Title exposing (Title)
-import View.Button as Button
-import View.Link as Link
+import Article exposing (Article)
+import Path as Path exposing (Path)
+import Title as Title exposing (Title)
+import Button as Button
 
 
 -- MODEL
@@ -117,7 +116,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Link.view
+        |> List.map Title.viewAsLink
         |> List.intersperse (text " → ")
         |> div []
 
@@ -127,9 +126,9 @@ viewError { source, destination, error } =
     let
         pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
-            , Link.view source.title
+            , Title.viewAsLink source.title
             , text " to "
-            , Link.view destination.title
+            , Title.viewAsLink destination.title
             , text " 💀"
             ]
     in

@@ -14,17 +14,14 @@ import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Bootstrap.Button as ButtonOptions
-import Api.Article as Article exposing (ArticleResult, ArticleError)
-import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
-import Data.Path as Path exposing (Path)
-import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
-import Data.OrderedSet as OrderedSet exposing (OrderedSet)
-import Data.Title as Title exposing (Title)
-import View.Button as Button
-import View.ArticleError as ArticleError
-import View.Spinner as Spinner
-import View.Link as Link
-import View.FadeOut as FadeOut
+import Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace), ArticleResult, ArticleError)
+import Path as Path exposing (Path)
+import PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import OrderedSet as OrderedSet exposing (OrderedSet)
+import Title as Title exposing (Title)
+import Button as Button
+import Spinner as Spinner
+import FadeOut as FadeOut
 
 
 -- MODEL
@@ -338,9 +335,9 @@ viewHeading : Article -> Article -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Link.view source.title
+        , Title.viewAsLink source.title
         , text " to "
-        , Link.view destination.title
+        , Title.viewAsLink destination.title
         , text "..."
         ]
 
@@ -349,7 +346,7 @@ viewErrors : List ArticleError -> Html msg
 viewErrors errors =
     errors
         |> List.head
-        |> Maybe.map ArticleError.view
+        |> Maybe.map Article.viewError
         |> Maybe.withDefault (text "")
 
 

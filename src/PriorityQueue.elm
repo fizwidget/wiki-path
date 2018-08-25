@@ -1,4 +1,4 @@
-module Data.PriorityQueue
+module PriorityQueue
     exposing
         ( PriorityQueue
         , Priority

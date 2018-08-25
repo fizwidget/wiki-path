@@ -16,13 +16,10 @@ import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Api.Article as Article exposing (RemoteArticle)
-import Api.Title as Title exposing (RemoteTitlePair)
-import Data.Article exposing (Article)
-import Data.Title as Title exposing (Title)
-import View.Button as Button
-import View.ArticleError as ArticleError
-import View.Spinner as Spinner
+import Article as Article exposing (Article, RemoteArticle)
+import Title as Title exposing (Title, RemoteTitlePair)
+import Button as Button
+import Spinner as Spinner
 
 
 -- MODEL
@@ -296,7 +293,7 @@ viewArticleError : RemoteArticle -> Html msg
 viewArticleError remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            ArticleError.view error
+            Article.viewError error
 
         _ ->
             text ""

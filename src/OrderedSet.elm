@@ -1,4 +1,4 @@
-module Data.OrderedSet exposing (OrderedSet, singleton, member, insert, inOrder)
+module OrderedSet exposing (OrderedSet, singleton, member, insert, inOrder)
 
 import Set exposing (Set)
 
