@@ -14,17 +14,14 @@ import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
 import Bootstrap.Button as ButtonOptions
-import Request.Article as Article exposing (ArticleResult, ArticleError)
-import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
-import Data.Path as Path exposing (Path)
-import Data.PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
-import Data.OrderedSet as OrderedSet exposing (OrderedSet)
-import Data.Title as Title exposing (Title)
-import View.Button as Button
-import View.Error as Error
-import View.Spinner as Spinner
-import View.Link as Link
-import View.Fade as Fade
+import Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace), ArticleResult, ArticleError)
+import Path as Path exposing (Path)
+import PriorityQueue as PriorityQueue exposing (PriorityQueue, Priority)
+import OrderedSet as OrderedSet exposing (OrderedSet)
+import Title as Title exposing (Title)
+import Button as Button
+import Spinner as Spinner
+import FadeOut as FadeOut
 
 
 -- MODEL
@@ -34,31 +31,23 @@ type alias Model =
     { source : Article
     , destination : Article
     , paths : PriorityQueue Path
-    , visitedTitles : VisitedTitles
+    , visitedTitles : OrderedSet String
     , errors : List ArticleError
-    , pendingRequests : RequestCount
-    , totalRequests : RequestCount
+    , pendingRequests : Int
+    , totalRequests : Int
     }
 
 
-type alias VisitedTitles =
-    OrderedSet String
+
+-- CONFIG
 
 
-type alias RequestCount =
-    Int
-
-
-
--- Config
-
-
-totalRequestsLimit : RequestCount
+totalRequestsLimit : Int
 totalRequestsLimit =
     400
 
 
-pendingRequestsLimit : RequestCount
+pendingRequestsLimit : Int
 pendingRequestsLimit =
     4
 
@@ -70,7 +59,7 @@ pendingRequestsLimit =
 init : Article -> Article -> UpdateResult
 init source destination =
     articleReceived
-        (Path.beginningWith source.title)
+        (Path.beginningAt source.title)
         source
         (initialModel source destination)
 
@@ -80,7 +69,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , paths = PriorityQueue.empty
-    , visitedTitles = OrderedSet.singleton (Title.value source.title)
+    , visitedTitles = OrderedSet.singleton (Title.asString source.title)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
@@ -92,28 +81,28 @@ initialModel source destination =
 
 
 type Msg
-    = ArticleResponse Path ArticleResult
-    | AbortRequest
+    = ArticleLoaded Path ArticleResult
+    | CancelPathfinding
 
 
 type UpdateResult
-    = Continue ( Model, Cmd Msg )
-    | PathFound Path
+    = InProgress ( Model, Cmd Msg )
+    | Cancelled Article Article
+    | Complete Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
-    | Abort Article Article
 
 
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        ArticleResponse pathToArticle articleResult ->
+        ArticleLoaded pathToArticle articleResult ->
             model
                 |> decrementPendingRequests
                 |> responseReceived pathToArticle articleResult
 
-        AbortRequest ->
-            Abort model.source model.destination
+        CancelPathfinding ->
+            Cancelled model.source model.destination
 
 
 responseReceived : Path -> ArticleResult -> Model -> UpdateResult
@@ -128,8 +117,8 @@ responseReceived pathToArticle articleResult model =
 
 articleReceived : Path -> Article -> Model -> UpdateResult
 articleReceived pathToArticle article model =
-    if hasReachedDestination article model then
-        PathFound pathToArticle
+    if article.title == model.destination.title then
+        Complete pathToArticle
     else
         model
             |> processLinks pathToArticle article
@@ -182,17 +171,17 @@ explorePaths : Model -> List Path -> UpdateResult
 explorePaths model pathsToFollow =
     case containsPathToDestination pathsToFollow model.destination of
         Just pathToDestination ->
-            PathFound pathToDestination
+            Complete pathToDestination
 
         Nothing ->
-            fetchNextArticles model pathsToFollow
+            getNextArticles model pathsToFollow
 
 
-fetchNextArticles : Model -> List Path -> UpdateResult
-fetchNextArticles model pathsToFollow =
+getNextArticles : Model -> List Path -> UpdateResult
+getNextArticles model pathsToFollow =
     let
         requests =
-            List.map fetchNextArticle pathsToFollow
+            List.map getNextArticle pathsToFollow
 
         updatedModel =
             incrementRequests model (List.length requests)
@@ -200,35 +189,30 @@ fetchNextArticles model pathsToFollow =
         if updatedModel.totalRequests > totalRequestsLimit then
             TooManyRequests updatedModel.source updatedModel.destination
         else
-            Continue ( updatedModel, Cmd.batch requests )
+            InProgress ( updatedModel, Cmd.batch requests )
 
 
-fetchNextArticle : Path -> Cmd Msg
-fetchNextArticle pathToFollow =
+getNextArticle : Path -> Cmd Msg
+getNextArticle pathToFollow =
     let
         articleTitle =
             pathToFollow
-                |> Path.nextStop
-                |> Title.value
+                |> Path.end
+                |> Title.asString
     in
-        Article.fetchArticleResult (ArticleResponse pathToFollow) articleTitle
+        Article.getArticleResult (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article -> Maybe Path
 containsPathToDestination paths destination =
     let
-        hasPathReachedDestination destination currentPath =
-            Path.nextStop currentPath == destination.title
+        hasReachedDestination path =
+            Path.end path == destination.title
     in
         paths
-            |> List.filter (hasPathReachedDestination destination)
+            |> List.filter hasReachedDestination
             |> List.sortBy Path.length
             |> List.head
-
-
-hasReachedDestination : Article -> Model -> Bool
-hasReachedDestination article { destination } =
-    article.title == destination.title
 
 
 decrementPendingRequests : Model -> Model
@@ -236,7 +220,7 @@ decrementPendingRequests model =
     { model | pendingRequests = model.pendingRequests - 1 }
 
 
-incrementRequests : Model -> RequestCount -> Model
+incrementRequests : Model -> Int -> Model
 incrementRequests model requestCount =
     { model
         | pendingRequests = model.pendingRequests + requestCount
@@ -245,14 +229,14 @@ incrementRequests model requestCount =
 
 
 
--- UTIL
+-- PATHFINDING UTILS
 
 
 isCandidate : OrderedSet String -> Link -> Bool
 isCandidate visitedTitles link =
     let
         title =
-            Title.value link.title
+            Title.asString link.title
 
         hasMinimumLength =
             String.length title > 1
@@ -278,7 +262,7 @@ isCandidate visitedTitles link =
                 , "Geographic coordinate system"
                 ]
     in
-        link.doesExist
+        link.exists
             && hasMinimumLength
             && isRegularArticle
             && not isVisited
@@ -288,7 +272,7 @@ isCandidate visitedTitles link =
 markVisited : OrderedSet String -> List Path -> OrderedSet String
 markVisited visitedTitles newPaths =
     newPaths
-        |> List.map (Path.nextStop >> Title.value)
+        |> List.map (Path.end >> Title.asString)
         |> List.foldl OrderedSet.insert visitedTitles
 
 
@@ -310,7 +294,7 @@ heuristic destination title =
     if title == destination.title then
         10000
     else
-        toFloat <| countOccurences destination.content (Title.value title)
+        toFloat <| countOccurences destination.content (Title.asString title)
 
 
 countOccurences : String -> String -> Int
@@ -351,23 +335,26 @@ viewHeading : Article -> Article -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Link.view source.title
+        , Title.viewAsLink source.title
         , text " to "
-        , Link.view destination.title
+        , Title.viewAsLink destination.title
         , text "..."
         ]
 
 
 viewErrors : List ArticleError -> Html msg
 viewErrors errors =
-    div [] (List.map Error.viewArticleError errors)
+    errors
+        |> List.head
+        |> Maybe.map Article.viewError
+        |> Maybe.withDefault (text "")
 
 
 viewBackButton : Html Msg
 viewBackButton =
     div [ css [ marginTop (px 10) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequest ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick CancelPathfinding ]
             [ text "Back" ]
         ]
 
@@ -385,9 +372,9 @@ viewDestinationContentWarning destination =
     let
         message =
             if String.contains "disambigbox" destination.content then
-                "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916"
+                "The destination is a disambiguation page, so I probably won't be able to find a path to it 😅"
             else if String.length destination.content < 10000 then
-                "The destination article is very short, so my pathfinding heuristic won't work well \x1F916"
+                "The destination article is very short, so it might take longer than usual to find! 😅"
             else
                 ""
     in
@@ -397,16 +384,16 @@ viewDestinationContentWarning destination =
 viewPathCountWarning : Int -> Html msg
 viewPathCountWarning totalRequests =
     if totalRequests > totalRequestsLimit // 2 then
-        div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
+        div [] [ text "This isn't looking good. Try a different destination maybe? 💩" ]
     else
         text ""
 
 
 viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
-    Fade.view
+    FadeOut.view
         (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
-            (OrderedSet.toList visited
+            (OrderedSet.inOrder visited
                 |> List.take 10
                 |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]

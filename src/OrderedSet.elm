@@ -1,4 +1,4 @@
-module Data.OrderedSet exposing (OrderedSet, singleton, member, insert, toList)
+module OrderedSet exposing (OrderedSet, singleton, member, insert, inOrder)
 
 import Set exposing (Set)
 
@@ -22,6 +22,6 @@ insert value (OrderedSet set list) =
     OrderedSet (Set.insert value set) (value :: list)
 
 
-toList : OrderedSet comparable -> List comparable
-toList (OrderedSet _ list) =
+inOrder : OrderedSet comparable -> List comparable
+inOrder (OrderedSet _ list) =
     list

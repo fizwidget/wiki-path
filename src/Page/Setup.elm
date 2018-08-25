@@ -2,7 +2,7 @@ module Page.Setup
     exposing
         ( Model
         , Msg
-        , UpdateResult(Continue, Done)
+        , UpdateResult(InProgress, Complete)
         , init
         , initWithTitles
         , update
@@ -16,22 +16,18 @@ import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Util exposing (noCmd)
-import Request.Article as Article exposing (RemoteArticle)
-import Request.Title as Title exposing (RemoteTitlePair)
-import Data.Article exposing (Article)
-import Data.Title as Title exposing (Title)
-import View.Button as Button
-import View.Error as Error
-import View.Spinner as Spinner
+import Article as Article exposing (Article, RemoteArticle)
+import Title as Title exposing (Title, RemoteTitlePair)
+import Button as Button
+import Spinner as Spinner
 
 
 -- MODEL
 
 
 type alias Model =
-    { sourceTitle : UserInput
-    , destinationTitle : UserInput
+    { sourceInput : UserInput
+    , destinationInput : UserInput
     , source : RemoteArticle
     , destination : RemoteArticle
     , randomTitles : RemoteTitlePair
@@ -53,15 +49,15 @@ init =
 
 initWithTitles : Title -> Title -> ( Model, Cmd Msg )
 initWithTitles source destination =
-    ( initialModel (Title.value source) (Title.value destination)
+    ( initialModel (Title.asString source) (Title.asString destination)
     , Cmd.none
     )
 
 
 initialModel : String -> String -> Model
-initialModel sourceTitle destinationTitle =
-    { sourceTitle = sourceTitle
-    , destinationTitle = destinationTitle
+initialModel sourceInput destinationInput =
+    { sourceInput = sourceInput
+    , destinationInput = destinationInput
     , source = NotAsked
     , destination = NotAsked
     , randomTitles = NotAsked
@@ -73,84 +69,89 @@ initialModel sourceTitle destinationTitle =
 
 
 type Msg
-    = SourceArticleTitleChange UserInput
-    | DestinationArticleTitleChange UserInput
-    | FetchArticlesRequest
-    | FetchSourceArticleResponse RemoteArticle
-    | FetchDestinationArticleResponse RemoteArticle
-    | FetchRandomTitlesRequest
-    | FetchRandomTitlesResponse RemoteTitlePair
+    = SourceInputChange UserInput
+    | DestinationInputChange UserInput
+    | GetArticlesRequest
+    | GetSourceArticleResponse RemoteArticle
+    | GetDestinationArticleResponse RemoteArticle
+    | RandomizeTitlesRequest
+    | RandomizeTitlesResponse RemoteTitlePair
 
 
 type UpdateResult
-    = Continue ( Model, Cmd Msg )
-    | Done Article Article
+    = InProgress ( Model, Cmd Msg )
+    | Complete Article Article
 
 
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        SourceArticleTitleChange title ->
-            { model | sourceTitle = title, source = NotAsked }
+        SourceInputChange input ->
+            { model | sourceInput = input, source = NotAsked }
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        DestinationArticleTitleChange title ->
-            { model | destinationTitle = title, destination = NotAsked }
+        DestinationInputChange input ->
+            { model | destinationInput = input, destination = NotAsked }
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        FetchRandomTitlesRequest ->
-            ( { model | randomTitles = Loading }, Title.fetchPair FetchRandomTitlesResponse )
-                |> Continue
+        RandomizeTitlesRequest ->
+            ( { model | randomTitles = Loading }, Title.getRandomPair RandomizeTitlesResponse )
+                |> InProgress
 
-        FetchRandomTitlesResponse response ->
+        RandomizeTitlesResponse response ->
             { model | randomTitles = response }
-                |> displayRandomTitles
+                |> randomizeTitleInputs
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        FetchArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, fetchArticles model )
-                |> Continue
+        GetArticlesRequest ->
+            ( { model | source = Loading, destination = Loading }, getArticles model )
+                |> InProgress
 
-        FetchSourceArticleResponse article ->
+        GetSourceArticleResponse article ->
             { model | source = article }
-                |> doneIfBothLoaded
+                |> maybeComplete
 
-        FetchDestinationArticleResponse article ->
+        GetDestinationArticleResponse article ->
             { model | destination = article }
-                |> doneIfBothLoaded
+                |> maybeComplete
 
 
-fetchArticles : Model -> Cmd Msg
-fetchArticles { sourceTitle, destinationTitle } =
+getArticles : Model -> Cmd Msg
+getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
-        [ Article.fetchRemoteArticle FetchSourceArticleResponse sourceTitle
-        , Article.fetchRemoteArticle FetchDestinationArticleResponse destinationTitle
+        [ Article.getRemoteArticle GetSourceArticleResponse sourceInput
+        , Article.getRemoteArticle GetDestinationArticleResponse destinationInput
         ]
 
 
-doneIfBothLoaded : Model -> UpdateResult
-doneIfBothLoaded ({ source, destination } as model) =
-    RemoteData.map2 Done source destination
-        |> RemoteData.withDefault (model |> noCmd |> Continue)
+maybeComplete : Model -> UpdateResult
+maybeComplete ({ source, destination } as model) =
+    RemoteData.map2 Complete source destination
+        |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
-displayRandomTitles : Model -> Model
-displayRandomTitles model =
+randomizeTitleInputs : Model -> Model
+randomizeTitleInputs model =
     let
-        setInputFields ( source, destination ) =
+        setTitleInputs ( source, destination ) =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceTitle = Title.value source
-                , destinationTitle = Title.value destination
+                , sourceInput = Title.asString source
+                , destinationInput = Title.asString destination
             }
     in
         model.randomTitles
-            |> RemoteData.map setInputFields
+            |> RemoteData.map setTitleInputs
             |> RemoteData.withDefault model
+
+
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 
@@ -164,16 +165,16 @@ view model =
         [ viewTitleInputs model
         , viewFindPathButton model
         , viewRandomizeTitlesButton model
-        , viewRandomizeTitlesError model
+        , viewTitleRandomizationError model.randomTitles
         , viewLoadingSpinner model
         ]
 
 
 viewTitleInputs : Model -> Html Msg
-viewTitleInputs ({ sourceTitle, destinationTitle, source, destination } as model) =
+viewTitleInputs ({ sourceInput, destinationInput, source, destination } as model) =
     div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-        [ viewSourceTitleInput sourceTitle source (getInputStatus model)
-        , viewDestinationTitleInput destinationTitle destination (getInputStatus model)
+        [ viewSourceTitleInput sourceInput source (getInputStatus model)
+        , viewDestinationTitleInput destinationInput destination (getInputStatus model)
         ]
 
 
@@ -187,12 +188,12 @@ getInputStatus model =
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewSourceTitleInput =
-    viewTitleInput SourceArticleTitleChange "From..."
+    viewTitleInput SourceInputChange "From..."
 
 
 viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewDestinationTitleInput =
-    viewTitleInput DestinationArticleTitleChange "To..."
+    viewTitleInput DestinationInputChange "To..."
 
 
 viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
@@ -238,7 +239,7 @@ viewFindPathButton model =
             [ ButtonOptions.primary
             , ButtonOptions.large
             , ButtonOptions.disabled (shouldDisableLoadButton model)
-            , ButtonOptions.onClick FetchArticlesRequest
+            , ButtonOptions.onClick GetArticlesRequest
             ]
             [ text "Find path" ]
         ]
@@ -251,7 +252,7 @@ viewRandomizeTitlesButton model =
             [ ButtonOptions.light
             , ButtonOptions.large
             , ButtonOptions.disabled (isLoading model)
-            , ButtonOptions.onClick FetchRandomTitlesRequest
+            , ButtonOptions.onClick RandomizeTitlesRequest
             ]
             [ text "Randomize" ]
         ]
@@ -260,8 +261,8 @@ viewRandomizeTitlesButton model =
 shouldDisableLoadButton : Model -> Bool
 shouldDisableLoadButton model =
     isLoading model
-        || isBlank model.sourceTitle
-        || isBlank model.destinationTitle
+        || isBlank model.sourceInput
+        || isBlank model.destinationInput
 
 
 isBlank : String -> Bool
@@ -292,20 +293,18 @@ viewArticleError : RemoteArticle -> Html msg
 viewArticleError remoteArticle =
     case remoteArticle of
         RemoteData.Failure error ->
-            Error.viewArticleError error
+            Article.viewError error
 
         _ ->
             text ""
 
 
-viewRandomizeTitlesError : Model -> Html msg
-viewRandomizeTitlesError { randomTitles } =
-    case randomTitles of
-        RemoteData.Failure error ->
-            Error.viewGeneralError "Error randomizing titles 😵" (toString error)
-
-        _ ->
-            text ""
+viewTitleRandomizationError : RemoteTitlePair -> Html msg
+viewTitleRandomizationError randomTitles =
+    if RemoteData.isFailure randomTitles then
+        text "Sorry, an error occured 😵"
+    else
+        text ""
 
 
 type InputStatus

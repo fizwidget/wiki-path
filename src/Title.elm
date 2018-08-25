@@ -1,17 +1,45 @@
-module Request.Title
-    exposing
-        ( RemoteTitlePair
-        , TitleError(UnexpectedTitleCount, HttpError)
-        , fetchPair
-        , titleDecoder
-        )
+module Title exposing (Title, RemoteTitlePair, from, asString, getRandomPair, titleDecoder, viewAsLink)
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, string, list)
-import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Request.Wikipedia as Wikipedia
-import Data.Title as Title exposing (Title)
+import Html.Styled exposing (Html, a, text)
+import Html.Styled.Attributes exposing (href)
+import Url as Url exposing (Url, QueryParam(KeyValue, Key))
+
+
+type Title
+    = Title String
+
+
+from : String -> Title
+from =
+    Title
+
+
+asString : Title -> String
+asString (Title title) =
+    title
+
+
+
+-- VIEW
+
+
+viewAsLink : Title -> Html msg
+viewAsLink title =
+    a
+        [ href (toUrl title) ]
+        [ text (asString title) ]
+
+
+toUrl : Title -> String
+toUrl title =
+    "https://en.wikipedia.org/wiki/" ++ (asString title)
+
+
+
+-- API
 
 
 type alias RemoteTitlePair =
@@ -23,8 +51,8 @@ type TitleError
     | HttpError Http.Error
 
 
-fetchPair : (RemoteTitlePair -> msg) -> Cmd msg
-fetchPair toMsg =
+getRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
+getRandomPair toMsg =
     buildRandomTitleRequest 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteTitlePair >> toMsg)
@@ -66,7 +94,11 @@ buildRandomTitlesUrl titleCount =
             , KeyValue ( "origin", "*" )
             ]
     in
-        Url.build Wikipedia.apiBaseUrl queryParams
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+
+
+
+-- SERIALIZATION
 
 
 randomTitlesResponseDecoder : Decoder (List Title)
@@ -78,4 +110,4 @@ randomTitlesResponseDecoder =
 
 titleDecoder : Decoder Title
 titleDecoder =
-    map Title.from string
+    map from string

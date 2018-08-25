@@ -5,11 +5,10 @@ import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Css exposing (..)
 import Css.Media as Media exposing (withMedia)
-import Util exposing (noCmd)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Data.Title exposing (Title)
+import Title exposing (Title)
 
 
 -- MODEL
@@ -34,14 +33,17 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel |> handleSetupUpdate
+        ( SetupMsg subMsg, SetupPage subModel ) ->
+            Setup.update subMsg subModel
+                |> handleSetupUpdate
 
-        ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel |> handlePathfindingUpdate
+        ( PathfindingMsg subMsg, PathfindingPage subModel ) ->
+            Pathfinding.update subMsg subModel
+                |> handlePathfindingUpdate
 
         ( BackToSetup source destination, _ ) ->
-            initSetupPageWithTitles source destination
+            Setup.initWithTitles source destination
+                |> inSetupPage
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -50,23 +52,25 @@ update msg model =
 handleSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
 handleSetupUpdate updateResult =
     case updateResult of
-        Setup.Continue ( model, cmd ) ->
+        Setup.InProgress ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
-        Setup.Done source destination ->
-            Pathfinding.init source destination |> handlePathfindingUpdate
+        Setup.Complete source destination ->
+            Pathfinding.init source destination
+                |> handlePathfindingUpdate
 
 
 handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
 handlePathfindingUpdate updateResult =
     case updateResult of
-        Pathfinding.Continue ( model, cmd ) ->
+        Pathfinding.InProgress ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
 
-        Pathfinding.Abort source destination ->
-            initSetupPageWithTitles source.title destination.title
+        Pathfinding.Cancelled source destination ->
+            Setup.initWithTitles source.title destination.title
+                |> inSetupPage
 
-        Pathfinding.PathFound path ->
+        Pathfinding.Complete path ->
             Finished.initWithPath path
                 |> noCmd
                 |> inFinishedPage
@@ -97,19 +101,14 @@ inFinishedPage =
     inPage FinishedPage identity
 
 
-inPage : (innerModel -> model) -> (innerMsg -> msg) -> ( innerModel, Cmd innerMsg ) -> ( model, Cmd msg )
-inPage toModel toMsg ( innerModel, innerCmd ) =
-    ( toModel innerModel, Cmd.map toMsg innerCmd )
+inPage : (subModel -> model) -> (subMsg -> msg) -> ( subModel, Cmd subMsg ) -> ( model, Cmd msg )
+inPage toModel toMsg ( subModel, subCmd ) =
+    ( toModel subModel, Cmd.map toMsg subCmd )
 
 
-initSetupPage : ( Model, Cmd Msg )
-initSetupPage =
-    inSetupPage Setup.init
-
-
-initSetupPageWithTitles : Title -> Title -> ( Model, Cmd Msg )
-initSetupPageWithTitles source destination =
-    Setup.initWithTitles source destination |> inSetupPage
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 
@@ -161,10 +160,12 @@ viewModel : Model -> Html Msg
 viewModel model =
     case model of
         SetupPage model ->
-            Setup.view model |> StyledHtml.map SetupMsg
+            Setup.view model
+                |> StyledHtml.map SetupMsg
 
         PathfindingPage model ->
-            Pathfinding.view model |> StyledHtml.map PathfindingMsg
+            Pathfinding.view model
+                |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
             Finished.view model BackToSetup
@@ -177,7 +178,7 @@ viewModel model =
 main : Program Never Model Msg
 main =
     Html.program
-        { init = initSetupPage
+        { init = Setup.init |> inSetupPage
         , view = view >> toUnstyled
         , update = update
         , subscriptions = always Sub.none

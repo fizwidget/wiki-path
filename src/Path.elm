@@ -1,7 +1,7 @@
-module Data.Path
+module Path
     exposing
         ( Path
-        , beginningWith
+        , beginningAt
         , beginning
         , end
         , inOrder
@@ -9,19 +9,26 @@ module Data.Path
         , priority
         , extend
         , contains
-        , nextStop
         , length
         )
 
-import Data.PriorityQueue exposing (Priority)
-import Data.Title exposing (Title)
+import PriorityQueue exposing (Priority)
+import Title exposing (Title)
 
 
-beginningWith : Title -> Path
-beginningWith articleTitle =
+type Path
+    = Path
+        { previousStops : List Title
+        , lastStop : Title
+        , priority : Priority
+        }
+
+
+beginningAt : Title -> Path
+beginningAt title =
     Path
-        { nextStop = articleTitle
-        , previousStops = []
+        { previousStops = []
+        , lastStop = title
         , priority = 0
         }
 
@@ -31,12 +38,12 @@ beginning (Path path) =
     path.previousStops
         |> List.reverse
         |> List.head
-        |> Maybe.withDefault path.nextStop
+        |> Maybe.withDefault path.lastStop
 
 
 end : Path -> Title
 end (Path path) =
-    path.nextStop
+    path.lastStop
 
 
 inOrder : Path -> List Title
@@ -46,7 +53,7 @@ inOrder =
 
 inReverseOrder : Path -> List Title
 inReverseOrder (Path path) =
-    path.nextStop :: path.previousStops
+    path.lastStop :: path.previousStops
 
 
 priority : Path -> Priority
@@ -55,33 +62,22 @@ priority (Path path) =
 
 
 extend : Path -> Title -> Priority -> Path
-extend (Path path) nextArticleTitle newPriority =
+extend (Path path) nextTitle nextPriority =
     Path
         { path
-            | nextStop = nextArticleTitle
-            , previousStops = path.nextStop :: path.previousStops
-            , priority = newPriority
+            | lastStop = nextTitle
+            , previousStops = path.lastStop :: path.previousStops
+            , priority = nextPriority
         }
 
 
 contains : Title -> Path -> Bool
 contains title path =
-    inReverseOrder path |> List.member title
-
-
-nextStop : Path -> Title
-nextStop (Path path) =
-    path.nextStop
+    path
+        |> inReverseOrder
+        |> List.member title
 
 
 length : Path -> Int
 length =
     inReverseOrder >> List.length
-
-
-type Path
-    = Path
-        { nextStop : Title
-        , previousStops : List Title
-        , priority : Priority
-        }

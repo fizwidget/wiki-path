@@ -1,25 +1,75 @@
-module Request.Article
+module Article
     exposing
-        ( ArticleResult
+        ( Article
+        , Link
+        , Namespace(..)
+        , ArticleResult
         , RemoteArticle
-        , ArticleError
-            ( ArticleNotFound
-            , InvalidTitle
-            , UnknownError
-            , HttpError
-            )
-        , fetchArticleResult
-        , fetchRemoteArticle
+        , ArticleError(..)
+        , getArticleResult
+        , getRemoteArticle
+        , viewError
         )
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import Request.Url as Url exposing (Url, QueryParam(KeyValue, Key))
-import Request.Wikipedia as Wikipedia
-import Request.Title as Title
-import Data.Article as Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
+import Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Html.Styled exposing (Html, div, text)
+import Title as Title exposing (Title)
+
+
+type alias Article =
+    { title : Title
+    , links : List Link
+    , content : HtmlString
+    }
+
+
+type alias Link =
+    { title : Title
+    , namespace : Namespace
+    , exists : Bool
+    }
+
+
+type Namespace
+    = ArticleNamespace
+    | NonArticleNamespace
+
+
+type alias HtmlString =
+    String
+
+
+
+-- VIEW
+
+
+viewError : ArticleError -> Html msg
+viewError error =
+    div [] [ text (toErrorMessage error) ]
+
+
+toErrorMessage : ArticleError -> String
+toErrorMessage error =
+    case error of
+        ArticleNotFound ->
+            "Couldn't find that article :("
+
+        InvalidTitle ->
+            "Not a valid article title :("
+
+        UnknownError _ ->
+            "Unknown error \x1F92F"
+
+        HttpError _ ->
+            "Network error 😭"
+
+
+
+-- API
 
 
 type alias ArticleResult =
@@ -37,31 +87,33 @@ type ArticleError
     | HttpError Http.Error
 
 
-fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
-fetchArticleResult toMsg title =
-    let
-        toArticleResult : Result Http.Error ArticleResult -> ArticleResult
-        toArticleResult result =
-            result
-                |> Result.mapError HttpError
-                |> Result.andThen identity
-    in
-        buildRequest title
-            |> Http.send (toArticleResult >> toMsg)
+getArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
+getArticleResult toMsg title =
+    title
+        |> buildRequest
+        |> Http.send (toArticleResult >> toMsg)
 
 
-fetchRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-fetchRemoteArticle toMsg title =
-    let
-        toRemoteArticle : WebData ArticleResult -> RemoteArticle
-        toRemoteArticle webData =
-            webData
-                |> RemoteData.mapError HttpError
-                |> RemoteData.andThen RemoteData.fromResult
-    in
-        buildRequest title
-            |> RemoteData.sendRequest
-            |> Cmd.map (toRemoteArticle >> toMsg)
+toArticleResult : Result Http.Error ArticleResult -> ArticleResult
+toArticleResult result =
+    result
+        |> Result.mapError HttpError
+        |> Result.andThen identity
+
+
+getRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+getRemoteArticle toMsg title =
+    title
+        |> buildRequest
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle webData =
+    webData
+        |> RemoteData.mapError HttpError
+        |> RemoteData.andThen RemoteData.fromResult
 
 
 buildRequest : String -> Http.Request ArticleResult
@@ -81,7 +133,11 @@ buildArticleUrl title =
             , Key "redirects"
             ]
     in
-        Url.build Wikipedia.apiBaseUrl queryParams
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+
+
+
+-- SERIALIZATION
 
 
 responseDecoder : Decoder ArticleResult
