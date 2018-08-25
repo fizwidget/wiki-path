@@ -102,7 +102,7 @@ update msg model =
 
         RandomizeTitlesResponse response ->
             { model | randomTitles = response }
-                |> displayRandomTitles
+                |> randomizeTitleInputs
                 |> noCmd
                 |> InProgress
 
@@ -133,10 +133,10 @@ maybeComplete ({ source, destination } as model) =
         |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
-displayRandomTitles : Model -> Model
-displayRandomTitles model =
+randomizeTitleInputs : Model -> Model
+randomizeTitleInputs model =
     let
-        setInputFields ( source, destination ) =
+        setTitleInputs ( source, destination ) =
             { model
                 | source = NotAsked
                 , destination = NotAsked
@@ -145,7 +145,7 @@ displayRandomTitles model =
             }
     in
         model.randomTitles
-            |> RemoteData.map setInputFields
+            |> RemoteData.map setTitleInputs
             |> RemoteData.withDefault model
 
 
