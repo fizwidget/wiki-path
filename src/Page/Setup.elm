@@ -89,13 +89,13 @@ type UpdateResult
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        SourceInputChange title ->
-            { model | sourceInput = title, source = NotAsked }
+        SourceInputChange input ->
+            { model | sourceInput = input, source = NotAsked }
                 |> noCmd
                 |> InProgress
 
-        DestinationInputChange title ->
-            { model | destinationInput = title, destination = NotAsked }
+        DestinationInputChange input ->
+            { model | destinationInput = input, destination = NotAsked }
                 |> noCmd
                 |> InProgress
 
