@@ -34,31 +34,23 @@ type alias Model =
     { source : Article
     , destination : Article
     , paths : PriorityQueue Path
-    , visitedTitles : VisitedTitles
+    , visitedTitles : OrderedSet String
     , errors : List ArticleError
-    , pendingRequests : RequestCount
-    , totalRequests : RequestCount
+    , pendingRequests : Int
+    , totalRequests : Int
     }
-
-
-type alias VisitedTitles =
-    OrderedSet String
-
-
-type alias RequestCount =
-    Int
 
 
 
 -- CONFIG
 
 
-totalRequestsLimit : RequestCount
+totalRequestsLimit : Int
 totalRequestsLimit =
     400
 
 
-pendingRequestsLimit : RequestCount
+pendingRequestsLimit : Int
 pendingRequestsLimit =
     4
 
@@ -93,15 +85,15 @@ initialModel source destination =
 
 type Msg
     = ArticleResponse Path ArticleResult
-    | AbortRequest
+    | CancelPathfinding
 
 
 type UpdateResult
     = Continue ( Model, Cmd Msg )
+    | Cancel Article Article
     | PathFound Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
-    | Abort Article Article
 
 
 update : Msg -> Model -> UpdateResult
@@ -112,8 +104,8 @@ update msg model =
                 |> decrementPendingRequests
                 |> responseReceived pathToArticle articleResult
 
-        AbortRequest ->
-            Abort model.source model.destination
+        CancelPathfinding ->
+            Cancel model.source model.destination
 
 
 responseReceived : Path -> ArticleResult -> Model -> UpdateResult
@@ -236,7 +228,7 @@ decrementPendingRequests model =
     { model | pendingRequests = model.pendingRequests - 1 }
 
 
-incrementRequests : Model -> RequestCount -> Model
+incrementRequests : Model -> Int -> Model
 incrementRequests model requestCount =
     { model
         | pendingRequests = model.pendingRequests + requestCount
@@ -367,7 +359,7 @@ viewBackButton : Html Msg
 viewBackButton =
     div [ css [ marginTop (px 10) ] ]
         [ Button.view
-            [ ButtonOptions.secondary, ButtonOptions.onClick AbortRequest ]
+            [ ButtonOptions.secondary, ButtonOptions.onClick CancelPathfinding ]
             [ text "Back" ]
         ]
 

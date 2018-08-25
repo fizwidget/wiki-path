@@ -22,21 +22,6 @@ type Model
 
 
 
--- INIT
-
-
-initSetupPage : ( Model, Cmd Msg )
-initSetupPage =
-    inSetupPage Setup.init
-
-
-initSetupPageWithTitles : Title -> Title -> ( Model, Cmd Msg )
-initSetupPageWithTitles source destination =
-    Setup.initWithTitles source destination
-        |> inSetupPage
-
-
-
 -- UPDATE
 
 
@@ -49,16 +34,17 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( SetupMsg innerMsg, SetupPage innerModel ) ->
-            Setup.update innerMsg innerModel
+        ( SetupMsg subMsg, SetupPage subModel ) ->
+            Setup.update subMsg subModel
                 |> handleSetupUpdate
 
-        ( PathfindingMsg innerMsg, PathfindingPage innerModel ) ->
-            Pathfinding.update innerMsg innerModel
+        ( PathfindingMsg subMsg, PathfindingPage subModel ) ->
+            Pathfinding.update subMsg subModel
                 |> handlePathfindingUpdate
 
         ( BackToSetup source destination, _ ) ->
-            initSetupPageWithTitles source destination
+            Setup.initWithTitles source destination
+                |> inSetupPage
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -81,8 +67,9 @@ handlePathfindingUpdate updateResult =
         Pathfinding.Continue ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
 
-        Pathfinding.Abort source destination ->
-            initSetupPageWithTitles source.title destination.title
+        Pathfinding.Cancel source destination ->
+            Setup.initWithTitles source.title destination.title
+                |> inSetupPage
 
         Pathfinding.PathFound path ->
             Finished.initWithPath path
@@ -115,9 +102,9 @@ inFinishedPage =
     inPage FinishedPage identity
 
 
-inPage : (innerModel -> model) -> (innerMsg -> msg) -> ( innerModel, Cmd innerMsg ) -> ( model, Cmd msg )
-inPage toModel toMsg ( innerModel, innerCmd ) =
-    ( toModel innerModel, Cmd.map toMsg innerCmd )
+inPage : (subModel -> model) -> (subMsg -> msg) -> ( subModel, Cmd subMsg ) -> ( model, Cmd msg )
+inPage toModel toMsg ( subModel, subCmd ) =
+    ( toModel subModel, Cmd.map toMsg subCmd )
 
 
 
@@ -187,7 +174,7 @@ viewModel model =
 main : Program Never Model Msg
 main =
     Html.program
-        { init = initSetupPage
+        { init = Setup.init |> inSetupPage
         , view = view >> toUnstyled
         , update = update
         , subscriptions = always Sub.none
