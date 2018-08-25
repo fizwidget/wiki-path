@@ -372,9 +372,9 @@ viewDestinationContentWarning destination =
     let
         message =
             if String.contains "disambigbox" destination.content then
-                "The destination article is a disambiguation page, so I probably won't be able to find a path to it \x1F916"
+                "The destination is a disambiguation page, so I probably won't be able to find a path to it 😅"
             else if String.length destination.content < 10000 then
-                "The destination article is very short, so my pathfinding heuristic won't work well \x1F916"
+                "The destination article is very short, so it might take longer than usual to find! 😅"
             else
                 ""
     in
@@ -384,7 +384,7 @@ viewDestinationContentWarning destination =
 viewPathCountWarning : Int -> Html msg
 viewPathCountWarning totalRequests =
     if totalRequests > totalRequestsLimit // 2 then
-        div [] [ text "This isn't looking good. Try a different destination maybe? 😅" ]
+        div [] [ text "This isn't looking good. Try a different destination maybe? 💩" ]
     else
         text ""
 
