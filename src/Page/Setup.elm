@@ -16,7 +16,6 @@ import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Util exposing (noCmd)
 import Request.Article as Article exposing (RemoteArticle)
 import Request.Title as Title exposing (RemoteTitlePair)
 import Data.Article exposing (Article)
@@ -151,6 +150,11 @@ displayRandomTitles model =
         model.randomTitles
             |> RemoteData.map setInputFields
             |> RemoteData.withDefault model
+
+
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 

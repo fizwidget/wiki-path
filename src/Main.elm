@@ -5,7 +5,6 @@ import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Css exposing (..)
 import Css.Media as Media exposing (withMedia)
-import Util exposing (noCmd)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
@@ -105,6 +104,11 @@ inFinishedPage =
 inPage : (subModel -> model) -> (subMsg -> msg) -> ( subModel, Cmd subMsg ) -> ( model, Cmd msg )
 inPage toModel toMsg ( subModel, subCmd ) =
     ( toModel subModel, Cmd.map toMsg subCmd )
+
+
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 
