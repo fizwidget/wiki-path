@@ -15,9 +15,9 @@ import Http
 import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
-import Url as Url exposing (Url, QueryParam(KeyValue, Key))
+import Url exposing (Url, QueryParam(KeyValue, Key))
 import Html.Styled exposing (Html, div, text)
-import Title as Title exposing (Title)
+import Title exposing (Title)
 
 
 type alias Article =

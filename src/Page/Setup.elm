@@ -12,14 +12,13 @@ module Page.Setup
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
-import Bootstrap.Button as ButtonOptions
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article as Article exposing (Article, RemoteArticle)
-import Title as Title exposing (Title, RemoteTitlePair)
-import Button as Button
-import Spinner as Spinner
+import Article exposing (Article, RemoteArticle)
+import Title exposing (Title, RemoteTitlePair)
+import Button
+import Spinner
 
 
 -- MODEL
@@ -235,26 +234,24 @@ viewTitleInput toMsg placeholder title article inputStatus =
 viewFindPathButton : Model -> Html Msg
 viewFindPathButton model =
     div [ css [ padding (px 4) ] ]
-        [ Button.view
-            [ ButtonOptions.primary
-            , ButtonOptions.large
-            , ButtonOptions.disabled (shouldDisableLoadButton model)
-            , ButtonOptions.onClick GetArticlesRequest
+        [ Button.view "Find path"
+            [ Button.Primary
+            , Button.Large
+            , Button.Disabled (shouldDisableLoadButton model)
+            , Button.OnClick GetArticlesRequest
             ]
-            [ text "Find path" ]
         ]
 
 
 viewRandomizeTitlesButton : Model -> Html Msg
 viewRandomizeTitlesButton model =
     div [ css [ padding (px 12) ] ]
-        [ Button.view
-            [ ButtonOptions.light
-            , ButtonOptions.large
-            , ButtonOptions.disabled (isLoading model)
-            , ButtonOptions.onClick RandomizeTitlesRequest
+        [ Button.view "Randomize"
+            [ Button.Light
+            , Button.Large
+            , Button.Disabled (isLoading model)
+            , Button.OnClick RandomizeTitlesRequest
             ]
-            [ text "Randomize" ]
         ]
 
 
