@@ -168,7 +168,7 @@ view model =
         [ viewTitleInputs model
         , viewFindPathButton model
         , viewRandomizeTitlesButton model
-        , viewTitleRandomizationError model
+        , viewTitleRandomizationError model.randomTitles
         , viewLoadingSpinner model
         ]
 
@@ -302,14 +302,12 @@ viewArticleError remoteArticle =
             text ""
 
 
-viewTitleRandomizationError : Model -> Html msg
-viewTitleRandomizationError { randomTitles } =
-    case randomTitles of
-        RemoteData.Failure _ ->
-            text "Sorry, an error occured 😵"
-
-        _ ->
-            text ""
+viewTitleRandomizationError : RemoteTitlePair -> Html msg
+viewTitleRandomizationError randomTitles =
+    if RemoteData.isFailure randomTitles then
+        text "Sorry, an error occured 😵"
+    else
+        text ""
 
 
 type InputStatus
