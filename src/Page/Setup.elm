@@ -2,7 +2,7 @@ module Page.Setup
     exposing
         ( Model
         , Msg
-        , UpdateResult(Continue, Done)
+        , UpdateResult(InProgress, Complete)
         , init
         , initWithTitles
         , update
@@ -72,52 +72,52 @@ initialModel sourceTitle destinationTitle =
 
 
 type Msg
-    = SourceArticleTitleChange UserInput
-    | DestinationArticleTitleChange UserInput
-    | FetchArticlesRequest
-    | FetchSourceArticleResponse RemoteArticle
-    | FetchDestinationArticleResponse RemoteArticle
-    | FetchRandomTitlesRequest
-    | FetchRandomTitlesResponse RemoteTitlePair
+    = SourceTitleChange UserInput
+    | DestinationTitleChange UserInput
+    | GetArticlesRequest
+    | GetSourceArticleResponse RemoteArticle
+    | GetDestinationArticleResponse RemoteArticle
+    | RandomizeTitlesRequest
+    | RandomizeTitlesResponse RemoteTitlePair
 
 
 type UpdateResult
-    = Continue ( Model, Cmd Msg )
-    | Done Article Article
+    = InProgress ( Model, Cmd Msg )
+    | Complete Article Article
 
 
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        SourceArticleTitleChange title ->
+        SourceTitleChange title ->
             { model | sourceTitle = title, source = NotAsked }
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        DestinationArticleTitleChange title ->
+        DestinationTitleChange title ->
             { model | destinationTitle = title, destination = NotAsked }
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        FetchRandomTitlesRequest ->
-            ( { model | randomTitles = Loading }, Title.fetchPair FetchRandomTitlesResponse )
-                |> Continue
+        RandomizeTitlesRequest ->
+            ( { model | randomTitles = Loading }, Title.fetchPair RandomizeTitlesResponse )
+                |> InProgress
 
-        FetchRandomTitlesResponse response ->
+        RandomizeTitlesResponse response ->
             { model | randomTitles = response }
                 |> displayRandomTitles
                 |> noCmd
-                |> Continue
+                |> InProgress
 
-        FetchArticlesRequest ->
+        GetArticlesRequest ->
             ( { model | source = Loading, destination = Loading }, fetchArticles model )
-                |> Continue
+                |> InProgress
 
-        FetchSourceArticleResponse article ->
+        GetSourceArticleResponse article ->
             { model | source = article }
                 |> doneIfBothLoaded
 
-        FetchDestinationArticleResponse article ->
+        GetDestinationArticleResponse article ->
             { model | destination = article }
                 |> doneIfBothLoaded
 
@@ -125,15 +125,15 @@ update msg model =
 fetchArticles : Model -> Cmd Msg
 fetchArticles { sourceTitle, destinationTitle } =
     Cmd.batch <|
-        [ Article.fetchRemoteArticle FetchSourceArticleResponse sourceTitle
-        , Article.fetchRemoteArticle FetchDestinationArticleResponse destinationTitle
+        [ Article.fetchRemoteArticle GetSourceArticleResponse sourceTitle
+        , Article.fetchRemoteArticle GetDestinationArticleResponse destinationTitle
         ]
 
 
 doneIfBothLoaded : Model -> UpdateResult
 doneIfBothLoaded ({ source, destination } as model) =
-    RemoteData.map2 Done source destination
-        |> RemoteData.withDefault (model |> noCmd |> Continue)
+    RemoteData.map2 Complete source destination
+        |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
 displayRandomTitles : Model -> Model
@@ -191,12 +191,12 @@ getInputStatus model =
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewSourceTitleInput =
-    viewTitleInput SourceArticleTitleChange "From..."
+    viewTitleInput SourceTitleChange "From..."
 
 
 viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewDestinationTitleInput =
-    viewTitleInput DestinationArticleTitleChange "To..."
+    viewTitleInput DestinationTitleChange "To..."
 
 
 viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
@@ -242,7 +242,7 @@ viewFindPathButton model =
             [ ButtonOptions.primary
             , ButtonOptions.large
             , ButtonOptions.disabled (shouldDisableLoadButton model)
-            , ButtonOptions.onClick FetchArticlesRequest
+            , ButtonOptions.onClick GetArticlesRequest
             ]
             [ text "Find path" ]
         ]
@@ -255,7 +255,7 @@ viewRandomizeTitlesButton model =
             [ ButtonOptions.light
             , ButtonOptions.large
             , ButtonOptions.disabled (isLoading model)
-            , ButtonOptions.onClick FetchRandomTitlesRequest
+            , ButtonOptions.onClick RandomizeTitlesRequest
             ]
             [ text "Randomize" ]
         ]

@@ -52,10 +52,10 @@ update msg model =
 handleSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
 handleSetupUpdate updateResult =
     case updateResult of
-        Setup.Continue ( model, cmd ) ->
+        Setup.InProgress ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
-        Setup.Done source destination ->
+        Setup.Complete source destination ->
             Pathfinding.init source destination
                 |> handlePathfindingUpdate
 
@@ -63,14 +63,14 @@ handleSetupUpdate updateResult =
 handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
 handlePathfindingUpdate updateResult =
     case updateResult of
-        Pathfinding.Continue ( model, cmd ) ->
+        Pathfinding.InProgress ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
 
-        Pathfinding.Cancel source destination ->
+        Pathfinding.Cancelled source destination ->
             Setup.initWithTitles source.title destination.title
                 |> inSetupPage
 
-        Pathfinding.PathFound path ->
+        Pathfinding.Complete path ->
             Finished.initWithPath path
                 |> noCmd
                 |> inFinishedPage

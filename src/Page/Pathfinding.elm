@@ -24,7 +24,7 @@ import View.Button as Button
 import View.Error as Error
 import View.Spinner as Spinner
 import View.Link as Link
-import View.Fade as Fade
+import View.FadeOut as FadeOut
 
 
 -- MODEL
@@ -89,9 +89,9 @@ type Msg
 
 
 type UpdateResult
-    = Continue ( Model, Cmd Msg )
-    | Cancel Article Article
-    | PathFound Path
+    = InProgress ( Model, Cmd Msg )
+    | Cancelled Article Article
+    | Complete Path
     | PathNotFound Article Article
     | TooManyRequests Article Article
 
@@ -105,7 +105,7 @@ update msg model =
                 |> responseReceived pathToArticle articleResult
 
         CancelPathfinding ->
-            Cancel model.source model.destination
+            Cancelled model.source model.destination
 
 
 responseReceived : Path -> ArticleResult -> Model -> UpdateResult
@@ -121,7 +121,7 @@ responseReceived pathToArticle articleResult model =
 articleReceived : Path -> Article -> Model -> UpdateResult
 articleReceived pathToArticle article model =
     if hasReachedDestination article model then
-        PathFound pathToArticle
+        Complete pathToArticle
     else
         model
             |> processLinks pathToArticle article
@@ -174,7 +174,7 @@ explorePaths : Model -> List Path -> UpdateResult
 explorePaths model pathsToFollow =
     case containsPathToDestination pathsToFollow model.destination of
         Just pathToDestination ->
-            PathFound pathToDestination
+            Complete pathToDestination
 
         Nothing ->
             fetchNextArticles model pathsToFollow
@@ -192,7 +192,7 @@ fetchNextArticles model pathsToFollow =
         if updatedModel.totalRequests > totalRequestsLimit then
             TooManyRequests updatedModel.source updatedModel.destination
         else
-            Continue ( updatedModel, Cmd.batch requests )
+            InProgress ( updatedModel, Cmd.batch requests )
 
 
 fetchNextArticle : Path -> Cmd Msg
@@ -396,7 +396,7 @@ viewPathCountWarning totalRequests =
 
 viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
-    Fade.view
+    FadeOut.view
         (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
             (OrderedSet.toList visited
                 |> List.take 10
