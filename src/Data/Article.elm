@@ -1,4 +1,4 @@
-module Data.Article exposing (Article, Link, Namespace(ArticleNamespace, NonArticleNamespace))
+module Data.Article exposing (Article, Link, Namespace(..))
 
 import Data.Title as Title exposing (Title)
 
@@ -13,7 +13,7 @@ type alias Article =
 type alias Link =
     { title : Title
     , namespace : Namespace
-    , doesExist : Bool
+    , exists : Bool
     }
 
 

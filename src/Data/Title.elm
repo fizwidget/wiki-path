@@ -1,4 +1,4 @@
-module Data.Title exposing (Title, from, value)
+module Data.Title exposing (Title, from, asString)
 
 
 type Title
@@ -10,6 +10,6 @@ from =
     Title
 
 
-value : Title -> String
-value (Title title) =
+asString : Title -> String
+asString (Title title) =
     title

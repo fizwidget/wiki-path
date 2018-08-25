@@ -9,9 +9,9 @@ view : Title -> Html msg
 view title =
     a
         [ href (toUrl title) ]
-        [ text (Title.value title) ]
+        [ text (Title.asString title) ]
 
 
 toUrl : Title -> String
 toUrl title =
-    "https://en.wikipedia.org/wiki/" ++ (Title.value title)
+    "https://en.wikipedia.org/wiki/" ++ (Title.asString title)

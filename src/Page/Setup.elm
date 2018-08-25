@@ -52,7 +52,7 @@ init =
 
 initWithTitles : Title -> Title -> ( Model, Cmd Msg )
 initWithTitles source destination =
-    ( initialModel (Title.value source) (Title.value destination)
+    ( initialModel (Title.asString source) (Title.asString destination)
     , Cmd.none
     )
 
@@ -143,8 +143,8 @@ displayRandomTitles model =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceTitle = Title.value source
-                , destinationTitle = Title.value destination
+                , sourceTitle = Title.asString source
+                , destinationTitle = Title.asString destination
             }
     in
         model.randomTitles

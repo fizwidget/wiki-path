@@ -3,12 +3,12 @@ module Data.PriorityQueue
         ( PriorityQueue
         , Priority
         , empty
+        , isEmpty
         , insert
+        , highestPriority
         , removeHighestPriority
         , removeHighestPriorities
-        , getHighestPriority
-        , isEmpty
-        , toSortedList
+        , inPriorityOrder
         )
 
 import PairingHeap exposing (PairingHeap)
@@ -27,72 +27,63 @@ empty =
     PriorityQueue PairingHeap.empty
 
 
+isEmpty : PriorityQueue a -> Bool
+isEmpty priorityQueue =
+    highestPriority priorityQueue
+        |> Maybe.map (always False)
+        |> Maybe.withDefault True
+
+
 insert : PriorityQueue a -> (a -> Priority) -> List a -> PriorityQueue a
 insert (PriorityQueue pairingHeap) getPriority values =
     let
-        -- We're negating the priorities because `PairingHeap` is a min-heap,
-        -- but we want to treat it as a max-heap (so the highest priority is at the top).
-        getNegatedPriority =
-            getPriority >> negate
-
-        withNegatedPriority =
-            \value -> ( getNegatedPriority value, value )
-
-        valuesWithNegatedPriorities =
-            List.map withNegatedPriority values
+        -- Negating the priorities because `PairingHeap` is a min-heap, but we want
+        -- to treat it as a max-heap (so the highest priority is at the top).
+        withNegatedPriorities =
+            values
+                |> List.map (\value -> ( getPriority value, value ))
+                |> List.map (Tuple.mapFirst negate)
     in
-        List.foldl PairingHeap.insert pairingHeap valuesWithNegatedPriorities
+        List.foldl PairingHeap.insert pairingHeap withNegatedPriorities
             |> PriorityQueue
 
 
-getHighestPriority : PriorityQueue a -> Maybe a
-getHighestPriority (PriorityQueue pairingHeap) =
+highestPriority : PriorityQueue a -> Maybe a
+highestPriority (PriorityQueue pairingHeap) =
     PairingHeap.findMin pairingHeap
         |> Maybe.map Tuple.second
 
 
 removeHighestPriority : PriorityQueue a -> ( Maybe a, PriorityQueue a )
 removeHighestPriority (PriorityQueue pairingHeap) =
-    let
-        highestPriorityValue =
-            PairingHeap.findMin pairingHeap
-                |> Maybe.map Tuple.second
-
-        updatedPriorityQueue =
-            PairingHeap.deleteMin pairingHeap
-                |> PriorityQueue
-    in
-        ( highestPriorityValue, updatedPriorityQueue )
+    ( PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
+    , pairingHeap |> PairingHeap.deleteMin |> PriorityQueue
+    )
 
 
 removeHighestPriorities : PriorityQueue a -> Int -> ( List a, PriorityQueue a )
 removeHighestPriorities priorityQueue howMany =
-    let
-        remove priorityQueue howMany removedValues =
-            if howMany > 0 then
-                let
-                    ( value, updatedPriorityQueue ) =
-                        removeHighestPriority priorityQueue
-                in
-                    remove updatedPriorityQueue (howMany - 1) (value :: removedValues)
-            else
-                ( removedValues, priorityQueue )
-    in
-        remove priorityQueue howMany []
-            |> Tuple.mapFirst (List.filterMap identity)
+    removeHighestPrioritiesHelper priorityQueue howMany []
 
 
-isEmpty : PriorityQueue a -> Bool
-isEmpty priorityQueue =
-    case getHighestPriority priorityQueue of
-        Just _ ->
-            False
+removeHighestPrioritiesHelper : PriorityQueue a -> Int -> List a -> ( List a, PriorityQueue a )
+removeHighestPrioritiesHelper priorityQueue howMany removedSoFar =
+    if howMany <= 0 then
+        ( removedSoFar, priorityQueue )
+    else
+        let
+            ( removedValue, updatedPriorityQueue ) =
+                removeHighestPriority priorityQueue
 
-        Nothing ->
-            True
+            removedValues =
+                removedValue
+                    |> Maybe.map (\value -> value :: removedSoFar)
+                    |> Maybe.withDefault removedSoFar
+        in
+            removeHighestPrioritiesHelper updatedPriorityQueue (howMany - 1) removedValues
 
 
-toSortedList : PriorityQueue a -> List a
-toSortedList (PriorityQueue pairingHeap) =
+inPriorityOrder : PriorityQueue a -> List a
+inPriorityOrder (PriorityQueue pairingHeap) =
     PairingHeap.toSortedList pairingHeap
         |> List.map Tuple.second

@@ -62,7 +62,7 @@ pendingRequestsLimit =
 init : Article -> Article -> UpdateResult
 init source destination =
     articleReceived
-        (Path.beginningWith source.title)
+        (Path.beginningAt source.title)
         source
         (initialModel source destination)
 
@@ -72,7 +72,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , paths = PriorityQueue.empty
-    , visitedTitles = OrderedSet.singleton (Title.value source.title)
+    , visitedTitles = OrderedSet.singleton (Title.asString source.title)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
@@ -200,8 +200,8 @@ fetchNextArticle pathToFollow =
     let
         articleTitle =
             pathToFollow
-                |> Path.nextStop
-                |> Title.value
+                |> Path.end
+                |> Title.asString
     in
         Article.fetchArticleResult (ArticleLoaded pathToFollow) articleTitle
 
@@ -210,7 +210,7 @@ containsPathToDestination : List Path -> Article -> Maybe Path
 containsPathToDestination paths destination =
     let
         hasReachedDestination path =
-            Path.nextStop path == destination.title
+            Path.end path == destination.title
     in
         paths
             |> List.filter hasReachedDestination
@@ -239,7 +239,7 @@ isCandidate : OrderedSet String -> Link -> Bool
 isCandidate visitedTitles link =
     let
         title =
-            Title.value link.title
+            Title.asString link.title
 
         hasMinimumLength =
             String.length title > 1
@@ -265,7 +265,7 @@ isCandidate visitedTitles link =
                 , "Geographic coordinate system"
                 ]
     in
-        link.doesExist
+        link.exists
             && hasMinimumLength
             && isRegularArticle
             && not isVisited
@@ -275,7 +275,7 @@ isCandidate visitedTitles link =
 markVisited : OrderedSet String -> List Path -> OrderedSet String
 markVisited visitedTitles newPaths =
     newPaths
-        |> List.map (Path.nextStop >> Title.value)
+        |> List.map (Path.end >> Title.asString)
         |> List.foldl OrderedSet.insert visitedTitles
 
 
@@ -297,7 +297,7 @@ heuristic destination title =
     if title == destination.title then
         10000
     else
-        toFloat <| countOccurences destination.content (Title.value title)
+        toFloat <| countOccurences destination.content (Title.asString title)
 
 
 countOccurences : String -> String -> Int
@@ -396,7 +396,7 @@ viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
     FadeOut.view
         (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
-            (OrderedSet.toList visited
+            (OrderedSet.inOrder visited
                 |> List.take 10
                 |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]
