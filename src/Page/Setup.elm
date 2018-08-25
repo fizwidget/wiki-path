@@ -118,18 +118,18 @@ update msg model =
                 |> maybeComplete
 
 
+maybeComplete : Model -> UpdateResult
+maybeComplete ({ source, destination } as model) =
+    RemoteData.map2 Complete source destination
+        |> RemoteData.withDefault (model |> noCmd |> InProgress)
+
+
 getArticles : Model -> Cmd Msg
 getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
         [ Article.getRemoteArticle GetSourceArticleResponse sourceInput
         , Article.getRemoteArticle GetDestinationArticleResponse destinationInput
         ]
-
-
-maybeComplete : Model -> UpdateResult
-maybeComplete ({ source, destination } as model) =
-    RemoteData.map2 Complete source destination
-        |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
 randomizeTitleInputs : Model -> Model

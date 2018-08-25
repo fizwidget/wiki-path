@@ -141,7 +141,7 @@ processLinks pathToArticle article model =
     in
         { model
             | paths = PriorityQueue.insert model.paths Path.priority newPaths
-            , visitedTitles = markVisited model.visitedTitles newPaths
+            , visitedTitles = markVisited model.visitedTitles (List.map Path.end newPaths)
         }
 
 
@@ -268,10 +268,10 @@ isCandidate visitedTitles link =
             && not isBlacklisted
 
 
-markVisited : OrderedSet String -> List Path -> OrderedSet String
-markVisited visitedTitles newPaths =
-    newPaths
-        |> List.map (Path.end >> Title.asString)
+markVisited : OrderedSet String -> List Title -> OrderedSet String
+markVisited visitedTitles newTitles =
+    newTitles
+        |> List.map Title.asString
         |> List.foldl OrderedSet.insert visitedTitles
 
 
@@ -293,11 +293,12 @@ heuristic destination title =
     if title == destination.title then
         10000
     else
-        toFloat <| countOccurences destination.content (Title.asString title)
+        countOccurences (Title.asString title) destination.content
+            |> toFloat
 
 
 countOccurences : String -> String -> Int
-countOccurences content target =
+countOccurences target content =
     let
         occurencePattern =
             ("(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")")
@@ -369,16 +370,15 @@ viewWarnings totalRequests destination =
 
 viewDestinationContentWarning : Article -> Html msg
 viewDestinationContentWarning destination =
-    let
-        message =
+    div []
+        [ text <|
             if String.contains "disambigbox" destination.content then
-                "The destination is a disambiguation page, so I probably won't be able to find a path to it 😅"
+                "The destination is a disambiguation page, so I probably won't be able to find it! 😅"
             else if String.length destination.content < 10000 then
                 "The destination article is very short, so it might take longer than usual to find! 😅"
             else
                 ""
-    in
-        div [] [ text message ]
+        ]
 
 
 viewPathCountWarning : Int -> Html msg
@@ -391,12 +391,11 @@ viewPathCountWarning totalRequests =
 
 viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
-    FadeOut.view
-        (div [ css [ textAlign center, height (px 300), overflow hidden ] ]
+    FadeOut.view <|
+        div [ css [ textAlign center, height (px 300), overflow hidden ] ]
             (OrderedSet.inOrder visited
                 |> List.take 10
                 |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]
                 |> List.map (List.singleton >> (div []))
             )
-        )
