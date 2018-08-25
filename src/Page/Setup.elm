@@ -12,12 +12,12 @@ module Page.Setup
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
-import Bootstrap.Form as Form
-import Bootstrap.Form.Input as Input
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
 import Article exposing (Article, RemoteArticle)
 import Title exposing (Title, RemoteTitlePair)
 import Button
+import Input
+import Form
 import Spinner
 
 
@@ -205,29 +205,19 @@ viewTitleInput toMsg placeholder title article inputStatus =
 
                 Disabled ->
                     True
-
-        inputStyle =
-            if RemoteData.isFailure article then
-                [ Input.danger ]
-            else
-                []
-
-        inputOptions =
-            inputStyle
-                ++ [ Input.large
-                   , Input.onInput toMsg
-                   , Input.value title
-                   , Input.placeholder placeholder
-                   , Input.disabled isDisabled
-                   ]
     in
         div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
-            [ fromUnstyled <|
-                Form.group []
-                    [ Input.text inputOptions
-                    , Form.invalidFeedback [] [ toUnstyled <| viewArticleError article ]
-                    , Form.validFeedback [] []
+            [ Form.group
+                (Input.text
+                    [ Input.Large
+                    , Input.OnInput toMsg
+                    , Input.Value title
+                    , Input.Placeholder placeholder
+                    , Input.Disabled isDisabled
+                    , Input.Error (RemoteData.isFailure article)
                     ]
+                )
+                (viewArticleError article)
             ]
 
 
