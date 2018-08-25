@@ -2,7 +2,7 @@ module Request.Title
     exposing
         ( RemoteTitlePair
         , TitleError(UnexpectedTitleCount, HttpError)
-        , fetchPair
+        , getRandomPair
         , titleDecoder
         )
 
@@ -23,8 +23,8 @@ type TitleError
     | HttpError Http.Error
 
 
-fetchPair : (RemoteTitlePair -> msg) -> Cmd msg
-fetchPair toMsg =
+getRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
+getRandomPair toMsg =
     buildRandomTitleRequest 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteTitlePair >> toMsg)

@@ -29,8 +29,8 @@ import View.Spinner as Spinner
 
 
 type alias Model =
-    { sourceTitle : UserInput
-    , destinationTitle : UserInput
+    { sourceInput : UserInput
+    , destinationInput : UserInput
     , source : RemoteArticle
     , destination : RemoteArticle
     , randomTitles : RemoteTitlePair
@@ -58,9 +58,9 @@ initWithTitles source destination =
 
 
 initialModel : String -> String -> Model
-initialModel sourceTitle destinationTitle =
-    { sourceTitle = sourceTitle
-    , destinationTitle = destinationTitle
+initialModel sourceInput destinationInput =
+    { sourceInput = sourceInput
+    , destinationInput = destinationInput
     , source = NotAsked
     , destination = NotAsked
     , randomTitles = NotAsked
@@ -72,8 +72,8 @@ initialModel sourceTitle destinationTitle =
 
 
 type Msg
-    = SourceTitleChange UserInput
-    | DestinationTitleChange UserInput
+    = SourceInputChange UserInput
+    | DestinationInputChange UserInput
     | GetArticlesRequest
     | GetSourceArticleResponse RemoteArticle
     | GetDestinationArticleResponse RemoteArticle
@@ -89,18 +89,18 @@ type UpdateResult
 update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
-        SourceTitleChange title ->
-            { model | sourceTitle = title, source = NotAsked }
+        SourceInputChange title ->
+            { model | sourceInput = title, source = NotAsked }
                 |> noCmd
                 |> InProgress
 
-        DestinationTitleChange title ->
-            { model | destinationTitle = title, destination = NotAsked }
+        DestinationInputChange title ->
+            { model | destinationInput = title, destination = NotAsked }
                 |> noCmd
                 |> InProgress
 
         RandomizeTitlesRequest ->
-            ( { model | randomTitles = Loading }, Title.fetchPair RandomizeTitlesResponse )
+            ( { model | randomTitles = Loading }, Title.getRandomPair RandomizeTitlesResponse )
                 |> InProgress
 
         RandomizeTitlesResponse response ->
@@ -110,28 +110,28 @@ update msg model =
                 |> InProgress
 
         GetArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, fetchArticles model )
+            ( { model | source = Loading, destination = Loading }, getArticles model )
                 |> InProgress
 
         GetSourceArticleResponse article ->
             { model | source = article }
-                |> doneIfBothLoaded
+                |> maybeComplete
 
         GetDestinationArticleResponse article ->
             { model | destination = article }
-                |> doneIfBothLoaded
+                |> maybeComplete
 
 
-fetchArticles : Model -> Cmd Msg
-fetchArticles { sourceTitle, destinationTitle } =
+getArticles : Model -> Cmd Msg
+getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
-        [ Article.fetchRemoteArticle GetSourceArticleResponse sourceTitle
-        , Article.fetchRemoteArticle GetDestinationArticleResponse destinationTitle
+        [ Article.getRemoteArticle GetSourceArticleResponse sourceInput
+        , Article.getRemoteArticle GetDestinationArticleResponse destinationInput
         ]
 
 
-doneIfBothLoaded : Model -> UpdateResult
-doneIfBothLoaded ({ source, destination } as model) =
+maybeComplete : Model -> UpdateResult
+maybeComplete ({ source, destination } as model) =
     RemoteData.map2 Complete source destination
         |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
@@ -143,8 +143,8 @@ displayRandomTitles model =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceTitle = Title.asString source
-                , destinationTitle = Title.asString destination
+                , sourceInput = Title.asString source
+                , destinationInput = Title.asString destination
             }
     in
         model.randomTitles
@@ -174,10 +174,10 @@ view model =
 
 
 viewTitleInputs : Model -> Html Msg
-viewTitleInputs ({ sourceTitle, destinationTitle, source, destination } as model) =
+viewTitleInputs ({ sourceInput, destinationInput, source, destination } as model) =
     div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-        [ viewSourceTitleInput sourceTitle source (getInputStatus model)
-        , viewDestinationTitleInput destinationTitle destination (getInputStatus model)
+        [ viewSourceTitleInput sourceInput source (getInputStatus model)
+        , viewDestinationTitleInput destinationInput destination (getInputStatus model)
         ]
 
 
@@ -191,12 +191,12 @@ getInputStatus model =
 
 viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewSourceTitleInput =
-    viewTitleInput SourceTitleChange "From..."
+    viewTitleInput SourceInputChange "From..."
 
 
 viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
 viewDestinationTitleInput =
-    viewTitleInput DestinationTitleChange "To..."
+    viewTitleInput DestinationInputChange "To..."
 
 
 viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
@@ -264,8 +264,8 @@ viewRandomizeTitlesButton model =
 shouldDisableLoadButton : Model -> Bool
 shouldDisableLoadButton model =
     isLoading model
-        || isBlank model.sourceTitle
-        || isBlank model.destinationTitle
+        || isBlank model.sourceInput
+        || isBlank model.destinationInput
 
 
 isBlank : String -> Bool

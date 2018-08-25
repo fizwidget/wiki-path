@@ -8,8 +8,8 @@ module Request.Article
             , UnknownError
             , HttpError
             )
-        , fetchArticleResult
-        , fetchRemoteArticle
+        , getArticleResult
+        , getRemoteArticle
         )
 
 import Http
@@ -37,8 +37,8 @@ type ArticleError
     | HttpError Http.Error
 
 
-fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
-fetchArticleResult toMsg title =
+getArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
+getArticleResult toMsg title =
     title
         |> buildRequest
         |> Http.send (toArticleResult >> toMsg)
@@ -51,8 +51,8 @@ toArticleResult result =
         |> Result.andThen identity
 
 
-fetchRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-fetchRemoteArticle toMsg title =
+getRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+getRemoteArticle toMsg title =
     title
         |> buildRequest
         |> RemoteData.sendRequest
