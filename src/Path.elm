@@ -13,18 +13,18 @@ module Path
         )
 
 import PriorityQueue exposing (Priority)
-import Title exposing (Title)
+import Article exposing (Article, Preview)
 
 
 type Path
     = Path
-        { previousStops : List Title
-        , lastStop : Title
+        { previousStops : List (Article Preview)
+        , lastStop : Article Preview
         , priority : Priority
         }
 
 
-beginningAt : Title -> Path
+beginningAt : Article Preview -> Path
 beginningAt title =
     Path
         { previousStops = []
@@ -33,7 +33,7 @@ beginningAt title =
         }
 
 
-beginning : Path -> Title
+beginning : Path -> Article Preview
 beginning (Path path) =
     path.previousStops
         |> List.reverse
@@ -41,17 +41,17 @@ beginning (Path path) =
         |> Maybe.withDefault path.lastStop
 
 
-end : Path -> Title
+end : Path -> Article Preview
 end (Path path) =
     path.lastStop
 
 
-inOrder : Path -> List Title
+inOrder : Path -> List Article Preview
 inOrder =
     inReverseOrder >> List.reverse
 
 
-inReverseOrder : Path -> List Title
+inReverseOrder : Path -> List Article Preview
 inReverseOrder (Path path) =
     path.lastStop :: path.previousStops
 
@@ -61,17 +61,17 @@ priority (Path path) =
     path.priority
 
 
-extend : Path -> Title -> Priority -> Path
-extend (Path path) nextTitle nextPriority =
+extend : Path -> Article Preview -> Priority -> Path
+extend (Path path) nextArticle nextPriority =
     Path
         { path
-            | lastStop = nextTitle
+            | lastStop = nextArticle
             , previousStops = path.lastStop :: path.previousStops
             , priority = nextPriority
         }
 
 
-contains : Title -> Path -> Bool
+contains : Article Preview -> Path -> Bool
 contains title path =
     path
         |> inReverseOrder

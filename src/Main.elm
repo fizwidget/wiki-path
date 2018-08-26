@@ -8,7 +8,7 @@ import Css.Media as Media exposing (withMedia)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Title exposing (Title)
+import Article exposing (Article, Preview)
 
 
 -- MODEL
@@ -27,7 +27,7 @@ type Model
 type Msg
     = SetupMsg Setup.Msg
     | PathfindingMsg Pathfinding.Msg
-    | BackToSetup Title Title
+    | BackToSetup (Article a) (Article a)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -42,7 +42,7 @@ update msg model =
                 |> handlePathfindingUpdate
 
         ( BackToSetup source destination, _ ) ->
-            Setup.initWithTitles source destination
+            Setup.initWithArticles source destination
                 |> inSetupPage
 
         ( _, _ ) ->
@@ -67,7 +67,7 @@ handlePathfindingUpdate updateResult =
             inPathfindingPage ( model, cmd )
 
         Pathfinding.Cancelled source destination ->
-            Setup.initWithTitles source.title destination.title
+            Setup.initWithArticles source.title destination.title
                 |> inSetupPage
 
         Pathfinding.Complete path ->

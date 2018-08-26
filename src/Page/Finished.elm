@@ -10,9 +10,8 @@ module Page.Finished
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
-import Article exposing (Article)
 import Path exposing (Path)
-import Title exposing (Title)
+import Article exposing (Article, Preview)
 import Button
 
 
@@ -68,7 +67,7 @@ initWithError error source destination =
 -- VIEW
 
 
-view : Model -> (Title -> Title -> backMsg) -> Html backMsg
+view : Model -> (Article Preview -> Article Preview -> backMsg) -> Html backMsg
 view model toBackMsg =
     div
         [ css
@@ -115,7 +114,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Title.viewAsLink
+        |> List.map Article.viewAsLink
         |> List.intersperse (text " → ")
         |> div []
 
@@ -125,9 +124,9 @@ viewError { source, destination, error } =
     let
         pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
-            , Title.viewAsLink source.title
+            , Article.viewAsLink source
             , text " to "
-            , Title.viewAsLink destination.title
+            , Article.viewAsLink destination
             , text " 💀"
             ]
     in
@@ -143,11 +142,11 @@ viewError { source, destination, error } =
             )
 
 
-viewBackButton : Model -> (Title -> Title -> backMsg) -> Html backMsg
+viewBackButton : Model -> (Article Preview -> Article Preview -> backMsg) -> Html backMsg
 viewBackButton model toBackMsg =
     let
         onClick =
-            toBackMsg (getSourceTitle model) (getDestinationTitle model)
+            toBackMsg (getSourceArticle model) (getDestinationArticle model)
     in
         div [ css [ margin (px 20) ] ]
             [ Button.view "Back"
@@ -157,8 +156,8 @@ viewBackButton model toBackMsg =
             ]
 
 
-getSourceTitle : Model -> Title
-getSourceTitle model =
+getSourceArticle : Model -> Article Preview
+getSourceArticle model =
     case model of
         Success path ->
             Path.beginning path
@@ -167,8 +166,8 @@ getSourceTitle model =
             source.title
 
 
-getDestinationTitle : Model -> Title
-getDestinationTitle model =
+getDestinationArticle : Model -> Article Preview
+getDestinationArticle model =
     case model of
         Success path ->
             Path.end path

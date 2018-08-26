@@ -1,12 +1,15 @@
 module Article
     exposing
         ( Article
-        , Link
+        , Full
+        , Preview
         , Namespace(..)
         , ArticleResult
         , RemoteArticle
         , ArticleError(..)
-        , getArticleResult
+        , title
+        , equals
+        , getFullArticle
         , getRemoteArticle
         , viewError
         )
@@ -16,21 +19,29 @@ import RemoteData exposing (RemoteData, WebData)
 import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Url exposing (Url, QueryParam(KeyValue, Key))
-import Html.Styled exposing (Html, div, text)
-import Title exposing (Title)
+import Html.Styled exposing (Html, div, text, a)
+import Html.Styled.Attributes exposing (href)
 
 
-type alias Article =
-    { title : Title
-    , links : List Link
-    , content : HtmlString
-    }
+type Article a
+    = Article Title a
 
 
-type alias Link =
-    { title : Title
-    , namespace : Namespace
-    , exists : Bool
+type alias Title =
+    String
+
+
+type Preview
+    = Preview Namespace
+
+
+type Full
+    = Full Content
+
+
+type alias Content =
+    { links : List (Article Preview)
+    , body : HtmlString
     }
 
 
@@ -43,8 +54,40 @@ type alias HtmlString =
     String
 
 
+title : Article a -> String
+title (Article title _) =
+    title
+
+
+body : Article Full -> HtmlString
+body (Article _ (Full { body })) =
+    body
+
+
+equals : Article a -> Article b -> Bool
+equals first second =
+    title first == title second
+
+
+asPreview : Article Full -> Article Preview
+asPreview (Article metadata _) =
+    Article metadata Preview
+
+
 
 -- VIEW
+
+
+viewAsLink : Article a -> Html msg
+viewAsLink (Article { title } _) =
+    a
+        [ href (toUrl title) ]
+        [ text title ]
+
+
+toUrl : String -> String
+toUrl title =
+    "https://en.wikipedia.org/wiki/" ++ title
 
 
 viewError : ArticleError -> Html msg
@@ -64,32 +107,32 @@ toErrorMessage error =
         UnknownError _ ->
             "Unknown error \x1F92F"
 
-        HttpError _ ->
+        FullArticleHttpError _ ->
             "Network error 😭"
 
 
 
--- API
+-- API (FULL)
 
 
 type alias ArticleResult =
-    Result ArticleError Article
+    Result ArticleError (Article Full)
 
 
 type alias RemoteArticle =
-    RemoteData ArticleError Article
+    RemoteData ArticleError (Article Full)
 
 
 type ArticleError
     = ArticleNotFound
     | InvalidTitle
     | UnknownError String
-    | HttpError Http.Error
+    | FullArticleHttpError Http.Error
 
 
-getArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
-getArticleResult toMsg title =
-    title
+getFullArticle : (ArticleResult -> msg) -> Article Preview -> Cmd msg
+getFullArticle toMsg article =
+    article
         |> buildRequest
         |> Http.send (toArticleResult >> toMsg)
 
@@ -97,13 +140,13 @@ getArticleResult toMsg title =
 toArticleResult : Result Http.Error ArticleResult -> ArticleResult
 toArticleResult result =
     result
-        |> Result.mapError HttpError
+        |> Result.mapError FullArticleHttpError
         |> Result.andThen identity
 
 
-getRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-getRemoteArticle toMsg title =
-    title
+getRemoteArticle : (RemoteArticle -> msg) -> Article Preview -> Cmd msg
+getRemoteArticle toMsg article =
+    article
         |> buildRequest
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
@@ -112,24 +155,24 @@ getRemoteArticle toMsg title =
 toRemoteArticle : WebData ArticleResult -> RemoteArticle
 toRemoteArticle webData =
     webData
-        |> RemoteData.mapError HttpError
+        |> RemoteData.mapError FullArticleHttpError
         |> RemoteData.andThen RemoteData.fromResult
 
 
-buildRequest : String -> Http.Request ArticleResult
-buildRequest title =
-    Http.get (buildArticleUrl title) responseDecoder
+buildRequest : Article Preview -> Http.Request ArticleResult
+buildRequest article =
+    Http.get (buildArticleUrl article) articleResponseDecoder
 
 
-buildArticleUrl : String -> Url
-buildArticleUrl title =
+buildArticleUrl : Article Preview -> Url
+buildArticleUrl article =
     let
         queryParams =
             [ KeyValue ( "action", "parse" )
             , KeyValue ( "format", "json" )
             , KeyValue ( "formatversion", "2" )
             , KeyValue ( "origin", "*" )
-            , KeyValue ( "page", title )
+            , KeyValue ( "page", title article )
             , Key "redirects"
             ]
     in
@@ -137,11 +180,71 @@ buildArticleUrl title =
 
 
 
--- SERIALIZATION
+-- API (PREVIEW)
 
 
-responseDecoder : Decoder ArticleResult
-responseDecoder =
+type alias RemoteArticlePair =
+    RemoteData ArticlePairError ( Article Preview, Article Preview )
+
+
+type ArticlePairError
+    = UnexpectedArticleCount
+    | PreviewArticleHttpError Http.Error
+
+
+getRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
+getRandomPair toMsg =
+    buildRandomTitleRequest 2
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticlePair >> toMsg)
+
+
+toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
+toRemoteArticlePair remoteTitles =
+    remoteTitles
+        |> RemoteData.mapError PreviewArticleHttpError
+        |> RemoteData.andThen toPair
+
+
+toPair : List (Article Preview) -> RemoteArticlePair
+toPair titles =
+    case titles of
+        first :: second :: _ ->
+            RemoteData.succeed ( first, second )
+
+        _ ->
+            RemoteData.Failure UnexpectedArticleCount
+
+
+buildRandomTitleRequest : Int -> Http.Request (List (Article Preview))
+buildRandomTitleRequest titleCount =
+    Http.get (buildRandomTitlesUrl titleCount) previewResponseDecoder
+
+
+buildRandomTitlesUrl : Int -> Url
+buildRandomTitlesUrl titleCount =
+    let
+        articleNamespace =
+            "0"
+
+        queryParams =
+            [ KeyValue ( "action", "query" )
+            , KeyValue ( "format", "json" )
+            , KeyValue ( "list", "random" )
+            , KeyValue ( "rnlimit", toString titleCount )
+            , KeyValue ( "rnnamespace", articleNamespace )
+            , KeyValue ( "origin", "*" )
+            ]
+    in
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+
+
+
+-- SERIALIZATION (FULL)
+
+
+articleResponseDecoder : Decoder ArticleResult
+articleResponseDecoder =
     oneOf
         [ map Ok successDecoder
         , map Err errorDecoder
@@ -150,23 +253,28 @@ responseDecoder =
 
 successDecoder : Decoder Article
 successDecoder =
-    field "parse" articleDecoder
+    field "parse" fullDecoder
 
 
-articleDecoder : Decoder Article
-articleDecoder =
+previewDecoder : Decoder (Article Preview)
+previewDecoder =
+    succeed Article
+        |> required "title" string
+
+
+fullDecoder : Decoder (Article Full)
+fullDecoder =
     decode Article
-        |> required "title" Title.titleDecoder
-        |> required "links" (list linkDecoder)
+        |> required "title" string
+        |> required "links" (list previewDecoder)
         |> required "text" string
 
 
-linkDecoder : Decoder Link
-linkDecoder =
-    decode Link
-        |> required "title" Title.titleDecoder
+metadataDecoder : Decoder Metadata
+metadataDecoder =
+    decode Metadata
+        |> required "title" string
         |> required "ns" namespaceDecoder
-        |> required "exists" bool
 
 
 namespaceDecoder : Decoder Namespace
@@ -199,3 +307,14 @@ errorDecoder =
             at [ "error", "code" ] string
     in
         map toError errorCode
+
+
+
+-- SERIALIZATION (PREVIEW)
+
+
+previewResponseDecoder : Decoder (List (Article Preview))
+previewResponseDecoder =
+    at
+        [ "query", "random" ]
+        (list <| previewDecoder)
