@@ -60,23 +60,24 @@ getRandomPair toMsg =
 
 toRemoteTitlePair : WebData (List Title) -> RemoteTitlePair
 toRemoteTitlePair remoteTitles =
-    let
-        toPair titles =
-            case titles of
-                titleA :: titleB :: _ ->
-                    RemoteData.succeed ( titleA, titleB )
+    remoteTitles
+        |> RemoteData.mapError HttpError
+        |> RemoteData.andThen toPair
 
-                _ ->
-                    RemoteData.Failure UnexpectedTitleCount
-    in
-        remoteTitles
-            |> RemoteData.mapError HttpError
-            |> RemoteData.andThen toPair
+
+toPair : List Title -> RemoteTitlePair
+toPair titles =
+    case titles of
+        first :: second :: _ ->
+            RemoteData.succeed ( first, second )
+
+        _ ->
+            RemoteData.Failure UnexpectedTitleCount
 
 
 buildRandomTitleRequest : Int -> Http.Request (List Title)
 buildRandomTitleRequest titleCount =
-    Http.get (buildRandomTitlesUrl titleCount) randomTitlesResponseDecoder
+    Http.get (buildRandomTitlesUrl titleCount) responseDecoder
 
 
 buildRandomTitlesUrl : Int -> Url
@@ -101,8 +102,8 @@ buildRandomTitlesUrl titleCount =
 -- SERIALIZATION
 
 
-randomTitlesResponseDecoder : Decoder (List Title)
-randomTitlesResponseDecoder =
+responseDecoder : Decoder (List Title)
+responseDecoder =
     at
         [ "query", "random" ]
         (list <| field "title" titleDecoder)

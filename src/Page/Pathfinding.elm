@@ -136,12 +136,12 @@ processLinks pathToArticle article model =
         newPaths =
             article.links
                 |> List.filter (isCandidate model.visitedTitles)
-                |> List.map (extendPath pathToArticle model.destination)
+                |> List.map (extendPath model.destination pathToArticle)
                 |> discardLowPriorities
     in
         { model
             | paths = PriorityQueue.insert model.paths Path.priority newPaths
-            , visitedTitles = markVisited model.visitedTitles (List.map Path.end newPaths)
+            , visitedTitles = markVisited model.visitedTitles newPaths
         }
 
 
@@ -268,23 +268,24 @@ isCandidate visitedTitles link =
             && not isBlacklisted
 
 
-markVisited : OrderedSet String -> List Title -> OrderedSet String
-markVisited visitedTitles newTitles =
-    newTitles
-        |> List.map Title.asString
+markVisited : OrderedSet String -> List Path -> OrderedSet String
+markVisited visitedTitles paths =
+    paths
+        |> List.map (Path.end >> Title.asString)
         |> List.foldl OrderedSet.insert visitedTitles
 
 
-extendPath : Path -> Article -> Link -> Path
-extendPath currentPath destination link =
-    Path.extend
-        currentPath
-        link.title
-        (calculatePriority destination currentPath link.title)
+extendPath : Article -> Path -> Link -> Path
+extendPath destination currentPath link =
+    let
+        priority =
+            calculatePriority currentPath link.title destination
+    in
+        Path.extend currentPath link.title priority
 
 
-calculatePriority : Article -> Path -> Title -> Priority
-calculatePriority destination currentPath title =
+calculatePriority : Path -> Title -> Article -> Priority
+calculatePriority currentPath title destination =
     (Path.priority currentPath) * 0.8 + (heuristic destination title)
 
 
