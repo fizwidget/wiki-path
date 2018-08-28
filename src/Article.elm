@@ -9,8 +9,8 @@ module Article
         , ArticleError(..)
         , title
         , equals
+        , getArticleLinks
         , getFullArticle
-        , getRemoteArticle
         , viewError
         )
 
@@ -21,41 +21,52 @@ import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Url exposing (Url, QueryParam(KeyValue, Key))
 import Html.Styled exposing (Html, div, text, a)
 import Html.Styled.Attributes exposing (href)
+import Article.Id as Id exposing (Id)
+
+
+-- TYPES
 
 
 type Article a
-    = Article Title a
+    = Article Metadata a
 
 
-type alias Title =
-    String
-
-
-type Preview
-    = Preview Namespace
-
-
-type Full
-    = Full Content
-
-
-type alias Content =
-    { links : List (Article Preview)
-    , body : HtmlString
+type alias Metadata =
+    { id : Id
+    , title : String
     }
 
 
-type Namespace
-    = ArticleNamespace
-    | NonArticleNamespace
+type Preview
+    = Preview
 
 
-type alias HtmlString =
+type Links
+    = Links (List (Article Preview))
+
+
+type Full
+    = Full
+        { content : Wikitext
+        , links : List (Article Preview)
+        }
+
+
+type alias Wikitext =
     String
 
 
+
+-- ACCESSORS
+
+
+id : Article a -> Id
+id (Article { id } _) =
+    id
+
+
 title : Article a -> String
-title (Article title _) =
+title (Article { title } _) =
     title
 
 
@@ -66,10 +77,10 @@ body (Article _ (Full { body })) =
 
 equals : Article a -> Article b -> Bool
 equals first second =
-    title first == title second
+    id first == id second
 
 
-asPreview : Article Full -> Article Preview
+asPreview : Article a -> Article Preview
 asPreview (Article metadata _) =
     Article metadata Preview
 
@@ -107,73 +118,109 @@ toErrorMessage error =
         UnknownError _ ->
             "Unknown error \x1F92F"
 
-        FullArticleHttpError _ ->
+        ArticleHttpError _ ->
             "Network error 😭"
 
 
 
--- API (FULL)
+-- API
 
 
-type alias ArticleResult =
-    Result ArticleError (Article Full)
+type alias ArticleResult a =
+    Result ArticleError (Article a)
 
 
-type alias RemoteArticle =
-    RemoteData ArticleError (Article Full)
+type alias RemoteArticle a =
+    RemoteData ArticleError (Article a)
 
 
 type ArticleError
     = ArticleNotFound
     | InvalidTitle
     | UnknownError String
-    | FullArticleHttpError Http.Error
+    | ArticleHttpError Http.Error
 
 
-getFullArticle : (ArticleResult -> msg) -> Article Preview -> Cmd msg
-getFullArticle toMsg article =
+
+-- API (LINKS)
+
+
+getArticleLinks : (ArticleResult Links -> msg) -> Article Preview -> Cmd msg
+getArticleLinks toMsg article =
     article
-        |> buildRequest
+        |> buildLinksRequest
         |> Http.send (toArticleResult >> toMsg)
 
 
-toArticleResult : Result Http.Error ArticleResult -> ArticleResult
+toArticleResult : Result Http.Error (ArticleResult Links) -> ArticleResult Links
 toArticleResult result =
     result
-        |> Result.mapError FullArticleHttpError
+        |> Result.mapError ArticleHttpError
         |> Result.andThen identity
 
 
-getRemoteArticle : (RemoteArticle -> msg) -> Article Preview -> Cmd msg
-getRemoteArticle toMsg article =
+buildLinksRequest : Article Preview -> Http.Request (ArticleResult Links)
+buildLinksRequest article =
+    Http.get (buildArticleLinksUrl article) articleResponseDecoder
+
+
+buildArticleLinksUrl : Article Preview -> Url
+buildArticleLinksUrl article =
+    let
+        queryParams =
+            [ KeyValue ( "action", "query" )
+            , KeyValue ( "format", "json" )
+            , KeyValue ( "prop", "links" )
+            , KeyValue ( "origin", "*" )
+            , KeyValue ( "formatversion", "2" )
+            , KeyValue ( "plnamespace", "0" )
+            , KeyValue ( "pllimit", "max" )
+            , KeyValue ( "redirects", "1" )
+            , KeyValue ( "pageids", id article )
+            ]
+    in
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+
+
+
+-- API (FULL)
+
+
+getFullArticle : (RemoteArticle Full -> msg) -> Article Preview -> Cmd msg
+getFullArticle toMsg article =
     article
-        |> buildRequest
+        |> buildFullArticleRequest
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
 
 
-toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle : WebData (ArticleResult Full) -> RemoteArticle Full
 toRemoteArticle webData =
     webData
-        |> RemoteData.mapError FullArticleHttpError
+        |> RemoteData.mapError ArticleHttpError
         |> RemoteData.andThen RemoteData.fromResult
 
 
-buildRequest : Article Preview -> Http.Request ArticleResult
-buildRequest article =
-    Http.get (buildArticleUrl article) articleResponseDecoder
+buildFullArticleRequest : Article Preview -> Http.Request (ArticleResult Full)
+buildFullArticleRequest article =
+    Http.get (buildFullArticleUrl article) articleResponseDecoder
 
 
-buildArticleUrl : Article Preview -> Url
-buildArticleUrl article =
+buildFullArticleUrl : Article Preview -> Url
+buildFullArticleUrl article =
     let
         queryParams =
-            [ KeyValue ( "action", "parse" )
+            [ KeyValue ( "action", "query" )
             , KeyValue ( "format", "json" )
-            , KeyValue ( "formatversion", "2" )
+            , KeyValue ( "generator", "links" )
+            , KeyValue ( "prop", "revisions" )
+            , KeyValue ( "rvprop", "content" )
             , KeyValue ( "origin", "*" )
-            , KeyValue ( "page", title article )
-            , Key "redirects"
+            , KeyValue ( "formatversion", "2" )
+            , KeyValue ( "plnamespace", "0" )
+            , KeyValue ( "gpllimit", "max" )
+            , KeyValue ( "redirects", "1" )
+            , KeyValue ( "pageids", id article )
             ]
     in
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
@@ -243,7 +290,7 @@ buildRandomTitlesUrl titleCount =
 -- SERIALIZATION (FULL)
 
 
-articleResponseDecoder : Decoder ArticleResult
+articleResponseDecoder : Decoder (ArticleResult Full)
 articleResponseDecoder =
     oneOf
         [ map Ok successDecoder
@@ -251,9 +298,9 @@ articleResponseDecoder =
         ]
 
 
-successDecoder : Decoder Article
+successDecoder : Decoder (Article Full)
 successDecoder =
-    field "parse" fullDecoder
+    at [ "query", "pages" ] fullDecoder
 
 
 previewDecoder : Decoder (Article Preview)
@@ -265,9 +312,10 @@ previewDecoder =
 fullDecoder : Decoder (Article Full)
 fullDecoder =
     decode Article
+        |> required "pageid" Id.decoder
         |> required "title" string
         |> required "links" (list previewDecoder)
-        |> required "text" string
+        |> required "revisions" revisionsDecoder
 
 
 metadataDecoder : Decoder Metadata
