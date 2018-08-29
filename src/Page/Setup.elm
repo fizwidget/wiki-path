@@ -13,8 +13,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, bu
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, RemoteArticle)
-import Title exposing (Title, RemoteTitlePair)
+import Article exposing (Article, Preview, Full, RemoteArticle, RemoteTitlePair)
 import Button
 import Input
 import Form
@@ -46,9 +45,9 @@ init =
     ( initialModel "" "", Cmd.none )
 
 
-initWithTitles : Title -> Title -> ( Model, Cmd Msg )
+initWithTitles : Article Preview -> Article Preview -> ( Model, Cmd Msg )
 initWithTitles source destination =
-    ( initialModel (Title.asString source) (Title.asString destination)
+    ( initialModel (Article.title source) (Article.title destination)
     , Cmd.none
     )
 
@@ -79,7 +78,7 @@ type Msg
 
 type UpdateResult
     = InProgress ( Model, Cmd Msg )
-    | Complete Article Article
+    | Complete (Article Full) (Article Full)
 
 
 update : Msg -> Model -> UpdateResult
@@ -96,7 +95,7 @@ update msg model =
                 |> InProgress
 
         RandomizeTitlesRequest ->
-            ( { model | randomTitles = Loading }, Title.getRandomPair RandomizeTitlesResponse )
+            ( { model | randomTitles = Loading }, Article.getRandomPair RandomizeTitlesResponse )
                 |> InProgress
 
         RandomizeTitlesResponse response ->
@@ -139,8 +138,8 @@ randomizeTitleInputs model =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceInput = Title.asString source
-                , destinationInput = Title.asString destination
+                , sourceInput = Article.title source
+                , destinationInput = Article.title destination
             }
     in
         model.randomTitles

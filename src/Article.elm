@@ -1,36 +1,49 @@
 module Article
     exposing
         ( Article
-        , Link
+        , Preview
+        , Full
         , Namespace(..)
         , ArticleResult
         , RemoteArticle
         , ArticleError(..)
+        , RemoteTitlePair
+        , title
+        , content
+        , links
+        , asPreview
+        , equals
         , getArticleResult
         , getRemoteArticle
+        , getRandomPair
         , viewError
+        , viewAsLink
         )
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
-import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf)
-import Json.Decode.Pipeline exposing (decode, required, requiredAt)
+import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf, succeed)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt, hardcoded, custom)
 import Url exposing (Url, QueryParam(KeyValue, Key))
-import Html.Styled exposing (Html, div, text)
-import Title exposing (Title)
+import Html.Styled exposing (Html, a, div, text)
+import Html.Styled.Attributes exposing (href)
 
 
-type alias Article =
-    { title : Title
-    , links : List Link
-    , content : HtmlString
-    }
+type Article a
+    = Article String a
 
 
-type alias Link =
-    { title : Title
-    , namespace : Namespace
-    , exists : Bool
+type Preview
+    = Preview
+
+
+type Full
+    = Full Body
+
+
+type alias Body =
+    { content : HtmlString
+    , links : List (Article Preview)
     }
 
 
@@ -43,8 +56,45 @@ type alias HtmlString =
     String
 
 
+title : Article a -> String
+title (Article title _) =
+    title
+
+
+content : Article Full -> String
+content (Article _ (Full { content })) =
+    content
+
+
+links : Article Full -> List (Article Preview)
+links (Article _ (Full { links })) =
+    links
+
+
+asPreview : Article a -> Article Preview
+asPreview (Article title _) =
+    Article title Preview
+
+
+equals : Article a -> Article b -> Bool
+equals (Article firstTitle _) (Article secondTitle _) =
+    firstTitle == secondTitle
+
+
 
 -- VIEW
+
+
+viewAsLink : Article a -> Html msg
+viewAsLink article =
+    a
+        [ href (toUrl article) ]
+        [ text (title article) ]
+
+
+toUrl : Article a -> String
+toUrl article =
+    "https://en.wikipedia.org/wiki/" ++ (title article)
 
 
 viewError : ArticleError -> Html msg
@@ -73,11 +123,11 @@ toErrorMessage error =
 
 
 type alias ArticleResult =
-    Result ArticleError Article
+    Result ArticleError (Article Full)
 
 
 type alias RemoteArticle =
-    RemoteData ArticleError Article
+    RemoteData ArticleError (Article Full)
 
 
 type ArticleError
@@ -97,7 +147,7 @@ getArticleResult toMsg title =
 toArticleResult : Result Http.Error ArticleResult -> ArticleResult
 toArticleResult result =
     result
-        |> Result.mapError HttpError
+        |> Result.mapError (Debug.log "### Error" >> HttpError)
         |> Result.andThen identity
 
 
@@ -125,12 +175,17 @@ buildArticleUrl : String -> Url
 buildArticleUrl title =
     let
         queryParams =
-            [ KeyValue ( "action", "parse" )
+            [ KeyValue ( "action", "query" )
             , KeyValue ( "format", "json" )
+            , KeyValue ( "prop", "revisions|links" )
+            , KeyValue ( "titles", title )
+            , KeyValue ( "redirects", "1" )
             , KeyValue ( "formatversion", "2" )
+            , KeyValue ( "rvprop", "content" )
+            , KeyValue ( "rvslots", "main" )
+            , KeyValue ( "plnamespace", "0" )
+            , KeyValue ( "pllimit", "max" )
             , KeyValue ( "origin", "*" )
-            , KeyValue ( "page", title )
-            , Key "redirects"
             ]
     in
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
@@ -144,29 +199,27 @@ responseDecoder : Decoder ArticleResult
 responseDecoder =
     oneOf
         [ map Ok successDecoder
-        , map Err errorDecoder
+        , map Err errorDecoder -- handle pages with "missing" or "invalid" attributes
         ]
 
 
-successDecoder : Decoder Article
+successDecoder : Decoder (Article Full)
 successDecoder =
-    field "parse" articleDecoder
+    at [ "query", "pages", "0" ] articleDecoder
 
 
-articleDecoder : Decoder Article
+articleDecoder : Decoder (Article Full)
 articleDecoder =
-    decode Article
-        |> required "title" Title.titleDecoder
-        |> required "links" (list linkDecoder)
-        |> required "text" string
+    succeed Article
+        |> required "title" string
+        |> custom (map Full bodyDecoder)
 
 
-linkDecoder : Decoder Link
-linkDecoder =
-    decode Link
-        |> required "title" Title.titleDecoder
-        |> required "ns" namespaceDecoder
-        |> required "exists" bool
+bodyDecoder : Decoder Body
+bodyDecoder =
+    decode Body
+        |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
+        |> required "links" (list previewDecoder)
 
 
 namespaceDecoder : Decoder Namespace
@@ -199,3 +252,81 @@ errorDecoder =
             at [ "error", "code" ] string
     in
         map toError errorCode
+
+
+
+-- PREVIEW
+
+
+type alias RemoteTitlePair =
+    RemoteData TitleError ( Article Preview, Article Preview )
+
+
+type TitleError
+    = UnexpectedTitleCount
+    | PreviewHttpError Http.Error
+
+
+getRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
+getRandomPair toMsg =
+    buildRandomTitleRequest 2
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteTitlePair >> toMsg)
+
+
+toRemoteTitlePair : WebData (List (Article Preview)) -> RemoteTitlePair
+toRemoteTitlePair remoteTitles =
+    remoteTitles
+        |> RemoteData.mapError PreviewHttpError
+        |> RemoteData.andThen toPair
+
+
+toPair : List (Article Preview) -> RemoteTitlePair
+toPair titles =
+    case titles of
+        first :: second :: _ ->
+            RemoteData.succeed ( first, second )
+
+        _ ->
+            RemoteData.Failure UnexpectedTitleCount
+
+
+buildRandomTitleRequest : Int -> Http.Request (List (Article Preview))
+buildRandomTitleRequest titleCount =
+    Http.get (buildRandomTitlesUrl titleCount) randomTitlesResponseDecoder
+
+
+buildRandomTitlesUrl : Int -> Url
+buildRandomTitlesUrl titleCount =
+    let
+        articleNamespace =
+            "0"
+
+        queryParams =
+            [ KeyValue ( "action", "query" )
+            , KeyValue ( "format", "json" )
+            , KeyValue ( "list", "random" )
+            , KeyValue ( "rnlimit", toString titleCount )
+            , KeyValue ( "rnnamespace", articleNamespace )
+            , KeyValue ( "origin", "*" )
+            ]
+    in
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+
+
+
+-- SERIALIZATION
+
+
+randomTitlesResponseDecoder : Decoder (List (Article Preview))
+randomTitlesResponseDecoder =
+    at
+        [ "query", "random" ]
+        (list previewDecoder)
+
+
+previewDecoder : Decoder (Article Preview)
+previewDecoder =
+    succeed Article
+        |> required "title" string
+        |> hardcoded Preview
