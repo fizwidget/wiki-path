@@ -3,7 +3,6 @@ module Article
         ( Article
         , Preview
         , Full
-        , Namespace(..)
         , ArticleResult
         , RemoteArticle
         , ArticleError(..)
@@ -45,11 +44,6 @@ type alias Body =
     { content : HtmlString
     , links : List (Article Preview)
     }
-
-
-type Namespace
-    = ArticleNamespace
-    | NonArticleNamespace
 
 
 type alias HtmlString =
@@ -231,18 +225,6 @@ bodyDecoder =
         |> required "links" (list previewDecoder)
 
 
-namespaceDecoder : Decoder Namespace
-namespaceDecoder =
-    let
-        toNamespace namespaceId =
-            if namespaceId == 0 then
-                ArticleNamespace
-            else
-                NonArticleNamespace
-    in
-        map toNamespace int
-
-
 errorDecoder : Decoder ArticleError
 errorDecoder =
     let
@@ -308,15 +290,12 @@ buildRandomArticlesRequest articleCount =
 buildRandomArticlesUrl : Int -> Url
 buildRandomArticlesUrl articleCount =
     let
-        articleNamespace =
-            "0"
-
         queryParams =
             [ KeyValue ( "action", "query" )
             , KeyValue ( "format", "json" )
             , KeyValue ( "list", "random" )
             , KeyValue ( "rnlimit", toString articleCount )
-            , KeyValue ( "rnnamespace", articleNamespace )
+            , KeyValue ( "rnnamespace", "0" )
             , KeyValue ( "origin", "*" )
             ]
     in
