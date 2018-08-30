@@ -146,7 +146,7 @@ viewBackButton : Model -> (Article Preview -> Article Preview -> backMsg) -> Htm
 viewBackButton model toBackMsg =
     let
         onClick =
-            toBackMsg (getSourceTitle model) (getDestinationTitle model)
+            toBackMsg (getSourceArticle model) (getDestinationArticle model)
     in
         div [ css [ margin (px 20) ] ]
             [ Button.view "Back"
@@ -156,8 +156,8 @@ viewBackButton model toBackMsg =
             ]
 
 
-getSourceTitle : Model -> Article Preview
-getSourceTitle model =
+getSourceArticle : Model -> Article Preview
+getSourceArticle model =
     case model of
         Success path ->
             Path.beginning path
@@ -166,8 +166,8 @@ getSourceTitle model =
             source
 
 
-getDestinationTitle : Model -> Article Preview
-getDestinationTitle model =
+getDestinationArticle : Model -> Article Preview
+getDestinationArticle model =
     case model of
         Success path ->
             Path.end path

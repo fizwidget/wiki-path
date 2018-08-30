@@ -231,10 +231,10 @@ incrementRequests model requestCount =
 
 
 isCandidate : OrderedSet String -> Article Preview -> Bool
-isCandidate visitedTitles link =
+isCandidate visitedTitles article =
     let
         title =
-            Article.title link
+            Article.title article
 
         hasMinimumLength =
             String.length title > 1
@@ -270,12 +270,12 @@ markVisited visitedTitles paths =
 
 
 extendPath : Article Full -> Path -> Article Preview -> Path
-extendPath destination currentPath link =
+extendPath destination currentPath nextArticle =
     let
         priority =
-            calculatePriority currentPath link destination
+            calculatePriority currentPath nextArticle destination
     in
-        Path.extend currentPath link priority
+        Path.extend currentPath nextArticle priority
 
 
 calculatePriority : Path -> Article Preview -> Article Full -> Priority
@@ -284,19 +284,20 @@ calculatePriority currentPath current destination =
 
 
 heuristic : Article Full -> Article Preview -> Float
-heuristic destination title =
-    if Article.equals title destination then
+heuristic destination current =
+    if Article.equals current destination then
         10000
     else
-        countOccurences (Article.title title) (Article.content destination)
+        countOccurences (Article.title current |> Debug.log "title") (Article.content destination)
             |> toFloat
+            |> Debug.log "heuristic"
 
 
 countOccurences : String -> String -> Int
 countOccurences target content =
     let
         occurencePattern =
-            ("(^|\\s+|\")" ++ (escape target) ++ "(\\s+|$|\")")
+            escape target
                 |> regex
                 |> caseInsensitive
     in

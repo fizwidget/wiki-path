@@ -42,7 +42,7 @@ update msg model =
                 |> handlePathfindingUpdate
 
         ( BackToSetup source destination, _ ) ->
-            Setup.initWithTitles source destination
+            Setup.initWithArticles source destination
                 |> inSetupPage
 
         ( _, _ ) ->
@@ -67,7 +67,7 @@ handlePathfindingUpdate updateResult =
             inPathfindingPage ( model, cmd )
 
         Pathfinding.Cancelled source destination ->
-            Setup.initWithTitles source destination
+            Setup.initWithArticles source destination
                 |> inSetupPage
 
         Pathfinding.Complete path ->

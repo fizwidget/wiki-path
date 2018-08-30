@@ -7,7 +7,7 @@ module Article
         , ArticleResult
         , RemoteArticle
         , ArticleError(..)
-        , RemoteTitlePair
+        , RemoteArticlePair
         , title
         , content
         , links
@@ -22,7 +22,7 @@ module Article
 
 import Http
 import RemoteData exposing (RemoteData, WebData)
-import Json.Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf, succeed)
+import Json.Decode as Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf, succeed)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt, hardcoded, custom)
 import Url exposing (Url, QueryParam(KeyValue, Key))
 import Html.Styled exposing (Html, a, div, text)
@@ -197,22 +197,31 @@ buildArticleUrl title =
 
 responseDecoder : Decoder ArticleResult
 responseDecoder =
-    oneOf
-        [ map Ok successDecoder
-        , map Err errorDecoder -- handle pages with "missing" or "invalid" attributes
-        ]
+    at [ "query", "pages", "0" ] <|
+        oneOf
+            [ map Ok successArticleDecoder
+            , map Err invalidArticleDecoder
+            , map Err missingArticleDecoder
+            ]
 
 
-successDecoder : Decoder (Article Full)
-successDecoder =
-    at [ "query", "pages", "0" ] articleDecoder
-
-
-articleDecoder : Decoder (Article Full)
-articleDecoder =
+successArticleDecoder : Decoder (Article Full)
+successArticleDecoder =
     succeed Article
         |> required "title" string
         |> custom (map Full bodyDecoder)
+
+
+invalidArticleDecoder : Decoder ArticleError
+invalidArticleDecoder =
+    field "invalid" bool
+        |> Decode.andThen (always <| Decode.succeed InvalidTitle)
+
+
+missingArticleDecoder : Decoder ArticleError
+missingArticleDecoder =
+    field "missing" bool
+        |> Decode.andThen (always <| Decode.succeed ArticleNotFound)
 
 
 bodyDecoder : Decoder Body
@@ -258,46 +267,46 @@ errorDecoder =
 -- PREVIEW
 
 
-type alias RemoteTitlePair =
-    RemoteData TitleError ( Article Preview, Article Preview )
+type alias RemoteArticlePair =
+    RemoteData ArticlesError ( Article Preview, Article Preview )
 
 
-type TitleError
-    = UnexpectedTitleCount
+type ArticlesError
+    = UnexpectedArticleCount
     | PreviewHttpError Http.Error
 
 
-getRandomPair : (RemoteTitlePair -> msg) -> Cmd msg
+getRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
 getRandomPair toMsg =
-    buildRandomTitleRequest 2
+    buildRandomArticlesRequest 2
         |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteTitlePair >> toMsg)
+        |> Cmd.map (toRemoteArticlePair >> toMsg)
 
 
-toRemoteTitlePair : WebData (List (Article Preview)) -> RemoteTitlePair
-toRemoteTitlePair remoteTitles =
-    remoteTitles
+toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
+toRemoteArticlePair remoteArticles =
+    remoteArticles
         |> RemoteData.mapError PreviewHttpError
         |> RemoteData.andThen toPair
 
 
-toPair : List (Article Preview) -> RemoteTitlePair
-toPair titles =
-    case titles of
+toPair : List (Article Preview) -> RemoteArticlePair
+toPair articles =
+    case articles of
         first :: second :: _ ->
             RemoteData.succeed ( first, second )
 
         _ ->
-            RemoteData.Failure UnexpectedTitleCount
+            RemoteData.Failure UnexpectedArticleCount
 
 
-buildRandomTitleRequest : Int -> Http.Request (List (Article Preview))
-buildRandomTitleRequest titleCount =
-    Http.get (buildRandomTitlesUrl titleCount) randomTitlesResponseDecoder
+buildRandomArticlesRequest : Int -> Http.Request (List (Article Preview))
+buildRandomArticlesRequest articleCount =
+    Http.get (buildRandomArticlesUrl articleCount) randomArticlesResponseDecoder
 
 
-buildRandomTitlesUrl : Int -> Url
-buildRandomTitlesUrl titleCount =
+buildRandomArticlesUrl : Int -> Url
+buildRandomArticlesUrl articleCount =
     let
         articleNamespace =
             "0"
@@ -306,7 +315,7 @@ buildRandomTitlesUrl titleCount =
             [ KeyValue ( "action", "query" )
             , KeyValue ( "format", "json" )
             , KeyValue ( "list", "random" )
-            , KeyValue ( "rnlimit", toString titleCount )
+            , KeyValue ( "rnlimit", toString articleCount )
             , KeyValue ( "rnnamespace", articleNamespace )
             , KeyValue ( "origin", "*" )
             ]
@@ -318,8 +327,8 @@ buildRandomTitlesUrl titleCount =
 -- SERIALIZATION
 
 
-randomTitlesResponseDecoder : Decoder (List (Article Preview))
-randomTitlesResponseDecoder =
+randomArticlesResponseDecoder : Decoder (List (Article Preview))
+randomArticlesResponseDecoder =
     at
         [ "query", "random" ]
         (list previewDecoder)

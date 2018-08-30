@@ -25,10 +25,10 @@ type Path
 
 
 beginningAt : Article a -> Path
-beginningAt title =
+beginningAt article =
     Path
         { previousStops = []
-        , lastStop = Article.asPreview title
+        , lastStop = Article.asPreview article
         , priority = 0
         }
 
@@ -72,10 +72,10 @@ extend (Path path) nextLink nextPriority =
 
 
 contains : Article Preview -> Path -> Bool
-contains title path =
+contains article path =
     path
         |> inReverseOrder
-        |> List.member title
+        |> List.member article
 
 
 length : Path -> Int
