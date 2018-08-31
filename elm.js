@@ -15873,8 +15873,7 @@ var _rtfeldman$elm_css$Html_Styled_Attributes$style = function (_p0) {
 		_elm_lang$virtual_dom$VirtualDom$style(_p0));
 };
 
-var _fizwidget$wiki_path$Title$buildRandomTitlesUrl = function (titleCount) {
-	var articleNamespace = '0';
+var _fizwidget$wiki_path$Article$buildRandomArticlesUrl = function (articleCount) {
 	var queryParams = {
 		ctor: '::',
 		_0: _fizwidget$wiki_path$Url$KeyValue(
@@ -15893,12 +15892,12 @@ var _fizwidget$wiki_path$Title$buildRandomTitlesUrl = function (titleCount) {
 						{
 							ctor: '_Tuple2',
 							_0: 'rnlimit',
-							_1: _elm_lang$core$Basics$toString(titleCount)
+							_1: _elm_lang$core$Basics$toString(articleCount)
 						}),
 					_1: {
 						ctor: '::',
 						_0: _fizwidget$wiki_path$Url$KeyValue(
-							{ctor: '_Tuple2', _0: 'rnnamespace', _1: articleNamespace}),
+							{ctor: '_Tuple2', _0: 'rnnamespace', _1: '0'}),
 						_1: {
 							ctor: '::',
 							_0: _fizwidget$wiki_path$Url$KeyValue(
@@ -15912,91 +15911,11 @@ var _fizwidget$wiki_path$Title$buildRandomTitlesUrl = function (titleCount) {
 	};
 	return A2(_fizwidget$wiki_path$Url$build, 'https://en.wikipedia.org/w/api.php', queryParams);
 };
-var _fizwidget$wiki_path$Title$asString = function (_p0) {
-	var _p1 = _p0;
-	return _p1._0;
-};
-var _fizwidget$wiki_path$Title$toUrl = function (title) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		'https://en.wikipedia.org/wiki/',
-		_fizwidget$wiki_path$Title$asString(title));
-};
-var _fizwidget$wiki_path$Title$viewAsLink = function (title) {
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$a,
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href(
-				_fizwidget$wiki_path$Title$toUrl(title)),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text(
-				_fizwidget$wiki_path$Title$asString(title)),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Title$Title = function (a) {
-	return {ctor: 'Title', _0: a};
-};
-var _fizwidget$wiki_path$Title$from = _fizwidget$wiki_path$Title$Title;
-var _fizwidget$wiki_path$Title$titleDecoder = A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Title$from, _elm_lang$core$Json_Decode$string);
-var _fizwidget$wiki_path$Title$randomTitlesResponseDecoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'query',
-		_1: {
-			ctor: '::',
-			_0: 'random',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$list(
-		A2(_elm_lang$core$Json_Decode$field, 'title', _fizwidget$wiki_path$Title$titleDecoder)));
-var _fizwidget$wiki_path$Title$buildRandomTitleRequest = function (titleCount) {
-	return A2(
-		_elm_lang$http$Http$get,
-		_fizwidget$wiki_path$Title$buildRandomTitlesUrl(titleCount),
-		_fizwidget$wiki_path$Title$randomTitlesResponseDecoder);
-};
-var _fizwidget$wiki_path$Title$HttpError = function (a) {
-	return {ctor: 'HttpError', _0: a};
-};
-var _fizwidget$wiki_path$Title$UnexpectedTitleCount = {ctor: 'UnexpectedTitleCount'};
-var _fizwidget$wiki_path$Title$toRemoteTitlePair = function (remoteTitles) {
-	var toPair = function (titles) {
-		var _p2 = titles;
-		if ((_p2.ctor === '::') && (_p2._1.ctor === '::')) {
-			return _krisajenkins$remotedata$RemoteData$succeed(
-				{ctor: '_Tuple2', _0: _p2._0, _1: _p2._1._0});
-		} else {
-			return _krisajenkins$remotedata$RemoteData$Failure(_fizwidget$wiki_path$Title$UnexpectedTitleCount);
-		}
-	};
-	return A2(
-		_krisajenkins$remotedata$RemoteData$andThen,
-		toPair,
-		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Title$HttpError, remoteTitles));
-};
-var _fizwidget$wiki_path$Title$getRandomPair = function (toMsg) {
-	return A2(
-		_elm_lang$core$Platform_Cmd$map,
-		function (_p3) {
-			return toMsg(
-				_fizwidget$wiki_path$Title$toRemoteTitlePair(_p3));
-		},
-		_krisajenkins$remotedata$RemoteData$sendRequest(
-			_fizwidget$wiki_path$Title$buildRandomTitleRequest(2)));
-};
-
 var _fizwidget$wiki_path$Article$buildArticleUrl = function (title) {
 	var queryParams = {
 		ctor: '::',
 		_0: _fizwidget$wiki_path$Url$KeyValue(
-			{ctor: '_Tuple2', _0: 'action', _1: 'parse'}),
+			{ctor: '_Tuple2', _0: 'action', _1: 'query'}),
 		_1: {
 			ctor: '::',
 			_0: _fizwidget$wiki_path$Url$KeyValue(
@@ -16004,19 +15923,45 @@ var _fizwidget$wiki_path$Article$buildArticleUrl = function (title) {
 			_1: {
 				ctor: '::',
 				_0: _fizwidget$wiki_path$Url$KeyValue(
-					{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
+					{ctor: '_Tuple2', _0: 'prop', _1: 'revisions|links'}),
 				_1: {
 					ctor: '::',
 					_0: _fizwidget$wiki_path$Url$KeyValue(
-						{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+						{ctor: '_Tuple2', _0: 'titles', _1: title}),
 					_1: {
 						ctor: '::',
 						_0: _fizwidget$wiki_path$Url$KeyValue(
-							{ctor: '_Tuple2', _0: 'page', _1: title}),
+							{ctor: '_Tuple2', _0: 'redirects', _1: '1'}),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wiki_path$Url$Key('redirects'),
-							_1: {ctor: '[]'}
+							_0: _fizwidget$wiki_path$Url$KeyValue(
+								{ctor: '_Tuple2', _0: 'formatversion', _1: '2'}),
+							_1: {
+								ctor: '::',
+								_0: _fizwidget$wiki_path$Url$KeyValue(
+									{ctor: '_Tuple2', _0: 'rvprop', _1: 'content'}),
+								_1: {
+									ctor: '::',
+									_0: _fizwidget$wiki_path$Url$KeyValue(
+										{ctor: '_Tuple2', _0: 'rvslots', _1: 'main'}),
+									_1: {
+										ctor: '::',
+										_0: _fizwidget$wiki_path$Url$KeyValue(
+											{ctor: '_Tuple2', _0: 'plnamespace', _1: '0'}),
+										_1: {
+											ctor: '::',
+											_0: _fizwidget$wiki_path$Url$KeyValue(
+												{ctor: '_Tuple2', _0: 'pllimit', _1: 'max'}),
+											_1: {
+												ctor: '::',
+												_0: _fizwidget$wiki_path$Url$KeyValue(
+													{ctor: '_Tuple2', _0: 'origin', _1: '*'}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -16032,8 +15977,6 @@ var _fizwidget$wiki_path$Article$toErrorMessage = function (error) {
 			return 'Couldn\'t find that article :(';
 		case 'InvalidTitle':
 			return 'Not a valid article title :(';
-		case 'UnknownError':
-			return 'Unknown error 🤯';
 		default:
 			return 'Network error 😭';
 	}
@@ -16049,49 +15992,125 @@ var _fizwidget$wiki_path$Article$viewError = function (error) {
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wiki_path$Article$Article = F3(
-	function (a, b, c) {
-		return {title: a, links: b, content: c};
+var _fizwidget$wiki_path$Article$equals = F2(
+	function (_p2, _p1) {
+		var _p3 = _p2;
+		var _p4 = _p1;
+		return _elm_lang$core$Native_Utils.eq(_p3._0, _p4._0);
 	});
-var _fizwidget$wiki_path$Article$Link = F3(
-	function (a, b, c) {
-		return {title: a, namespace: b, exists: c};
+var _fizwidget$wiki_path$Article$links = function (_p5) {
+	var _p6 = _p5;
+	return _p6._1._0.links;
+};
+var _fizwidget$wiki_path$Article$content = function (_p7) {
+	var _p8 = _p7;
+	return _p8._1._0.content;
+};
+var _fizwidget$wiki_path$Article$title = function (_p9) {
+	var _p10 = _p9;
+	return _p10._0;
+};
+var _fizwidget$wiki_path$Article$toUrl = function (article) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'https://en.wikipedia.org/wiki/',
+		_fizwidget$wiki_path$Article$title(article));
+};
+var _fizwidget$wiki_path$Article$viewLink = function (article) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$a,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$href(
+				_fizwidget$wiki_path$Article$toUrl(article)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled$text(
+				_fizwidget$wiki_path$Article$title(article)),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Article$Body = F2(
+	function (a, b) {
+		return {content: a, links: b};
 	});
-var _fizwidget$wiki_path$Article$NonArticleNamespace = {ctor: 'NonArticleNamespace'};
-var _fizwidget$wiki_path$Article$ArticleNamespace = {ctor: 'ArticleNamespace'};
-var _fizwidget$wiki_path$Article$namespaceDecoder = function () {
-	var toNamespace = function (namespaceId) {
-		return _elm_lang$core$Native_Utils.eq(namespaceId, 0) ? _fizwidget$wiki_path$Article$ArticleNamespace : _fizwidget$wiki_path$Article$NonArticleNamespace;
-	};
-	return A2(_elm_lang$core$Json_Decode$map, toNamespace, _elm_lang$core$Json_Decode$int);
-}();
-var _fizwidget$wiki_path$Article$linkDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'exists',
-	_elm_lang$core$Json_Decode$bool,
+var _fizwidget$wiki_path$Article$Article = F2(
+	function (a, b) {
+		return {ctor: 'Article', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Article$Preview = {ctor: 'Preview'};
+var _fizwidget$wiki_path$Article$preview = function (_p11) {
+	var _p12 = _p11;
+	return A2(_fizwidget$wiki_path$Article$Article, _p12._0, _fizwidget$wiki_path$Article$Preview);
+};
+var _fizwidget$wiki_path$Article$previewDecoder = A2(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+	_fizwidget$wiki_path$Article$Preview,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'ns',
-		_fizwidget$wiki_path$Article$namespaceDecoder,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_fizwidget$wiki_path$Title$titleDecoder,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Article$Link))));
-var _fizwidget$wiki_path$Article$articleDecoder = A3(
+		'title',
+		_elm_lang$core$Json_Decode$string,
+		_elm_lang$core$Json_Decode$succeed(_fizwidget$wiki_path$Article$Article)));
+var _fizwidget$wiki_path$Article$bodyDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'text',
-	_elm_lang$core$Json_Decode$string,
+	'links',
+	_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Article$previewDecoder),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
+		{
+			ctor: '::',
+			_0: 'revisions',
+			_1: {
+				ctor: '::',
+				_0: '0',
+				_1: {
+					ctor: '::',
+					_0: 'slots',
+					_1: {
+						ctor: '::',
+						_0: 'main',
+						_1: {
+							ctor: '::',
+							_0: 'content',
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Article$Body)));
+var _fizwidget$wiki_path$Article$randomArticlesDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'query',
+		_1: {
+			ctor: '::',
+			_0: 'random',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Article$previewDecoder));
+var _fizwidget$wiki_path$Article$buildRandomArticlesRequest = function (articleCount) {
+	return A2(
+		_elm_lang$http$Http$get,
+		_fizwidget$wiki_path$Article$buildRandomArticlesUrl(articleCount),
+		_fizwidget$wiki_path$Article$randomArticlesDecoder);
+};
+var _fizwidget$wiki_path$Article$Full = function (a) {
+	return {ctor: 'Full', _0: a};
+};
+var _fizwidget$wiki_path$Article$successDecoder = A2(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
+	A2(_elm_lang$core$Json_Decode$map, _fizwidget$wiki_path$Article$Full, _fizwidget$wiki_path$Article$bodyDecoder),
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'links',
-		_elm_lang$core$Json_Decode$list(_fizwidget$wiki_path$Article$linkDecoder),
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_fizwidget$wiki_path$Title$titleDecoder,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fizwidget$wiki_path$Article$Article))));
-var _fizwidget$wiki_path$Article$successDecoder = A2(_elm_lang$core$Json_Decode$field, 'parse', _fizwidget$wiki_path$Article$articleDecoder);
+		'title',
+		_elm_lang$core$Json_Decode$string,
+		_elm_lang$core$Json_Decode$succeed(_fizwidget$wiki_path$Article$Article)));
 var _fizwidget$wiki_path$Article$HttpError = function (a) {
 	return {ctor: 'HttpError', _0: a};
 };
@@ -16107,47 +16126,47 @@ var _fizwidget$wiki_path$Article$toRemoteArticle = function (webData) {
 		_krisajenkins$remotedata$RemoteData$fromResult,
 		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Article$HttpError, webData));
 };
-var _fizwidget$wiki_path$Article$UnknownError = function (a) {
-	return {ctor: 'UnknownError', _0: a};
-};
 var _fizwidget$wiki_path$Article$InvalidTitle = {ctor: 'InvalidTitle'};
+var _fizwidget$wiki_path$Article$invalidDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	_elm_lang$core$Basics$always(
+		_elm_lang$core$Json_Decode$succeed(_fizwidget$wiki_path$Article$InvalidTitle)),
+	A2(_elm_lang$core$Json_Decode$field, 'invalid', _elm_lang$core$Json_Decode$bool));
 var _fizwidget$wiki_path$Article$ArticleNotFound = {ctor: 'ArticleNotFound'};
-var _fizwidget$wiki_path$Article$errorDecoder = function () {
-	var errorCode = A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'error',
-			_1: {
-				ctor: '::',
-				_0: 'code',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string);
-	var toError = function (errorCode) {
-		var _p1 = errorCode;
-		switch (_p1) {
-			case 'missingtitle':
-				return _fizwidget$wiki_path$Article$ArticleNotFound;
-			case 'invalidtitle':
-				return _fizwidget$wiki_path$Article$InvalidTitle;
-			default:
-				return _fizwidget$wiki_path$Article$UnknownError(errorCode);
-		}
-	};
-	return A2(_elm_lang$core$Json_Decode$map, toError, errorCode);
-}();
-var _fizwidget$wiki_path$Article$responseDecoder = _elm_lang$core$Json_Decode$oneOf(
+var _fizwidget$wiki_path$Article$missingDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	_elm_lang$core$Basics$always(
+		_elm_lang$core$Json_Decode$succeed(_fizwidget$wiki_path$Article$ArticleNotFound)),
+	A2(_elm_lang$core$Json_Decode$field, 'missing', _elm_lang$core$Json_Decode$bool));
+var _fizwidget$wiki_path$Article$responseDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
-		_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Article$successDecoder),
+		_0: 'query',
 		_1: {
 			ctor: '::',
-			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Article$errorDecoder),
-			_1: {ctor: '[]'}
+			_0: 'pages',
+			_1: {
+				ctor: '::',
+				_0: '0',
+				_1: {ctor: '[]'}
+			}
 		}
-	});
+	},
+	_elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, _fizwidget$wiki_path$Article$successDecoder),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Article$invalidDecoder),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, _fizwidget$wiki_path$Article$missingDecoder),
+					_1: {ctor: '[]'}
+				}
+			}
+		}));
 var _fizwidget$wiki_path$Article$buildRequest = function (title) {
 	return A2(
 		_elm_lang$http$Http$get,
@@ -16158,9 +16177,9 @@ var _fizwidget$wiki_path$Article$getArticleResult = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$http$Http$send,
-			function (_p2) {
+			function (_p13) {
 				return toMsg(
-					_fizwidget$wiki_path$Article$toArticleResult(_p2));
+					_fizwidget$wiki_path$Article$toArticleResult(_p13));
 			},
 			_fizwidget$wiki_path$Article$buildRequest(title));
 	});
@@ -16168,13 +16187,42 @@ var _fizwidget$wiki_path$Article$getRemoteArticle = F2(
 	function (toMsg, title) {
 		return A2(
 			_elm_lang$core$Platform_Cmd$map,
-			function (_p3) {
+			function (_p14) {
 				return toMsg(
-					_fizwidget$wiki_path$Article$toRemoteArticle(_p3));
+					_fizwidget$wiki_path$Article$toRemoteArticle(_p14));
 			},
 			_krisajenkins$remotedata$RemoteData$sendRequest(
 				_fizwidget$wiki_path$Article$buildRequest(title)));
 	});
+var _fizwidget$wiki_path$Article$LinkHttpError = function (a) {
+	return {ctor: 'LinkHttpError', _0: a};
+};
+var _fizwidget$wiki_path$Article$UnexpectedArticleCount = {ctor: 'UnexpectedArticleCount'};
+var _fizwidget$wiki_path$Article$toPair = function (articles) {
+	var _p15 = articles;
+	if ((_p15.ctor === '::') && (_p15._1.ctor === '::')) {
+		return _krisajenkins$remotedata$RemoteData$succeed(
+			{ctor: '_Tuple2', _0: _p15._0, _1: _p15._1._0});
+	} else {
+		return _krisajenkins$remotedata$RemoteData$Failure(_fizwidget$wiki_path$Article$UnexpectedArticleCount);
+	}
+};
+var _fizwidget$wiki_path$Article$toRemoteArticlePair = function (remoteArticles) {
+	return A2(
+		_krisajenkins$remotedata$RemoteData$andThen,
+		_fizwidget$wiki_path$Article$toPair,
+		A2(_krisajenkins$remotedata$RemoteData$mapError, _fizwidget$wiki_path$Article$LinkHttpError, remoteArticles));
+};
+var _fizwidget$wiki_path$Article$getRandomPair = function (toMsg) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		function (_p16) {
+			return toMsg(
+				_fizwidget$wiki_path$Article$toRemoteArticlePair(_p16));
+		},
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			_fizwidget$wiki_path$Article$buildRandomArticlesRequest(2)));
+};
 
 var _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption = function (size) {
 	var _p0 = size;
@@ -19431,10 +19479,10 @@ var _fizwidget$wiki_path$Path$inReverseOrder = function (_p2) {
 	return {ctor: '::', _0: _p4.lastStop, _1: _p4.previousStops};
 };
 var _fizwidget$wiki_path$Path$contains = F2(
-	function (title, path) {
+	function (article, path) {
 		return A2(
 			_elm_lang$core$List$member,
-			title,
+			article,
 			_fizwidget$wiki_path$Path$inReverseOrder(path));
 	});
 var _fizwidget$wiki_path$Path$length = function (_p5) {
@@ -19461,80 +19509,44 @@ var _fizwidget$wiki_path$Path$beginning = function (_p9) {
 var _fizwidget$wiki_path$Path$Path = function (a) {
 	return {ctor: 'Path', _0: a};
 };
-var _fizwidget$wiki_path$Path$beginningAt = function (title) {
+var _fizwidget$wiki_path$Path$beginningAt = function (article) {
 	return _fizwidget$wiki_path$Path$Path(
 		{
 			previousStops: {ctor: '[]'},
-			lastStop: title,
+			lastStop: _fizwidget$wiki_path$Article$preview(article),
 			priority: 0
 		});
 };
 var _fizwidget$wiki_path$Path$extend = F3(
-	function (_p12, nextTitle, nextPriority) {
+	function (_p12, nextLink, nextPriority) {
 		var _p13 = _p12;
 		var _p14 = _p13._0;
 		return _fizwidget$wiki_path$Path$Path(
 			_elm_lang$core$Native_Utils.update(
 				_p14,
 				{
-					lastStop: nextTitle,
+					lastStop: nextLink,
 					previousStops: {ctor: '::', _0: _p14.lastStop, _1: _p14.previousStops},
 					priority: nextPriority
 				}));
 	});
 
-var _fizwidget$wiki_path$Page_Finished$getDestinationTitle = function (model) {
+var _fizwidget$wiki_path$Page_Finished$getDestinationArticle = function (model) {
 	var _p0 = model;
 	if (_p0.ctor === 'Success') {
 		return _fizwidget$wiki_path$Path$end(_p0._0);
 	} else {
-		return _p0._0.destination.title;
+		return _p0._0.destination;
 	}
 };
-var _fizwidget$wiki_path$Page_Finished$getSourceTitle = function (model) {
+var _fizwidget$wiki_path$Page_Finished$getSourceArticle = function (model) {
 	var _p1 = model;
 	if (_p1.ctor === 'Success') {
 		return _fizwidget$wiki_path$Path$beginning(_p1._0);
 	} else {
-		return _p1._0.source.title;
+		return _p1._0.source;
 	}
 };
-var _fizwidget$wiki_path$Page_Finished$viewBackButton = F2(
-	function (model, toBackMsg) {
-		var onClick = A2(
-			toBackMsg,
-			_fizwidget$wiki_path$Page_Finished$getSourceTitle(model),
-			_fizwidget$wiki_path$Page_Finished$getDestinationTitle(model));
-		return A2(
-			_rtfeldman$elm_css$Html_Styled$div,
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-					{
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$margin(
-							_rtfeldman$elm_css$Css$px(20)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_fizwidget$wiki_path$Button$view,
-					'Back',
-					{
-						ctor: '::',
-						_0: _fizwidget$wiki_path$Button$Secondary,
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Button$OnClick(onClick),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			});
-	});
 var _fizwidget$wiki_path$Page_Finished$viewError = function (_p2) {
 	var _p3 = _p2;
 	var pathNotFoundMessage = {
@@ -19542,13 +19554,13 @@ var _fizwidget$wiki_path$Page_Finished$viewError = function (_p2) {
 		_0: _rtfeldman$elm_css$Html_Styled$text('Sorry, couldn\'t find a path from '),
 		_1: {
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Title$viewAsLink(_p3.source.title),
+			_0: _fizwidget$wiki_path$Article$viewLink(_p3.source),
 			_1: {
 				ctor: '::',
 				_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wiki_path$Title$viewAsLink(_p3.destination.title),
+					_0: _fizwidget$wiki_path$Article$viewLink(_p3.destination),
 					_1: {
 						ctor: '::',
 						_0: _rtfeldman$elm_css$Html_Styled$text(' 💀'),
@@ -19602,7 +19614,7 @@ var _fizwidget$wiki_path$Page_Finished$viewPath = function (path) {
 			_rtfeldman$elm_css$Html_Styled$text(' → '),
 			A2(
 				_elm_lang$core$List$map,
-				_fizwidget$wiki_path$Title$viewAsLink,
+				_fizwidget$wiki_path$Article$viewLink,
 				_fizwidget$wiki_path$Path$inOrder(path))));
 };
 var _fizwidget$wiki_path$Page_Finished$viewSubHeading = A2(
@@ -19656,42 +19668,6 @@ var _fizwidget$wiki_path$Page_Finished$viewModel = function (model) {
 		return _fizwidget$wiki_path$Page_Finished$viewError(_p5._0);
 	}
 };
-var _fizwidget$wiki_path$Page_Finished$view = F2(
-	function (model, toBackMsg) {
-		return A2(
-			_rtfeldman$elm_css$Html_Styled$div,
-			{
-				ctor: '::',
-				_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
-					{
-						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$displayFlex,
-						_1: {
-							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
-							_1: {
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
-								_1: {
-									ctor: '::',
-									_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _fizwidget$wiki_path$Page_Finished$viewModel(model),
-				_1: {
-					ctor: '::',
-					_0: A2(_fizwidget$wiki_path$Page_Finished$viewBackButton, model, toBackMsg),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
 var _fizwidget$wiki_path$Page_Finished$ErrorDetails = F3(
 	function (a, b, c) {
 		return {error: a, source: b, destination: c};
@@ -19712,6 +19688,85 @@ var _fizwidget$wiki_path$Page_Finished$TooManyRequests = {ctor: 'TooManyRequests
 var _fizwidget$wiki_path$Page_Finished$initWithTooManyRequestsError = _fizwidget$wiki_path$Page_Finished$initWithError(_fizwidget$wiki_path$Page_Finished$TooManyRequests);
 var _fizwidget$wiki_path$Page_Finished$PathNotFound = {ctor: 'PathNotFound'};
 var _fizwidget$wiki_path$Page_Finished$initWithPathNotFoundError = _fizwidget$wiki_path$Page_Finished$initWithError(_fizwidget$wiki_path$Page_Finished$PathNotFound);
+var _fizwidget$wiki_path$Page_Finished$Back = {ctor: 'Back'};
+var _fizwidget$wiki_path$Page_Finished$viewBackButton = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$margin(
+						_rtfeldman$elm_css$Css$px(20)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_fizwidget$wiki_path$Button$view,
+				'Back',
+				{
+					ctor: '::',
+					_0: _fizwidget$wiki_path$Button$Secondary,
+					_1: {
+						ctor: '::',
+						_0: _fizwidget$wiki_path$Button$OnClick(_fizwidget$wiki_path$Page_Finished$Back),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _fizwidget$wiki_path$Page_Finished$view = function (model) {
+	return A2(
+		_rtfeldman$elm_css$Html_Styled$div,
+		{
+			ctor: '::',
+			_0: _rtfeldman$elm_css$Html_Styled_Attributes$css(
+				{
+					ctor: '::',
+					_0: _rtfeldman$elm_css$Css$displayFlex,
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$alignItems(_rtfeldman$elm_css$Css$center),
+						_1: {
+							ctor: '::',
+							_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$center),
+							_1: {
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css$flexDirection(_rtfeldman$elm_css$Css$column),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _fizwidget$wiki_path$Page_Finished$viewModel(model),
+			_1: {
+				ctor: '::',
+				_0: _fizwidget$wiki_path$Page_Finished$viewBackButton(model),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fizwidget$wiki_path$Page_Finished$BackToSetup = F2(
+	function (a, b) {
+		return {ctor: 'BackToSetup', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Finished$update = F2(
+	function (_p6, model) {
+		var _p7 = _p6;
+		return A2(
+			_fizwidget$wiki_path$Page_Finished$BackToSetup,
+			_fizwidget$wiki_path$Page_Finished$getSourceArticle(model),
+			_fizwidget$wiki_path$Page_Finished$getDestinationArticle(model));
+	});
 
 var _fizwidget$wiki_path$OrderedSet$inOrder = function (_p0) {
 	var _p1 = _p0;
@@ -19816,28 +19871,6 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewVisited = function (visited) {
 							10,
 							_fizwidget$wiki_path$OrderedSet$inOrder(visited)))))));
 };
-var _fizwidget$wiki_path$Page_Pathfinding$viewDestinationContentWarning = function (destination) {
-	var message = A2(_elm_lang$core$String$contains, 'disambigbox', destination.content) ? 'The destination is a disambiguation page, so I probably won\'t be able to find a path to it 😅' : ((_elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$String$length(destination.content),
-		10000) < 0) ? 'The destination article is very short, so it might take longer than usual to find! 😅' : '');
-	return A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text(message),
-			_1: {ctor: '[]'}
-		});
-};
-var _fizwidget$wiki_path$Page_Pathfinding$viewErrors = function (errors) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		_rtfeldman$elm_css$Html_Styled$text(''),
-		A2(
-			_elm_lang$core$Maybe$map,
-			_fizwidget$wiki_path$Article$viewError,
-			_elm_lang$core$List$head(errors)));
-};
 var _fizwidget$wiki_path$Page_Pathfinding$viewHeading = F2(
 	function (source, destination) {
 		return A2(
@@ -19857,13 +19890,13 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewHeading = F2(
 				_0: _rtfeldman$elm_css$Html_Styled$text('Finding path from '),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wiki_path$Title$viewAsLink(source.title),
+					_0: _fizwidget$wiki_path$Article$viewLink(source),
 					_1: {
 						ctor: '::',
 						_0: _rtfeldman$elm_css$Html_Styled$text(' to '),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wiki_path$Title$viewAsLink(destination.title),
+							_0: _fizwidget$wiki_path$Article$viewLink(destination),
 							_1: {
 								ctor: '::',
 								_0: _rtfeldman$elm_css$Html_Styled$text('...'),
@@ -19887,61 +19920,51 @@ var _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorities = function (paths
 			paths));
 };
 var _fizwidget$wiki_path$Page_Pathfinding$countOccurences = F2(
-	function (content, target) {
+	function (target, content) {
 		var occurencePattern = _elm_lang$core$Regex$caseInsensitive(
 			_elm_lang$core$Regex$regex(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'(^|\\s+|\")',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Regex$escape(target),
-						'(\\s+|$|\")'))));
+				_elm_lang$core$Regex$escape(target)));
 		return _elm_lang$core$List$length(
 			A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, occurencePattern, content));
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$heuristic = F2(
-	function (destination, title) {
-		return _elm_lang$core$Native_Utils.eq(title, destination.title) ? 10000 : _elm_lang$core$Basics$toFloat(
+	function (destination, current) {
+		return A2(_fizwidget$wiki_path$Article$equals, current, destination) ? 10000 : _elm_lang$core$Basics$toFloat(
 			A2(
 				_fizwidget$wiki_path$Page_Pathfinding$countOccurences,
-				destination.content,
-				_fizwidget$wiki_path$Title$asString(title)));
+				_fizwidget$wiki_path$Article$title(current),
+				_fizwidget$wiki_path$Article$content(destination)));
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$calculatePriority = F3(
-	function (destination, currentPath, title) {
-		return (_fizwidget$wiki_path$Path$priority(currentPath) * 0.8) + A2(_fizwidget$wiki_path$Page_Pathfinding$heuristic, destination, title);
+	function (currentPath, current, destination) {
+		return (_fizwidget$wiki_path$Path$priority(currentPath) * 0.8) + A2(_fizwidget$wiki_path$Page_Pathfinding$heuristic, destination, current);
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$extendPath = F3(
-	function (currentPath, destination, link) {
-		return A3(
-			_fizwidget$wiki_path$Path$extend,
-			currentPath,
-			link.title,
-			A3(_fizwidget$wiki_path$Page_Pathfinding$calculatePriority, destination, currentPath, link.title));
+	function (destination, currentPath, nextArticle) {
+		var priority = A3(_fizwidget$wiki_path$Page_Pathfinding$calculatePriority, currentPath, nextArticle, destination);
+		return A3(_fizwidget$wiki_path$Path$extend, currentPath, nextArticle, priority);
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$markVisited = F2(
-	function (visitedTitles, newPaths) {
+	function (visitedArticles, paths) {
 		return A3(
 			_elm_lang$core$List$foldl,
 			_fizwidget$wiki_path$OrderedSet$insert,
-			visitedTitles,
+			visitedArticles,
 			A2(
 				_elm_lang$core$List$map,
 				function (_p2) {
-					return _fizwidget$wiki_path$Title$asString(
+					return _fizwidget$wiki_path$Article$title(
 						_fizwidget$wiki_path$Path$end(_p2));
 				},
-				newPaths));
+				paths));
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$isCandidate = F2(
-	function (visitedTitles, link) {
-		var isRegularArticle = _elm_lang$core$Native_Utils.eq(link.namespace, _fizwidget$wiki_path$Article$ArticleNamespace);
-		var title = _fizwidget$wiki_path$Title$asString(link.title);
+	function (visitedArticles, article) {
+		var title = _fizwidget$wiki_path$Article$title(article);
 		var hasMinimumLength = _elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$String$length(title),
 			1) > 0;
-		var isVisited = A2(_fizwidget$wiki_path$OrderedSet$member, title, visitedTitles);
+		var isVisited = A2(_fizwidget$wiki_path$OrderedSet$member, title, visitedArticles);
 		var isBlacklisted = A2(
 			_elm_lang$core$List$member,
 			title,
@@ -19990,7 +20013,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$isCandidate = F2(
 					}
 				}
 			});
-		return link.exists && (hasMinimumLength && (isRegularArticle && ((!isVisited) && (!isBlacklisted))));
+		return hasMinimumLength && ((!isVisited) && (!isBlacklisted));
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$incrementRequests = F2(
 	function (model, requestCount) {
@@ -20006,9 +20029,10 @@ var _fizwidget$wiki_path$Page_Pathfinding$decrementPendingRequests = function (m
 var _fizwidget$wiki_path$Page_Pathfinding$containsPathToDestination = F2(
 	function (paths, destination) {
 		var hasReachedDestination = function (path) {
-			return _elm_lang$core$Native_Utils.eq(
+			return A2(
+				_fizwidget$wiki_path$Article$equals,
 				_fizwidget$wiki_path$Path$end(path),
-				destination.title);
+				destination);
 		};
 		return _elm_lang$core$List$head(
 			A2(
@@ -20021,16 +20045,16 @@ var _fizwidget$wiki_path$Page_Pathfinding$processLinks = F3(
 		var newPaths = _fizwidget$wiki_path$Page_Pathfinding$discardLowPriorities(
 			A2(
 				_elm_lang$core$List$map,
-				A2(_fizwidget$wiki_path$Page_Pathfinding$extendPath, pathToArticle, model.destination),
+				A2(_fizwidget$wiki_path$Page_Pathfinding$extendPath, model.destination, pathToArticle),
 				A2(
 					_elm_lang$core$List$filter,
-					_fizwidget$wiki_path$Page_Pathfinding$isCandidate(model.visitedTitles),
-					article.links)));
+					_fizwidget$wiki_path$Page_Pathfinding$isCandidate(model.visitedArticles),
+					_fizwidget$wiki_path$Article$links(article))));
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				paths: A3(_fizwidget$wiki_path$PriorityQueue$insert, model.paths, _fizwidget$wiki_path$Path$priority, newPaths),
-				visitedTitles: A2(_fizwidget$wiki_path$Page_Pathfinding$markVisited, model.visitedTitles, newPaths)
+				visitedArticles: A2(_fizwidget$wiki_path$Page_Pathfinding$markVisited, model.visitedArticles, newPaths)
 			});
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$initialModel = F2(
@@ -20039,8 +20063,8 @@ var _fizwidget$wiki_path$Page_Pathfinding$initialModel = F2(
 			source: source,
 			destination: destination,
 			paths: _fizwidget$wiki_path$PriorityQueue$empty,
-			visitedTitles: _fizwidget$wiki_path$OrderedSet$singleton(
-				_fizwidget$wiki_path$Title$asString(source.title)),
+			visitedArticles: _fizwidget$wiki_path$OrderedSet$singleton(
+				_fizwidget$wiki_path$Article$title(source)),
 			errors: {ctor: '[]'},
 			pendingRequests: 0,
 			totalRequests: 0
@@ -20048,16 +20072,6 @@ var _fizwidget$wiki_path$Page_Pathfinding$initialModel = F2(
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$pendingRequestsLimit = 4;
 var _fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit = 400;
-var _fizwidget$wiki_path$Page_Pathfinding$viewPathCountWarning = function (totalRequests) {
-	return (_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? A2(
-		_rtfeldman$elm_css$Html_Styled$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _rtfeldman$elm_css$Html_Styled$text('This isn\'t looking good. Try a different destination maybe? 💩'),
-			_1: {ctor: '[]'}
-		}) : _rtfeldman$elm_css$Html_Styled$text('');
-};
 var _fizwidget$wiki_path$Page_Pathfinding$viewWarnings = F2(
 	function (totalRequests, destination) {
 		return A2(
@@ -20074,17 +20088,20 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewWarnings = F2(
 			},
 			{
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Page_Pathfinding$viewDestinationContentWarning(destination),
-				_1: {
-					ctor: '::',
-					_0: _fizwidget$wiki_path$Page_Pathfinding$viewPathCountWarning(totalRequests),
-					_1: {ctor: '[]'}
-				}
+				_0: _rtfeldman$elm_css$Html_Styled$text(
+					A2(
+						_elm_lang$core$String$contains,
+						'{{disambiguation}}',
+						_fizwidget$wiki_path$Article$content(destination)) ? 'The destination is a disambiguation page, so I might not be able to find it! 😅' : ((_elm_lang$core$Native_Utils.cmp(
+						_elm_lang$core$String$length(
+							_fizwidget$wiki_path$Article$content(destination)),
+						5000) < 0) ? 'The destination article is very short, so it might take longer than usual to find! 😅' : ((_elm_lang$core$Native_Utils.cmp(totalRequests, (_fizwidget$wiki_path$Page_Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? 'This isn\'t looking good. Try a different destination maybe? 💩' : ''))),
+				_1: {ctor: '[]'}
 			});
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$Model = F7(
 	function (a, b, c, d, e, f, g) {
-		return {source: a, destination: b, paths: c, visitedTitles: d, errors: e, pendingRequests: f, totalRequests: g};
+		return {source: a, destination: b, paths: c, visitedArticles: d, errors: e, pendingRequests: f, totalRequests: g};
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$CancelPathfinding = {ctor: 'CancelPathfinding'};
 var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = A2(
@@ -20095,7 +20112,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$viewBackButton = A2(
 			{
 				ctor: '::',
 				_0: _rtfeldman$elm_css$Css$marginTop(
-					_rtfeldman$elm_css$Css$px(10)),
+					_rtfeldman$elm_css$Css$px(20)),
 				_1: {ctor: '[]'}
 			}),
 		_1: {ctor: '[]'}
@@ -20144,18 +20161,14 @@ var _fizwidget$wiki_path$Page_Pathfinding$view = function (_p3) {
 			_0: A2(_fizwidget$wiki_path$Page_Pathfinding$viewHeading, _p4.source, _p5),
 			_1: {
 				ctor: '::',
-				_0: _fizwidget$wiki_path$Page_Pathfinding$viewErrors(_p4.errors),
+				_0: A2(_fizwidget$wiki_path$Page_Pathfinding$viewWarnings, _p4.totalRequests, _p5),
 				_1: {
 					ctor: '::',
-					_0: A2(_fizwidget$wiki_path$Page_Pathfinding$viewWarnings, _p4.totalRequests, _p5),
+					_0: _fizwidget$wiki_path$Page_Pathfinding$viewVisited(_p4.visitedArticles),
 					_1: {
 						ctor: '::',
 						_0: _fizwidget$wiki_path$Page_Pathfinding$viewBackButton,
-						_1: {
-							ctor: '::',
-							_0: _fizwidget$wiki_path$Page_Pathfinding$viewVisited(_p4.visitedTitles),
-							_1: {ctor: '[]'}
-						}
+						_1: {ctor: '[]'}
 					}
 				}
 			}
@@ -20166,7 +20179,7 @@ var _fizwidget$wiki_path$Page_Pathfinding$ArticleLoaded = F2(
 		return {ctor: 'ArticleLoaded', _0: a, _1: b};
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$getNextArticle = function (pathToFollow) {
-	var articleTitle = _fizwidget$wiki_path$Title$asString(
+	var articleTitle = _fizwidget$wiki_path$Article$title(
 		_fizwidget$wiki_path$Path$end(pathToFollow));
 	return A2(
 		_fizwidget$wiki_path$Article$getArticleResult,
@@ -20227,14 +20240,14 @@ var _fizwidget$wiki_path$Page_Pathfinding$continueSearch = function (model) {
 };
 var _fizwidget$wiki_path$Page_Pathfinding$articleReceived = F3(
 	function (pathToArticle, article, model) {
-		return _elm_lang$core$Native_Utils.eq(article.title, model.destination.title) ? _fizwidget$wiki_path$Page_Pathfinding$Complete(pathToArticle) : _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
+		return A2(_fizwidget$wiki_path$Article$equals, article, model.destination) ? _fizwidget$wiki_path$Page_Pathfinding$Complete(pathToArticle) : _fizwidget$wiki_path$Page_Pathfinding$continueSearch(
 			A3(_fizwidget$wiki_path$Page_Pathfinding$processLinks, pathToArticle, article, model));
 	});
 var _fizwidget$wiki_path$Page_Pathfinding$init = F2(
 	function (source, destination) {
 		return A3(
 			_fizwidget$wiki_path$Page_Pathfinding$articleReceived,
-			_fizwidget$wiki_path$Path$beginningAt(source.title),
+			_fizwidget$wiki_path$Path$beginningAt(source),
 			source,
 			A2(_fizwidget$wiki_path$Page_Pathfinding$initialModel, source, destination));
 	});
@@ -20270,35 +20283,31 @@ var _fizwidget$wiki_path$Page_Pathfinding$update = F2(
 		}
 	});
 
-var _fizwidget$wiki_path$Page_Setup$viewTitleRandomizationError = function (randomTitles) {
-	return _krisajenkins$remotedata$RemoteData$isFailure(randomTitles) ? _rtfeldman$elm_css$Html_Styled$text('Sorry, an error occured 😵') : _rtfeldman$elm_css$Html_Styled$text('');
-};
-var _fizwidget$wiki_path$Page_Setup$viewArticleError = function (remoteArticle) {
-	var _p0 = remoteArticle;
-	if (_p0.ctor === 'Failure') {
-		return _fizwidget$wiki_path$Article$viewError(_p0._0);
-	} else {
-		return _rtfeldman$elm_css$Html_Styled$text('');
-	}
-};
-var _fizwidget$wiki_path$Page_Setup$isLoading = function (_p1) {
-	var _p2 = _p1;
-	var areTitlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p2.randomTitles);
+var _fizwidget$wiki_path$Page_Setup$isLoading = function (_p0) {
+	var _p1 = _p0;
+	var areRandomArticlesLoading = _krisajenkins$remotedata$RemoteData$isLoading(_p1.randomArticles);
 	var areArticlesLoading = A2(
 		_elm_lang$core$List$any,
 		_krisajenkins$remotedata$RemoteData$isLoading,
 		{
 			ctor: '::',
-			_0: _p2.source,
+			_0: _p1.source,
 			_1: {
 				ctor: '::',
-				_0: _p2.destination,
+				_0: _p1.destination,
 				_1: {ctor: '[]'}
 			}
 		});
-	return areArticlesLoading || areTitlesLoading;
+	return areArticlesLoading || areRandomArticlesLoading;
 };
-var _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner = function (model) {
+var _fizwidget$wiki_path$Page_Setup$isBlank = function (_p2) {
+	return _elm_lang$core$String$isEmpty(
+		_elm_lang$core$String$trim(_p2));
+};
+var _fizwidget$wiki_path$Page_Setup$shouldDisableLoadButton = function (model) {
+	return _fizwidget$wiki_path$Page_Setup$isLoading(model) || (_fizwidget$wiki_path$Page_Setup$isBlank(model.sourceInput) || _fizwidget$wiki_path$Page_Setup$isBlank(model.destinationInput));
+};
+var _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner = function (isVisible) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -20315,29 +20324,23 @@ var _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner = function (model) {
 		{
 			ctor: '::',
 			_0: _fizwidget$wiki_path$Spinner$view(
-				{
-					isVisible: _fizwidget$wiki_path$Page_Setup$isLoading(model)
-				}),
+				{isVisible: isVisible}),
 			_1: {ctor: '[]'}
 		});
 };
-var _fizwidget$wiki_path$Page_Setup$isBlank = function (_p3) {
-	return _elm_lang$core$String$isEmpty(
-		_elm_lang$core$String$trim(_p3));
+var _fizwidget$wiki_path$Page_Setup$viewRandomizationError = function (randomArticles) {
+	return _krisajenkins$remotedata$RemoteData$isFailure(randomArticles) ? _rtfeldman$elm_css$Html_Styled$text('Sorry, an error occured 😵') : _rtfeldman$elm_css$Html_Styled$text('');
 };
-var _fizwidget$wiki_path$Page_Setup$shouldDisableLoadButton = function (model) {
-	return _fizwidget$wiki_path$Page_Setup$isLoading(model) || (_fizwidget$wiki_path$Page_Setup$isBlank(model.sourceInput) || _fizwidget$wiki_path$Page_Setup$isBlank(model.destinationInput));
+var _fizwidget$wiki_path$Page_Setup$viewArticleError = function (remoteArticle) {
+	var _p3 = remoteArticle;
+	if (_p3.ctor === 'Failure') {
+		return _fizwidget$wiki_path$Article$viewError(_p3._0);
+	} else {
+		return _rtfeldman$elm_css$Html_Styled$text('');
+	}
 };
-var _fizwidget$wiki_path$Page_Setup$viewTitleInput = F5(
-	function (toMsg, placeholder, title, article, inputStatus) {
-		var isDisabled = function () {
-			var _p4 = inputStatus;
-			if (_p4.ctor === 'Enabled') {
-				return false;
-			} else {
-				return true;
-			}
-		}();
+var _fizwidget$wiki_path$Page_Setup$viewArticleInput = F5(
+	function (toMsg, placeholder, title, article, isDisabled) {
 		return A2(
 			_rtfeldman$elm_css$Html_Styled$div,
 			{
@@ -20396,35 +20399,35 @@ var _fizwidget$wiki_path$Page_Setup$viewTitleInput = F5(
 var _fizwidget$wiki_path$Page_Setup$noCmd = function (model) {
 	return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 };
-var _fizwidget$wiki_path$Page_Setup$randomizeTitleInputs = function (model) {
-	var setTitleInputs = function (_p5) {
-		var _p6 = _p5;
+var _fizwidget$wiki_path$Page_Setup$randomizeArticleInputs = function (model) {
+	var setArticleInputs = function (_p4) {
+		var _p5 = _p4;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				source: _krisajenkins$remotedata$RemoteData$NotAsked,
 				destination: _krisajenkins$remotedata$RemoteData$NotAsked,
-				sourceInput: _fizwidget$wiki_path$Title$asString(_p6._0),
-				destinationInput: _fizwidget$wiki_path$Title$asString(_p6._1)
+				sourceInput: _fizwidget$wiki_path$Article$title(_p5._0),
+				destinationInput: _fizwidget$wiki_path$Article$title(_p5._1)
 			});
 	};
 	return A2(
 		_krisajenkins$remotedata$RemoteData$withDefault,
 		model,
-		A2(_krisajenkins$remotedata$RemoteData$map, setTitleInputs, model.randomTitles));
+		A2(_krisajenkins$remotedata$RemoteData$map, setArticleInputs, model.randomArticles));
 };
 var _fizwidget$wiki_path$Page_Setup$initialModel = F2(
 	function (sourceInput, destinationInput) {
-		return {sourceInput: sourceInput, destinationInput: destinationInput, source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomTitles: _krisajenkins$remotedata$RemoteData$NotAsked};
+		return {sourceInput: sourceInput, destinationInput: destinationInput, source: _krisajenkins$remotedata$RemoteData$NotAsked, destination: _krisajenkins$remotedata$RemoteData$NotAsked, randomArticles: _krisajenkins$remotedata$RemoteData$NotAsked};
 	});
-var _fizwidget$wiki_path$Page_Setup$initWithTitles = F2(
+var _fizwidget$wiki_path$Page_Setup$initWithArticles = F2(
 	function (source, destination) {
 		return {
 			ctor: '_Tuple2',
 			_0: A2(
 				_fizwidget$wiki_path$Page_Setup$initialModel,
-				_fizwidget$wiki_path$Title$asString(source),
-				_fizwidget$wiki_path$Title$asString(destination)),
+				_fizwidget$wiki_path$Article$title(source),
+				_fizwidget$wiki_path$Article$title(destination)),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
@@ -20435,13 +20438,13 @@ var _fizwidget$wiki_path$Page_Setup$init = {
 };
 var _fizwidget$wiki_path$Page_Setup$Model = F5(
 	function (a, b, c, d, e) {
-		return {sourceInput: a, destinationInput: b, source: c, destination: d, randomTitles: e};
+		return {sourceInput: a, destinationInput: b, source: c, destination: d, randomArticles: e};
 	});
-var _fizwidget$wiki_path$Page_Setup$RandomizeTitlesResponse = function (a) {
-	return {ctor: 'RandomizeTitlesResponse', _0: a};
+var _fizwidget$wiki_path$Page_Setup$RandomizeArticlesResponse = function (a) {
+	return {ctor: 'RandomizeArticlesResponse', _0: a};
 };
-var _fizwidget$wiki_path$Page_Setup$RandomizeTitlesRequest = {ctor: 'RandomizeTitlesRequest'};
-var _fizwidget$wiki_path$Page_Setup$viewRandomizeTitlesButton = function (model) {
+var _fizwidget$wiki_path$Page_Setup$RandomizeArticlesRequest = {ctor: 'RandomizeArticlesRequest'};
+var _fizwidget$wiki_path$Page_Setup$viewRandomizeButton = function (isDisabled) {
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -20468,11 +20471,10 @@ var _fizwidget$wiki_path$Page_Setup$viewRandomizeTitlesButton = function (model)
 						_0: _fizwidget$wiki_path$Button$Large,
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wiki_path$Button$Disabled(
-								_fizwidget$wiki_path$Page_Setup$isLoading(model)),
+							_0: _fizwidget$wiki_path$Button$Disabled(isDisabled),
 							_1: {
 								ctor: '::',
-								_0: _fizwidget$wiki_path$Button$OnClick(_fizwidget$wiki_path$Page_Setup$RandomizeTitlesRequest),
+								_0: _fizwidget$wiki_path$Button$OnClick(_fizwidget$wiki_path$Page_Setup$RandomizeArticlesRequest),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -20487,15 +20489,15 @@ var _fizwidget$wiki_path$Page_Setup$GetDestinationArticleResponse = function (a)
 var _fizwidget$wiki_path$Page_Setup$GetSourceArticleResponse = function (a) {
 	return {ctor: 'GetSourceArticleResponse', _0: a};
 };
-var _fizwidget$wiki_path$Page_Setup$getArticles = function (_p7) {
-	var _p8 = _p7;
+var _fizwidget$wiki_path$Page_Setup$getArticles = function (_p6) {
+	var _p7 = _p6;
 	return _elm_lang$core$Platform_Cmd$batch(
 		{
 			ctor: '::',
-			_0: A2(_fizwidget$wiki_path$Article$getRemoteArticle, _fizwidget$wiki_path$Page_Setup$GetSourceArticleResponse, _p8.sourceInput),
+			_0: A2(_fizwidget$wiki_path$Article$getRemoteArticle, _fizwidget$wiki_path$Page_Setup$GetSourceArticleResponse, _p7.sourceInput),
 			_1: {
 				ctor: '::',
-				_0: A2(_fizwidget$wiki_path$Article$getRemoteArticle, _fizwidget$wiki_path$Page_Setup$GetDestinationArticleResponse, _p8.destinationInput),
+				_0: A2(_fizwidget$wiki_path$Article$getRemoteArticle, _fizwidget$wiki_path$Page_Setup$GetDestinationArticleResponse, _p7.destinationInput),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -20544,87 +20546,14 @@ var _fizwidget$wiki_path$Page_Setup$viewFindPathButton = function (model) {
 var _fizwidget$wiki_path$Page_Setup$DestinationInputChange = function (a) {
 	return {ctor: 'DestinationInputChange', _0: a};
 };
-var _fizwidget$wiki_path$Page_Setup$viewDestinationTitleInput = A2(_fizwidget$wiki_path$Page_Setup$viewTitleInput, _fizwidget$wiki_path$Page_Setup$DestinationInputChange, 'To...');
+var _fizwidget$wiki_path$Page_Setup$viewDestinationArticleInput = A2(_fizwidget$wiki_path$Page_Setup$viewArticleInput, _fizwidget$wiki_path$Page_Setup$DestinationInputChange, 'To...');
 var _fizwidget$wiki_path$Page_Setup$SourceInputChange = function (a) {
 	return {ctor: 'SourceInputChange', _0: a};
 };
-var _fizwidget$wiki_path$Page_Setup$viewSourceTitleInput = A2(_fizwidget$wiki_path$Page_Setup$viewTitleInput, _fizwidget$wiki_path$Page_Setup$SourceInputChange, 'From...');
-var _fizwidget$wiki_path$Page_Setup$Complete = F2(
-	function (a, b) {
-		return {ctor: 'Complete', _0: a, _1: b};
-	});
-var _fizwidget$wiki_path$Page_Setup$InProgress = function (a) {
-	return {ctor: 'InProgress', _0: a};
-};
-var _fizwidget$wiki_path$Page_Setup$maybeComplete = function (_p9) {
+var _fizwidget$wiki_path$Page_Setup$viewSourceArticleInput = A2(_fizwidget$wiki_path$Page_Setup$viewArticleInput, _fizwidget$wiki_path$Page_Setup$SourceInputChange, 'From...');
+var _fizwidget$wiki_path$Page_Setup$viewArticleInputs = function (_p8) {
+	var _p9 = _p8;
 	var _p10 = _p9;
-	return A2(
-		_krisajenkins$remotedata$RemoteData$withDefault,
-		_fizwidget$wiki_path$Page_Setup$InProgress(
-			_fizwidget$wiki_path$Page_Setup$noCmd(_p10)),
-		A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Page_Setup$Complete, _p10.source, _p10.destination));
-};
-var _fizwidget$wiki_path$Page_Setup$update = F2(
-	function (msg, model) {
-		var _p11 = msg;
-		switch (_p11.ctor) {
-			case 'SourceInputChange':
-				return _fizwidget$wiki_path$Page_Setup$InProgress(
-					_fizwidget$wiki_path$Page_Setup$noCmd(
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{sourceInput: _p11._0, source: _krisajenkins$remotedata$RemoteData$NotAsked})));
-			case 'DestinationInputChange':
-				return _fizwidget$wiki_path$Page_Setup$InProgress(
-					_fizwidget$wiki_path$Page_Setup$noCmd(
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{destinationInput: _p11._0, destination: _krisajenkins$remotedata$RemoteData$NotAsked})));
-			case 'RandomizeTitlesRequest':
-				return _fizwidget$wiki_path$Page_Setup$InProgress(
-					{
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{randomTitles: _krisajenkins$remotedata$RemoteData$Loading}),
-						_1: _fizwidget$wiki_path$Title$getRandomPair(_fizwidget$wiki_path$Page_Setup$RandomizeTitlesResponse)
-					});
-			case 'RandomizeTitlesResponse':
-				return _fizwidget$wiki_path$Page_Setup$InProgress(
-					_fizwidget$wiki_path$Page_Setup$noCmd(
-						_fizwidget$wiki_path$Page_Setup$randomizeTitleInputs(
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{randomTitles: _p11._0}))));
-			case 'GetArticlesRequest':
-				return _fizwidget$wiki_path$Page_Setup$InProgress(
-					{
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading}),
-						_1: _fizwidget$wiki_path$Page_Setup$getArticles(model)
-					});
-			case 'GetSourceArticleResponse':
-				return _fizwidget$wiki_path$Page_Setup$maybeComplete(
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{source: _p11._0}));
-			default:
-				return _fizwidget$wiki_path$Page_Setup$maybeComplete(
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{destination: _p11._0}));
-		}
-	});
-var _fizwidget$wiki_path$Page_Setup$Disabled = {ctor: 'Disabled'};
-var _fizwidget$wiki_path$Page_Setup$Enabled = {ctor: 'Enabled'};
-var _fizwidget$wiki_path$Page_Setup$getInputStatus = function (model) {
-	return _fizwidget$wiki_path$Page_Setup$isLoading(model) ? _fizwidget$wiki_path$Page_Setup$Disabled : _fizwidget$wiki_path$Page_Setup$Enabled;
-};
-var _fizwidget$wiki_path$Page_Setup$viewTitleInputs = function (_p12) {
-	var _p13 = _p12;
-	var _p14 = _p13;
 	return A2(
 		_rtfeldman$elm_css$Html_Styled$div,
 		{
@@ -20648,17 +20577,17 @@ var _fizwidget$wiki_path$Page_Setup$viewTitleInputs = function (_p12) {
 		{
 			ctor: '::',
 			_0: A3(
-				_fizwidget$wiki_path$Page_Setup$viewSourceTitleInput,
-				_p13.sourceInput,
-				_p13.source,
-				_fizwidget$wiki_path$Page_Setup$getInputStatus(_p14)),
+				_fizwidget$wiki_path$Page_Setup$viewSourceArticleInput,
+				_p9.sourceInput,
+				_p9.source,
+				_fizwidget$wiki_path$Page_Setup$isLoading(_p10)),
 			_1: {
 				ctor: '::',
 				_0: A3(
-					_fizwidget$wiki_path$Page_Setup$viewDestinationTitleInput,
-					_p13.destinationInput,
-					_p13.destination,
-					_fizwidget$wiki_path$Page_Setup$getInputStatus(_p14)),
+					_fizwidget$wiki_path$Page_Setup$viewDestinationArticleInput,
+					_p9.destinationInput,
+					_p9.destination,
+					_fizwidget$wiki_path$Page_Setup$isLoading(_p10)),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -20686,19 +20615,21 @@ var _fizwidget$wiki_path$Page_Setup$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _fizwidget$wiki_path$Page_Setup$viewTitleInputs(model),
+			_0: _fizwidget$wiki_path$Page_Setup$viewArticleInputs(model),
 			_1: {
 				ctor: '::',
 				_0: _fizwidget$wiki_path$Page_Setup$viewFindPathButton(model),
 				_1: {
 					ctor: '::',
-					_0: _fizwidget$wiki_path$Page_Setup$viewRandomizeTitlesButton(model),
+					_0: _fizwidget$wiki_path$Page_Setup$viewRandomizeButton(
+						_fizwidget$wiki_path$Page_Setup$isLoading(model)),
 					_1: {
 						ctor: '::',
-						_0: _fizwidget$wiki_path$Page_Setup$viewTitleRandomizationError(model.randomTitles),
+						_0: _fizwidget$wiki_path$Page_Setup$viewRandomizationError(model.randomArticles),
 						_1: {
 							ctor: '::',
-							_0: _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner(model),
+							_0: _fizwidget$wiki_path$Page_Setup$viewLoadingSpinner(
+								_fizwidget$wiki_path$Page_Setup$isLoading(model)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -20706,6 +20637,74 @@ var _fizwidget$wiki_path$Page_Setup$view = function (model) {
 			}
 		});
 };
+var _fizwidget$wiki_path$Page_Setup$Complete = F2(
+	function (a, b) {
+		return {ctor: 'Complete', _0: a, _1: b};
+	});
+var _fizwidget$wiki_path$Page_Setup$InProgress = function (a) {
+	return {ctor: 'InProgress', _0: a};
+};
+var _fizwidget$wiki_path$Page_Setup$maybeComplete = function (_p11) {
+	var _p12 = _p11;
+	return A2(
+		_krisajenkins$remotedata$RemoteData$withDefault,
+		_fizwidget$wiki_path$Page_Setup$InProgress(
+			_fizwidget$wiki_path$Page_Setup$noCmd(_p12)),
+		A3(_krisajenkins$remotedata$RemoteData$map2, _fizwidget$wiki_path$Page_Setup$Complete, _p12.source, _p12.destination));
+};
+var _fizwidget$wiki_path$Page_Setup$update = F2(
+	function (msg, model) {
+		var _p13 = msg;
+		switch (_p13.ctor) {
+			case 'SourceInputChange':
+				return _fizwidget$wiki_path$Page_Setup$InProgress(
+					_fizwidget$wiki_path$Page_Setup$noCmd(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{sourceInput: _p13._0, source: _krisajenkins$remotedata$RemoteData$NotAsked})));
+			case 'DestinationInputChange':
+				return _fizwidget$wiki_path$Page_Setup$InProgress(
+					_fizwidget$wiki_path$Page_Setup$noCmd(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{destinationInput: _p13._0, destination: _krisajenkins$remotedata$RemoteData$NotAsked})));
+			case 'RandomizeArticlesRequest':
+				return _fizwidget$wiki_path$Page_Setup$InProgress(
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{randomArticles: _krisajenkins$remotedata$RemoteData$Loading}),
+						_1: _fizwidget$wiki_path$Article$getRandomPair(_fizwidget$wiki_path$Page_Setup$RandomizeArticlesResponse)
+					});
+			case 'RandomizeArticlesResponse':
+				return _fizwidget$wiki_path$Page_Setup$InProgress(
+					_fizwidget$wiki_path$Page_Setup$noCmd(
+						_fizwidget$wiki_path$Page_Setup$randomizeArticleInputs(
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{randomArticles: _p13._0}))));
+			case 'GetArticlesRequest':
+				return _fizwidget$wiki_path$Page_Setup$InProgress(
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{source: _krisajenkins$remotedata$RemoteData$Loading, destination: _krisajenkins$remotedata$RemoteData$Loading}),
+						_1: _fizwidget$wiki_path$Page_Setup$getArticles(model)
+					});
+			case 'GetSourceArticleResponse':
+				return _fizwidget$wiki_path$Page_Setup$maybeComplete(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{source: _p13._0}));
+			default:
+				return _fizwidget$wiki_path$Page_Setup$maybeComplete(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{destination: _p13._0}));
+		}
+	});
 
 var _fizwidget$wiki_path$Main$viewHeading = function () {
 	var mobileFontStyle = A2(
@@ -20796,10 +20795,9 @@ var _fizwidget$wiki_path$Main$PathfindingPage = function (a) {
 var _fizwidget$wiki_path$Main$SetupPage = function (a) {
 	return {ctor: 'SetupPage', _0: a};
 };
-var _fizwidget$wiki_path$Main$BackToSetup = F2(
-	function (a, b) {
-		return {ctor: 'BackToSetup', _0: a, _1: b};
-	});
+var _fizwidget$wiki_path$Main$FinishedMsg = function (a) {
+	return {ctor: 'FinishedMsg', _0: a};
+};
 var _fizwidget$wiki_path$Main$PathfindingMsg = function (a) {
 	return {ctor: 'PathfindingMsg', _0: a};
 };
@@ -20816,7 +20814,7 @@ var _fizwidget$wiki_path$Main$handlePathfindingUpdate = function (updateResult) 
 				{ctor: '_Tuple2', _0: _p2._0._0, _1: _p2._0._1});
 		case 'Cancelled':
 			return _fizwidget$wiki_path$Main$inSetupPage(
-				A2(_fizwidget$wiki_path$Page_Setup$initWithTitles, _p2._0.title, _p2._1.title));
+				A2(_fizwidget$wiki_path$Page_Setup$initWithArticles, _p2._0, _p2._1));
 		case 'Complete':
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Main$noCmd(
@@ -20824,11 +20822,17 @@ var _fizwidget$wiki_path$Main$handlePathfindingUpdate = function (updateResult) 
 		case 'PathNotFound':
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Main$noCmd(
-					A2(_fizwidget$wiki_path$Page_Finished$initWithPathNotFoundError, _p2._0, _p2._1)));
+					A2(
+						_fizwidget$wiki_path$Page_Finished$initWithPathNotFoundError,
+						_fizwidget$wiki_path$Article$preview(_p2._0),
+						_fizwidget$wiki_path$Article$preview(_p2._1))));
 		default:
 			return _fizwidget$wiki_path$Main$inFinishedPage(
 				_fizwidget$wiki_path$Main$noCmd(
-					A2(_fizwidget$wiki_path$Page_Finished$initWithTooManyRequestsError, _p2._0, _p2._1)));
+					A2(
+						_fizwidget$wiki_path$Page_Finished$initWithTooManyRequestsError,
+						_fizwidget$wiki_path$Article$preview(_p2._0),
+						_fizwidget$wiki_path$Article$preview(_p2._1))));
 	}
 };
 var _fizwidget$wiki_path$Main$handleSetupUpdate = function (updateResult) {
@@ -20841,48 +20845,63 @@ var _fizwidget$wiki_path$Main$handleSetupUpdate = function (updateResult) {
 			A2(_fizwidget$wiki_path$Page_Pathfinding$init, _p3._0, _p3._1));
 	}
 };
+var _fizwidget$wiki_path$Main$handleFinishedUpdate = function (updateResult) {
+	var _p4 = updateResult;
+	return _fizwidget$wiki_path$Main$inSetupPage(
+		A2(
+			_fizwidget$wiki_path$Page_Setup$initWithArticles,
+			_fizwidget$wiki_path$Article$preview(_p4._0),
+			_fizwidget$wiki_path$Article$preview(_p4._1)));
+};
 var _fizwidget$wiki_path$Main$update = F2(
 	function (msg, model) {
-		var _p4 = {ctor: '_Tuple2', _0: msg, _1: model};
-		_v3_3:
+		var _p5 = {ctor: '_Tuple2', _0: msg, _1: model};
+		_v4_3:
 		do {
-			switch (_p4._0.ctor) {
+			switch (_p5._0.ctor) {
 				case 'SetupMsg':
-					if (_p4._1.ctor === 'SetupPage') {
+					if (_p5._1.ctor === 'SetupPage') {
 						return _fizwidget$wiki_path$Main$handleSetupUpdate(
-							A2(_fizwidget$wiki_path$Page_Setup$update, _p4._0._0, _p4._1._0));
+							A2(_fizwidget$wiki_path$Page_Setup$update, _p5._0._0, _p5._1._0));
 					} else {
-						break _v3_3;
+						break _v4_3;
 					}
 				case 'PathfindingMsg':
-					if (_p4._1.ctor === 'PathfindingPage') {
+					if (_p5._1.ctor === 'PathfindingPage') {
 						return _fizwidget$wiki_path$Main$handlePathfindingUpdate(
-							A2(_fizwidget$wiki_path$Page_Pathfinding$update, _p4._0._0, _p4._1._0));
+							A2(_fizwidget$wiki_path$Page_Pathfinding$update, _p5._0._0, _p5._1._0));
 					} else {
-						break _v3_3;
+						break _v4_3;
 					}
 				default:
-					return _fizwidget$wiki_path$Main$inSetupPage(
-						A2(_fizwidget$wiki_path$Page_Setup$initWithTitles, _p4._0._0, _p4._0._1));
+					if (_p5._1.ctor === 'FinishedPage') {
+						return _fizwidget$wiki_path$Main$handleFinishedUpdate(
+							A2(_fizwidget$wiki_path$Page_Finished$update, _p5._0._0, _p5._1._0));
+					} else {
+						break _v4_3;
+					}
 			}
 		} while(false);
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _fizwidget$wiki_path$Main$viewModel = function (model) {
-	var _p5 = model;
-	switch (_p5.ctor) {
+	var _p6 = model;
+	switch (_p6.ctor) {
 		case 'SetupPage':
 			return A2(
 				_rtfeldman$elm_css$Html_Styled$map,
 				_fizwidget$wiki_path$Main$SetupMsg,
-				_fizwidget$wiki_path$Page_Setup$view(_p5._0));
+				_fizwidget$wiki_path$Page_Setup$view(_p6._0));
 		case 'PathfindingPage':
 			return A2(
 				_rtfeldman$elm_css$Html_Styled$map,
 				_fizwidget$wiki_path$Main$PathfindingMsg,
-				_fizwidget$wiki_path$Page_Pathfinding$view(_p5._0));
+				_fizwidget$wiki_path$Page_Pathfinding$view(_p6._0));
 		default:
-			return A2(_fizwidget$wiki_path$Page_Finished$view, _p5._0, _fizwidget$wiki_path$Main$BackToSetup);
+			return A2(
+				_rtfeldman$elm_css$Html_Styled$map,
+				_fizwidget$wiki_path$Main$FinishedMsg,
+				_fizwidget$wiki_path$Page_Finished$view(_p6._0));
 	}
 };
 var _fizwidget$wiki_path$Main$view = function (model) {
@@ -20930,9 +20949,9 @@ var _fizwidget$wiki_path$Main$view = function (model) {
 var _fizwidget$wiki_path$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _fizwidget$wiki_path$Main$inSetupPage(_fizwidget$wiki_path$Page_Setup$init),
-		view: function (_p6) {
+		view: function (_p7) {
 			return _rtfeldman$elm_css$Html_Styled$toUnstyled(
-				_fizwidget$wiki_path$Main$view(_p6));
+				_fizwidget$wiki_path$Main$view(_p7));
 		},
 		update: _fizwidget$wiki_path$Main$update,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
