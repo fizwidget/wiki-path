@@ -8,7 +8,7 @@ import Css.Media as Media exposing (withMedia)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Article exposing (Article, Preview)
+import Article exposing (Article, Full)
 
 
 -- MODEL
@@ -27,7 +27,7 @@ type Model
 type Msg
     = SetupMsg Setup.Msg
     | PathfindingMsg Pathfinding.Msg
-    | BackToSetup (Article Preview) (Article Preview)
+    | FinishedMsg Finished.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -41,9 +41,9 @@ update msg model =
             Pathfinding.update subMsg subModel
                 |> handlePathfindingUpdate
 
-        ( BackToSetup source destination, _ ) ->
-            Setup.initWithArticles source destination
-                |> inSetupPage
+        ( FinishedMsg subMsg, FinishedPage subModel ) ->
+            Finished.update subMsg subModel
+                |> handleFinishedUpdate
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -76,14 +76,22 @@ handlePathfindingUpdate updateResult =
                 |> inFinishedPage
 
         Pathfinding.PathNotFound source destination ->
-            Finished.initWithPathNotFoundError source destination
+            Finished.initWithPathNotFoundError (Article.preview source) (Article.preview destination)
                 |> noCmd
                 |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
-            Finished.initWithTooManyRequestsError source destination
+            Finished.initWithTooManyRequestsError (Article.preview source) (Article.preview destination)
                 |> noCmd
                 |> inFinishedPage
+
+
+handleFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
+handleFinishedUpdate updateResult =
+    case updateResult of
+        Finished.BackToSetup source destination ->
+            Setup.initWithArticles (Article.preview source) (Article.preview destination)
+                |> inSetupPage
 
 
 inSetupPage : ( Setup.Model, Cmd Setup.Msg ) -> ( Model, Cmd Msg )
@@ -168,7 +176,8 @@ viewModel model =
                 |> StyledHtml.map PathfindingMsg
 
         FinishedPage model ->
-            Finished.view model BackToSetup
+            Finished.view model
+                |> StyledHtml.map FinishedMsg
 
 
 

@@ -13,7 +13,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, bu
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Preview, Full, RemoteArticle, RemoteArticlePair)
+import Article exposing (Article, Full, RemoteArticle, RemoteArticlePair)
 import Button
 import Input
 import Form
@@ -45,7 +45,7 @@ init =
     ( initialModel "" "", Cmd.none )
 
 
-initWithArticles : Article Preview -> Article Preview -> ( Model, Cmd Msg )
+initWithArticles : Article a -> Article a -> ( Model, Cmd Msg )
 initWithArticles source destination =
     ( initialModel (Article.title source) (Article.title destination)
     , Cmd.none

@@ -1,9 +1,12 @@
 module Page.Finished
     exposing
         ( Model
+        , Msg
+        , UpdateResult(BackToSetup)
         , initWithPath
         , initWithPathNotFoundError
         , initWithTooManyRequestsError
+        , update
         , view
         )
 
@@ -64,11 +67,28 @@ initWithError error source destination =
 
 
 
+-- UPDATE
+
+
+type Msg
+    = Back
+
+
+type UpdateResult
+    = BackToSetup (Article Preview) (Article Preview)
+
+
+update : Msg -> Model -> UpdateResult
+update Back model =
+    BackToSetup (getSourceArticle model) (getDestinationArticle model)
+
+
+
 -- VIEW
 
 
-view : Model -> (Article Preview -> Article Preview -> backMsg) -> Html backMsg
-view model toBackMsg =
+view : Model -> Html Msg
+view model =
     div
         [ css
             [ displayFlex
@@ -78,7 +98,7 @@ view model toBackMsg =
             ]
         ]
         [ viewModel model
-        , viewBackButton model toBackMsg
+        , viewBackButton model
         ]
 
 
@@ -114,7 +134,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Article.viewAsLink
+        |> List.map Article.viewLink
         |> List.intersperse (text " → ")
         |> div []
 
@@ -124,9 +144,9 @@ viewError { source, destination, error } =
     let
         pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
-            , Article.viewAsLink source
+            , Article.viewLink source
             , text " to "
-            , Article.viewAsLink destination
+            , Article.viewLink destination
             , text " 💀"
             ]
     in
@@ -142,18 +162,14 @@ viewError { source, destination, error } =
             )
 
 
-viewBackButton : Model -> (Article Preview -> Article Preview -> backMsg) -> Html backMsg
-viewBackButton model toBackMsg =
-    let
-        onClick =
-            toBackMsg (getSourceArticle model) (getDestinationArticle model)
-    in
-        div [ css [ margin (px 20) ] ]
-            [ Button.view "Back"
-                [ Button.Secondary
-                , Button.OnClick onClick
-                ]
+viewBackButton : Model -> Html Msg
+viewBackButton model =
+    div [ css [ margin (px 20) ] ]
+        [ Button.view "Back"
+            [ Button.Secondary
+            , Button.OnClick Back
             ]
+        ]
 
 
 getSourceArticle : Model -> Article Preview

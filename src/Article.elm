@@ -10,13 +10,13 @@ module Article
         , title
         , content
         , links
-        , asPreview
+        , preview
         , equals
         , getArticleResult
         , getRemoteArticle
         , getRandomPair
         , viewError
-        , viewAsLink
+        , viewLink
         )
 
 import Http
@@ -41,12 +41,12 @@ type Full
 
 
 type alias Body =
-    { content : HtmlString
+    { content : Wikitext
     , links : List (Article Preview)
     }
 
 
-type alias HtmlString =
+type alias Wikitext =
     String
 
 
@@ -65,8 +65,8 @@ links (Article _ (Full { links })) =
     links
 
 
-asPreview : Article a -> Article Preview
-asPreview (Article title _) =
+preview : Article a -> Article Preview
+preview (Article title _) =
     Article title Preview
 
 
@@ -79,8 +79,8 @@ equals (Article firstTitle _) (Article secondTitle _) =
 -- VIEW
 
 
-viewAsLink : Article a -> Html msg
-viewAsLink article =
+viewLink : Article a -> Html msg
+viewLink article =
     a
         [ href (toUrl article) ]
         [ text (title article) ]
@@ -105,9 +105,6 @@ toErrorMessage error =
         InvalidTitle ->
             "Not a valid article title :("
 
-        UnknownError _ ->
-            "Unknown error \x1F92F"
-
         HttpError _ ->
             "Network error 😭"
 
@@ -127,7 +124,6 @@ type alias RemoteArticle =
 type ArticleError
     = ArticleNotFound
     | InvalidTitle
-    | UnknownError String
     | HttpError Http.Error
 
 
@@ -141,7 +137,7 @@ getArticleResult toMsg title =
 toArticleResult : Result Http.Error ArticleResult -> ArticleResult
 toArticleResult result =
     result
-        |> Result.mapError (Debug.log "### Error" >> HttpError)
+        |> Result.mapError HttpError
         |> Result.andThen identity
 
 
@@ -193,29 +189,31 @@ responseDecoder : Decoder ArticleResult
 responseDecoder =
     at [ "query", "pages", "0" ] <|
         oneOf
-            [ map Ok successArticleDecoder
-            , map Err invalidArticleDecoder
-            , map Err missingArticleDecoder
+            [ map Ok successDecoder
+            , map Err invalidDecoder
+            , map Err missingDecoder
             ]
 
 
-successArticleDecoder : Decoder (Article Full)
-successArticleDecoder =
+successDecoder : Decoder (Article Full)
+successDecoder =
     succeed Article
         |> required "title" string
         |> custom (map Full bodyDecoder)
 
 
-invalidArticleDecoder : Decoder ArticleError
-invalidArticleDecoder =
+invalidDecoder : Decoder ArticleError
+invalidDecoder =
     field "invalid" bool
-        |> Decode.andThen (always <| Decode.succeed InvalidTitle)
+        |> Decode.andThen
+            (always <| Decode.succeed InvalidTitle)
 
 
-missingArticleDecoder : Decoder ArticleError
-missingArticleDecoder =
+missingDecoder : Decoder ArticleError
+missingDecoder =
     field "missing" bool
-        |> Decode.andThen (always <| Decode.succeed ArticleNotFound)
+        |> Decode.andThen
+            (always <| Decode.succeed ArticleNotFound)
 
 
 bodyDecoder : Decoder Body
@@ -223,26 +221,6 @@ bodyDecoder =
     decode Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
         |> required "links" (list previewDecoder)
-
-
-errorDecoder : Decoder ArticleError
-errorDecoder =
-    let
-        toError errorCode =
-            case errorCode of
-                "missingtitle" ->
-                    ArticleNotFound
-
-                "invalidtitle" ->
-                    InvalidTitle
-
-                _ ->
-                    UnknownError errorCode
-
-        errorCode =
-            at [ "error", "code" ] string
-    in
-        map toError errorCode
 
 
 
@@ -255,7 +233,7 @@ type alias RemoteArticlePair =
 
 type ArticlesError
     = UnexpectedArticleCount
-    | PreviewHttpError Http.Error
+    | LinkHttpError Http.Error
 
 
 getRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
@@ -268,7 +246,7 @@ getRandomPair toMsg =
 toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
 toRemoteArticlePair remoteArticles =
     remoteArticles
-        |> RemoteData.mapError PreviewHttpError
+        |> RemoteData.mapError LinkHttpError
         |> RemoteData.andThen toPair
 
 
@@ -284,7 +262,7 @@ toPair articles =
 
 buildRandomArticlesRequest : Int -> Http.Request (List (Article Preview))
 buildRandomArticlesRequest articleCount =
-    Http.get (buildRandomArticlesUrl articleCount) randomArticlesResponseDecoder
+    Http.get (buildRandomArticlesUrl articleCount) randomArticlesDecoder
 
 
 buildRandomArticlesUrl : Int -> Url
@@ -306,8 +284,8 @@ buildRandomArticlesUrl articleCount =
 -- SERIALIZATION
 
 
-randomArticlesResponseDecoder : Decoder (List (Article Preview))
-randomArticlesResponseDecoder =
+randomArticlesDecoder : Decoder (List (Article Preview))
+randomArticlesDecoder =
     at
         [ "query", "random" ]
         (list previewDecoder)

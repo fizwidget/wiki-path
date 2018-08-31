@@ -28,7 +28,7 @@ beginningAt : Article a -> Path
 beginningAt article =
     Path
         { previousStops = []
-        , lastStop = Article.asPreview article
+        , lastStop = Article.preview article
         , priority = 0
         }
 
