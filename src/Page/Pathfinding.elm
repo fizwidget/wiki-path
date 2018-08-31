@@ -280,16 +280,17 @@ extendPath destination currentPath nextArticle =
 
 calculatePriority : Path -> Article Preview -> Article Full -> Priority
 calculatePriority currentPath current destination =
-    (Path.priority currentPath) * 0.8 + (heuristic destination current)
-
-
-heuristic : Article Full -> Article Preview -> Float
-heuristic destination current =
     if Article.equals current destination then
         10000
     else
-        countOccurences (Article.title current) (Article.content destination)
-            |> toFloat
+        (Path.priority currentPath) * 0.8 + (heuristic destination current |> toFloat)
+
+
+heuristic : Article Full -> Article Preview -> Int
+heuristic destination current =
+    countOccurences
+        (Article.title current)
+        (Article.content destination)
 
 
 countOccurences : String -> String -> Int

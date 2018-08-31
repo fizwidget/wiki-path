@@ -29,7 +29,7 @@ import Html.Styled.Attributes exposing (href)
 
 
 type Article a
-    = Article String a
+    = Article Title a
 
 
 type Preview
@@ -44,6 +44,10 @@ type alias Body =
     { content : Wikitext
     , links : List (Article Preview)
     }
+
+
+type alias Title =
+    String
 
 
 type alias Wikitext =
@@ -106,7 +110,7 @@ toErrorMessage error =
             "Not a valid article title :("
 
         HttpError _ ->
-            "Network error 😭"
+            "Network error :("
 
 
 

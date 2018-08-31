@@ -15,9 +15,9 @@ import Article exposing (Article, Full)
 
 
 type Model
-    = SetupPage Setup.Model
-    | PathfindingPage Pathfinding.Model
-    | FinishedPage Finished.Model
+    = SetupModel Setup.Model
+    | PathfindingModel Pathfinding.Model
+    | FinishedModel Finished.Model
 
 
 
@@ -33,15 +33,15 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( SetupMsg subMsg, SetupPage subModel ) ->
+        ( SetupMsg subMsg, SetupModel subModel ) ->
             Setup.update subMsg subModel
                 |> handleSetupUpdate
 
-        ( PathfindingMsg subMsg, PathfindingPage subModel ) ->
+        ( PathfindingMsg subMsg, PathfindingModel subModel ) ->
             Pathfinding.update subMsg subModel
                 |> handlePathfindingUpdate
 
-        ( FinishedMsg subMsg, FinishedPage subModel ) ->
+        ( FinishedMsg subMsg, FinishedModel subModel ) ->
             Finished.update subMsg subModel
                 |> handleFinishedUpdate
 
@@ -87,26 +87,24 @@ handlePathfindingUpdate updateResult =
 
 
 handleFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
-handleFinishedUpdate updateResult =
-    case updateResult of
-        Finished.BackToSetup source destination ->
-            Setup.initWithArticles (Article.preview source) (Article.preview destination)
-                |> inSetupPage
+handleFinishedUpdate (Finished.BackToSetup source destination) =
+    Setup.initWithArticles (Article.preview source) (Article.preview destination)
+        |> inSetupPage
 
 
 inSetupPage : ( Setup.Model, Cmd Setup.Msg ) -> ( Model, Cmd Msg )
 inSetupPage =
-    inPage SetupPage SetupMsg
+    inPage SetupModel SetupMsg
 
 
 inPathfindingPage : ( Pathfinding.Model, Cmd Pathfinding.Msg ) -> ( Model, Cmd Msg )
 inPathfindingPage =
-    inPage PathfindingPage PathfindingMsg
+    inPage PathfindingModel PathfindingMsg
 
 
-inFinishedPage : ( Finished.Model, Cmd msg ) -> ( Model, Cmd msg )
+inFinishedPage : ( Finished.Model, Cmd Finished.Msg ) -> ( Model, Cmd Msg )
 inFinishedPage =
-    inPage FinishedPage identity
+    inPage FinishedModel FinishedMsg
 
 
 inPage : (subModel -> model) -> (subMsg -> msg) -> ( subModel, Cmd subMsg ) -> ( model, Cmd msg )
@@ -167,15 +165,15 @@ viewHeading =
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
-        SetupPage model ->
+        SetupModel model ->
             Setup.view model
                 |> StyledHtml.map SetupMsg
 
-        PathfindingPage model ->
+        PathfindingModel model ->
             Pathfinding.view model
                 |> StyledHtml.map PathfindingMsg
 
-        FinishedPage model ->
+        FinishedModel model ->
             Finished.view model
                 |> StyledHtml.map FinishedMsg
 
