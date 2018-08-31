@@ -4,7 +4,7 @@ module Page.Setup
         , Msg
         , UpdateResult(InProgress, Complete)
         , init
-        , initWithTitles
+        , initWithArticles
         , update
         , view
         )
@@ -13,8 +13,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, bu
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, RemoteArticle)
-import Title exposing (Title, RemoteTitlePair)
+import Article exposing (Article, Full, RemoteArticle, RemoteArticlePair)
 import Button
 import Input
 import Form
@@ -29,7 +28,7 @@ type alias Model =
     , destinationInput : UserInput
     , source : RemoteArticle
     , destination : RemoteArticle
-    , randomTitles : RemoteTitlePair
+    , randomArticles : RemoteArticlePair
     }
 
 
@@ -46,9 +45,9 @@ init =
     ( initialModel "" "", Cmd.none )
 
 
-initWithTitles : Title -> Title -> ( Model, Cmd Msg )
-initWithTitles source destination =
-    ( initialModel (Title.asString source) (Title.asString destination)
+initWithArticles : Article a -> Article a -> ( Model, Cmd Msg )
+initWithArticles source destination =
+    ( initialModel (Article.title source) (Article.title destination)
     , Cmd.none
     )
 
@@ -59,7 +58,7 @@ initialModel sourceInput destinationInput =
     , destinationInput = destinationInput
     , source = NotAsked
     , destination = NotAsked
-    , randomTitles = NotAsked
+    , randomArticles = NotAsked
     }
 
 
@@ -73,13 +72,13 @@ type Msg
     | GetArticlesRequest
     | GetSourceArticleResponse RemoteArticle
     | GetDestinationArticleResponse RemoteArticle
-    | RandomizeTitlesRequest
-    | RandomizeTitlesResponse RemoteTitlePair
+    | RandomizeArticlesRequest
+    | RandomizeArticlesResponse RemoteArticlePair
 
 
 type UpdateResult
     = InProgress ( Model, Cmd Msg )
-    | Complete Article Article
+    | Complete (Article Full) (Article Full)
 
 
 update : Msg -> Model -> UpdateResult
@@ -95,13 +94,13 @@ update msg model =
                 |> noCmd
                 |> InProgress
 
-        RandomizeTitlesRequest ->
-            ( { model | randomTitles = Loading }, Title.getRandomPair RandomizeTitlesResponse )
+        RandomizeArticlesRequest ->
+            ( { model | randomArticles = Loading }, Article.getRandomPair RandomizeArticlesResponse )
                 |> InProgress
 
-        RandomizeTitlesResponse response ->
-            { model | randomTitles = response }
-                |> randomizeTitleInputs
+        RandomizeArticlesResponse response ->
+            { model | randomArticles = response }
+                |> randomizeArticleInputs
                 |> noCmd
                 |> InProgress
 
@@ -118,6 +117,12 @@ update msg model =
                 |> maybeComplete
 
 
+maybeComplete : Model -> UpdateResult
+maybeComplete ({ source, destination } as model) =
+    RemoteData.map2 Complete source destination
+        |> RemoteData.withDefault (model |> noCmd |> InProgress)
+
+
 getArticles : Model -> Cmd Msg
 getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
@@ -126,25 +131,19 @@ getArticles { sourceInput, destinationInput } =
         ]
 
 
-maybeComplete : Model -> UpdateResult
-maybeComplete ({ source, destination } as model) =
-    RemoteData.map2 Complete source destination
-        |> RemoteData.withDefault (model |> noCmd |> InProgress)
-
-
-randomizeTitleInputs : Model -> Model
-randomizeTitleInputs model =
+randomizeArticleInputs : Model -> Model
+randomizeArticleInputs model =
     let
-        setTitleInputs ( source, destination ) =
+        setArticleInputs ( source, destination ) =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceInput = Title.asString source
-                , destinationInput = Title.asString destination
+                , sourceInput = Article.title source
+                , destinationInput = Article.title destination
             }
     in
-        model.randomTitles
-            |> RemoteData.map setTitleInputs
+        model.randomArticles
+            |> RemoteData.map setArticleInputs
             |> RemoteData.withDefault model
 
 
@@ -161,64 +160,47 @@ view : Model -> Html Msg
 view model =
     form
         [ css [ displayFlex, alignItems center, flexDirection column ] ]
-        [ viewTitleInputs model
+        [ viewArticleInputs model
         , viewFindPathButton model
-        , viewRandomizeTitlesButton model
-        , viewTitleRandomizationError model.randomTitles
-        , viewLoadingSpinner model
+        , viewRandomizeButton (isLoading model)
+        , viewRandomizationError model.randomArticles
+        , viewLoadingSpinner (isLoading model)
         ]
 
 
-viewTitleInputs : Model -> Html Msg
-viewTitleInputs ({ sourceInput, destinationInput, source, destination } as model) =
+viewArticleInputs : Model -> Html Msg
+viewArticleInputs ({ sourceInput, destinationInput, source, destination } as model) =
     div [ css [ displayFlex, justifyContent center, flexWrap wrap ] ]
-        [ viewSourceTitleInput sourceInput source (getInputStatus model)
-        , viewDestinationTitleInput destinationInput destination (getInputStatus model)
+        [ viewSourceArticleInput sourceInput source (isLoading model)
+        , viewDestinationArticleInput destinationInput destination (isLoading model)
         ]
 
 
-getInputStatus : Model -> InputStatus
-getInputStatus model =
-    if isLoading model then
-        Disabled
-    else
-        Enabled
+viewSourceArticleInput : UserInput -> RemoteArticle -> Bool -> Html Msg
+viewSourceArticleInput =
+    viewArticleInput SourceInputChange "From..."
 
 
-viewSourceTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
-viewSourceTitleInput =
-    viewTitleInput SourceInputChange "From..."
+viewDestinationArticleInput : UserInput -> RemoteArticle -> Bool -> Html Msg
+viewDestinationArticleInput =
+    viewArticleInput DestinationInputChange "To..."
 
 
-viewDestinationTitleInput : UserInput -> RemoteArticle -> InputStatus -> Html Msg
-viewDestinationTitleInput =
-    viewTitleInput DestinationInputChange "To..."
-
-
-viewTitleInput : (UserInput -> Msg) -> String -> UserInput -> RemoteArticle -> InputStatus -> Html Msg
-viewTitleInput toMsg placeholder title article inputStatus =
-    let
-        isDisabled =
-            case inputStatus of
-                Enabled ->
-                    False
-
-                Disabled ->
-                    True
-    in
-        div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
-            [ Form.group
-                (Input.text
-                    [ Input.Large
-                    , Input.OnInput toMsg
-                    , Input.Value title
-                    , Input.Placeholder placeholder
-                    , Input.Disabled isDisabled
-                    , Input.Error (RemoteData.isFailure article)
-                    ]
-                )
-                (viewArticleError article)
-            ]
+viewArticleInput : (UserInput -> Msg) -> String -> String -> RemoteArticle -> Bool -> Html Msg
+viewArticleInput toMsg placeholder title article isDisabled =
+    div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
+        [ Form.group
+            (Input.text
+                [ Input.Large
+                , Input.OnInput toMsg
+                , Input.Value title
+                , Input.Placeholder placeholder
+                , Input.Disabled isDisabled
+                , Input.Error (RemoteData.isFailure article)
+                ]
+            )
+            (viewArticleError article)
+        ]
 
 
 viewFindPathButton : Model -> Html Msg
@@ -233,16 +215,41 @@ viewFindPathButton model =
         ]
 
 
-viewRandomizeTitlesButton : Model -> Html Msg
-viewRandomizeTitlesButton model =
+viewRandomizeButton : Bool -> Html Msg
+viewRandomizeButton isDisabled =
     div [ css [ padding (px 12) ] ]
         [ Button.view "Randomize"
             [ Button.Light
             , Button.Large
-            , Button.Disabled (isLoading model)
-            , Button.OnClick RandomizeTitlesRequest
+            , Button.Disabled isDisabled
+            , Button.OnClick RandomizeArticlesRequest
             ]
         ]
+
+
+viewArticleError : RemoteArticle -> Html msg
+viewArticleError remoteArticle =
+    case remoteArticle of
+        RemoteData.Failure error ->
+            Article.viewError error
+
+        _ ->
+            text ""
+
+
+viewRandomizationError : RemoteArticlePair -> Html msg
+viewRandomizationError randomArticles =
+    if RemoteData.isFailure randomArticles then
+        text "Sorry, an error occured 😵"
+    else
+        text ""
+
+
+viewLoadingSpinner : Bool -> Html msg
+viewLoadingSpinner isVisible =
+    div
+        [ css [ paddingTop (px 6) ] ]
+        [ Spinner.view { isVisible = isVisible } ]
 
 
 shouldDisableLoadButton : Model -> Bool
@@ -257,43 +264,13 @@ isBlank =
     String.trim >> String.isEmpty
 
 
-viewLoadingSpinner : Model -> Html msg
-viewLoadingSpinner model =
-    div
-        [ css [ paddingTop (px 6) ] ]
-        [ Spinner.view { isVisible = isLoading model } ]
-
-
 isLoading : Model -> Bool
-isLoading { source, destination, randomTitles } =
+isLoading { source, destination, randomArticles } =
     let
         areArticlesLoading =
             List.any RemoteData.isLoading [ source, destination ]
 
-        areTitlesLoading =
-            RemoteData.isLoading randomTitles
+        areRandomArticlesLoading =
+            RemoteData.isLoading randomArticles
     in
-        areArticlesLoading || areTitlesLoading
-
-
-viewArticleError : RemoteArticle -> Html msg
-viewArticleError remoteArticle =
-    case remoteArticle of
-        RemoteData.Failure error ->
-            Article.viewError error
-
-        _ ->
-            text ""
-
-
-viewTitleRandomizationError : RemoteTitlePair -> Html msg
-viewTitleRandomizationError randomTitles =
-    if RemoteData.isFailure randomTitles then
-        text "Sorry, an error occured 😵"
-    else
-        text ""
-
-
-type InputStatus
-    = Enabled
-    | Disabled
+        areArticlesLoading || areRandomArticlesLoading

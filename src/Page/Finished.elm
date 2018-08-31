@@ -1,18 +1,20 @@
 module Page.Finished
     exposing
         ( Model
+        , Msg
+        , UpdateResult(BackToSetup)
         , initWithPath
         , initWithPathNotFoundError
         , initWithTooManyRequestsError
+        , update
         , view
         )
 
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
-import Article exposing (Article)
+import Article exposing (Article, Preview)
 import Path exposing (Path)
-import Title exposing (Title)
 import Button
 
 
@@ -26,8 +28,8 @@ type Model
 
 type alias ErrorDetails =
     { error : Error
-    , source : Article
-    , destination : Article
+    , source : Article Preview
+    , destination : Article Preview
     }
 
 
@@ -45,17 +47,17 @@ initWithPath =
     Success
 
 
-initWithPathNotFoundError : Article -> Article -> Model
+initWithPathNotFoundError : Article Preview -> Article Preview -> Model
 initWithPathNotFoundError =
     initWithError PathNotFound
 
 
-initWithTooManyRequestsError : Article -> Article -> Model
+initWithTooManyRequestsError : Article Preview -> Article Preview -> Model
 initWithTooManyRequestsError =
     initWithError TooManyRequests
 
 
-initWithError : Error -> Article -> Article -> Model
+initWithError : Error -> Article Preview -> Article Preview -> Model
 initWithError error source destination =
     Error
         { error = error
@@ -65,11 +67,28 @@ initWithError error source destination =
 
 
 
+-- UPDATE
+
+
+type Msg
+    = Back
+
+
+type UpdateResult
+    = BackToSetup (Article Preview) (Article Preview)
+
+
+update : Msg -> Model -> UpdateResult
+update Back model =
+    BackToSetup (getSourceArticle model) (getDestinationArticle model)
+
+
+
 -- VIEW
 
 
-view : Model -> (Title -> Title -> backMsg) -> Html backMsg
-view model toBackMsg =
+view : Model -> Html Msg
+view model =
     div
         [ css
             [ displayFlex
@@ -79,7 +98,7 @@ view model toBackMsg =
             ]
         ]
         [ viewModel model
-        , viewBackButton model toBackMsg
+        , viewBackButton model
         ]
 
 
@@ -115,7 +134,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Title.viewAsLink
+        |> List.map Article.viewLink
         |> List.intersperse (text " → ")
         |> div []
 
@@ -125,9 +144,9 @@ viewError { source, destination, error } =
     let
         pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
-            , Title.viewAsLink source.title
+            , Article.viewLink source
             , text " to "
-            , Title.viewAsLink destination.title
+            , Article.viewLink destination
             , text " 💀"
             ]
     in
@@ -143,35 +162,31 @@ viewError { source, destination, error } =
             )
 
 
-viewBackButton : Model -> (Title -> Title -> backMsg) -> Html backMsg
-viewBackButton model toBackMsg =
-    let
-        onClick =
-            toBackMsg (getSourceTitle model) (getDestinationTitle model)
-    in
-        div [ css [ margin (px 20) ] ]
-            [ Button.view "Back"
-                [ Button.Secondary
-                , Button.OnClick onClick
-                ]
+viewBackButton : Model -> Html Msg
+viewBackButton model =
+    div [ css [ margin (px 20) ] ]
+        [ Button.view "Back"
+            [ Button.Secondary
+            , Button.OnClick Back
             ]
+        ]
 
 
-getSourceTitle : Model -> Title
-getSourceTitle model =
+getSourceArticle : Model -> Article Preview
+getSourceArticle model =
     case model of
         Success path ->
             Path.beginning path
 
         Error { source } ->
-            source.title
+            source
 
 
-getDestinationTitle : Model -> Title
-getDestinationTitle model =
+getDestinationArticle : Model -> Article Preview
+getDestinationArticle model =
     case model of
         Success path ->
             Path.end path
 
         Error { destination } ->
-            destination.title
+            destination
