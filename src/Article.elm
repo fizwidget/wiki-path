@@ -110,7 +110,7 @@ toErrorMessage error =
 
 
 
--- API
+-- ARTICLE API
 
 
 type alias ArticleResult =
@@ -181,10 +181,6 @@ buildArticleUrl title =
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
 
 
-
--- SERIALIZATION
-
-
 responseDecoder : Decoder ArticleResult
 responseDecoder =
     at [ "query", "pages", "0" ] <|
@@ -224,7 +220,7 @@ bodyDecoder =
 
 
 
--- PREVIEW
+-- ARTICLE PREVIEW API
 
 
 type alias RemoteArticlePair =
@@ -278,10 +274,6 @@ buildRandomArticlesUrl articleCount =
             ]
     in
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
-
-
-
--- SERIALIZATION
 
 
 randomArticlesDecoder : Decoder (List (Article Preview))
