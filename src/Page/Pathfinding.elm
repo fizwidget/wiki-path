@@ -8,12 +8,13 @@ module Page.Pathfinding
         , view
         )
 
+import Http
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
 import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
-import Article exposing (Article, Preview, Full, ArticleResult, ArticleError)
+import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(HttpError))
 import Path exposing (Path)
 import PriorityQueue exposing (PriorityQueue, Priority)
 import OrderedSet exposing (OrderedSet)
@@ -198,7 +199,7 @@ getNextArticle pathToFollow =
                 |> Path.end
                 |> Article.title
     in
-        Article.getArticleResult (ArticleLoaded pathToFollow) articleTitle
+        fetch (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article Full -> Maybe Path
@@ -280,16 +281,17 @@ extendPath destination currentPath nextArticle =
 
 calculatePriority : Path -> Article Preview -> Article Full -> Priority
 calculatePriority currentPath current destination =
-    (Path.priority currentPath) * 0.8 + (heuristic destination current)
-
-
-heuristic : Article Full -> Article Preview -> Float
-heuristic destination current =
     if Article.equals current destination then
         10000
     else
-        countOccurences (Article.title current) (Article.content destination)
-            |> toFloat
+        (Path.priority currentPath) * 0.8 + (heuristic destination current |> toFloat)
+
+
+heuristic : Article Full -> Article Preview -> Int
+heuristic destination current =
+    countOccurences
+        (Article.title current)
+        (Article.content destination)
 
 
 countOccurences : String -> String -> Int
@@ -312,6 +314,24 @@ discardLowPriorities paths =
 
 
 
+-- FETCH
+
+
+fetch : (ArticleResult -> msg) -> String -> Cmd msg
+fetch toMsg title =
+    title
+        |> Article.fetchNamed
+        |> Http.send (toArticleResult >> toMsg)
+
+
+toArticleResult : Result Http.Error ArticleResult -> ArticleResult
+toArticleResult result =
+    result
+        |> Result.mapError HttpError
+        |> Result.andThen identity
+
+
+
 -- VIEW
 
 
@@ -329,9 +349,9 @@ viewHeading : Article Full -> Article Full -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Article.viewLink source
+        , Article.viewAsLink source
         , text " to "
-        , Article.viewLink destination
+        , Article.viewAsLink destination
         , text "..."
         ]
 
@@ -352,9 +372,9 @@ viewWarnings : Int -> Article Full -> Html msg
 viewWarnings totalRequests destination =
     div [ css [ textAlign center ] ]
         [ text <|
-            if String.contains "{{disambiguation}}" (Article.content destination) then
+            if Article.isDisambiguation destination then
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
-            else if String.length (Article.content destination) < 5000 then
+            else if Article.length destination < 3000 then
                 "The destination article is very short, so it might take longer than usual to find! 😅"
             else if totalRequests > totalRequestsLimit // 2 then
                 "This isn't looking good. Try a different destination maybe? 💩"

@@ -9,11 +9,12 @@ module Page.Setup
         , view
         )
 
+import Http
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Full, RemoteArticle, RemoteArticlePair)
+import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(..))
 import Button
 import Input
 import Form
@@ -34,6 +35,19 @@ type alias Model =
 
 type alias UserInput =
     String
+
+
+type alias RemoteArticlePair =
+    RemoteData RemoteArticlePairError ( Article Preview, Article Preview )
+
+
+type RemoteArticlePairError
+    = UnexpectedArticleCount
+    | HttpError Http.Error
+
+
+type alias RemoteArticle =
+    RemoteData ArticleError (Article Full)
 
 
 
@@ -95,7 +109,7 @@ update msg model =
                 |> InProgress
 
         RandomizeArticlesRequest ->
-            ( { model | randomArticles = Loading }, Article.getRandomPair RandomizeArticlesResponse )
+            ( { model | randomArticles = Loading }, fetchRandomPair )
                 |> InProgress
 
         RandomizeArticlesResponse response ->
@@ -105,7 +119,7 @@ update msg model =
                 |> InProgress
 
         GetArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, getArticles model )
+            ( { model | source = Loading, destination = Loading }, fetchFullArticles model )
                 |> InProgress
 
         GetSourceArticleResponse article ->
@@ -123,12 +137,37 @@ maybeComplete ({ source, destination } as model) =
         |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
-getArticles : Model -> Cmd Msg
-getArticles { sourceInput, destinationInput } =
-    Cmd.batch <|
-        [ Article.getRemoteArticle GetSourceArticleResponse sourceInput
-        , Article.getRemoteArticle GetDestinationArticleResponse destinationInput
-        ]
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
+
+
+
+-- FETCH RANDOM PAIR
+
+
+fetchRandomPair : Cmd Msg
+fetchRandomPair =
+    Article.fetchRandom 2
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticlePair >> RandomizeArticlesResponse)
+
+
+toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
+toRemoteArticlePair remoteArticles =
+    remoteArticles
+        |> RemoteData.mapError HttpError
+        |> RemoteData.andThen toPair
+
+
+toPair : List (Article Preview) -> RemoteArticlePair
+toPair articles =
+    case articles of
+        first :: second :: _ ->
+            RemoteData.succeed ( first, second )
+
+        _ ->
+            RemoteData.Failure UnexpectedArticleCount
 
 
 randomizeArticleInputs : Model -> Model
@@ -147,9 +186,31 @@ randomizeArticleInputs model =
             |> RemoteData.withDefault model
 
 
-noCmd : model -> ( model, Cmd msg )
-noCmd model =
-    ( model, Cmd.none )
+
+-- FETCH FULL ARTICLE
+
+
+fetchFullArticles : Model -> Cmd Msg
+fetchFullArticles { sourceInput, destinationInput } =
+    Cmd.batch <|
+        [ fetchFullArticle GetSourceArticleResponse sourceInput
+        , fetchFullArticle GetDestinationArticleResponse destinationInput
+        ]
+
+
+fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+fetchFullArticle toMsg title =
+    title
+        |> Article.fetchNamed
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle webData =
+    webData
+        |> RemoteData.mapError Article.HttpError
+        |> RemoteData.andThen RemoteData.fromResult
 
 
 

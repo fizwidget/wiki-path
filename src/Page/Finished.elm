@@ -134,7 +134,7 @@ viewSubHeading =
 viewPath : Path -> Html msg
 viewPath path =
     Path.inOrder path
-        |> List.map Article.viewLink
+        |> List.map Article.viewAsLink
         |> List.intersperse (text " → ")
         |> div []
 
@@ -144,9 +144,9 @@ viewError { source, destination, error } =
     let
         pathNotFoundMessage =
             [ text "Sorry, couldn't find a path from "
-            , Article.viewLink source
+            , Article.viewAsLink source
             , text " to "
-            , Article.viewLink destination
+            , Article.viewAsLink destination
             , text " 💀"
             ]
     in
