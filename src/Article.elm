@@ -6,7 +6,6 @@ module Article
         , ArticleResult
         , RemoteArticle
         , ArticleError(..)
-        , RemoteArticlePair
         , title
         , content
         , links
@@ -16,7 +15,7 @@ module Article
         , length
         , fetchArticleResult
         , fetchRemoteArticle
-        , fetchRandomPair
+        , buildRandomArticlesRequest
         , viewError
         , viewAsLink
         )
@@ -240,43 +239,6 @@ bodyDecoder =
     decode Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
         |> required "links" (list previewDecoder)
-
-
-
--- ARTICLE PREVIEW API
-
-
-type alias RemoteArticlePair =
-    RemoteData ArticlesError ( Article Preview, Article Preview )
-
-
-type ArticlesError
-    = UnexpectedArticleCount
-    | LinkHttpError Http.Error
-
-
-fetchRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
-fetchRandomPair toMsg =
-    buildRandomArticlesRequest 2
-        |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticlePair >> toMsg)
-
-
-toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
-toRemoteArticlePair remoteArticles =
-    remoteArticles
-        |> RemoteData.mapError LinkHttpError
-        |> RemoteData.andThen toPair
-
-
-toPair : List (Article Preview) -> RemoteArticlePair
-toPair articles =
-    case articles of
-        first :: second :: _ ->
-            RemoteData.succeed ( first, second )
-
-        _ ->
-            RemoteData.Failure UnexpectedArticleCount
 
 
 buildRandomArticlesRequest : Int -> Http.Request (List (Article Preview))

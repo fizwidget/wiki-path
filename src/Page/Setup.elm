@@ -9,11 +9,12 @@ module Page.Setup
         , view
         )
 
+import Http
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Full, RemoteArticle, RemoteArticlePair)
+import Article exposing (Article, Preview, Full, RemoteArticle)
 import Button
 import Input
 import Form
@@ -34,6 +35,15 @@ type alias Model =
 
 type alias UserInput =
     String
+
+
+type alias RemoteArticlePair =
+    RemoteData ArticlesError ( Article Preview, Article Preview )
+
+
+type ArticlesError
+    = UnexpectedArticleCount
+    | HttpError Http.Error
 
 
 
@@ -95,7 +105,7 @@ update msg model =
                 |> InProgress
 
         RandomizeArticlesRequest ->
-            ( { model | randomArticles = Loading }, Article.fetchRandomPair RandomizeArticlesResponse )
+            ( { model | randomArticles = Loading }, fetchRandomPair )
                 |> InProgress
 
         RandomizeArticlesResponse response ->
@@ -129,6 +139,30 @@ getArticles { sourceInput, destinationInput } =
         [ Article.fetchRemoteArticle GetSourceArticleResponse sourceInput
         , Article.fetchRemoteArticle GetDestinationArticleResponse destinationInput
         ]
+
+
+fetchRandomPair : Cmd Msg
+fetchRandomPair =
+    Article.buildRandomArticlesRequest 2
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticlePair >> RandomizeArticlesResponse)
+
+
+toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
+toRemoteArticlePair remoteArticles =
+    remoteArticles
+        |> RemoteData.mapError HttpError
+        |> RemoteData.andThen toPair
+
+
+toPair : List (Article Preview) -> RemoteArticlePair
+toPair articles =
+    case articles of
+        first :: second :: _ ->
+            RemoteData.succeed ( first, second )
+
+        _ ->
+            RemoteData.Failure UnexpectedArticleCount
 
 
 randomizeArticleInputs : Model -> Model
