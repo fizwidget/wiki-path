@@ -353,9 +353,9 @@ viewWarnings : Int -> Article Full -> Html msg
 viewWarnings totalRequests destination =
     div [ css [ textAlign center ] ]
         [ text <|
-            if String.contains "{{disambiguation}}" (Article.content destination) then
+            if Article.isDisambiguation destination then
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
-            else if String.length (Article.content destination) < 5000 then
+            else if Article.length destination < 3000 then
                 "The destination article is very short, so it might take longer than usual to find! 😅"
             else if totalRequests > totalRequestsLimit // 2 then
                 "This isn't looking good. Try a different destination maybe? 💩"

@@ -12,6 +12,8 @@ module Article
         , links
         , preview
         , equals
+        , isDisambiguation
+        , length
         , getArticleResult
         , getRemoteArticle
         , getRandomPair
@@ -77,6 +79,16 @@ preview (Article title _) =
 equals : Article a -> Article b -> Bool
 equals (Article firstTitle _) (Article secondTitle _) =
     firstTitle == secondTitle
+
+
+isDisambiguation : Article Full -> Bool
+isDisambiguation =
+    content >> String.contains "{{disambiguation}}"
+
+
+length : Article Full -> Int
+length =
+    content >> String.length
 
 
 
