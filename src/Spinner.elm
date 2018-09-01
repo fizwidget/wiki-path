@@ -1,8 +1,8 @@
 module Spinner exposing (view)
 
-import Html.Styled exposing (Html, div)
-import Html.Styled.Attributes exposing (css, class)
 import Css exposing (..)
+import Html.Styled exposing (Html, div)
+import Html.Styled.Attributes exposing (class, css)
 
 
 view : { isVisible : Bool } -> Html msg
@@ -18,6 +18,7 @@ visibilityStyle : Bool -> Style
 visibilityStyle isVisible =
     if isVisible then
         visibility visible
+
     else
         visibility hidden
 

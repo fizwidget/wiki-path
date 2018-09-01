@@ -1,26 +1,26 @@
-module Page.Pathfinding
-    exposing
-        ( Model
-        , Msg
-        , UpdateResult(..)
-        , init
-        , update
-        , view
-        )
+module Page.Pathfinding exposing
+    ( Model
+    , Msg
+    , UpdateResult(..)
+    , init
+    , update
+    , view
+    )
 
-import Http
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
-import Html.Styled.Attributes exposing (css)
-import Css exposing (..)
-import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
-import Result exposing (Result(Ok, Err))
-import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(HttpError))
-import Path exposing (Path)
-import PriorityQueue exposing (PriorityQueue, Priority)
-import OrderedSet exposing (OrderedSet)
+import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
 import Button
-import Spinner
+import Css exposing (..)
 import FadeOut
+import Html.Styled exposing (Html, div, fromUnstyled, h3, li, ol, text, toUnstyled)
+import Html.Styled.Attributes exposing (css)
+import Http
+import OrderedSet exposing (OrderedSet)
+import Path exposing (Path)
+import PriorityQueue exposing (Priority, PriorityQueue)
+import Regex
+import Result exposing (Result(..))
+import Spinner
+
 
 
 -- MODEL
@@ -67,8 +67,8 @@ initialModel : Article Full -> Article Full -> Model
 initialModel source destination =
     { source = source
     , destination = destination
-    , paths = PriorityQueue.empty
-    , visitedArticles = OrderedSet.singleton (Article.title source)
+    , paths = PriorityQueue.empty Path.priority
+    , visitedArticles = OrderedSet.singleton (Article.getTitle source)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
@@ -118,6 +118,7 @@ articleReceived : Path -> Article Full -> Model -> UpdateResult
 articleReceived pathToArticle article model =
     if Article.equals article model.destination then
         Complete pathToArticle
+
     else
         model
             |> processLinks pathToArticle article
@@ -134,15 +135,15 @@ processLinks : Path -> Article Full -> Model -> Model
 processLinks pathToArticle article model =
     let
         newPaths =
-            Article.links article
+            Article.getLinks article
                 |> List.filter (isCandidate model.visitedArticles)
                 |> List.map (extendPath model.destination pathToArticle)
                 |> discardLowPriorities
     in
-        { model
-            | paths = PriorityQueue.insert model.paths Path.priority newPaths
-            , visitedArticles = markVisited model.visitedArticles newPaths
-        }
+    { model
+        | paths = PriorityQueue.insert model.paths newPaths
+        , visitedArticles = markVisited model.visitedArticles newPaths
+    }
 
 
 continueSearch : Model -> UpdateResult
@@ -160,10 +161,11 @@ continueSearch model =
         isDeadEnd =
             List.isEmpty pathsToExplore && model.pendingRequests == 0
     in
-        if isDeadEnd then
-            PathNotFound updatedModel.source updatedModel.destination
-        else
-            explorePaths updatedModel pathsToExplore
+    if isDeadEnd then
+        PathNotFound updatedModel.source updatedModel.destination
+
+    else
+        explorePaths updatedModel pathsToExplore
 
 
 explorePaths : Model -> List Path -> UpdateResult
@@ -185,10 +187,11 @@ getNextArticles model pathsToFollow =
         updatedModel =
             incrementRequests model (List.length requests)
     in
-        if updatedModel.totalRequests > totalRequestsLimit then
-            TooManyRequests updatedModel.source updatedModel.destination
-        else
-            InProgress ( updatedModel, Cmd.batch requests )
+    if updatedModel.totalRequests > totalRequestsLimit then
+        TooManyRequests updatedModel.source updatedModel.destination
+
+    else
+        InProgress ( updatedModel, Cmd.batch requests )
 
 
 getNextArticle : Path -> Cmd Msg
@@ -197,9 +200,9 @@ getNextArticle pathToFollow =
         articleTitle =
             pathToFollow
                 |> Path.end
-                |> Article.title
+                |> Article.getTitle
     in
-        fetch (ArticleLoaded pathToFollow) articleTitle
+    fetch (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article Full -> Maybe Path
@@ -208,10 +211,10 @@ containsPathToDestination paths destination =
         hasReachedDestination path =
             Article.equals (Path.end path) destination
     in
-        paths
-            |> List.filter hasReachedDestination
-            |> List.sortBy Path.length
-            |> List.head
+    paths
+        |> List.filter hasReachedDestination
+        |> List.sortBy Path.length
+        |> List.head
 
 
 decrementPendingRequests : Model -> Model
@@ -235,7 +238,7 @@ isCandidate : OrderedSet String -> Article Preview -> Bool
 isCandidate visitedArticles article =
     let
         title =
-            Article.title article
+            Article.getTitle article
 
         hasMinimumLength =
             String.length title > 1
@@ -258,15 +261,15 @@ isCandidate visitedArticles article =
                 , "Geographic coordinate system"
                 ]
     in
-        hasMinimumLength
-            && not isVisited
-            && not isBlacklisted
+    hasMinimumLength
+        && not isVisited
+        && not isBlacklisted
 
 
 markVisited : OrderedSet String -> List Path -> OrderedSet String
 markVisited visitedArticles paths =
     paths
-        |> List.map (Path.end >> Article.title)
+        |> List.map (Path.end >> Article.getTitle)
         |> List.foldl OrderedSet.insert visitedArticles
 
 
@@ -276,34 +279,34 @@ extendPath destination currentPath nextArticle =
         priority =
             calculatePriority currentPath nextArticle destination
     in
-        Path.extend currentPath nextArticle priority
+    Path.extend currentPath nextArticle priority
 
 
 calculatePriority : Path -> Article Preview -> Article Full -> Priority
 calculatePriority currentPath current destination =
     if Article.equals current destination then
         10000
+
     else
-        (Path.priority currentPath) * 0.8 + (heuristic destination current |> toFloat)
+        Path.priority currentPath * 0.8 + (heuristic destination current |> toFloat)
 
 
 heuristic : Article Full -> Article Preview -> Int
 heuristic destination current =
     countOccurences
-        (Article.title current)
-        (Article.content destination)
+        (Article.getTitle current)
+        (Article.getContent destination)
 
 
 countOccurences : String -> String -> Int
 countOccurences target content =
     let
         occurencePattern =
-            escape target
-                |> regex
-                |> caseInsensitive
+            Regex.fromStringWith { caseInsensitive = True, multiline = False } target
+                |> Maybe.withDefault Regex.never
     in
-        find All occurencePattern content
-            |> List.length
+    Regex.find occurencePattern content
+        |> List.length
 
 
 discardLowPriorities : List Path -> List Path
@@ -340,8 +343,8 @@ view { source, destination, visitedArticles, paths, errors, totalRequests } =
     div [ css [ displayFlex, flexDirection column, alignItems center ] ]
         [ viewHeading source destination
         , viewWarnings totalRequests destination
-        , viewVisited visitedArticles
         , viewBackButton
+        , viewVisited visitedArticles
         ]
 
 
@@ -364,7 +367,7 @@ viewVisited visited =
                 |> List.take 10
                 |> List.map text
                 |> List.append [ Spinner.view { isVisible = True } ]
-                |> List.map (List.singleton >> (div []))
+                |> List.map (List.singleton >> div [])
             )
 
 
@@ -374,10 +377,13 @@ viewWarnings totalRequests destination =
         [ text <|
             if Article.isDisambiguation destination then
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
+
             else if Article.length destination < 3000 then
                 "The destination article is very short, so it might take longer than usual to find! 😅"
+
             else if totalRequests > totalRequestsLimit // 2 then
                 "This isn't looking good. Try a different destination maybe? 💩"
+
             else
                 ""
         ]
@@ -385,9 +391,9 @@ viewWarnings totalRequests destination =
 
 viewBackButton : Html Msg
 viewBackButton =
-    div [ css [ marginTop (px 20) ] ]
+    div []
         [ Button.view "Back"
-            [ Button.Secondary
+            [ Button.Light
             , Button.OnClick CancelPathfinding
             ]
         ]

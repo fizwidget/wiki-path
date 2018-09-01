@@ -1,21 +1,21 @@
-module Page.Finished
-    exposing
-        ( Model
-        , Msg
-        , UpdateResult(BackToSetup)
-        , initWithPath
-        , initWithPathNotFoundError
-        , initWithTooManyRequestsError
-        , update
-        , view
-        )
+module Page.Finished exposing
+    ( Model
+    , Msg
+    , UpdateResult(..)
+    , initWithPath
+    , initWithPathNotFoundError
+    , initWithTooManyRequestsError
+    , update
+    , view
+    )
 
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, h2, h4, div, pre, input, button, text, form)
-import Html.Styled.Attributes exposing (css, value, type_, placeholder)
-import Css exposing (..)
 import Article exposing (Article, Preview)
-import Path exposing (Path)
 import Button
+import Css exposing (..)
+import Html.Styled exposing (Html, button, div, form, fromUnstyled, h2, h4, input, pre, text, toUnstyled)
+import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Path exposing (Path)
+
 
 
 -- MODEL
@@ -150,16 +150,16 @@ viewError { source, destination, error } =
             , text " 💀"
             ]
     in
-        div [ css [ textAlign center ] ]
-            (case error of
-                PathNotFound ->
-                    pathNotFoundMessage
+    div [ css [ textAlign center ] ]
+        (case error of
+            PathNotFound ->
+                pathNotFoundMessage
 
-                TooManyRequests ->
-                    List.append
-                        pathNotFoundMessage
-                        [ div [] [ text "We made too many requests to Wikipedia! 😵" ] ]
-            )
+            TooManyRequests ->
+                List.append
+                    pathNotFoundMessage
+                    [ div [] [ text "We made too many requests to Wikipedia! 😵" ] ]
+        )
 
 
 viewBackButton : Model -> Html Msg

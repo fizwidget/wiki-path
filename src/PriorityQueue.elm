@@ -1,64 +1,56 @@
-module PriorityQueue
-    exposing
-        ( PriorityQueue
-        , Priority
-        , empty
-        , isEmpty
-        , insert
-        , highestPriority
-        , removeHighestPriority
-        , removeHighestPriorities
-        , inPriorityOrder
-        )
+module PriorityQueue exposing
+    ( Priority
+    , PriorityQueue
+    , empty
+    , highestPriority
+    , inPriorityOrder
+    , insert
+    , isEmpty
+    , removeHighestPriorities
+    , removeHighestPriority
+    )
 
-import PairingHeap exposing (PairingHeap)
+import Heap exposing (Heap, biggest, by)
 
 
 type PriorityQueue a
-    = PriorityQueue (PairingHeap Priority a)
+    = PriorityQueue (Heap a)
 
 
 type alias Priority =
     Float
 
 
-empty : PriorityQueue a
-empty =
-    PriorityQueue PairingHeap.empty
+empty : (a -> Priority) -> PriorityQueue a
+empty getPriority =
+    Heap.empty (biggest |> by getPriority)
+        |> PriorityQueue
 
 
 isEmpty : PriorityQueue a -> Bool
-isEmpty priorityQueue =
-    highestPriority priorityQueue
-        |> Maybe.map (always False)
-        |> Maybe.withDefault True
+isEmpty (PriorityQueue heap) =
+    Heap.isEmpty heap
 
 
-insert : PriorityQueue a -> (a -> Priority) -> List a -> PriorityQueue a
-insert (PriorityQueue pairingHeap) getPriority values =
-    let
-        -- Negating the priorities because `PairingHeap` is a min-heap, but we want
-        -- to treat it as a max-heap (so the highest priority is at the top).
-        withNegatedPriorities =
-            values
-                |> List.map (\value -> ( getPriority value, value ))
-                |> List.map (Tuple.mapFirst negate)
-    in
-        List.foldl PairingHeap.insert pairingHeap withNegatedPriorities
-            |> PriorityQueue
+insert : PriorityQueue a -> List a -> PriorityQueue a
+insert (PriorityQueue heap) values =
+    List.foldl Heap.push heap values
+        |> PriorityQueue
 
 
 highestPriority : PriorityQueue a -> Maybe a
-highestPriority (PriorityQueue pairingHeap) =
-    PairingHeap.findMin pairingHeap
-        |> Maybe.map Tuple.second
+highestPriority (PriorityQueue heap) =
+    Heap.peek heap
 
 
-removeHighestPriority : PriorityQueue a -> ( Maybe a, PriorityQueue a )
-removeHighestPriority (PriorityQueue pairingHeap) =
-    ( PairingHeap.findMin pairingHeap |> Maybe.map Tuple.second
-    , pairingHeap |> PairingHeap.deleteMin |> PriorityQueue
-    )
+removeHighestPriority : PriorityQueue a -> Maybe ( a, PriorityQueue a )
+removeHighestPriority (PriorityQueue heap) =
+    case Heap.pop heap of
+        Just ( value, updatedHeap ) ->
+            Just ( value, PriorityQueue updatedHeap )
+
+        Nothing ->
+            Nothing
 
 
 removeHighestPriorities : PriorityQueue a -> Int -> ( List a, PriorityQueue a )
@@ -70,20 +62,16 @@ removeHighestPrioritiesHelper : PriorityQueue a -> Int -> List a -> ( List a, Pr
 removeHighestPrioritiesHelper priorityQueue howMany removedSoFar =
     if howMany <= 0 then
         ( removedSoFar, priorityQueue )
-    else
-        let
-            ( removedValue, updatedPriorityQueue ) =
-                removeHighestPriority priorityQueue
 
-            removedValues =
-                removedValue
-                    |> Maybe.map (\value -> value :: removedSoFar)
-                    |> Maybe.withDefault removedSoFar
-        in
-            removeHighestPrioritiesHelper updatedPriorityQueue (howMany - 1) removedValues
+    else
+        case removeHighestPriority priorityQueue of
+            Just ( removedValue, updatedPriorityQueue ) ->
+                removeHighestPrioritiesHelper updatedPriorityQueue (howMany - 1) (removedValue :: removedSoFar)
+
+            Nothing ->
+                ( removedSoFar, priorityQueue )
 
 
 inPriorityOrder : PriorityQueue a -> List a
-inPriorityOrder (PriorityQueue pairingHeap) =
-    PairingHeap.toSortedList pairingHeap
-        |> List.map Tuple.second
+inPriorityOrder (PriorityQueue heap) =
+    Heap.toList heap

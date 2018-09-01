@@ -1,29 +1,30 @@
-module Article
-    exposing
-        ( Article
-        , Preview
-        , Full
-        , ArticleResult
-        , ArticleError(..)
-        , title
-        , content
-        , links
-        , preview
-        , equals
-        , length
-        , isDisambiguation
-        , fetchNamed
-        , fetchRandom
-        , viewError
-        , viewAsLink
-        )
+module Article exposing
+    ( Article
+    , ArticleError(..)
+    , ArticleResult
+    , Full
+    , Preview
+    , equals
+    , fetchNamed
+    , fetchRandom
+    , getContent
+    , getLinks
+    , getTitle
+    , isDisambiguation
+    , length
+    , preview
+    , viewAsLink
+    , viewError
+    )
 
-import Http
-import Json.Decode as Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf, succeed)
-import Json.Decode.Pipeline exposing (decode, required, requiredAt, hardcoded, custom)
-import Url exposing (Url, QueryParam(KeyValue, Key))
 import Html.Styled exposing (Html, a, div, text)
 import Html.Styled.Attributes exposing (href)
+import Http
+import Json.Decode as Decode exposing (Decoder, at, bool, field, int, list, map, oneOf, string, succeed)
+import Json.Decode.Pipeline exposing (custom, hardcoded, required, requiredAt)
+import Url exposing (Url)
+import Url.Builder
+
 
 
 -- TYPES
@@ -59,18 +60,18 @@ type alias Wikitext =
 -- INFO
 
 
-title : Article a -> String
-title (Article title _) =
+getTitle : Article a -> String
+getTitle (Article title _) =
     title
 
 
-content : Article Full -> String
-content (Article _ (Full { content })) =
+getContent : Article Full -> String
+getContent (Article _ (Full { content })) =
     content
 
 
-links : Article Full -> List (Article Preview)
-links (Article _ (Full { links })) =
+getLinks : Article Full -> List (Article Preview)
+getLinks (Article _ (Full { links })) =
     links
 
 
@@ -86,12 +87,12 @@ equals (Article firstTitle _) (Article secondTitle _) =
 
 length : Article Full -> Int
 length =
-    content >> String.length
+    getContent >> String.length
 
 
 isDisambiguation : Article Full -> Bool
 isDisambiguation =
-    content >> String.contains "{{disambiguation}}"
+    getContent >> String.contains "{{disambiguation}}"
 
 
 
@@ -102,12 +103,12 @@ viewAsLink : Article a -> Html msg
 viewAsLink article =
     a
         [ href (toUrl article) ]
-        [ text (title article) ]
+        [ text (getTitle article) ]
 
 
 toUrl : Article a -> String
 toUrl article =
-    "https://en.wikipedia.org/wiki/" ++ (title article)
+    "https://en.wikipedia.org/wiki/" ++ getTitle article
 
 
 viewError : ArticleError -> Html msg
@@ -156,39 +157,39 @@ fetchRandom count =
 -- URLS
 
 
-randomArticlesUrl : Int -> Url
+randomArticlesUrl : Int -> String
 randomArticlesUrl articleCount =
     let
         queryParams =
-            [ KeyValue ( "action", "query" )
-            , KeyValue ( "format", "json" )
-            , KeyValue ( "list", "random" )
-            , KeyValue ( "rnlimit", toString articleCount )
-            , KeyValue ( "rnnamespace", "0" )
-            , KeyValue ( "origin", "*" )
+            [ Url.Builder.string "action" "query"
+            , Url.Builder.string "format" "json"
+            , Url.Builder.string "list" "random"
+            , Url.Builder.int "rnlimit" articleCount
+            , Url.Builder.string "rnnamespace" "0"
+            , Url.Builder.string "origin" "*"
             ]
     in
-        Url.build wikipediaApi queryParams
+    Url.Builder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] queryParams
 
 
-namedArticleUrl : Title -> Url
+namedArticleUrl : Title -> String
 namedArticleUrl title =
     let
         queryParams =
-            [ KeyValue ( "action", "query" )
-            , KeyValue ( "format", "json" )
-            , KeyValue ( "prop", "revisions|links" )
-            , KeyValue ( "titles", title )
-            , KeyValue ( "redirects", "1" )
-            , KeyValue ( "formatversion", "2" )
-            , KeyValue ( "rvprop", "content" )
-            , KeyValue ( "rvslots", "main" )
-            , KeyValue ( "plnamespace", "0" )
-            , KeyValue ( "pllimit", "max" )
-            , KeyValue ( "origin", "*" )
+            [ Url.Builder.string "action" "query"
+            , Url.Builder.string "format" "json"
+            , Url.Builder.string "prop" "revisions|links"
+            , Url.Builder.string "titles" title
+            , Url.Builder.string "redirects" "1"
+            , Url.Builder.string "formatversion" "2"
+            , Url.Builder.string "rvprop" "content"
+            , Url.Builder.string "rvslots" "main"
+            , Url.Builder.string "plnamespace" "0"
+            , Url.Builder.string "pllimit" "max"
+            , Url.Builder.string "origin" "*"
             ]
     in
-        Url.build wikipediaApi queryParams
+    Url.Builder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] queryParams
 
 
 wikipediaApi : String
@@ -232,7 +233,7 @@ fullArticleDecoder =
 
 bodyDecoder : Decoder Body
 bodyDecoder =
-    decode Body
+    succeed Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
         |> required "links" (list previewArticleDecoder)
 

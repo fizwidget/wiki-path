@@ -1,8 +1,8 @@
 module FadeOut exposing (view)
 
+import Css exposing (..)
 import Html.Styled exposing (Html, div)
 import Html.Styled.Attributes exposing (css)
-import Css exposing (..)
 
 
 view : Html msg -> Html msg
