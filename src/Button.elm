@@ -1,7 +1,8 @@
-module Button exposing (view, Option(..))
+module Button exposing (Option(..), view)
 
-import Html.Styled exposing (Html, text, fromUnstyled, toUnstyled)
-import Bootstrap.Button
+import Html.Styled exposing (Attribute, Html, button, text)
+import Html.Styled.Attributes exposing (class, disabled, type_)
+import Html.Styled.Events exposing (onClick)
 
 
 type Option msg
@@ -15,32 +16,33 @@ type Option msg
 
 view : String -> List (Option msg) -> Html msg
 view title options =
-    let
-        button =
-            Bootstrap.Button.button
-                (List.map toBootstrapOption options)
-                [ text title |> toUnstyled ]
-    in
-        fromUnstyled button
+    button
+        (defaultAttributes ++ List.map toAttribute options)
+        [ text title ]
 
 
-toBootstrapOption : Option msg -> Bootstrap.Button.Option msg
-toBootstrapOption option =
+defaultAttributes : List (Attribute msg)
+defaultAttributes =
+    [ type_ "button", class "btn" ]
+
+
+toAttribute : Option msg -> Attribute msg
+toAttribute option =
     case option of
         OnClick msg ->
-            Bootstrap.Button.onClick msg
+            onClick msg
 
         Primary ->
-            Bootstrap.Button.primary
+            class "btn-primary"
 
         Secondary ->
-            Bootstrap.Button.secondary
+            class "btn-info"
 
         Light ->
-            Bootstrap.Button.light
+            class "btn-link"
 
         Large ->
-            Bootstrap.Button.large
+            class "btn-lg"
 
         Disabled isDisabled ->
-            Bootstrap.Button.disabled isDisabled
+            disabled isDisabled

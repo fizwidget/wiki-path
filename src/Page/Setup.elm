@@ -1,24 +1,24 @@
-module Page.Setup
-    exposing
-        ( Model
-        , Msg
-        , UpdateResult(InProgress, Complete)
-        , init
-        , initWithArticles
-        , update
-        , view
-        )
+module Page.Setup exposing
+    ( Model
+    , Msg
+    , UpdateResult(..)
+    , init
+    , initWithArticles
+    , update
+    , view
+    )
 
-import Http
-import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, button, text, form)
-import Html.Styled.Attributes exposing (css, value, type_, placeholder)
-import Css exposing (..)
-import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(..))
+import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
 import Button
-import Input
+import Css exposing (..)
 import Form
+import Html.Styled exposing (Html, button, div, form, fromUnstyled, input, pre, text, toUnstyled)
+import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Http
+import Input
+import RemoteData exposing (RemoteData(..), WebData)
 import Spinner
+
 
 
 -- MODEL
@@ -61,7 +61,7 @@ init =
 
 initWithArticles : Article a -> Article a -> ( Model, Cmd Msg )
 initWithArticles source destination =
-    ( initialModel (Article.title source) (Article.title destination)
+    ( initialModel (Article.getTitle source) (Article.getTitle destination)
     , Cmd.none
     )
 
@@ -177,13 +177,13 @@ randomizeArticleInputs model =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceInput = Article.title source
-                , destinationInput = Article.title destination
+                , sourceInput = Article.getTitle source
+                , destinationInput = Article.getTitle destination
             }
     in
-        model.randomArticles
-            |> RemoteData.map setArticleInputs
-            |> RemoteData.withDefault model
+    model.randomArticles
+        |> RemoteData.map setArticleInputs
+        |> RemoteData.withDefault model
 
 
 
@@ -302,6 +302,7 @@ viewRandomizationError : RemoteArticlePair -> Html msg
 viewRandomizationError randomArticles =
     if RemoteData.isFailure randomArticles then
         text "Sorry, an error occured 😵"
+
     else
         text ""
 
@@ -334,4 +335,4 @@ isLoading { source, destination, randomArticles } =
         areRandomArticlesLoading =
             RemoteData.isLoading randomArticles
     in
-        areArticlesLoading || areRandomArticlesLoading
+    areArticlesLoading || areRandomArticlesLoading

@@ -1,19 +1,18 @@
-module Path
-    exposing
-        ( Path
-        , beginningAt
-        , beginning
-        , end
-        , inOrder
-        , inReverseOrder
-        , priority
-        , extend
-        , contains
-        , length
-        )
+module Path exposing
+    ( Path
+    , beginning
+    , beginningAt
+    , contains
+    , end
+    , extend
+    , inOrder
+    , inReverseOrder
+    , length
+    , priority
+    )
 
-import PriorityQueue exposing (Priority)
 import Article exposing (Article, Preview)
+import PriorityQueue exposing (Priority)
 
 
 type Path

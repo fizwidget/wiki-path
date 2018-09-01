@@ -1,14 +1,16 @@
 module Main exposing (main)
 
-import Html
-import Html.Styled as StyledHtml exposing (Html, toUnstyled, div, h1, text)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Article exposing (Article, Full)
+import Browser exposing (Document)
 import Css exposing (..)
 import Css.Media as Media exposing (withMedia)
+import Html
+import Html.Styled as StyledHtml exposing (Html, div, h1, text, toUnstyled)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
 import Page.Setup as Setup
-import Article exposing (Article, Full)
+
 
 
 -- MODEL
@@ -121,6 +123,13 @@ noCmd model =
 -- VIEW
 
 
+document : Model -> Document Msg
+document model =
+    { title = "WikiPath"
+    , body = [ view model |> toUnstyled ]
+    }
+
+
 view : Model -> Html Msg
 view model =
     div
@@ -148,33 +157,33 @@ viewHeading =
                 [ Media.all [ Media.maxWidth (px 420) ] ]
                 [ fontSize (vw 20) ]
     in
-        h1
-            [ css
-                [ desktopFontSize
-                , mobileFontStyle
-                , fontWeight (int 900)
-                , fontFamily serif
-                , textAlign center
-                , marginTop (px 50)
-                , marginBottom (px 34)
-                ]
+    h1
+        [ css
+            [ desktopFontSize
+            , mobileFontStyle
+            , fontWeight (int 900)
+            , fontFamily serif
+            , textAlign center
+            , marginTop (px 50)
+            , marginBottom (px 34)
             ]
-            [ text "WikiPath" ]
+        ]
+        [ text "WikiPath" ]
 
 
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
-        SetupModel model ->
-            Setup.view model
+        SetupModel subModel ->
+            Setup.view subModel
                 |> StyledHtml.map SetupMsg
 
-        PathfindingModel model ->
-            Pathfinding.view model
+        PathfindingModel subModel ->
+            Pathfinding.view subModel
                 |> StyledHtml.map PathfindingMsg
 
-        FinishedModel model ->
-            Finished.view model
+        FinishedModel subModel ->
+            Finished.view subModel
                 |> StyledHtml.map FinishedMsg
 
 
@@ -182,11 +191,11 @@ viewModel model =
 -- MAIN
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Html.program
-        { init = inSetupPage Setup.init
-        , view = view >> toUnstyled
+    Browser.document
+        { init = \_ -> inSetupPage Setup.init
+        , view = document
         , update = update
         , subscriptions = always Sub.none
         }

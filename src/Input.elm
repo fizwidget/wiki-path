@@ -1,7 +1,8 @@
-module Input exposing (text, Option(..))
+module Input exposing (Option(..), text)
 
-import Html.Styled exposing (Html, fromUnstyled)
-import Bootstrap.Form.Input
+import Html.Styled exposing (Attribute, Html, div, input)
+import Html.Styled.Attributes exposing (class, disabled, placeholder, type_, value)
+import Html.Styled.Events exposing (onInput)
 
 
 type Option msg
@@ -15,30 +16,43 @@ type Option msg
 
 text : List (Option msg) -> Html msg
 text options =
-    Bootstrap.Form.Input.text (List.filterMap toBootstrapOption options)
-        |> fromUnstyled
+    div (List.filterMap errorAttribute options)
+        [ input (defaultAttributes ++ List.map toAttribute options) [] ]
 
 
-toBootstrapOption : Option msg -> Maybe (Bootstrap.Form.Input.Option msg)
-toBootstrapOption option =
+defaultAttributes : List (Attribute msg)
+defaultAttributes =
+    [ type_ "text", class "form-control" ]
+
+
+toAttribute : Option msg -> Attribute msg
+toAttribute option =
     case option of
         Large ->
-            Just Bootstrap.Form.Input.large
+            class "btn-lg"
 
         OnInput toMsg ->
-            Just (Bootstrap.Form.Input.onInput toMsg)
+            onInput toMsg
 
-        Value value ->
-            Just (Bootstrap.Form.Input.value value)
+        Value textValue ->
+            value textValue
 
-        Placeholder placeholder ->
-            Just (Bootstrap.Form.Input.placeholder placeholder)
+        Placeholder textValue ->
+            placeholder textValue
 
         Disabled isDisabled ->
-            Just (Bootstrap.Form.Input.disabled isDisabled)
+            disabled isDisabled
 
         Error isError ->
-            if isError then
-                Just Bootstrap.Form.Input.danger
-            else
-                Nothing
+            class ""
+
+
+errorAttribute : Option msg -> Maybe (Attribute msg)
+errorAttribute option =
+    case option of
+        Error True ->
+            -- Not working!
+            Just (class "has-error")
+
+        _ ->
+            Nothing
