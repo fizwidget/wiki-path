@@ -169,7 +169,7 @@ randomArticlesUrl articleCount =
             , KeyValue ( "origin", "*" )
             ]
     in
-        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+        Url.build wikipediaApi queryParams
 
 
 namedArticleUrl : Title -> Url
@@ -189,7 +189,12 @@ namedArticleUrl title =
             , KeyValue ( "origin", "*" )
             ]
     in
-        Url.build "https://en.wikipedia.org/w/api.php" queryParams
+        Url.build wikipediaApi queryParams
+
+
+wikipediaApi : String
+wikipediaApi =
+    "https://en.wikipedia.org/w/api.php"
 
 
 

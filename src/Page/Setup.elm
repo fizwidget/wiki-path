@@ -119,7 +119,7 @@ update msg model =
                 |> InProgress
 
         GetArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, getArticles model )
+            ( { model | source = Loading, destination = Loading }, fetchFullArticles model )
                 |> InProgress
 
         GetSourceArticleResponse article ->
@@ -137,12 +137,9 @@ maybeComplete ({ source, destination } as model) =
         |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
-getArticles : Model -> Cmd Msg
-getArticles { sourceInput, destinationInput } =
-    Cmd.batch <|
-        [ fetchFullArticle GetSourceArticleResponse sourceInput
-        , fetchFullArticle GetDestinationArticleResponse destinationInput
-        ]
+noCmd : model -> ( model, Cmd msg )
+noCmd model =
+    ( model, Cmd.none )
 
 
 
@@ -173,25 +170,6 @@ toPair articles =
             RemoteData.Failure UnexpectedArticleCount
 
 
-
--- FETCH FULL ARTICLE
-
-
-fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-fetchFullArticle toMsg title =
-    title
-        |> Article.fetchNamed
-        |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticle >> toMsg)
-
-
-toRemoteArticle : WebData ArticleResult -> RemoteArticle
-toRemoteArticle webData =
-    webData
-        |> RemoteData.mapError Article.HttpError
-        |> RemoteData.andThen RemoteData.fromResult
-
-
 randomizeArticleInputs : Model -> Model
 randomizeArticleInputs model =
     let
@@ -208,9 +186,31 @@ randomizeArticleInputs model =
             |> RemoteData.withDefault model
 
 
-noCmd : model -> ( model, Cmd msg )
-noCmd model =
-    ( model, Cmd.none )
+
+-- FETCH FULL ARTICLE
+
+
+fetchFullArticles : Model -> Cmd Msg
+fetchFullArticles { sourceInput, destinationInput } =
+    Cmd.batch <|
+        [ fetchFullArticle GetSourceArticleResponse sourceInput
+        , fetchFullArticle GetDestinationArticleResponse destinationInput
+        ]
+
+
+fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+fetchFullArticle toMsg title =
+    title
+        |> Article.fetchNamed
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle webData =
+    webData
+        |> RemoteData.mapError Article.HttpError
+        |> RemoteData.andThen RemoteData.fromResult
 
 
 
