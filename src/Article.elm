@@ -14,8 +14,8 @@ module Article
         , isDisambiguation
         , length
         , fetchArticleResult
-        , fetchRemoteArticle
         , buildRandomArticlesRequest
+        , buildRequest
         , viewError
         , viewAsLink
         )
@@ -161,21 +161,6 @@ toArticleResult result =
     result
         |> Result.mapError HttpError
         |> Result.andThen identity
-
-
-fetchRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-fetchRemoteArticle toMsg title =
-    title
-        |> buildRequest
-        |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticle >> toMsg)
-
-
-toRemoteArticle : WebData ArticleResult -> RemoteArticle
-toRemoteArticle webData =
-    webData
-        |> RemoteData.mapError HttpError
-        |> RemoteData.andThen RemoteData.fromResult
 
 
 buildRequest : String -> Http.Request ArticleResult

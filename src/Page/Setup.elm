@@ -14,7 +14,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, bu
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Preview, Full, RemoteArticle)
+import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(..), RemoteArticle)
 import Button
 import Input
 import Form
@@ -38,12 +38,16 @@ type alias UserInput =
 
 
 type alias RemoteArticlePair =
-    RemoteData ArticlesError ( Article Preview, Article Preview )
+    RemoteData RemoteArticlePairError ( Article Preview, Article Preview )
 
 
-type ArticlesError
+type RemoteArticlePairError
     = UnexpectedArticleCount
     | HttpError Http.Error
+
+
+type alias ArticleResult =
+    Result ArticleError (Article Full)
 
 
 
@@ -136,9 +140,13 @@ maybeComplete ({ source, destination } as model) =
 getArticles : Model -> Cmd Msg
 getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
-        [ Article.fetchRemoteArticle GetSourceArticleResponse sourceInput
-        , Article.fetchRemoteArticle GetDestinationArticleResponse destinationInput
+        [ fetchFullArticle GetSourceArticleResponse sourceInput
+        , fetchFullArticle GetDestinationArticleResponse destinationInput
         ]
+
+
+
+-- FETCH RANDOM PAIR
 
 
 fetchRandomPair : Cmd Msg
@@ -163,6 +171,25 @@ toPair articles =
 
         _ ->
             RemoteData.Failure UnexpectedArticleCount
+
+
+
+-- FETCH FULL ARTICLE
+
+
+fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+fetchFullArticle toMsg title =
+    title
+        |> Article.buildRequest
+        |> RemoteData.sendRequest
+        |> Cmd.map (toRemoteArticle >> toMsg)
+
+
+toRemoteArticle : WebData ArticleResult -> RemoteArticle
+toRemoteArticle webData =
+    webData
+        |> RemoteData.mapError Article.HttpError
+        |> RemoteData.andThen RemoteData.fromResult
 
 
 randomizeArticleInputs : Model -> Model
