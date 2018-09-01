@@ -320,7 +320,7 @@ discardLowPriorities paths =
 fetch : (ArticleResult -> msg) -> String -> Cmd msg
 fetch toMsg title =
     title
-        |> Article.fetchNamed 
+        |> Article.fetchNamed
         |> Http.send (toArticleResult >> toMsg)
 
 
