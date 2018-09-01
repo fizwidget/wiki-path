@@ -301,12 +301,27 @@ heuristic destination current =
 countOccurences : String -> String -> Int
 countOccurences target content =
     let
+        options =
+            { caseInsensitive = True, multiline = False }
+
         occurencePattern =
-            Regex.fromStringWith { caseInsensitive = True, multiline = False } target
+            target
+                |> escapeRegex
+                |> Regex.fromStringWith options
                 |> Maybe.withDefault Regex.never
     in
     Regex.find occurencePattern content
         |> List.length
+
+
+escapeRegex : String -> String
+escapeRegex value =
+    let
+        regex =
+            Regex.fromString "[.*+?^${}()|[\\]\\\\]"
+                |> Maybe.withDefault Regex.never
+    in
+    Regex.replace regex (\{ match } -> "\\" ++ match) value
 
 
 discardLowPriorities : List Path -> List Path
