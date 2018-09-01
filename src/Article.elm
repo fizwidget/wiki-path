@@ -14,11 +14,11 @@ module Article
         , equals
         , isDisambiguation
         , length
-        , getArticleResult
-        , getRemoteArticle
-        , getRandomPair
+        , fetchArticleResult
+        , fetchRemoteArticle
+        , fetchRandomPair
         , viewError
-        , viewLink
+        , viewAsLink
         )
 
 import Http
@@ -28,6 +28,9 @@ import Json.Decode.Pipeline exposing (decode, required, requiredAt, hardcoded, c
 import Url exposing (Url, QueryParam(KeyValue, Key))
 import Html.Styled exposing (Html, a, div, text)
 import Html.Styled.Attributes exposing (href)
+
+
+-- TYPES
 
 
 type Article a
@@ -54,6 +57,10 @@ type alias Title =
 
 type alias Wikitext =
     String
+
+
+
+-- INFO
 
 
 title : Article a -> String
@@ -95,8 +102,8 @@ length =
 -- VIEW
 
 
-viewLink : Article a -> Html msg
-viewLink article =
+viewAsLink : Article a -> Html msg
+viewAsLink article =
     a
         [ href (toUrl article) ]
         [ text (title article) ]
@@ -126,7 +133,7 @@ toErrorMessage error =
 
 
 
--- ARTICLE API
+-- FETCH
 
 
 type alias ArticleResult =
@@ -143,8 +150,8 @@ type ArticleError
     | HttpError Http.Error
 
 
-getArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
-getArticleResult toMsg title =
+fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
+fetchArticleResult toMsg title =
     title
         |> buildRequest
         |> Http.send (toArticleResult >> toMsg)
@@ -157,8 +164,8 @@ toArticleResult result =
         |> Result.andThen identity
 
 
-getRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
-getRemoteArticle toMsg title =
+fetchRemoteArticle : (RemoteArticle -> msg) -> String -> Cmd msg
+fetchRemoteArticle toMsg title =
     title
         |> buildRequest
         |> RemoteData.sendRequest
@@ -248,8 +255,8 @@ type ArticlesError
     | LinkHttpError Http.Error
 
 
-getRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
-getRandomPair toMsg =
+fetchRandomPair : (RemoteArticlePair -> msg) -> Cmd msg
+fetchRandomPair toMsg =
     buildRandomArticlesRequest 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticlePair >> toMsg)

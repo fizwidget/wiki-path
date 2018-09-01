@@ -95,7 +95,7 @@ update msg model =
                 |> InProgress
 
         RandomizeArticlesRequest ->
-            ( { model | randomArticles = Loading }, Article.getRandomPair RandomizeArticlesResponse )
+            ( { model | randomArticles = Loading }, Article.fetchRandomPair RandomizeArticlesResponse )
                 |> InProgress
 
         RandomizeArticlesResponse response ->
@@ -126,8 +126,8 @@ maybeComplete ({ source, destination } as model) =
 getArticles : Model -> Cmd Msg
 getArticles { sourceInput, destinationInput } =
     Cmd.batch <|
-        [ Article.getRemoteArticle GetSourceArticleResponse sourceInput
-        , Article.getRemoteArticle GetDestinationArticleResponse destinationInput
+        [ Article.fetchRemoteArticle GetSourceArticleResponse sourceInput
+        , Article.fetchRemoteArticle GetDestinationArticleResponse destinationInput
         ]
 
 

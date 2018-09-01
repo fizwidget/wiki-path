@@ -198,7 +198,7 @@ getNextArticle pathToFollow =
                 |> Path.end
                 |> Article.title
     in
-        Article.getArticleResult (ArticleLoaded pathToFollow) articleTitle
+        Article.fetchArticleResult (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article Full -> Maybe Path
@@ -330,9 +330,9 @@ viewHeading : Article Full -> Article Full -> Html msg
 viewHeading source destination =
     h3 [ css [ textAlign center ] ]
         [ text "Finding path from "
-        , Article.viewLink source
+        , Article.viewAsLink source
         , text " to "
-        , Article.viewLink destination
+        , Article.viewAsLink destination
         , text "..."
         ]
 
