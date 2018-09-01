@@ -151,7 +151,7 @@ getArticles { sourceInput, destinationInput } =
 
 fetchRandomPair : Cmd Msg
 fetchRandomPair =
-    Article.random 2
+    Article.fetchRandom 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticlePair >> RandomizeArticlesResponse)
 
@@ -180,7 +180,7 @@ toPair articles =
 fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
 fetchFullArticle toMsg title =
     title
-        |> Article.fetch
+        |> Article.fetchNamed
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
 

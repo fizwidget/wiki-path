@@ -10,10 +10,10 @@ module Article
         , links
         , preview
         , equals
-        , isDisambiguation
         , length
-        , random
-        , fetch
+        , isDisambiguation
+        , fetchNamed
+        , fetchRandom
         , viewError
         , viewAsLink
         )
@@ -85,14 +85,14 @@ equals (Article firstTitle _) (Article secondTitle _) =
     firstTitle == secondTitle
 
 
-isDisambiguation : Article Full -> Bool
-isDisambiguation =
-    content >> String.contains "{{disambiguation}}"
-
-
 length : Article Full -> Int
 length =
     content >> String.length
+
+
+isDisambiguation : Article Full -> Bool
+isDisambiguation =
+    content >> String.contains "{{disambiguation}}"
 
 
 
@@ -143,9 +143,29 @@ type ArticleError
     | HttpError Http.Error
 
 
-fetch : String -> Http.Request ArticleResult
-fetch title =
+fetchNamed : String -> Http.Request ArticleResult
+fetchNamed title =
     Http.get (buildArticleUrl title) responseDecoder
+
+
+fetchRandom : Int -> Http.Request (List (Article Preview))
+fetchRandom count =
+    Http.get (buildRandomArticlesUrl count) randomArticlesDecoder
+
+
+buildRandomArticlesUrl : Int -> Url
+buildRandomArticlesUrl articleCount =
+    let
+        queryParams =
+            [ KeyValue ( "action", "query" )
+            , KeyValue ( "format", "json" )
+            , KeyValue ( "list", "random" )
+            , KeyValue ( "rnlimit", toString articleCount )
+            , KeyValue ( "rnnamespace", "0" )
+            , KeyValue ( "origin", "*" )
+            ]
+    in
+        Url.build "https://en.wikipedia.org/w/api.php" queryParams
 
 
 buildArticleUrl : String -> Url
@@ -204,26 +224,6 @@ bodyDecoder =
     decode Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
         |> required "links" (list previewDecoder)
-
-
-random : Int -> Http.Request (List (Article Preview))
-random count =
-    Http.get (buildRandomArticlesUrl count) randomArticlesDecoder
-
-
-buildRandomArticlesUrl : Int -> Url
-buildRandomArticlesUrl articleCount =
-    let
-        queryParams =
-            [ KeyValue ( "action", "query" )
-            , KeyValue ( "format", "json" )
-            , KeyValue ( "list", "random" )
-            , KeyValue ( "rnlimit", toString articleCount )
-            , KeyValue ( "rnnamespace", "0" )
-            , KeyValue ( "origin", "*" )
-            ]
-    in
-        Url.build "https://en.wikipedia.org/w/api.php" queryParams
 
 
 randomArticlesDecoder : Decoder (List (Article Preview))
