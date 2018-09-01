@@ -14,7 +14,7 @@ import Html.Styled exposing (Html, fromUnstyled, toUnstyled, div, pre, input, bu
 import Html.Styled.Attributes exposing (css, value, type_, placeholder)
 import Css exposing (..)
 import RemoteData exposing (WebData, RemoteData(Loading, NotAsked))
-import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(..), RemoteArticle)
+import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(..))
 import Button
 import Input
 import Form
@@ -46,8 +46,8 @@ type RemoteArticlePairError
     | HttpError Http.Error
 
 
-type alias ArticleResult =
-    Result ArticleError (Article Full)
+type alias RemoteArticle =
+    RemoteData ArticleError (Article Full)
 
 
 
@@ -151,7 +151,7 @@ getArticles { sourceInput, destinationInput } =
 
 fetchRandomPair : Cmd Msg
 fetchRandomPair =
-    Article.buildRandomArticlesRequest 2
+    Article.random 2
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticlePair >> RandomizeArticlesResponse)
 
@@ -180,7 +180,7 @@ toPair articles =
 fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
 fetchFullArticle toMsg title =
     title
-        |> Article.buildRequest
+        |> Article.fetch
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
 

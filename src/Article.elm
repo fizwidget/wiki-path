@@ -4,7 +4,6 @@ module Article
         , Preview
         , Full
         , ArticleResult
-        , RemoteArticle
         , ArticleError(..)
         , title
         , content
@@ -13,9 +12,8 @@ module Article
         , equals
         , isDisambiguation
         , length
-        , fetchArticleResult
-        , buildRandomArticlesRequest
-        , buildRequest
+        , random
+        , fetch
         , viewError
         , viewAsLink
         )
@@ -139,32 +137,14 @@ type alias ArticleResult =
     Result ArticleError (Article Full)
 
 
-type alias RemoteArticle =
-    RemoteData ArticleError (Article Full)
-
-
 type ArticleError
     = ArticleNotFound
     | InvalidTitle
     | HttpError Http.Error
 
 
-fetchArticleResult : (ArticleResult -> msg) -> String -> Cmd msg
-fetchArticleResult toMsg title =
-    title
-        |> buildRequest
-        |> Http.send (toArticleResult >> toMsg)
-
-
-toArticleResult : Result Http.Error ArticleResult -> ArticleResult
-toArticleResult result =
-    result
-        |> Result.mapError HttpError
-        |> Result.andThen identity
-
-
-buildRequest : String -> Http.Request ArticleResult
-buildRequest title =
+fetch : String -> Http.Request ArticleResult
+fetch title =
     Http.get (buildArticleUrl title) responseDecoder
 
 
@@ -226,9 +206,9 @@ bodyDecoder =
         |> required "links" (list previewDecoder)
 
 
-buildRandomArticlesRequest : Int -> Http.Request (List (Article Preview))
-buildRandomArticlesRequest articleCount =
-    Http.get (buildRandomArticlesUrl articleCount) randomArticlesDecoder
+random : Int -> Http.Request (List (Article Preview))
+random count =
+    Http.get (buildRandomArticlesUrl count) randomArticlesDecoder
 
 
 buildRandomArticlesUrl : Int -> Url

@@ -8,12 +8,13 @@ module Page.Pathfinding
         , view
         )
 
+import Http
 import Html.Styled exposing (Html, fromUnstyled, toUnstyled, text, ol, li, h3, div)
 import Html.Styled.Attributes exposing (css)
 import Css exposing (..)
 import Regex exposing (Regex, regex, find, escape, caseInsensitive, HowMany(All))
 import Result exposing (Result(Ok, Err))
-import Article exposing (Article, Preview, Full, ArticleResult, ArticleError)
+import Article exposing (Article, Preview, Full, ArticleResult, ArticleError(HttpError))
 import Path exposing (Path)
 import PriorityQueue exposing (PriorityQueue, Priority)
 import OrderedSet exposing (OrderedSet)
@@ -198,7 +199,7 @@ getNextArticle pathToFollow =
                 |> Path.end
                 |> Article.title
     in
-        Article.fetchArticleResult (ArticleLoaded pathToFollow) articleTitle
+        fetch (ArticleLoaded pathToFollow) articleTitle
 
 
 containsPathToDestination : List Path -> Article Full -> Maybe Path
@@ -310,6 +311,24 @@ discardLowPriorities paths =
     paths
         |> List.sortBy (Path.priority >> negate)
         |> List.take 2
+
+
+
+-- FETCH
+
+
+fetch : (ArticleResult -> msg) -> String -> Cmd msg
+fetch toMsg title =
+    title
+        |> Article.fetch
+        |> Http.send (toArticleResult >> toMsg)
+
+
+toArticleResult : Result Http.Error ArticleResult -> ArticleResult
+toArticleResult result =
+    result
+        |> Result.mapError HttpError
+        |> Result.andThen identity
 
 
 
