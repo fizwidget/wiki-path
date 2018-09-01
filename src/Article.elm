@@ -145,16 +145,20 @@ type ArticleError
 
 fetchNamed : String -> Http.Request ArticleResult
 fetchNamed title =
-    Http.get (buildArticleUrl title) responseDecoder
+    Http.get (namedArticleUrl title) namedArticlesDecoder
 
 
 fetchRandom : Int -> Http.Request (List (Article Preview))
 fetchRandom count =
-    Http.get (buildRandomArticlesUrl count) randomArticlesDecoder
+    Http.get (randomArticlesUrl count) randomArticlesDecoder
 
 
-buildRandomArticlesUrl : Int -> Url
-buildRandomArticlesUrl articleCount =
+
+-- URLS
+
+
+randomArticlesUrl : Int -> Url
+randomArticlesUrl articleCount =
     let
         queryParams =
             [ KeyValue ( "action", "query" )
@@ -168,8 +172,8 @@ buildRandomArticlesUrl articleCount =
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
 
 
-buildArticleUrl : String -> Url
-buildArticleUrl title =
+namedArticleUrl : Title -> Url
+namedArticleUrl title =
     let
         queryParams =
             [ KeyValue ( "action", "query" )
@@ -188,53 +192,56 @@ buildArticleUrl title =
         Url.build "https://en.wikipedia.org/w/api.php" queryParams
 
 
-responseDecoder : Decoder ArticleResult
-responseDecoder =
-    at [ "query", "pages", "0" ] <|
-        oneOf
-            [ map Ok successDecoder
-            , map Err invalidDecoder
-            , map Err missingDecoder
+
+-- DECODERS
+
+
+namedArticlesDecoder : Decoder ArticleResult
+namedArticlesDecoder =
+    at [ "query", "pages", "0" ]
+        (oneOf
+            [ map Ok fullArticleDecoder
+            , map Err invalidArticleDecoder
+            , map Err missingArticleDecoder
             ]
+        )
 
 
-successDecoder : Decoder (Article Full)
-successDecoder =
+randomArticlesDecoder : Decoder (List (Article Preview))
+randomArticlesDecoder =
+    at [ "query", "random" ] (list previewArticleDecoder)
+
+
+previewArticleDecoder : Decoder (Article Preview)
+previewArticleDecoder =
+    succeed Article
+        |> required "title" string
+        |> hardcoded Preview
+
+
+fullArticleDecoder : Decoder (Article Full)
+fullArticleDecoder =
     succeed Article
         |> required "title" string
         |> custom (map Full bodyDecoder)
-
-
-invalidDecoder : Decoder ArticleError
-invalidDecoder =
-    field "invalid" bool
-        |> Decode.andThen
-            (always <| Decode.succeed InvalidTitle)
-
-
-missingDecoder : Decoder ArticleError
-missingDecoder =
-    field "missing" bool
-        |> Decode.andThen
-            (always <| Decode.succeed ArticleNotFound)
 
 
 bodyDecoder : Decoder Body
 bodyDecoder =
     decode Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
-        |> required "links" (list previewDecoder)
+        |> required "links" (list previewArticleDecoder)
 
 
-randomArticlesDecoder : Decoder (List (Article Preview))
-randomArticlesDecoder =
-    at
-        [ "query", "random" ]
-        (list previewDecoder)
+invalidArticleDecoder : Decoder ArticleError
+invalidArticleDecoder =
+    field "invalid" bool
+        |> Decode.andThen
+            (always <| Decode.succeed InvalidTitle)
 
 
-previewDecoder : Decoder (Article Preview)
-previewDecoder =
-    succeed Article
-        |> required "title" string
-        |> hardcoded Preview
+missingArticleDecoder : Decoder ArticleError
+missingArticleDecoder =
+    field "missing" bool
+        |> Decode.andThen
+            (always <| Decode.succeed ArticleNotFound)
