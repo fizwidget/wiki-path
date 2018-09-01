@@ -19,7 +19,6 @@ module Article
         )
 
 import Http
-import RemoteData exposing (RemoteData, WebData)
 import Json.Decode as Decode exposing (Decoder, field, at, map, bool, string, int, list, oneOf, succeed)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt, hardcoded, custom)
 import Url exposing (Url, QueryParam(KeyValue, Key))
