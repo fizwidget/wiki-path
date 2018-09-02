@@ -15,6 +15,7 @@ import Html.Styled.Attributes exposing (css, placeholder, type_, value)
 import Http
 import RemoteData exposing (RemoteData(..), WebData)
 import View.Button as Button
+import View.Empty as Empty
 import View.Form as Form
 import View.Input as Input
 import View.Spinner as Spinner
@@ -278,7 +279,7 @@ viewFindPathButton model =
 
 viewRandomizeButton : Bool -> Html Msg
 viewRandomizeButton isDisabled =
-    div [ css [ padding (px 12) ] ]
+    div [ css [ paddingTop (px 8) ] ]
         [ Button.view "Randomize"
             [ Button.Secondary
             , Button.Large
@@ -295,7 +296,7 @@ viewArticleError remoteArticle =
             Article.viewError error
 
         _ ->
-            text ""
+            Empty.view
 
 
 viewRandomizationError : RemoteArticlePair -> Html msg
@@ -304,14 +305,16 @@ viewRandomizationError randomArticles =
         text "Sorry, an error occured 😵"
 
     else
-        text ""
+        Empty.view
 
 
 viewLoadingSpinner : Bool -> Html msg
 viewLoadingSpinner isVisible =
-    div
-        [ css [ paddingTop (px 6) ] ]
-        [ Spinner.view { isVisible = isVisible } ]
+    if isVisible then
+        Spinner.view
+
+    else
+        Empty.view
 
 
 shouldDisableLoadButton : Model -> Bool

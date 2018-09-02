@@ -382,7 +382,7 @@ viewVisited visited =
             (OrderedSet.inOrder visited
                 |> List.take 10
                 |> List.map text
-                |> List.append [ Spinner.view { isVisible = True } ]
+                |> List.append [ Spinner.view ]
                 |> List.map (List.singleton >> div [])
             )
 

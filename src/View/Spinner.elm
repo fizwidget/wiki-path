@@ -2,25 +2,15 @@ module View.Spinner exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div)
-import Html.Styled.Attributes exposing (class, css)
+import Html.Styled.Attributes exposing (class)
 
 
-view : { isVisible : Bool } -> Html msg
-view { isVisible } =
+view : Html msg
+view =
     div
-        [ class "lds-ellipsis" -- Styles live in top-level CSS file
-        , css [ visibilityStyle isVisible ]
-        ]
+        -- Spinner styles live in top-level CSS file
+        [ class "lds-ellipsis" ]
         (List.repeat 4 emptyDiv)
-
-
-visibilityStyle : Bool -> Style
-visibilityStyle isVisible =
-    if isVisible then
-        visibility visible
-
-    else
-        visibility hidden
 
 
 emptyDiv : Html msg
