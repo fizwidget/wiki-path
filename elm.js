@@ -7946,7 +7946,7 @@ var author$project$Page$Pathfinding$view = function (_n0) {
 				author$project$Page$Pathfinding$viewVisited(visitedArticles)
 			]));
 };
-var author$project$Page$Setup$GetArticlesRequest = {$: 2};
+var author$project$Page$Setup$FetchArticlesRequest = {$: 2};
 var krisajenkins$remotedata$RemoteData$isLoading = function (data) {
 	if (data.$ === 1) {
 		return true;
@@ -7958,13 +7958,11 @@ var author$project$Page$Setup$isLoading = function (_n0) {
 	var source = _n0.a8;
 	var destination = _n0.aZ;
 	var randomArticles = _n0.z;
-	var areRandomArticlesLoading = krisajenkins$remotedata$RemoteData$isLoading(randomArticles);
-	var areArticlesLoading = A2(
+	return krisajenkins$remotedata$RemoteData$isLoading(randomArticles) || A2(
 		elm$core$List$any,
 		krisajenkins$remotedata$RemoteData$isLoading,
 		_List_fromArray(
 			[source, destination]));
-	return areArticlesLoading || areRandomArticlesLoading;
 };
 var author$project$Page$Setup$DestinationInputChange = function (a) {
 	return {$: 1, a: a};
@@ -8272,7 +8270,7 @@ var author$project$Page$Setup$viewLoadingSpinner = function (isVisible) {
 var author$project$Page$Setup$viewRandomizationError = function (randomArticles) {
 	return krisajenkins$remotedata$RemoteData$isFailure(randomArticles) ? rtfeldman$elm_css$Html$Styled$text('Sorry, an error occured 😵') : author$project$View$Empty$view;
 };
-var author$project$Page$Setup$RandomizeArticlesRequest = {$: 5};
+var author$project$Page$Setup$FetchRandomArticlesRequest = {$: 5};
 var author$project$View$Button$Secondary = {$: 2};
 var author$project$Page$Setup$viewRandomizeButton = function (isDisabled) {
 	return A2(
@@ -8296,7 +8294,7 @@ var author$project$Page$Setup$viewRandomizeButton = function (isDisabled) {
 						author$project$View$Button$Secondary,
 						author$project$View$Button$Large,
 						author$project$View$Button$Disabled(isDisabled),
-						author$project$View$Button$OnClick(author$project$Page$Setup$RandomizeArticlesRequest)
+						author$project$View$Button$OnClick(author$project$Page$Setup$FetchRandomArticlesRequest)
 					]))
 			]));
 };
@@ -8335,7 +8333,7 @@ var author$project$Page$Setup$view = function (model) {
 						rtfeldman$elm_css$Css$alignItems(rtfeldman$elm_css$Css$center),
 						rtfeldman$elm_css$Css$flexDirection(rtfeldman$elm_css$Css$column)
 					])),
-				rtfeldman$elm_css$Html$Styled$Events$onSubmit(author$project$Page$Setup$GetArticlesRequest)
+				rtfeldman$elm_css$Html$Styled$Events$onSubmit(author$project$Page$Setup$FetchArticlesRequest)
 			]),
 		_List_fromArray(
 			[
@@ -10493,10 +10491,10 @@ var author$project$Page$Pathfinding$update = F2(
 var author$project$Page$Setup$InProgress = function (a) {
 	return {$: 0, a: a};
 };
-var author$project$Page$Setup$GetDestinationArticleResponse = function (a) {
+var author$project$Page$Setup$FetchDestinationArticleResponse = function (a) {
 	return {$: 4, a: a};
 };
-var author$project$Page$Setup$GetSourceArticleResponse = function (a) {
+var author$project$Page$Setup$FetchSourceArticleResponse = function (a) {
 	return {$: 3, a: a};
 };
 var krisajenkins$remotedata$RemoteData$Failure = function (a) {
@@ -10567,8 +10565,8 @@ var author$project$Page$Setup$fetchFullArticles = function (_n0) {
 	return elm$core$Platform$Cmd$batch(
 		_List_fromArray(
 			[
-				A2(author$project$Page$Setup$fetchFullArticle, author$project$Page$Setup$GetSourceArticleResponse, sourceInput),
-				A2(author$project$Page$Setup$fetchFullArticle, author$project$Page$Setup$GetDestinationArticleResponse, destinationInput)
+				A2(author$project$Page$Setup$fetchFullArticle, author$project$Page$Setup$FetchSourceArticleResponse, sourceInput),
+				A2(author$project$Page$Setup$fetchFullArticle, author$project$Page$Setup$FetchDestinationArticleResponse, destinationInput)
 			]));
 };
 var author$project$Article$randomArticlesDecoder = A2(
@@ -10591,7 +10589,7 @@ var author$project$Article$fetchRandom = function (count) {
 		author$project$Article$randomArticlesUrl(count),
 		author$project$Article$randomArticlesDecoder);
 };
-var author$project$Page$Setup$RandomizeArticlesResponse = function (a) {
+var author$project$Page$Setup$FetchRandomArticlesResponse = function (a) {
 	return {$: 6, a: a};
 };
 var author$project$Page$Setup$HttpError = function (a) {
@@ -10618,7 +10616,7 @@ var author$project$Page$Setup$toRemoteArticlePair = function (remoteArticles) {
 };
 var author$project$Page$Setup$fetchRandomPair = A2(
 	elm$core$Platform$Cmd$map,
-	A2(elm$core$Basics$composeR, author$project$Page$Setup$toRemoteArticlePair, author$project$Page$Setup$RandomizeArticlesResponse),
+	A2(elm$core$Basics$composeR, author$project$Page$Setup$toRemoteArticlePair, author$project$Page$Setup$FetchRandomArticlesResponse),
 	krisajenkins$remotedata$RemoteData$sendRequest(
 		author$project$Article$fetchRandom(2)));
 var author$project$Page$Setup$Complete = F2(
