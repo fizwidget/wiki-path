@@ -9,15 +9,16 @@ module Page.Setup exposing
     )
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
-import Button
 import Css exposing (..)
-import Form
-import Html.Styled exposing (Html, button, div, form, fromUnstyled, input, pre, text, toUnstyled)
+import Html.Styled exposing (Html, button, div, form, text)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Html.Styled.Events exposing (onSubmit)
 import Http
-import Input
 import RemoteData exposing (RemoteData(..), WebData)
-import Spinner
+import View.Button as Button
+import View.Empty as Empty
+import View.Input as Input
+import View.Spinner as Spinner
 
 
 
@@ -99,12 +100,12 @@ update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
         SourceInputChange input ->
-            { model | sourceInput = input, source = NotAsked }
+            { model | sourceInput = input, source = NotAsked, randomArticles = NotAsked }
                 |> noCmd
                 |> InProgress
 
         DestinationInputChange input ->
-            { model | destinationInput = input, destination = NotAsked }
+            { model | destinationInput = input, destination = NotAsked, randomArticles = NotAsked }
                 |> noCmd
                 |> InProgress
 
@@ -220,7 +221,13 @@ toRemoteArticle webData =
 view : Model -> Html Msg
 view model =
     form
-        [ css [ displayFlex, alignItems center, flexDirection column ] ]
+        [ css
+            [ displayFlex
+            , alignItems center
+            , flexDirection column
+            ]
+        , onSubmit GetArticlesRequest
+        ]
         [ viewArticleInputs model
         , viewFindPathButton model
         , viewRandomizeButton (isLoading model)
@@ -249,18 +256,21 @@ viewDestinationArticleInput =
 
 viewArticleInput : (UserInput -> Msg) -> String -> String -> RemoteArticle -> Bool -> Html Msg
 viewArticleInput toMsg placeholder title article isDisabled =
-    div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
-        [ Form.group
-            (Input.text
-                [ Input.Large
-                , Input.OnInput toMsg
-                , Input.Value title
-                , Input.Placeholder placeholder
-                , Input.Disabled isDisabled
-                , Input.Error (RemoteData.isFailure article)
-                ]
-            )
-            (viewArticleError article)
+    div
+        [ css
+            [ padding2 (px 0) (px 8)
+            , height (px 76)
+            , textAlign center
+            ]
+        ]
+        [ Input.text
+            [ Input.Large
+            , Input.OnInput toMsg
+            , Input.Value title
+            , Input.Placeholder placeholder
+            , Input.Disabled isDisabled
+            ]
+        , viewArticleError article
         ]
 
 
@@ -271,16 +281,15 @@ viewFindPathButton model =
             [ Button.Primary
             , Button.Large
             , Button.Disabled (shouldDisableLoadButton model)
-            , Button.OnClick GetArticlesRequest
             ]
         ]
 
 
 viewRandomizeButton : Bool -> Html Msg
 viewRandomizeButton isDisabled =
-    div [ css [ padding (px 12) ] ]
+    div [ css [ paddingTop (px 8) ] ]
         [ Button.view "Randomize"
-            [ Button.Light
+            [ Button.Secondary
             , Button.Large
             , Button.Disabled isDisabled
             , Button.OnClick RandomizeArticlesRequest
@@ -295,7 +304,7 @@ viewArticleError remoteArticle =
             Article.viewError error
 
         _ ->
-            text ""
+            Empty.view
 
 
 viewRandomizationError : RemoteArticlePair -> Html msg
@@ -304,14 +313,16 @@ viewRandomizationError randomArticles =
         text "Sorry, an error occured 😵"
 
     else
-        text ""
+        Empty.view
 
 
 viewLoadingSpinner : Bool -> Html msg
 viewLoadingSpinner isVisible =
-    div
-        [ css [ paddingTop (px 6) ] ]
-        [ Spinner.view { isVisible = isVisible } ]
+    if isVisible then
+        Spinner.view
+
+    else
+        Empty.view
 
 
 shouldDisableLoadButton : Model -> Bool

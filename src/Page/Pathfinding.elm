@@ -8,9 +8,7 @@ module Page.Pathfinding exposing
     )
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
-import Button
 import Css exposing (..)
-import FadeOut
 import Html.Styled exposing (Html, div, fromUnstyled, h3, li, ol, text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Http
@@ -19,7 +17,9 @@ import Path exposing (Path)
 import PriorityQueue exposing (Priority, PriorityQueue)
 import Regex
 import Result exposing (Result(..))
-import Spinner
+import View.Button as Button
+import View.Fade as Fade
+import View.Spinner as Spinner
 
 
 
@@ -301,12 +301,28 @@ heuristic destination current =
 countOccurences : String -> String -> Int
 countOccurences target content =
     let
-        occurencePattern =
-            Regex.fromStringWith { caseInsensitive = True, multiline = False } target
+        targetRegex =
+            target
+                |> escapeForRegex
+                |> Regex.fromStringWith { caseInsensitive = True, multiline = False }
                 |> Maybe.withDefault Regex.never
     in
-    Regex.find occurencePattern content
+    Regex.find targetRegex content
         |> List.length
+
+
+escapeForRegex : String -> String
+escapeForRegex value =
+    let
+        specialCharacters =
+            "[.*+?^${}()|[\\]\\\\]"
+                |> Regex.fromString
+                |> Maybe.withDefault Regex.never
+
+        escape match =
+            "\\" ++ match
+    in
+    Regex.replace specialCharacters (.match >> escape) value
 
 
 discardLowPriorities : List Path -> List Path
@@ -361,12 +377,12 @@ viewHeading source destination =
 
 viewVisited : OrderedSet String -> Html msg
 viewVisited visited =
-    FadeOut.view <|
+    Fade.view <|
         div [ css [ textAlign center, height (px 300), overflow hidden ] ]
             (OrderedSet.inOrder visited
                 |> List.take 10
                 |> List.map text
-                |> List.append [ Spinner.view { isVisible = True } ]
+                |> List.append [ Spinner.view ]
                 |> List.map (List.singleton >> div [])
             )
 
@@ -393,7 +409,7 @@ viewBackButton : Html Msg
 viewBackButton =
     div []
         [ Button.view "Back"
-            [ Button.Light
+            [ Button.Secondary
             , Button.OnClick CancelPathfinding
             ]
         ]

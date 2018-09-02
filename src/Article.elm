@@ -17,8 +17,9 @@ module Article exposing
     , viewError
     )
 
-import Html.Styled exposing (Html, a, div, text)
-import Html.Styled.Attributes exposing (href)
+import Css exposing (..)
+import Html.Styled exposing (Html, a, span, text)
+import Html.Styled.Attributes exposing (css, href)
 import Http
 import Json.Decode as Decode exposing (Decoder, at, bool, field, int, list, map, oneOf, string, succeed)
 import Json.Decode.Pipeline exposing (custom, hardcoded, required, requiredAt)
@@ -113,20 +114,22 @@ toUrl article =
 
 viewError : ArticleError -> Html msg
 viewError error =
-    div [] [ text (toErrorMessage error) ]
+    span
+        [ css [ fontSize (px 16) ] ]
+        [ text (toErrorMessage error) ]
 
 
 toErrorMessage : ArticleError -> String
 toErrorMessage error =
     case error of
         ArticleNotFound ->
-            "Couldn't find that article :("
+            "Couldn't find that article 😕"
 
         InvalidTitle ->
-            "Not a valid article title :("
+            "Not a valid article title 😕"
 
         HttpError _ ->
-            "Network error :("
+            "Network error 😕"
 
 
 

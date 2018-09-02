@@ -1,4 +1,4 @@
-module FadeOut exposing (view)
+module View.Fade exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div)
