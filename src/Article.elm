@@ -8,10 +8,10 @@ module Article exposing
     , fetchNamed
     , fetchRandom
     , getContent
+    , getLength
     , getLinks
     , getTitle
     , isDisambiguation
-    , length
     , preview
     , viewAsLink
     , viewError
@@ -24,7 +24,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, at, bool, field, int, list, map, oneOf, string, succeed)
 import Json.Decode.Pipeline exposing (custom, hardcoded, required, requiredAt)
 import Url exposing (Url)
-import Url.Builder
+import Url.Builder as UrlBuilder exposing (QueryParameter)
 
 
 
@@ -76,6 +76,16 @@ getLinks (Article _ (Full { links })) =
     links
 
 
+getLength : Article Full -> Int
+getLength =
+    getContent >> String.length
+
+
+isDisambiguation : Article Full -> Bool
+isDisambiguation =
+    getContent >> String.contains "{{disambiguation}}"
+
+
 preview : Article a -> Article Preview
 preview (Article title _) =
     Article title Preview
@@ -84,16 +94,6 @@ preview (Article title _) =
 equals : Article a -> Article b -> Bool
 equals (Article firstTitle _) (Article secondTitle _) =
     firstTitle == secondTitle
-
-
-length : Article Full -> Int
-length =
-    getContent >> String.length
-
-
-isDisambiguation : Article Full -> Bool
-isDisambiguation =
-    getContent >> String.contains "{{disambiguation}}"
 
 
 
@@ -136,6 +136,16 @@ toErrorMessage error =
 -- FETCH
 
 
+fetchNamed : String -> Http.Request ArticleResult
+fetchNamed title =
+    Http.get (namedArticleUrl title) namedArticleDecoder
+
+
+fetchRandom : Int -> Http.Request (List (Article Preview))
+fetchRandom count =
+    Http.get (randomArticlesUrl count) randomArticlesDecoder
+
+
 type alias ArticleResult =
     Result ArticleError (Article Full)
 
@@ -146,66 +156,51 @@ type ArticleError
     | HttpError Http.Error
 
 
-fetchNamed : String -> Http.Request ArticleResult
-fetchNamed title =
-    Http.get (namedArticleUrl title) namedArticlesDecoder
-
-
-fetchRandom : Int -> Http.Request (List (Article Preview))
-fetchRandom count =
-    Http.get (randomArticlesUrl count) randomArticlesDecoder
-
-
 
 -- URLS
 
 
 randomArticlesUrl : Int -> String
-randomArticlesUrl articleCount =
-    let
-        queryParams =
-            [ Url.Builder.string "action" "query"
-            , Url.Builder.string "format" "json"
-            , Url.Builder.string "list" "random"
-            , Url.Builder.int "rnlimit" articleCount
-            , Url.Builder.string "rnnamespace" "0"
-            , Url.Builder.string "origin" "*"
-            ]
-    in
-    Url.Builder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] queryParams
+randomArticlesUrl count =
+    wikipediaQueryUrl
+        [ UrlBuilder.string "list" "random"
+        , UrlBuilder.int "rnlimit" count
+        , UrlBuilder.int "rnnamespace" 0
+        ]
 
 
 namedArticleUrl : Title -> String
 namedArticleUrl title =
+    wikipediaQueryUrl
+        [ UrlBuilder.string "prop" "revisions|links"
+        , UrlBuilder.string "titles" title
+        , UrlBuilder.int "redirects" 1
+        , UrlBuilder.int "formatversion" 2
+        , UrlBuilder.string "rvprop" "content"
+        , UrlBuilder.string "rvslots" "main"
+        , UrlBuilder.int "plnamespace" 0
+        , UrlBuilder.string "pllimit" "max"
+        ]
+
+
+wikipediaQueryUrl : List QueryParameter -> String
+wikipediaQueryUrl params =
     let
-        queryParams =
-            [ Url.Builder.string "action" "query"
-            , Url.Builder.string "format" "json"
-            , Url.Builder.string "prop" "revisions|links"
-            , Url.Builder.string "titles" title
-            , Url.Builder.string "redirects" "1"
-            , Url.Builder.string "formatversion" "2"
-            , Url.Builder.string "rvprop" "content"
-            , Url.Builder.string "rvslots" "main"
-            , Url.Builder.string "plnamespace" "0"
-            , Url.Builder.string "pllimit" "max"
-            , Url.Builder.string "origin" "*"
+        baseParams =
+            [ UrlBuilder.string "action" "query"
+            , UrlBuilder.string "format" "json"
+            , UrlBuilder.string "origin" "*"
             ]
     in
-    Url.Builder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] queryParams
-
-
-wikipediaApi : String
-wikipediaApi =
-    "https://en.wikipedia.org/w/api.php"
+    UrlBuilder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] (baseParams ++ params)
 
 
 
 -- DECODERS
 
 
-namedArticlesDecoder : Decoder ArticleResult
-namedArticlesDecoder =
+namedArticleDecoder : Decoder ArticleResult
+namedArticleDecoder =
     at [ "query", "pages", "0" ]
         (oneOf
             [ map Ok fullArticleDecoder
@@ -244,12 +239,10 @@ bodyDecoder =
 invalidArticleDecoder : Decoder ArticleError
 invalidArticleDecoder =
     field "invalid" bool
-        |> Decode.andThen
-            (always <| Decode.succeed InvalidTitle)
+        |> Decode.andThen (always <| Decode.succeed InvalidTitle)
 
 
 missingArticleDecoder : Decoder ArticleError
 missingArticleDecoder =
     field "missing" bool
-        |> Decode.andThen
-            (always <| Decode.succeed ArticleNotFound)
+        |> Decode.andThen (always <| Decode.succeed ArticleNotFound)

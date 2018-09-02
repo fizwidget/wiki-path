@@ -45,12 +45,9 @@ highestPriority (PriorityQueue heap) =
 
 removeHighestPriority : PriorityQueue a -> Maybe ( a, PriorityQueue a )
 removeHighestPriority (PriorityQueue heap) =
-    case Heap.pop heap of
-        Just ( value, updatedHeap ) ->
-            Just ( value, PriorityQueue updatedHeap )
-
-        Nothing ->
-            Nothing
+    heap
+        |> Heap.pop
+        |> Maybe.map (\( value, updatedHeap ) -> ( value, PriorityQueue updatedHeap ))
 
 
 removeHighestPriorities : PriorityQueue a -> Int -> ( List a, PriorityQueue a )

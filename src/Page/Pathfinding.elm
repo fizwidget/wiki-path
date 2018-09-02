@@ -394,7 +394,7 @@ viewWarnings totalRequests destination =
             if Article.isDisambiguation destination then
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
 
-            else if Article.length destination < 3000 then
+            else if Article.getLength destination < 3000 then
                 "The destination article is very short, so it might take a while to find! 😅"
 
             else if totalRequests > totalRequestsLimit // 2 then
