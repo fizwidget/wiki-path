@@ -175,14 +175,14 @@ explorePaths model pathsToFollow =
             Complete pathToDestination
 
         Nothing ->
-            getNextArticles model pathsToFollow
+            fetchNextArticles model pathsToFollow
 
 
-getNextArticles : Model -> List Path -> UpdateResult
-getNextArticles model pathsToFollow =
+fetchNextArticles : Model -> List Path -> UpdateResult
+fetchNextArticles model pathsToFollow =
     let
         requests =
-            List.map getNextArticle pathsToFollow
+            List.map fetchNextArticle pathsToFollow
 
         updatedModel =
             incrementRequests model (List.length requests)
@@ -194,15 +194,9 @@ getNextArticles model pathsToFollow =
         InProgress ( updatedModel, Cmd.batch requests )
 
 
-getNextArticle : Path -> Cmd Msg
-getNextArticle pathToFollow =
-    let
-        articleTitle =
-            pathToFollow
-                |> Path.end
-                |> Article.getTitle
-    in
-    fetch (ArticleLoaded pathToFollow) articleTitle
+fetchNextArticle : Path -> Cmd Msg
+fetchNextArticle pathToFollow =
+    fetchFull (ArticleLoaded pathToFollow) (Path.end pathToFollow)
 
 
 containsPathToDestination : List Path -> Article Full -> Maybe Path
@@ -336,9 +330,10 @@ discardLowPriorities paths =
 -- FETCH
 
 
-fetch : (ArticleResult -> msg) -> String -> Cmd msg
-fetch toMsg title =
-    title
+fetchFull : (ArticleResult -> msg) -> Article Preview -> Cmd msg
+fetchFull toMsg articlePreview =
+    articlePreview
+        |> Article.getTitle
         |> Article.fetchNamed
         |> Http.send (toArticleResult >> toMsg)
 
