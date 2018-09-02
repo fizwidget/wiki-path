@@ -395,7 +395,7 @@ viewWarnings totalRequests destination =
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
 
             else if Article.length destination < 3000 then
-                "The destination article is very short, so it might take longer than usual to find! 😅"
+                "The destination article is very short, so it might take a while to find! 😅"
 
             else if totalRequests > totalRequestsLimit // 2 then
                 "This isn't looking good. Try a different destination maybe? 💩"
@@ -407,9 +407,9 @@ viewWarnings totalRequests destination =
 
 viewBackButton : Html Msg
 viewBackButton =
-    div []
+    div [ css [ paddingTop (px 8) ] ]
         [ Button.view "Back"
-            [ Button.Secondary
+            [ Button.Primary
             , Button.OnClick CancelPathfinding
             ]
         ]

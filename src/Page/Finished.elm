@@ -147,7 +147,7 @@ viewError { source, destination, error } =
             , Article.viewAsLink source
             , text " to "
             , Article.viewAsLink destination
-            , text " 💀"
+            , text " 🙈"
             ]
     in
     div [ css [ textAlign center ] ]
