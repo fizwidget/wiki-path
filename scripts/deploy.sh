@@ -9,7 +9,7 @@ git merge master -m "Merging master"
 echo
 
 echo "- Building..."
-./build.sh
+make production
 echo
 
 echo "- Comitting new artefacts..."
