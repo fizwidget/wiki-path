@@ -125,9 +125,22 @@ noCmd model =
 
 document : Model -> Document Msg
 document model =
-    { title = "WikiPath"
+    { title = title model
     , body = [ view model |> toUnstyled ]
     }
+
+
+title : Model -> String
+title model =
+    case model of
+        SetupModel _ ->
+            "WikiPath"
+
+        PathfindingModel _ ->
+            "WikiPath - Searching..."
+
+        FinishedModel _ ->
+            "WikiPath - Done!"
 
 
 view : Model -> Html Msg
