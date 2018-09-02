@@ -84,11 +84,11 @@ initialModel sourceInput destinationInput =
 type Msg
     = SourceInputChange UserInput
     | DestinationInputChange UserInput
-    | GetArticlesRequest
-    | GetSourceArticleResponse RemoteArticle
-    | GetDestinationArticleResponse RemoteArticle
-    | RandomizeArticlesRequest
-    | RandomizeArticlesResponse RemoteArticlePair
+    | FetchArticlesRequest
+    | FetchSourceArticleResponse RemoteArticle
+    | FetchDestinationArticleResponse RemoteArticle
+    | FetchRandomArticlesRequest
+    | FetchRandomArticlesResponse RemoteArticlePair
 
 
 type UpdateResult
@@ -109,25 +109,25 @@ update msg model =
                 |> noCmd
                 |> InProgress
 
-        RandomizeArticlesRequest ->
+        FetchRandomArticlesRequest ->
             ( { model | randomArticles = Loading }, fetchRandomPair )
                 |> InProgress
 
-        RandomizeArticlesResponse response ->
+        FetchRandomArticlesResponse response ->
             { model | randomArticles = response }
                 |> randomizeArticleInputs
                 |> noCmd
                 |> InProgress
 
-        GetArticlesRequest ->
+        FetchArticlesRequest ->
             ( { model | source = Loading, destination = Loading }, fetchFullArticles model )
                 |> InProgress
 
-        GetSourceArticleResponse article ->
+        FetchSourceArticleResponse article ->
             { model | source = article }
                 |> maybeComplete
 
-        GetDestinationArticleResponse article ->
+        FetchDestinationArticleResponse article ->
             { model | destination = article }
                 |> maybeComplete
 
@@ -151,7 +151,7 @@ fetchRandomPair : Cmd Msg
 fetchRandomPair =
     Article.fetchRandom 2
         |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticlePair >> RandomizeArticlesResponse)
+        |> Cmd.map (toRemoteArticlePair >> FetchRandomArticlesResponse)
 
 
 toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
@@ -194,8 +194,8 @@ randomizeArticleInputs model =
 fetchFullArticles : Model -> Cmd Msg
 fetchFullArticles { sourceInput, destinationInput } =
     Cmd.batch <|
-        [ fetchFullArticle GetSourceArticleResponse sourceInput
-        , fetchFullArticle GetDestinationArticleResponse destinationInput
+        [ fetchFullArticle FetchSourceArticleResponse sourceInput
+        , fetchFullArticle FetchDestinationArticleResponse destinationInput
         ]
 
 
@@ -226,7 +226,7 @@ view model =
             , alignItems center
             , flexDirection column
             ]
-        , onSubmit GetArticlesRequest
+        , onSubmit FetchArticlesRequest
         ]
         [ viewArticleInputs model
         , viewFindPathButton model
@@ -293,7 +293,7 @@ viewRandomizeButton isDisabled =
             [ Button.Secondary
             , Button.Large
             , Button.Disabled isDisabled
-            , Button.OnClick RandomizeArticlesRequest
+            , Button.OnClick FetchRandomArticlesRequest
             ]
         ]
 
@@ -340,11 +340,5 @@ isBlank =
 
 isLoading : Model -> Bool
 isLoading { source, destination, randomArticles } =
-    let
-        areArticlesLoading =
-            List.any RemoteData.isLoading [ source, destination ]
-
-        areRandomArticlesLoading =
-            RemoteData.isLoading randomArticles
-    in
-    areArticlesLoading || areRandomArticlesLoading
+    RemoteData.isLoading randomArticles
+        || List.any RemoteData.isLoading [ source, destination ]
