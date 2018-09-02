@@ -15,8 +15,8 @@ type Option msg
 
 text : List (Option msg) -> Html msg
 text options =
-    div []
-        [ input (defaultAttributes ++ List.map toAttribute options) [] ]
+    div (List.concatMap toContainerAttribute options)
+        [ input (defaultAttributes ++ List.concatMap toInputAttribute options) [] ]
 
 
 defaultAttributes : List (Attribute msg)
@@ -24,20 +24,39 @@ defaultAttributes =
     [ type_ "text", class "form-control" ]
 
 
-toAttribute : Option msg -> Attribute msg
-toAttribute option =
+toContainerAttribute : Option msg -> List (Attribute msg)
+toContainerAttribute option =
     case option of
         Large ->
-            class "btn-lg"
+            [ class "input-group-lg" ]
 
         OnInput toMsg ->
-            onInput toMsg
+            []
 
         Value textValue ->
-            value textValue
+            []
 
         Placeholder textValue ->
-            placeholder textValue
+            []
 
         Disabled isDisabled ->
-            disabled isDisabled
+            []
+
+
+toInputAttribute : Option msg -> List (Attribute msg)
+toInputAttribute option =
+    case option of
+        Large ->
+            []
+
+        OnInput toMsg ->
+            [ onInput toMsg ]
+
+        Value textValue ->
+            [ value textValue ]
+
+        Placeholder textValue ->
+            [ placeholder textValue ]
+
+        Disabled isDisabled ->
+            [ disabled isDisabled ]
