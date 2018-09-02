@@ -4622,6 +4622,16 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$title = function (model) {
+	switch (model.$) {
+		case 0:
+			return 'WikiPath';
+		case 1:
+			return 'WikiPath - Searching...';
+		default:
+			return 'WikiPath - Done!';
+	}
+};
 var elm$core$Basics$EQ = 1;
 var elm$core$Basics$LT = 0;
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -8995,7 +9005,7 @@ var author$project$Main$document = function (model) {
 				rtfeldman$elm_css$Html$Styled$toUnstyled(
 				author$project$Main$view(model))
 			]),
-		cO: 'WikiPath'
+		cO: author$project$Main$title(model)
 	};
 };
 var author$project$Main$SetupModel = function (a) {
