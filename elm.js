@@ -7492,7 +7492,7 @@ var author$project$Page$Finished$viewError = function (_n0) {
 			author$project$Article$viewAsLink(source),
 			rtfeldman$elm_css$Html$Styled$text(' to '),
 			author$project$Article$viewAsLink(destination),
-			rtfeldman$elm_css$Html$Styled$text(' 💀')
+			rtfeldman$elm_css$Html$Styled$text(' 🙈')
 		]);
 	return A2(
 		rtfeldman$elm_css$Html$Styled$div,
@@ -7648,10 +7648,18 @@ var author$project$Page$Finished$view = function (model) {
 			]));
 };
 var author$project$Page$Pathfinding$CancelPathfinding = {$: 1};
-var author$project$View$Button$Secondary = {$: 2};
+var rtfeldman$elm_css$Css$paddingTop = rtfeldman$elm_css$Css$prop1('padding-top');
 var author$project$Page$Pathfinding$viewBackButton = A2(
 	rtfeldman$elm_css$Html$Styled$div,
-	_List_Nil,
+	_List_fromArray(
+		[
+			rtfeldman$elm_css$Html$Styled$Attributes$css(
+			_List_fromArray(
+				[
+					rtfeldman$elm_css$Css$paddingTop(
+					rtfeldman$elm_css$Css$px(8))
+				]))
+		]),
 	_List_fromArray(
 		[
 			A2(
@@ -7659,7 +7667,7 @@ var author$project$Page$Pathfinding$viewBackButton = A2(
 			'Back',
 			_List_fromArray(
 				[
-					author$project$View$Button$Secondary,
+					author$project$View$Button$Primary,
 					author$project$View$Button$OnClick(author$project$Page$Pathfinding$CancelPathfinding)
 				]))
 		]));
@@ -7908,7 +7916,7 @@ var author$project$Page$Pathfinding$viewWarnings = F2(
 			_List_fromArray(
 				[
 					rtfeldman$elm_css$Html$Styled$text(
-					author$project$Article$isDisambiguation(destination) ? 'The destination is a disambiguation page, so I might not be able to find it! 😅' : ((author$project$Article$length(destination) < 3000) ? 'The destination article is very short, so it might take longer than usual to find! 😅' : ((_Utils_cmp(totalRequests, (author$project$Page$Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? 'This isn\'t looking good. Try a different destination maybe? 💩' : '')))
+					author$project$Article$isDisambiguation(destination) ? 'The destination is a disambiguation page, so I might not be able to find it! 😅' : ((author$project$Article$length(destination) < 3000) ? 'The destination article is very short, so it might take a while to find! 😅' : ((_Utils_cmp(totalRequests, (author$project$Page$Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? 'This isn\'t looking good. Try a different destination maybe? 💩' : '')))
 				]));
 	});
 var author$project$Page$Pathfinding$view = function (_n0) {
@@ -8017,6 +8025,27 @@ var author$project$View$Input$defaultAttributes = _List_fromArray(
 		rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
 		rtfeldman$elm_css$Html$Styled$Attributes$class('form-control')
 	]);
+var author$project$View$Input$toContainerAttribute = function (option) {
+	switch (option.$) {
+		case 0:
+			return _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Attributes$class('input-group-lg')
+				]);
+		case 1:
+			var toMsg = option.a;
+			return _List_Nil;
+		case 2:
+			var textValue = option.a;
+			return _List_Nil;
+		case 3:
+			var textValue = option.a;
+			return _List_Nil;
+		default:
+			var isDisabled = option.a;
+			return _List_Nil;
+	}
+};
 var rtfeldman$elm_css$Html$Styled$Attributes$placeholder = rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
 var rtfeldman$elm_css$Html$Styled$Attributes$value = rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
@@ -8052,36 +8081,48 @@ var rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
 			rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
 			A2(elm$json$Json$Decode$map, tagger, rtfeldman$elm_css$Html$Styled$Events$targetValue)));
 };
-var author$project$View$Input$toAttribute = function (option) {
+var author$project$View$Input$toInputAttribute = function (option) {
 	switch (option.$) {
 		case 0:
-			return rtfeldman$elm_css$Html$Styled$Attributes$class('btn-lg');
+			return _List_Nil;
 		case 1:
 			var toMsg = option.a;
-			return rtfeldman$elm_css$Html$Styled$Events$onInput(toMsg);
+			return _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Events$onInput(toMsg)
+				]);
 		case 2:
 			var textValue = option.a;
-			return rtfeldman$elm_css$Html$Styled$Attributes$value(textValue);
+			return _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Attributes$value(textValue)
+				]);
 		case 3:
 			var textValue = option.a;
-			return rtfeldman$elm_css$Html$Styled$Attributes$placeholder(textValue);
+			return _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Attributes$placeholder(textValue)
+				]);
 		default:
 			var isDisabled = option.a;
-			return rtfeldman$elm_css$Html$Styled$Attributes$disabled(isDisabled);
+			return _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Attributes$disabled(isDisabled)
+				]);
 	}
 };
 var rtfeldman$elm_css$Html$Styled$input = rtfeldman$elm_css$Html$Styled$node('input');
 var author$project$View$Input$text = function (options) {
 	return A2(
 		rtfeldman$elm_css$Html$Styled$div,
-		_List_Nil,
+		A2(elm$core$List$concatMap, author$project$View$Input$toContainerAttribute, options),
 		_List_fromArray(
 			[
 				A2(
 				rtfeldman$elm_css$Html$Styled$input,
 				_Utils_ap(
 					author$project$View$Input$defaultAttributes,
-					A2(elm$core$List$map, author$project$View$Input$toAttribute, options)),
+					A2(elm$core$List$concatMap, author$project$View$Input$toInputAttribute, options)),
 				_List_Nil)
 			]));
 };
@@ -8218,7 +8259,7 @@ var author$project$Page$Setup$viewRandomizationError = function (randomArticles)
 	return krisajenkins$remotedata$RemoteData$isFailure(randomArticles) ? rtfeldman$elm_css$Html$Styled$text('Sorry, an error occured 😵') : author$project$View$Empty$view;
 };
 var author$project$Page$Setup$RandomizeArticlesRequest = {$: 5};
-var rtfeldman$elm_css$Css$paddingTop = rtfeldman$elm_css$Css$prop1('padding-top');
+var author$project$View$Button$Secondary = {$: 2};
 var author$project$Page$Setup$viewRandomizeButton = function (isDisabled) {
 	return A2(
 		rtfeldman$elm_css$Html$Styled$div,
