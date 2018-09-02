@@ -166,7 +166,7 @@ viewBackButton : Model -> Html Msg
 viewBackButton model =
     div [ css [ margin (px 20) ] ]
         [ Button.view "Back"
-            [ Button.Secondary
+            [ Button.Primary
             , Button.OnClick Back
             ]
         ]
