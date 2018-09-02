@@ -14,3 +14,4 @@
 
 ## Refactoring
 * Improve readability of `Pathfinding.Update` by combining `Path` and `Article` somehow?
+    * `Path a` & `Path.map` to model this?
