@@ -269,6 +269,7 @@ viewArticleInput toMsg placeholder title article isDisabled =
             , Input.Value title
             , Input.Placeholder placeholder
             , Input.Disabled isDisabled
+            , Input.Error (RemoteData.isFailure article)
             ]
         , viewArticleError article
         ]

@@ -11,6 +11,7 @@ type Option msg
     | Value String
     | Placeholder String
     | Disabled Bool
+    | Error Bool
 
 
 text : List (Option msg) -> Html msg
@@ -42,6 +43,9 @@ toContainerAttribute option =
         Disabled isDisabled ->
             []
 
+        Error isError ->
+            []
+
 
 toInputAttribute : Option msg -> List (Attribute msg)
 toInputAttribute option =
@@ -60,3 +64,10 @@ toInputAttribute option =
 
         Disabled isDisabled ->
             [ disabled isDisabled ]
+
+        Error isError ->
+            if isError then
+                [ class "is-invalid" ]
+
+            else
+                []
