@@ -82,8 +82,17 @@ getLength =
 
 
 isDisambiguation : Article Full -> Bool
-isDisambiguation =
-    getContent >> String.contains "{{disambiguation}}"
+isDisambiguation article =
+    let
+        doesArticleContain text =
+            String.contains text (getContent article)
+    in
+    List.any doesArticleContain
+        [ "disambiguation}}"
+        , "{{Disambiguation"
+        , "{{disambig}}"
+        , "{{dmbox"
+        ]
 
 
 preview : Article a -> Article Preview
