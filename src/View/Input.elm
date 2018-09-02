@@ -11,12 +11,11 @@ type Option msg
     | Value String
     | Placeholder String
     | Disabled Bool
-    | Error Bool
 
 
 text : List (Option msg) -> Html msg
 text options =
-    div (List.filterMap errorAttribute options)
+    div []
         [ input (defaultAttributes ++ List.map toAttribute options) [] ]
 
 
@@ -42,17 +41,3 @@ toAttribute option =
 
         Disabled isDisabled ->
             disabled isDisabled
-
-        Error isError ->
-            class ""
-
-
-errorAttribute : Option msg -> Maybe (Attribute msg)
-errorAttribute option =
-    case option of
-        Error True ->
-            -- Not working!
-            Just (class "has-error")
-
-        _ ->
-            Nothing

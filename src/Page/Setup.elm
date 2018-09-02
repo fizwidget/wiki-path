@@ -17,7 +17,6 @@ import Http
 import RemoteData exposing (RemoteData(..), WebData)
 import View.Button as Button
 import View.Empty as Empty
-import View.Form as Form
 import View.Input as Input
 import View.Spinner as Spinner
 
@@ -257,18 +256,21 @@ viewDestinationArticleInput =
 
 viewArticleInput : (UserInput -> Msg) -> String -> String -> RemoteArticle -> Bool -> Html Msg
 viewArticleInput toMsg placeholder title article isDisabled =
-    div [ css [ padding2 (px 0) (px 8), height (px 76) ] ]
-        [ Form.group
-            (Input.text
-                [ Input.Large
-                , Input.OnInput toMsg
-                , Input.Value title
-                , Input.Placeholder placeholder
-                , Input.Disabled isDisabled
-                , Input.Error (RemoteData.isFailure article)
-                ]
-            )
-            (viewArticleError article)
+    div
+        [ css
+            [ padding2 (px 0) (px 8)
+            , height (px 76)
+            , textAlign center
+            ]
+        ]
+        [ Input.text
+            [ Input.Large
+            , Input.OnInput toMsg
+            , Input.Value title
+            , Input.Placeholder placeholder
+            , Input.Disabled isDisabled
+            ]
+        , viewArticleError article
         ]
 
 
