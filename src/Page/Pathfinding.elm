@@ -135,7 +135,8 @@ processLinks : Path -> Article Full -> Model -> Model
 processLinks pathToArticle article model =
     let
         newPaths =
-            Article.getLinks article
+            article
+                |> Article.getLinks
                 |> List.filter (isCandidate model.visitedArticles)
                 |> List.map (extendPath model.destination pathToArticle)
                 |> discardLowPriorities
