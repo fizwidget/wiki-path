@@ -138,7 +138,7 @@ maybeComplete ({ source, destination } as model) =
         |> RemoteData.withDefault (model |> noCmd |> InProgress)
 
 
-noCmd : model -> ( model, Cmd msg )
+noCmd : Model -> ( Model, Cmd Msg )
 noCmd model =
     ( model, Cmd.none )
 
