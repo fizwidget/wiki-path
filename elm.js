@@ -7893,13 +7893,13 @@ var author$project$Article$getContent = function (_n0) {
 	var content = _n0.b.bH;
 	return content;
 };
+var elm$core$String$length = _String_length;
+var author$project$Article$getLength = A2(elm$core$Basics$composeR, author$project$Article$getContent, elm$core$String$length);
 var elm$core$String$contains = _String_contains;
 var author$project$Article$isDisambiguation = A2(
 	elm$core$Basics$composeR,
 	author$project$Article$getContent,
 	elm$core$String$contains('{{disambiguation}}'));
-var elm$core$String$length = _String_length;
-var author$project$Article$length = A2(elm$core$Basics$composeR, author$project$Article$getContent, elm$core$String$length);
 var author$project$Page$Pathfinding$totalRequestsLimit = 400;
 var author$project$Page$Pathfinding$viewWarnings = F2(
 	function (totalRequests, destination) {
@@ -7916,7 +7916,7 @@ var author$project$Page$Pathfinding$viewWarnings = F2(
 			_List_fromArray(
 				[
 					rtfeldman$elm_css$Html$Styled$text(
-					author$project$Article$isDisambiguation(destination) ? 'The destination is a disambiguation page, so I might not be able to find it! 😅' : ((author$project$Article$length(destination) < 3000) ? 'The destination article is very short, so it might take a while to find! 😅' : ((_Utils_cmp(totalRequests, (author$project$Page$Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? 'This isn\'t looking good. Try a different destination maybe? 💩' : '')))
+					author$project$Article$isDisambiguation(destination) ? 'The destination is a disambiguation page, so I might not be able to find it! 😅' : ((author$project$Article$getLength(destination) < 3000) ? 'The destination article is very short, so it might take a while to find! 😅' : ((_Utils_cmp(totalRequests, (author$project$Page$Pathfinding$totalRequestsLimit / 2) | 0) > 0) ? 'This isn\'t looking good. Try a different destination maybe? 💩' : '')))
 				]));
 	});
 var author$project$Page$Pathfinding$view = function (_n0) {
@@ -8010,6 +8010,9 @@ var author$project$Page$Setup$viewArticleError = function (remoteArticle) {
 var author$project$View$Input$Disabled = function (a) {
 	return {$: 4, a: a};
 };
+var author$project$View$Input$Error = function (a) {
+	return {$: 5, a: a};
+};
 var author$project$View$Input$Large = {$: 0};
 var author$project$View$Input$OnInput = function (a) {
 	return {$: 1, a: a};
@@ -8041,8 +8044,11 @@ var author$project$View$Input$toContainerAttribute = function (option) {
 		case 3:
 			var textValue = option.a;
 			return _List_Nil;
-		default:
+		case 4:
 			var isDisabled = option.a;
+			return _List_Nil;
+		default:
+			var isError = option.a;
 			return _List_Nil;
 	}
 };
@@ -8103,12 +8109,18 @@ var author$project$View$Input$toInputAttribute = function (option) {
 				[
 					rtfeldman$elm_css$Html$Styled$Attributes$placeholder(textValue)
 				]);
-		default:
+		case 4:
 			var isDisabled = option.a;
 			return _List_fromArray(
 				[
 					rtfeldman$elm_css$Html$Styled$Attributes$disabled(isDisabled)
 				]);
+		default:
+			var isError = option.a;
+			return isError ? _List_fromArray(
+				[
+					rtfeldman$elm_css$Html$Styled$Attributes$class('is-invalid')
+				]) : _List_Nil;
 	}
 };
 var rtfeldman$elm_css$Html$Styled$input = rtfeldman$elm_css$Html$Styled$node('input');
@@ -8125,6 +8137,14 @@ var author$project$View$Input$text = function (options) {
 					A2(elm$core$List$concatMap, author$project$View$Input$toInputAttribute, options)),
 				_List_Nil)
 			]));
+};
+var krisajenkins$remotedata$RemoteData$isFailure = function (data) {
+	if (data.$ === 2) {
+		var x = data.a;
+		return true;
+	} else {
+		return false;
+	}
 };
 var rtfeldman$elm_css$Css$prop2 = F3(
 	function (key, argA, argB) {
@@ -8165,7 +8185,9 @@ var author$project$Page$Setup$viewArticleInput = F5(
 							author$project$View$Input$OnInput(toMsg),
 							author$project$View$Input$Value(title),
 							author$project$View$Input$Placeholder(placeholder),
-							author$project$View$Input$Disabled(isDisabled)
+							author$project$View$Input$Disabled(isDisabled),
+							author$project$View$Input$Error(
+							krisajenkins$remotedata$RemoteData$isFailure(article))
 						])),
 					author$project$Page$Setup$viewArticleError(article)
 				]));
@@ -8246,14 +8268,6 @@ var author$project$Page$Setup$viewFindPathButton = function (model) {
 };
 var author$project$Page$Setup$viewLoadingSpinner = function (isVisible) {
 	return isVisible ? author$project$View$Spinner$view : author$project$View$Empty$view;
-};
-var krisajenkins$remotedata$RemoteData$isFailure = function (data) {
-	if (data.$ === 2) {
-		var x = data.a;
-		return true;
-	} else {
-		return false;
-	}
 };
 var author$project$Page$Setup$viewRandomizationError = function (randomArticles) {
 	return krisajenkins$remotedata$RemoteData$isFailure(randomArticles) ? rtfeldman$elm_css$Html$Styled$text('Sorry, an error occured 😵') : author$project$View$Empty$view;
@@ -9142,59 +9156,6 @@ var author$project$Page$Pathfinding$ArticleLoaded = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
-var elm$url$Url$Builder$toQueryPair = function (_n0) {
-	var key = _n0.a;
-	var value = _n0.b;
-	return key + ('=' + value);
-};
-var elm$url$Url$Builder$toQuery = function (parameters) {
-	if (!parameters.b) {
-		return '';
-	} else {
-		return '?' + A2(
-			elm$core$String$join,
-			'&',
-			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
-	}
-};
-var elm$url$Url$Builder$crossOrigin = F3(
-	function (prePath, pathSegments, parameters) {
-		return prePath + ('/' + (A2(elm$core$String$join, '/', pathSegments) + elm$url$Url$Builder$toQuery(parameters)));
-	});
-var elm$url$Url$percentEncode = _Url_percentEncode;
-var elm$url$Url$Builder$QueryParameter = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
-	});
-var elm$url$Url$Builder$string = F2(
-	function (key, value) {
-		return A2(
-			elm$url$Url$Builder$QueryParameter,
-			elm$url$Url$percentEncode(key),
-			elm$url$Url$percentEncode(value));
-	});
-var author$project$Article$namedArticleUrl = function (title) {
-	var queryParams = _List_fromArray(
-		[
-			A2(elm$url$Url$Builder$string, 'action', 'query'),
-			A2(elm$url$Url$Builder$string, 'format', 'json'),
-			A2(elm$url$Url$Builder$string, 'prop', 'revisions|links'),
-			A2(elm$url$Url$Builder$string, 'titles', title),
-			A2(elm$url$Url$Builder$string, 'redirects', '1'),
-			A2(elm$url$Url$Builder$string, 'formatversion', '2'),
-			A2(elm$url$Url$Builder$string, 'rvprop', 'content'),
-			A2(elm$url$Url$Builder$string, 'rvslots', 'main'),
-			A2(elm$url$Url$Builder$string, 'plnamespace', '0'),
-			A2(elm$url$Url$Builder$string, 'pllimit', 'max'),
-			A2(elm$url$Url$Builder$string, 'origin', '*')
-		]);
-	return A3(
-		elm$url$Url$Builder$crossOrigin,
-		'https://en.wikipedia.org',
-		_List_fromArray(
-			['w', 'api.php']),
-		queryParams);
-};
 var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = elm$json$Json$Decode$map2(elm$core$Basics$apR);
 var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	function (key, valDecoder, decoder) {
@@ -9262,7 +9223,7 @@ var author$project$Article$missingArticleDecoder = A2(
 		elm$json$Json$Decode$succeed(author$project$Article$ArticleNotFound)),
 	A2(elm$json$Json$Decode$field, 'missing', elm$json$Json$Decode$bool));
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var author$project$Article$namedArticlesDecoder = A2(
+var author$project$Article$namedArticleDecoder = A2(
 	elm$json$Json$Decode$at,
 	_List_fromArray(
 		['query', 'pages', '0']),
@@ -9273,6 +9234,72 @@ var author$project$Article$namedArticlesDecoder = A2(
 				A2(elm$json$Json$Decode$map, elm$core$Result$Err, author$project$Article$invalidArticleDecoder),
 				A2(elm$json$Json$Decode$map, elm$core$Result$Err, author$project$Article$missingArticleDecoder)
 			])));
+var elm$url$Url$Builder$toQueryPair = function (_n0) {
+	var key = _n0.a;
+	var value = _n0.b;
+	return key + ('=' + value);
+};
+var elm$url$Url$Builder$toQuery = function (parameters) {
+	if (!parameters.b) {
+		return '';
+	} else {
+		return '?' + A2(
+			elm$core$String$join,
+			'&',
+			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
+	}
+};
+var elm$url$Url$Builder$crossOrigin = F3(
+	function (prePath, pathSegments, parameters) {
+		return prePath + ('/' + (A2(elm$core$String$join, '/', pathSegments) + elm$url$Url$Builder$toQuery(parameters)));
+	});
+var elm$url$Url$percentEncode = _Url_percentEncode;
+var elm$url$Url$Builder$QueryParameter = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var elm$url$Url$Builder$string = F2(
+	function (key, value) {
+		return A2(
+			elm$url$Url$Builder$QueryParameter,
+			elm$url$Url$percentEncode(key),
+			elm$url$Url$percentEncode(value));
+	});
+var author$project$Article$wikipediaQueryUrl = function (params) {
+	var baseParams = _List_fromArray(
+		[
+			A2(elm$url$Url$Builder$string, 'action', 'query'),
+			A2(elm$url$Url$Builder$string, 'format', 'json'),
+			A2(elm$url$Url$Builder$string, 'origin', '*')
+		]);
+	return A3(
+		elm$url$Url$Builder$crossOrigin,
+		'https://en.wikipedia.org',
+		_List_fromArray(
+			['w', 'api.php']),
+		_Utils_ap(baseParams, params));
+};
+var elm$url$Url$Builder$int = F2(
+	function (key, value) {
+		return A2(
+			elm$url$Url$Builder$QueryParameter,
+			elm$url$Url$percentEncode(key),
+			elm$core$String$fromInt(value));
+	});
+var author$project$Article$namedArticleUrl = function (title) {
+	return author$project$Article$wikipediaQueryUrl(
+		_List_fromArray(
+			[
+				A2(elm$url$Url$Builder$string, 'prop', 'revisions|links'),
+				A2(elm$url$Url$Builder$string, 'titles', title),
+				A2(elm$url$Url$Builder$int, 'redirects', 1),
+				A2(elm$url$Url$Builder$int, 'formatversion', 2),
+				A2(elm$url$Url$Builder$string, 'rvprop', 'content'),
+				A2(elm$url$Url$Builder$string, 'rvslots', 'main'),
+				A2(elm$url$Url$Builder$int, 'plnamespace', 0),
+				A2(elm$url$Url$Builder$string, 'pllimit', 'max')
+			]));
+};
 var elm$http$Http$Internal$EmptyBody = {$: 0};
 var elm$http$Http$emptyBody = elm$http$Http$Internal$EmptyBody;
 var elm$core$Dict$get = F2(
@@ -9754,7 +9781,7 @@ var author$project$Article$fetchNamed = function (title) {
 	return A2(
 		elm$http$Http$get,
 		author$project$Article$namedArticleUrl(title),
-		author$project$Article$namedArticlesDecoder);
+		author$project$Article$namedArticleDecoder);
 };
 var author$project$Article$HttpError = function (a) {
 	return {$: 2, a: a};
@@ -10032,16 +10059,14 @@ var TSFoster$elm_heap$Heap$pop = function (_n0) {
 var author$project$PriorityQueue$PriorityQueue = elm$core$Basics$identity;
 var author$project$PriorityQueue$removeHighestPriority = function (_n0) {
 	var heap = _n0;
-	var _n1 = TSFoster$elm_heap$Heap$pop(heap);
-	if (!_n1.$) {
-		var _n2 = _n1.a;
-		var value = _n2.a;
-		var updatedHeap = _n2.b;
-		return elm$core$Maybe$Just(
-			_Utils_Tuple2(value, updatedHeap));
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
+	return A2(
+		elm$core$Maybe$map,
+		function (_n1) {
+			var value = _n1.a;
+			var updatedHeap = _n1.b;
+			return _Utils_Tuple2(value, updatedHeap);
+		},
+		TSFoster$elm_heap$Heap$pop(heap));
 };
 var author$project$PriorityQueue$removeHighestPrioritiesHelper = F3(
 	function (priorityQueue, howMany, removedSoFar) {
@@ -10551,29 +10576,14 @@ var author$project$Article$randomArticlesDecoder = A2(
 	_List_fromArray(
 		['query', 'random']),
 	elm$json$Json$Decode$list(author$project$Article$previewArticleDecoder));
-var elm$url$Url$Builder$int = F2(
-	function (key, value) {
-		return A2(
-			elm$url$Url$Builder$QueryParameter,
-			elm$url$Url$percentEncode(key),
-			elm$core$String$fromInt(value));
-	});
-var author$project$Article$randomArticlesUrl = function (articleCount) {
-	var queryParams = _List_fromArray(
-		[
-			A2(elm$url$Url$Builder$string, 'action', 'query'),
-			A2(elm$url$Url$Builder$string, 'format', 'json'),
-			A2(elm$url$Url$Builder$string, 'list', 'random'),
-			A2(elm$url$Url$Builder$int, 'rnlimit', articleCount),
-			A2(elm$url$Url$Builder$string, 'rnnamespace', '0'),
-			A2(elm$url$Url$Builder$string, 'origin', '*')
-		]);
-	return A3(
-		elm$url$Url$Builder$crossOrigin,
-		'https://en.wikipedia.org',
+var author$project$Article$randomArticlesUrl = function (count) {
+	return author$project$Article$wikipediaQueryUrl(
 		_List_fromArray(
-			['w', 'api.php']),
-		queryParams);
+			[
+				A2(elm$url$Url$Builder$string, 'list', 'random'),
+				A2(elm$url$Url$Builder$int, 'rnlimit', count),
+				A2(elm$url$Url$Builder$int, 'rnnamespace', 0)
+			]));
 };
 var author$project$Article$fetchRandom = function (count) {
 	return A2(
