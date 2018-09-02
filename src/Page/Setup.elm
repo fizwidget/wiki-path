@@ -10,8 +10,9 @@ module Page.Setup exposing
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, form, fromUnstyled, input, pre, text, toUnstyled)
+import Html.Styled exposing (Html, button, div, form, text)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Html.Styled.Events exposing (onSubmit)
 import Http
 import RemoteData exposing (RemoteData(..), WebData)
 import View.Button as Button
@@ -100,12 +101,12 @@ update : Msg -> Model -> UpdateResult
 update msg model =
     case msg of
         SourceInputChange input ->
-            { model | sourceInput = input, source = NotAsked }
+            { model | sourceInput = input, source = NotAsked, randomArticles = NotAsked }
                 |> noCmd
                 |> InProgress
 
         DestinationInputChange input ->
-            { model | destinationInput = input, destination = NotAsked }
+            { model | destinationInput = input, destination = NotAsked, randomArticles = NotAsked }
                 |> noCmd
                 |> InProgress
 
@@ -221,7 +222,13 @@ toRemoteArticle webData =
 view : Model -> Html Msg
 view model =
     form
-        [ css [ displayFlex, alignItems center, flexDirection column ] ]
+        [ css
+            [ displayFlex
+            , alignItems center
+            , flexDirection column
+            ]
+        , onSubmit GetArticlesRequest
+        ]
         [ viewArticleInputs model
         , viewFindPathButton model
         , viewRandomizeButton (isLoading model)
@@ -272,7 +279,6 @@ viewFindPathButton model =
             [ Button.Primary
             , Button.Large
             , Button.Disabled (shouldDisableLoadButton model)
-            , Button.OnClick GetArticlesRequest
             ]
         ]
 

@@ -16,7 +16,7 @@ type Option msg
 view : String -> List (Option msg) -> Html msg
 view title options =
     button
-        (defaultAttributes ++ List.map toAttribute options)
+        (defaultAttributes ++ List.concatMap toAttributes options)
         [ text title ]
 
 
@@ -25,20 +25,20 @@ defaultAttributes =
     [ type_ "button", class "btn" ]
 
 
-toAttribute : Option msg -> Attribute msg
-toAttribute option =
+toAttributes : Option msg -> List (Attribute msg)
+toAttributes option =
     case option of
         OnClick msg ->
-            onClick msg
+            [ onClick msg ]
 
         Primary ->
-            class "btn-primary"
+            [ class "btn-primary", type_ "submit" ]
 
         Secondary ->
-            class "btn-link"
+            [ class "btn-link" ]
 
         Large ->
-            class "btn-lg"
+            [ class "btn-lg" ]
 
         Disabled isDisabled ->
-            disabled isDisabled
+            [ disabled isDisabled ]
