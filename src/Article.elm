@@ -161,17 +161,17 @@ type ArticleError
 
 
 randomArticlesUrl : Int -> String
-randomArticlesUrl articleCount =
-    wikipediaQuery
+randomArticlesUrl count =
+    wikipediaQueryUrl
         [ UrlBuilder.string "list" "random"
-        , UrlBuilder.int "rnlimit" articleCount
+        , UrlBuilder.int "rnlimit" count
         , UrlBuilder.int "rnnamespace" 0
         ]
 
 
 namedArticleUrl : Title -> String
 namedArticleUrl title =
-    wikipediaQuery
+    wikipediaQueryUrl
         [ UrlBuilder.string "prop" "revisions|links"
         , UrlBuilder.string "titles" title
         , UrlBuilder.int "redirects" 1
@@ -183,8 +183,8 @@ namedArticleUrl title =
         ]
 
 
-wikipediaQuery : List QueryParameter -> String
-wikipediaQuery params =
+wikipediaQueryUrl : List QueryParameter -> String
+wikipediaQueryUrl params =
     let
         baseParams =
             [ UrlBuilder.string "action" "query"
@@ -239,12 +239,10 @@ bodyDecoder =
 invalidArticleDecoder : Decoder ArticleError
 invalidArticleDecoder =
     field "invalid" bool
-        |> Decode.andThen
-            (always <| Decode.succeed InvalidTitle)
+        |> Decode.andThen (always <| Decode.succeed InvalidTitle)
 
 
 missingArticleDecoder : Decoder ArticleError
 missingArticleDecoder =
     field "missing" bool
-        |> Decode.andThen
-            (always <| Decode.succeed ArticleNotFound)
+        |> Decode.andThen (always <| Decode.succeed ArticleNotFound)
