@@ -7906,10 +7906,19 @@ var author$project$Article$getContent = function (_n0) {
 var elm$core$String$length = _String_length;
 var author$project$Article$getLength = A2(elm$core$Basics$composeR, author$project$Article$getContent, elm$core$String$length);
 var elm$core$String$contains = _String_contains;
-var author$project$Article$isDisambiguation = A2(
-	elm$core$Basics$composeR,
-	author$project$Article$getContent,
-	elm$core$String$contains('{{disambiguation}}'));
+var author$project$Article$isDisambiguation = function (article) {
+	var doesArticleContain = function (text) {
+		return A2(
+			elm$core$String$contains,
+			text,
+			author$project$Article$getContent(article));
+	};
+	return A2(
+		elm$core$List$any,
+		doesArticleContain,
+		_List_fromArray(
+			['disambiguation}}', '{{Disambiguation', '{{disambig}}', '{{dmbox']));
+};
 var author$project$Page$Pathfinding$totalRequestsLimit = 400;
 var author$project$Page$Pathfinding$viewWarnings = F2(
 	function (totalRequests, destination) {
@@ -9920,20 +9929,19 @@ var elm$http$Http$send = F2(
 			resultToMessage,
 			elm$http$Http$toTask(request_));
 	});
-var author$project$Page$Pathfinding$fetch = F2(
-	function (toMsg, title) {
+var author$project$Page$Pathfinding$fetchFull = F2(
+	function (toMsg, articlePreview) {
 		return A2(
 			elm$http$Http$send,
 			A2(elm$core$Basics$composeR, author$project$Page$Pathfinding$toArticleResult, toMsg),
-			author$project$Article$fetchNamed(title));
+			author$project$Article$fetchNamed(
+				author$project$Article$getTitle(articlePreview)));
 	});
-var author$project$Page$Pathfinding$getNextArticle = function (pathToFollow) {
-	var articleTitle = author$project$Article$getTitle(
-		author$project$Path$end(pathToFollow));
+var author$project$Page$Pathfinding$fetchNextArticle = function (pathToFollow) {
 	return A2(
-		author$project$Page$Pathfinding$fetch,
+		author$project$Page$Pathfinding$fetchFull,
 		author$project$Page$Pathfinding$ArticleLoaded(pathToFollow),
-		articleTitle);
+		author$project$Path$end(pathToFollow));
 };
 var author$project$Page$Pathfinding$incrementRequests = F2(
 	function (model, requestCount) {
@@ -9941,9 +9949,9 @@ var author$project$Page$Pathfinding$incrementRequests = F2(
 			model,
 			{K: model.K + requestCount, av: model.av + requestCount});
 	});
-var author$project$Page$Pathfinding$getNextArticles = F2(
+var author$project$Page$Pathfinding$fetchNextArticles = F2(
 	function (model, pathsToFollow) {
-		var requests = A2(elm$core$List$map, author$project$Page$Pathfinding$getNextArticle, pathsToFollow);
+		var requests = A2(elm$core$List$map, author$project$Page$Pathfinding$fetchNextArticle, pathsToFollow);
 		var updatedModel = A2(
 			author$project$Page$Pathfinding$incrementRequests,
 			model,
@@ -9960,7 +9968,7 @@ var author$project$Page$Pathfinding$explorePaths = F2(
 			var pathToDestination = _n0.a;
 			return author$project$Page$Pathfinding$Complete(pathToDestination);
 		} else {
-			return A2(author$project$Page$Pathfinding$getNextArticles, model, pathsToFollow);
+			return A2(author$project$Page$Pathfinding$fetchNextArticles, model, pathsToFollow);
 		}
 	});
 var author$project$Page$Pathfinding$pendingRequestsLimit = 4;
