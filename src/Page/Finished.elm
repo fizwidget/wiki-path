@@ -10,11 +10,11 @@ module Page.Finished exposing
     )
 
 import Article exposing (Article, Preview)
-import Button
 import Css exposing (..)
 import Html.Styled exposing (Html, button, div, form, fromUnstyled, h2, h4, input, pre, text, toUnstyled)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
 import Path exposing (Path)
+import View.Button as Button
 
 
 

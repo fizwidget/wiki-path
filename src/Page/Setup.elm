@@ -9,15 +9,15 @@ module Page.Setup exposing
     )
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
-import Button
 import Css exposing (..)
-import Form
 import Html.Styled exposing (Html, button, div, form, fromUnstyled, input, pre, text, toUnstyled)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
 import Http
-import Input
 import RemoteData exposing (RemoteData(..), WebData)
-import Spinner
+import View.Button as Button
+import View.Form as Form
+import View.Input as Input
+import View.Spinner as Spinner
 
 
 
@@ -280,7 +280,7 @@ viewRandomizeButton : Bool -> Html Msg
 viewRandomizeButton isDisabled =
     div [ css [ padding (px 12) ] ]
         [ Button.view "Randomize"
-            [ Button.Light
+            [ Button.Secondary
             , Button.Large
             , Button.Disabled isDisabled
             , Button.OnClick RandomizeArticlesRequest

@@ -1,4 +1,4 @@
-module Form exposing (group)
+module View.Form exposing (group)
 
 import Html.Styled exposing (Html, div, span)
 

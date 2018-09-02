@@ -1,4 +1,4 @@
-module Input exposing (Option(..), text)
+module View.Input exposing (Option(..), text)
 
 import Html.Styled exposing (Attribute, Html, div, input)
 import Html.Styled.Attributes exposing (class, disabled, placeholder, type_, value)

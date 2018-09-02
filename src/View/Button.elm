@@ -1,4 +1,4 @@
-module Button exposing (Option(..), view)
+module View.Button exposing (Option(..), view)
 
 import Html.Styled exposing (Attribute, Html, button, text)
 import Html.Styled.Attributes exposing (class, disabled, type_)
@@ -9,7 +9,6 @@ type Option msg
     = OnClick msg
     | Primary
     | Secondary
-    | Light
     | Large
     | Disabled Bool
 
@@ -36,9 +35,6 @@ toAttribute option =
             class "btn-primary"
 
         Secondary ->
-            class "btn-info"
-
-        Light ->
             class "btn-link"
 
         Large ->
