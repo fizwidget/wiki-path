@@ -3,7 +3,7 @@ module Main exposing (main)
 import Article exposing (Article, Full)
 import Browser exposing (Document)
 import Css exposing (..)
-import Css.Media as Media exposing (withMedia)
+import Css.Media as Media
 import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
@@ -165,7 +165,7 @@ viewHeading =
             fontSize (px 80)
 
         mobileFontStyle =
-            withMedia
+            Media.withMedia
                 [ Media.all [ Media.maxWidth (px 420) ] ]
                 [ fontSize (vw 20) ]
     in
