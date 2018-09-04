@@ -18,7 +18,7 @@ import PriorityQueue exposing (Priority)
 type Path
     = Path
         { previousStops : List (Article Preview)
-        , lastStop : Article Preview
+        , currentStop : Article Preview
         , priority : Priority
         }
 
@@ -26,8 +26,8 @@ type Path
 beginningAt : Article a -> Path
 beginningAt article =
     Path
-        { previousStops = []
-        , lastStop = Article.preview article
+        { currentStop = Article.preview article
+        , previousStops = []
         , priority = 0
         }
 
@@ -37,12 +37,12 @@ beginning (Path path) =
     path.previousStops
         |> List.reverse
         |> List.head
-        |> Maybe.withDefault path.lastStop
+        |> Maybe.withDefault path.currentStop
 
 
 end : Path -> Article Preview
 end (Path path) =
-    path.lastStop
+    path.currentStop
 
 
 inOrder : Path -> List (Article Preview)
@@ -52,7 +52,7 @@ inOrder =
 
 inReverseOrder : Path -> List (Article Preview)
 inReverseOrder (Path path) =
-    path.lastStop :: path.previousStops
+    path.currentStop :: path.previousStops
 
 
 priority : Path -> Priority
@@ -61,13 +61,13 @@ priority (Path path) =
 
 
 extend : Path -> Article Preview -> Priority -> Path
-extend (Path path) nextLink nextPriority =
-    Path
-        { path
-            | lastStop = nextLink
-            , previousStops = path.lastStop :: path.previousStops
-            , priority = nextPriority
-        }
+extend (Path path) nextStop nextPriority =
+    { path
+        | currentStop = nextStop
+        , previousStops = path.currentStop :: path.previousStops
+        , priority = nextPriority
+    }
+        |> Path
 
 
 contains : Article Preview -> Path -> Bool
