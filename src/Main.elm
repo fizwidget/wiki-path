@@ -4,7 +4,7 @@ import Article exposing (Article, Full)
 import Browser exposing (Document)
 import Css exposing (..)
 import Css.Media as Media exposing (withMedia)
-import Html.Styled as Html exposing (Html, div, h1, text, toUnstyled)
+import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
@@ -36,33 +36,33 @@ update msg model =
     case ( msg, model ) of
         ( SetupMsg subMsg, SetupModel subModel ) ->
             Setup.update subMsg subModel
-                |> handleSetupUpdate
+                |> onSetupUpdate
 
         ( PathfindingMsg subMsg, PathfindingModel subModel ) ->
             Pathfinding.update subMsg subModel
-                |> handlePathfindingUpdate
+                |> onPathfindingUpdate
 
         ( FinishedMsg subMsg, FinishedModel subModel ) ->
             Finished.update subMsg subModel
-                |> handleFinishedUpdate
+                |> onFinishedUpdate
 
         ( _, _ ) ->
             ( model, Cmd.none )
 
 
-handleSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
-handleSetupUpdate updateResult =
+onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+onSetupUpdate updateResult =
     case updateResult of
         Setup.InProgress ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
         Setup.Complete source destination ->
             Pathfinding.init source destination
-                |> handlePathfindingUpdate
+                |> onPathfindingUpdate
 
 
-handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
-handlePathfindingUpdate updateResult =
+onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+onPathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.InProgress ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
@@ -87,8 +87,8 @@ handlePathfindingUpdate updateResult =
                 |> inFinishedPage
 
 
-handleFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
-handleFinishedUpdate (Finished.BackToSetup source destination) =
+onFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
+onFinishedUpdate (Finished.BackToSetup source destination) =
     Setup.initWithArticles (Article.preview source) (Article.preview destination)
         |> inSetupPage
 
@@ -125,7 +125,7 @@ noCmd model =
 view : Model -> Document Msg
 view model =
     { title = title model
-    , body = [ model |> viewBody |> toUnstyled ]
+    , body = [ Html.toUnstyled (body model) ]
     }
 
 
@@ -142,8 +142,8 @@ title model =
             "WikiPath - Done!"
 
 
-viewBody : Model -> Html Msg
-viewBody model =
+body : Model -> Html Msg
+body model =
     div
         [ css
             [ fontSize (px 24)
