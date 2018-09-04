@@ -4,8 +4,7 @@ import Article exposing (Article, Full)
 import Browser exposing (Document)
 import Css exposing (..)
 import Css.Media as Media exposing (withMedia)
-import Html
-import Html.Styled as StyledHtml exposing (Html, div, h1, text, toUnstyled)
+import Html.Styled as Html exposing (Html, div, h1, text, toUnstyled)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
@@ -189,15 +188,15 @@ viewModel model =
     case model of
         SetupModel subModel ->
             Setup.view subModel
-                |> StyledHtml.map SetupMsg
+                |> Html.map SetupMsg
 
         PathfindingModel subModel ->
             Pathfinding.view subModel
-                |> StyledHtml.map PathfindingMsg
+                |> Html.map PathfindingMsg
 
         FinishedModel subModel ->
             Finished.view subModel
-                |> StyledHtml.map FinishedMsg
+                |> Html.map FinishedMsg
 
 
 
