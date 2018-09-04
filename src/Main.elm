@@ -122,10 +122,10 @@ noCmd model =
 -- VIEW
 
 
-document : Model -> Document Msg
-document model =
+view : Model -> Document Msg
+view model =
     { title = title model
-    , body = [ view model |> toUnstyled ]
+    , body = [ model |> viewBody |> toUnstyled ]
     }
 
 
@@ -142,8 +142,8 @@ title model =
             "WikiPath - Done!"
 
 
-view : Model -> Html Msg
-view model =
+viewBody : Model -> Html Msg
+viewBody model =
     div
         [ css
             [ fontSize (px 24)
@@ -207,7 +207,7 @@ main : Program () Model Msg
 main =
     Browser.document
         { init = \_ -> inSetupPage Setup.init
-        , view = document
+        , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \_ -> Sub.none
         }
