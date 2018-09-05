@@ -9,6 +9,7 @@ module Page.Setup exposing
     )
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
+import Cmd.Extra exposing (withCmd, withNoCmd)
 import Css exposing (..)
 import Html.Styled exposing (Html, button, div, form, text)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
@@ -101,26 +102,28 @@ update msg model =
     case msg of
         SourceInputChange input ->
             { model | sourceInput = input, source = NotAsked, randomArticles = NotAsked }
-                |> noCmd
+                |> withNoCmd
                 |> InProgress
 
         DestinationInputChange input ->
             { model | destinationInput = input, destination = NotAsked, randomArticles = NotAsked }
-                |> noCmd
+                |> withNoCmd
                 |> InProgress
 
         FetchRandomArticlesRequest ->
-            ( { model | randomArticles = Loading }, fetchRandomPair )
+            { model | randomArticles = Loading }
+                |> withCmd fetchRandomPair
                 |> InProgress
 
         FetchRandomArticlesResponse response ->
             { model | randomArticles = response }
                 |> randomizeArticleInputs
-                |> noCmd
+                |> withNoCmd
                 |> InProgress
 
         FetchArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, fetchFullArticles model )
+            { model | source = Loading, destination = Loading }
+                |> withCmd (fetchFullArticles model)
                 |> InProgress
 
         FetchSourceArticleResponse article ->
@@ -135,12 +138,7 @@ update msg model =
 maybeComplete : Model -> UpdateResult
 maybeComplete ({ source, destination } as model) =
     RemoteData.map2 Complete source destination
-        |> RemoteData.withDefault (model |> noCmd |> InProgress)
-
-
-noCmd : Model -> ( Model, Cmd Msg )
-noCmd model =
-    ( model, Cmd.none )
+        |> RemoteData.withDefault (model |> withNoCmd |> InProgress)
 
 
 
@@ -193,7 +191,7 @@ randomizeArticleInputs model =
 
 fetchFullArticles : Model -> Cmd Msg
 fetchFullArticles { sourceInput, destinationInput } =
-    Cmd.batch <|
+    Cmd.batch
         [ fetchFullArticle FetchSourceArticleResponse sourceInput
         , fetchFullArticle FetchDestinationArticleResponse destinationInput
         ]

@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Article exposing (Article, Full)
 import Browser exposing (Document)
+import Cmd.Extra exposing (withNoCmd)
 import Css exposing (..)
 import Css.Media as Media
 import Html.Styled as Html exposing (Html, div, h1, text)
@@ -73,17 +74,17 @@ onPathfindingUpdate updateResult =
 
         Pathfinding.Complete path ->
             Finished.initWithPath path
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
         Pathfinding.PathNotFound source destination ->
             Finished.initWithPathNotFoundError (Article.preview source) (Article.preview destination)
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
             Finished.initWithTooManyRequestsError (Article.preview source) (Article.preview destination)
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
 
@@ -111,11 +112,6 @@ inFinishedPage =
 inPage : (subModel -> model) -> (subMsg -> msg) -> ( subModel, Cmd subMsg ) -> ( model, Cmd msg )
 inPage toModel toMsg ( subModel, subCmd ) =
     ( toModel subModel, Cmd.map toMsg subCmd )
-
-
-noCmd : model -> ( model, Cmd msg )
-noCmd model =
-    ( model, Cmd.none )
 
 
 
