@@ -335,7 +335,7 @@ fetchFull : (ArticleResult -> msg) -> Article Preview -> Cmd msg
 fetchFull toMsg articlePreview =
     articlePreview
         |> Article.getTitle
-        |> Article.fetchNamed
+        |> Article.fetchByTitle
         |> Http.send (toArticleResult >> toMsg)
 
 

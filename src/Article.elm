@@ -5,7 +5,7 @@ module Article exposing
     , Full
     , Preview
     , equals
-    , fetchNamed
+    , fetchByTitle
     , fetchRandom
     , getContent
     , getLength
@@ -145,8 +145,8 @@ toErrorMessage error =
 -- FETCH
 
 
-fetchNamed : String -> Http.Request ArticleResult
-fetchNamed title =
+fetchByTitle : String -> Http.Request ArticleResult
+fetchByTitle title =
     Http.get (namedArticleUrl title) namedArticleDecoder
 
 
