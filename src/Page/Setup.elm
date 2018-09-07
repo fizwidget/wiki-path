@@ -85,11 +85,11 @@ initialModel sourceInput destinationInput =
 type Msg
     = SourceInputChange UserInput
     | DestinationInputChange UserInput
-    | FetchArticlesRequest
-    | FetchSourceArticleResponse RemoteArticle
-    | FetchDestinationArticleResponse RemoteArticle
-    | FetchRandomArticlesRequest
-    | FetchRandomArticlesResponse RemoteArticlePair
+    | FetchArticles
+    | SourceArticleResponse RemoteArticle
+    | DestinationArticleResponse RemoteArticle
+    | FetchRandomArticles
+    | RandomArticlesResponse RemoteArticlePair
 
 
 type UpdateResult
@@ -110,27 +110,27 @@ update msg model =
                 |> withNoCmd
                 |> InProgress
 
-        FetchRandomArticlesRequest ->
+        FetchRandomArticles ->
             { model | randomArticles = Loading }
                 |> withCmd fetchRandomArticles
                 |> InProgress
 
-        FetchRandomArticlesResponse response ->
+        RandomArticlesResponse response ->
             { model | randomArticles = response }
                 |> showRandomArticles
                 |> withNoCmd
                 |> InProgress
 
-        FetchArticlesRequest ->
+        FetchArticles ->
             { model | source = Loading, destination = Loading }
                 |> withCmd (fetchFullArticles model)
                 |> InProgress
 
-        FetchSourceArticleResponse article ->
+        SourceArticleResponse article ->
             { model | source = article }
                 |> maybeCompleteSetup
 
-        FetchDestinationArticleResponse article ->
+        DestinationArticleResponse article ->
             { model | destination = article }
                 |> maybeCompleteSetup
 
@@ -165,7 +165,7 @@ fetchRandomArticles : Cmd Msg
 fetchRandomArticles =
     Article.fetchRandom 2
         |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticlePair >> FetchRandomArticlesResponse)
+        |> Cmd.map (toRemoteArticlePair >> RandomArticlesResponse)
 
 
 toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
@@ -192,8 +192,8 @@ toPair articles =
 fetchFullArticles : Model -> Cmd Msg
 fetchFullArticles { sourceInput, destinationInput } =
     Cmd.batch
-        [ fetchFullArticle FetchSourceArticleResponse sourceInput
-        , fetchFullArticle FetchDestinationArticleResponse destinationInput
+        [ fetchFullArticle SourceArticleResponse sourceInput
+        , fetchFullArticle DestinationArticleResponse destinationInput
         ]
 
 
@@ -223,7 +223,7 @@ view model =
             , alignItems center
             , flexDirection column
             ]
-        , onSubmit FetchArticlesRequest
+        , onSubmit FetchArticles
         ]
         [ viewArticleInputs model
         , viewFindPathButton (isFindPathButtonDisabled model)
@@ -300,7 +300,7 @@ viewRandomizeButton isDisabled =
             [ Button.Secondary
             , Button.Large
             , Button.Disabled isDisabled
-            , Button.OnClick FetchRandomArticlesRequest
+            , Button.OnClick FetchRandomArticles
             ]
         ]
 
