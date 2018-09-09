@@ -145,14 +145,14 @@ toErrorMessage error =
 -- FETCH
 
 
-fetchByTitle : String -> Http.Request ArticleResult
+fetchByTitle : Title -> Http.Request ArticleResult
 fetchByTitle title =
-    Http.get (namedArticleUrl title) namedArticleDecoder
+    Http.get (fetchByTitleUrl title) fetchByTitleDecoder
 
 
 fetchRandom : Int -> Http.Request (List (Article Preview))
 fetchRandom count =
-    Http.get (randomArticlesUrl count) randomArticlesDecoder
+    Http.get (fetchRandomUrl count) fetchRandomDecoder
 
 
 type alias ArticleResult =
@@ -169,8 +169,12 @@ type ArticleError
 -- URLS
 
 
-randomArticlesUrl : Int -> String
-randomArticlesUrl count =
+type alias Url =
+    String
+
+
+fetchRandomUrl : Int -> Url
+fetchRandomUrl count =
     wikipediaQueryUrl
         [ UrlBuilder.string "list" "random"
         , UrlBuilder.int "rnlimit" count
@@ -178,8 +182,8 @@ randomArticlesUrl count =
         ]
 
 
-namedArticleUrl : Title -> String
-namedArticleUrl title =
+fetchByTitleUrl : Title -> Url
+fetchByTitleUrl title =
     wikipediaQueryUrl
         [ UrlBuilder.string "prop" "revisions|links"
         , UrlBuilder.string "titles" title
@@ -192,7 +196,7 @@ namedArticleUrl title =
         ]
 
 
-wikipediaQueryUrl : List QueryParameter -> String
+wikipediaQueryUrl : List QueryParameter -> Url
 wikipediaQueryUrl params =
     let
         baseParams =
@@ -208,31 +212,31 @@ wikipediaQueryUrl params =
 -- DECODERS
 
 
-namedArticleDecoder : Decoder ArticleResult
-namedArticleDecoder =
+fetchByTitleDecoder : Decoder ArticleResult
+fetchByTitleDecoder =
     at [ "query", "pages", "0" ]
         (oneOf
-            [ map Ok fullArticleDecoder
+            [ map Ok articleFullDecoder
             , map Err invalidArticleDecoder
             , map Err missingArticleDecoder
             ]
         )
 
 
-randomArticlesDecoder : Decoder (List (Article Preview))
-randomArticlesDecoder =
-    at [ "query", "random" ] (list previewArticleDecoder)
+fetchRandomDecoder : Decoder (List (Article Preview))
+fetchRandomDecoder =
+    at [ "query", "random" ] (list articlePreviewDecoder)
 
 
-previewArticleDecoder : Decoder (Article Preview)
-previewArticleDecoder =
+articlePreviewDecoder : Decoder (Article Preview)
+articlePreviewDecoder =
     succeed Article
         |> required "title" string
         |> hardcoded Preview
 
 
-fullArticleDecoder : Decoder (Article Full)
-fullArticleDecoder =
+articleFullDecoder : Decoder (Article Full)
+articleFullDecoder =
     succeed Article
         |> required "title" string
         |> custom (map Full bodyDecoder)
@@ -242,7 +246,7 @@ bodyDecoder : Decoder Body
 bodyDecoder =
     succeed Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
-        |> required "links" (list previewArticleDecoder)
+        |> required "links" (list articlePreviewDecoder)
 
 
 invalidArticleDecoder : Decoder ArticleError
