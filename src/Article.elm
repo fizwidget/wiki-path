@@ -4,15 +4,15 @@ module Article exposing
     , ArticleResult
     , Full
     , Preview
+    , content
     , equals
     , fetchByTitle
     , fetchRandom
-    , getContent
     , getLength
-    , getLinks
-    , getTitle
     , isDisambiguation
+    , links
     , preview
+    , title
     , viewAsLink
     , viewError
     )
@@ -61,33 +61,33 @@ type alias Wikitext =
 -- INFO
 
 
-getTitle : Article a -> String
-getTitle (Article title _) =
-    title
+title : Article a -> String
+title (Article articleTitle _) =
+    articleTitle
 
 
-getContent : Article Full -> String
-getContent (Article _ (Full { content })) =
-    content
+content : Article Full -> String
+content (Article _ (Full body)) =
+    body.content
 
 
-getLinks : Article Full -> List (Article Preview)
-getLinks (Article _ (Full { links })) =
-    links
+links : Article Full -> List (Article Preview)
+links (Article _ (Full body)) =
+    body.links
 
 
 getLength : Article Full -> Int
 getLength =
-    getContent >> String.length
+    content >> String.length
 
 
 isDisambiguation : Article Full -> Bool
 isDisambiguation article =
     let
-        doesArticleContain text =
-            String.contains text (getContent article)
+        contains text =
+            String.contains text (content article)
     in
-    List.any doesArticleContain
+    List.any contains
         [ "disambiguation}}"
         , "{{Disambiguation"
         , "{{disambig}}"
@@ -96,8 +96,8 @@ isDisambiguation article =
 
 
 preview : Article a -> Article Preview
-preview (Article title _) =
-    Article title Preview
+preview (Article articleTitle _) =
+    Article articleTitle Preview
 
 
 equals : Article a -> Article b -> Bool
@@ -113,12 +113,12 @@ viewAsLink : Article a -> Html msg
 viewAsLink article =
     a
         [ href (toUrl article) ]
-        [ text (getTitle article) ]
+        [ text (title article) ]
 
 
 toUrl : Article a -> String
 toUrl article =
-    "https://en.wikipedia.org/wiki/" ++ getTitle article
+    "https://en.wikipedia.org/wiki/" ++ title article
 
 
 viewError : ArticleError -> Html msg
@@ -146,8 +146,8 @@ toErrorMessage error =
 
 
 fetchByTitle : Title -> Http.Request ArticleResult
-fetchByTitle title =
-    Http.get (fetchByTitleUrl title) fetchByTitleDecoder
+fetchByTitle articleTitle =
+    Http.get (fetchByTitleUrl articleTitle) fetchByTitleDecoder
 
 
 fetchRandom : Int -> Http.Request (List (Article Preview))
@@ -183,10 +183,10 @@ fetchRandomUrl count =
 
 
 fetchByTitleUrl : Title -> Url
-fetchByTitleUrl title =
+fetchByTitleUrl articleTitle =
     wikipediaQueryUrl
         [ UrlBuilder.string "prop" "revisions|links"
-        , UrlBuilder.string "titles" title
+        , UrlBuilder.string "titles" articleTitle
         , UrlBuilder.int "redirects" 1
         , UrlBuilder.int "formatversion" 2
         , UrlBuilder.string "rvprop" "content"

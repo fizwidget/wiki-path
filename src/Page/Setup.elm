@@ -63,7 +63,7 @@ init =
 
 initWithArticles : Article a -> Article a -> ( Model, Cmd Msg )
 initWithArticles source destination =
-    ( initialModel (Article.getTitle source) (Article.getTitle destination)
+    ( initialModel (Article.title source) (Article.title destination)
     , Cmd.none
     )
 
@@ -142,8 +142,8 @@ showRandomArticles model =
             { model
                 | source = NotAsked
                 , destination = NotAsked
-                , sourceInput = Article.getTitle source
-                , destinationInput = Article.getTitle destination
+                , sourceInput = Article.title source
+                , destinationInput = Article.title destination
             }
     in
     model.randomArticles
