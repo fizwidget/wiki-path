@@ -202,8 +202,8 @@ viewModel model =
 main : Program () Model Msg
 main =
     Browser.document
-        { init = \_ -> inSetupPage Setup.init
+        { init = always (inSetupPage Setup.init)
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = always Sub.none
         }
