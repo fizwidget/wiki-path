@@ -1,19 +1,29 @@
 #!/bin/bash
 
+set -e
+
 echo "- Checking out deployment branch..."
 git checkout gh-pages
 echo
 
-echo "- Merging master into deployment branch"
-git merge master -m "Merging master"
+echo "- Merging master into deployment branch..."
+git merge master -m "Merging master" --strategy-option theirs
+echo
+
+echo "- Installing dependencies..."
+yarn install
 echo
 
 echo "- Building..."
-make production
+yarn build --optimize
+echo
+
+echo "- Minifying..."
+yarn elm-minify ./build/elm.js --replace
 echo
 
 echo "- Comitting new artefacts..."
-git add elm.js
+git add -f build/elm.js
 git commit -m "Updating build artefacts"
 echo
 
