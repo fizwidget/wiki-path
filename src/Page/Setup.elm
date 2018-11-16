@@ -9,6 +9,7 @@ module Page.Setup exposing
     )
 
 import Article exposing (Article, ArticleError(..), ArticleResult, Full, Preview)
+import Cmd.Extra exposing (withCmd, withNoCmd)
 import Css exposing (..)
 import Html.Styled exposing (Html, button, div, form, text)
 import Html.Styled.Attributes exposing (css, placeholder, type_, value)
@@ -62,7 +63,7 @@ init =
 
 initWithArticles : Article a -> Article a -> ( Model, Cmd Msg )
 initWithArticles source destination =
-    ( initialModel (Article.getTitle source) (Article.getTitle destination)
+    ( initialModel (Article.title source) (Article.title destination)
     , Cmd.none
     )
 
@@ -84,11 +85,11 @@ initialModel sourceInput destinationInput =
 type Msg
     = SourceInputChange UserInput
     | DestinationInputChange UserInput
-    | FetchArticlesRequest
-    | FetchSourceArticleResponse RemoteArticle
-    | FetchDestinationArticleResponse RemoteArticle
-    | FetchRandomArticlesRequest
-    | FetchRandomArticlesResponse RemoteArticlePair
+    | FetchArticles
+    | SourceArticleResponse RemoteArticle
+    | DestinationArticleResponse RemoteArticle
+    | FetchRandomArticles
+    | RandomArticlesResponse RemoteArticlePair
 
 
 type UpdateResult
@@ -101,57 +102,70 @@ update msg model =
     case msg of
         SourceInputChange input ->
             { model | sourceInput = input, source = NotAsked, randomArticles = NotAsked }
-                |> noCmd
+                |> withNoCmd
                 |> InProgress
 
         DestinationInputChange input ->
             { model | destinationInput = input, destination = NotAsked, randomArticles = NotAsked }
-                |> noCmd
+                |> withNoCmd
                 |> InProgress
 
-        FetchRandomArticlesRequest ->
-            ( { model | randomArticles = Loading }, fetchRandomPair )
+        FetchRandomArticles ->
+            { model | randomArticles = Loading }
+                |> withCmd fetchRandomArticles
                 |> InProgress
 
-        FetchRandomArticlesResponse response ->
+        RandomArticlesResponse response ->
             { model | randomArticles = response }
-                |> randomizeArticleInputs
-                |> noCmd
+                |> showRandomArticles
+                |> withNoCmd
                 |> InProgress
 
-        FetchArticlesRequest ->
-            ( { model | source = Loading, destination = Loading }, fetchFullArticles model )
+        FetchArticles ->
+            { model | source = Loading, destination = Loading }
+                |> withCmd (fetchFullArticles model)
                 |> InProgress
 
-        FetchSourceArticleResponse article ->
+        SourceArticleResponse article ->
             { model | source = article }
-                |> maybeComplete
+                |> maybeCompleteSetup
 
-        FetchDestinationArticleResponse article ->
+        DestinationArticleResponse article ->
             { model | destination = article }
-                |> maybeComplete
+                |> maybeCompleteSetup
 
 
-maybeComplete : Model -> UpdateResult
-maybeComplete ({ source, destination } as model) =
+showRandomArticles : Model -> Model
+showRandomArticles model =
+    let
+        setArticleInputs ( source, destination ) =
+            { model
+                | source = NotAsked
+                , destination = NotAsked
+                , sourceInput = Article.title source
+                , destinationInput = Article.title destination
+            }
+    in
+    model.randomArticles
+        |> RemoteData.map setArticleInputs
+        |> RemoteData.withDefault model
+
+
+maybeCompleteSetup : Model -> UpdateResult
+maybeCompleteSetup ({ source, destination } as model) =
     RemoteData.map2 Complete source destination
-        |> RemoteData.withDefault (model |> noCmd |> InProgress)
-
-
-noCmd : Model -> ( Model, Cmd Msg )
-noCmd model =
-    ( model, Cmd.none )
+        |> RemoteData.withDefault (model |> withNoCmd |> InProgress)
 
 
 
--- FETCH RANDOM PAIR
+-- FETCH RANDOM ARTICLE PREVIEWS
 
 
-fetchRandomPair : Cmd Msg
-fetchRandomPair =
+fetchRandomArticles : Cmd Msg
+fetchRandomArticles =
     Article.fetchRandom 2
         |> RemoteData.sendRequest
-        |> Cmd.map (toRemoteArticlePair >> FetchRandomArticlesResponse)
+        |> Cmd.map (toRemoteArticlePair >> RandomArticlesResponse)
 
 
 toRemoteArticlePair : WebData (List (Article Preview)) -> RemoteArticlePair
@@ -171,38 +185,21 @@ toPair articles =
             RemoteData.Failure UnexpectedArticleCount
 
 
-randomizeArticleInputs : Model -> Model
-randomizeArticleInputs model =
-    let
-        setArticleInputs ( source, destination ) =
-            { model
-                | source = NotAsked
-                , destination = NotAsked
-                , sourceInput = Article.getTitle source
-                , destinationInput = Article.getTitle destination
-            }
-    in
-    model.randomArticles
-        |> RemoteData.map setArticleInputs
-        |> RemoteData.withDefault model
 
-
-
--- FETCH FULL ARTICLE
+-- FETCH FULL ARTICLES
 
 
 fetchFullArticles : Model -> Cmd Msg
 fetchFullArticles { sourceInput, destinationInput } =
-    Cmd.batch <|
-        [ fetchFullArticle FetchSourceArticleResponse sourceInput
-        , fetchFullArticle FetchDestinationArticleResponse destinationInput
+    Cmd.batch
+        [ fetchFullArticle SourceArticleResponse sourceInput
+        , fetchFullArticle DestinationArticleResponse destinationInput
         ]
 
 
 fetchFullArticle : (RemoteArticle -> msg) -> String -> Cmd msg
 fetchFullArticle toMsg title =
-    title
-        |> Article.fetchNamed
+    Article.fetchByTitle title
         |> RemoteData.sendRequest
         |> Cmd.map (toRemoteArticle >> toMsg)
 
@@ -226,10 +223,10 @@ view model =
             , alignItems center
             , flexDirection column
             ]
-        , onSubmit FetchArticlesRequest
+        , onSubmit FetchArticles
         ]
         [ viewArticleInputs model
-        , viewFindPathButton model
+        , viewFindPathButton (isFindPathButtonDisabled model)
         , viewRandomizeButton (isLoading model)
         , viewRandomizationError model.randomArticles
         , viewLoadingSpinner (isLoading model)
@@ -275,13 +272,23 @@ viewArticleInput toMsg placeholder title article isDisabled =
         ]
 
 
-viewFindPathButton : Model -> Html Msg
-viewFindPathButton model =
+viewArticleError : RemoteArticle -> Html msg
+viewArticleError remoteArticle =
+    case remoteArticle of
+        RemoteData.Failure error ->
+            Article.viewError error
+
+        _ ->
+            Empty.view
+
+
+viewFindPathButton : Bool -> Html Msg
+viewFindPathButton isDisabled =
     div [ css [ padding (px 4) ] ]
         [ Button.view "Find path"
             [ Button.Primary
             , Button.Large
-            , Button.Disabled (shouldDisableLoadButton model)
+            , Button.Disabled isDisabled
             ]
         ]
 
@@ -293,19 +300,9 @@ viewRandomizeButton isDisabled =
             [ Button.Secondary
             , Button.Large
             , Button.Disabled isDisabled
-            , Button.OnClick FetchRandomArticlesRequest
+            , Button.OnClick FetchRandomArticles
             ]
         ]
-
-
-viewArticleError : RemoteArticle -> Html msg
-viewArticleError remoteArticle =
-    case remoteArticle of
-        RemoteData.Failure error ->
-            Article.viewError error
-
-        _ ->
-            Empty.view
 
 
 viewRandomizationError : RemoteArticlePair -> Html msg
@@ -326,19 +323,20 @@ viewLoadingSpinner isVisible =
         Empty.view
 
 
-shouldDisableLoadButton : Model -> Bool
-shouldDisableLoadButton model =
+isFindPathButtonDisabled : Model -> Bool
+isFindPathButtonDisabled model =
     isLoading model
         || isBlank model.sourceInput
         || isBlank model.destinationInput
 
 
-isBlank : String -> Bool
-isBlank =
-    String.trim >> String.isEmpty
-
-
 isLoading : Model -> Bool
 isLoading { source, destination, randomArticles } =
     RemoteData.isLoading randomArticles
-        || List.any RemoteData.isLoading [ source, destination ]
+        || RemoteData.isLoading source
+        || RemoteData.isLoading destination
+
+
+isBlank : String -> Bool
+isBlank =
+    String.trim >> String.isEmpty

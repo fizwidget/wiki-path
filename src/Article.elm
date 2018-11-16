@@ -4,15 +4,15 @@ module Article exposing
     , ArticleResult
     , Full
     , Preview
+    , content
     , equals
-    , fetchNamed
+    , fetchByTitle
     , fetchRandom
-    , getContent
-    , getLength
-    , getLinks
-    , getTitle
     , isDisambiguation
+    , length
+    , links
     , preview
+    , title
     , viewAsLink
     , viewError
     )
@@ -24,7 +24,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, at, bool, field, int, list, map, oneOf, string, succeed)
 import Json.Decode.Pipeline exposing (custom, hardcoded, required, requiredAt)
 import Url exposing (Url)
-import Url.Builder as UrlBuilder exposing (QueryParameter)
+import Url.Builder as Url exposing (QueryParameter)
 
 
 
@@ -61,33 +61,33 @@ type alias Wikitext =
 -- INFO
 
 
-getTitle : Article a -> String
-getTitle (Article title _) =
-    title
+title : Article a -> String
+title (Article value _) =
+    value
 
 
-getContent : Article Full -> String
-getContent (Article _ (Full { content })) =
-    content
+content : Article Full -> String
+content (Article _ (Full body)) =
+    body.content
 
 
-getLinks : Article Full -> List (Article Preview)
-getLinks (Article _ (Full { links })) =
-    links
+links : Article Full -> List (Article Preview)
+links (Article _ (Full body)) =
+    body.links
 
 
-getLength : Article Full -> Int
-getLength =
-    getContent >> String.length
+length : Article Full -> Int
+length =
+    content >> String.length
 
 
 isDisambiguation : Article Full -> Bool
 isDisambiguation article =
     let
-        doesArticleContain text =
-            String.contains text (getContent article)
+        contains text =
+            String.contains text (content article)
     in
-    List.any doesArticleContain
+    List.any contains
         [ "disambiguation}}"
         , "{{Disambiguation"
         , "{{disambig}}"
@@ -96,8 +96,8 @@ isDisambiguation article =
 
 
 preview : Article a -> Article Preview
-preview (Article title _) =
-    Article title Preview
+preview (Article value _) =
+    Article value Preview
 
 
 equals : Article a -> Article b -> Bool
@@ -113,12 +113,12 @@ viewAsLink : Article a -> Html msg
 viewAsLink article =
     a
         [ href (toUrl article) ]
-        [ text (getTitle article) ]
+        [ text (title article) ]
 
 
 toUrl : Article a -> String
 toUrl article =
-    "https://en.wikipedia.org/wiki/" ++ getTitle article
+    "https://en.wikipedia.org/wiki/" ++ title article
 
 
 viewError : ArticleError -> Html msg
@@ -142,17 +142,71 @@ toErrorMessage error =
 
 
 
--- FETCH
-
-
-fetchNamed : String -> Http.Request ArticleResult
-fetchNamed title =
-    Http.get (namedArticleUrl title) namedArticleDecoder
+-- FETCH RANDOM
 
 
 fetchRandom : Int -> Http.Request (List (Article Preview))
 fetchRandom count =
-    Http.get (randomArticlesUrl count) randomArticlesDecoder
+    Http.get (fetchRandomUrl count) fetchRandomDecoder
+
+
+fetchRandomUrl : Int -> Url
+fetchRandomUrl count =
+    wikipediaQueryUrl
+        [ Url.string "list" "random"
+        , Url.int "rnlimit" count
+        , Url.int "rnnamespace" 0
+        ]
+
+
+fetchRandomDecoder : Decoder (List (Article Preview))
+fetchRandomDecoder =
+    at [ "query", "random" ] (list previewDecoder)
+
+
+
+-- FETCH BY TITLE
+
+
+fetchByTitle : Title -> Http.Request ArticleResult
+fetchByTitle articleTitle =
+    Http.get (fetchByTitleUrl articleTitle) fetchByTitleDecoder
+
+
+fetchByTitleUrl : Title -> Url
+fetchByTitleUrl articleTitle =
+    wikipediaQueryUrl
+        [ Url.string "prop" "revisions|links"
+        , Url.string "titles" articleTitle
+        , Url.int "redirects" 1
+        , Url.int "formatversion" 2
+        , Url.string "rvprop" "content"
+        , Url.string "rvslots" "main"
+        , Url.int "plnamespace" 0
+        , Url.string "pllimit" "max"
+        ]
+
+
+fetchByTitleDecoder : Decoder ArticleResult
+fetchByTitleDecoder =
+    at [ "query", "pages", "0" ] <|
+        oneOf
+            [ map Ok fullDecoder
+            , map Err invalidDecoder
+            , map Err missingDecoder
+            ]
+
+
+invalidDecoder : Decoder ArticleError
+invalidDecoder =
+    field "invalid" bool
+        |> Decode.andThen (always (Decode.succeed InvalidTitle))
+
+
+missingDecoder : Decoder ArticleError
+missingDecoder =
+    field "missing" bool
+        |> Decode.andThen (always (Decode.succeed ArticleNotFound))
 
 
 type alias ArticleResult =
@@ -166,73 +220,38 @@ type ArticleError
 
 
 
--- URLS
+-- API UTILS
 
 
-randomArticlesUrl : Int -> String
-randomArticlesUrl count =
-    wikipediaQueryUrl
-        [ UrlBuilder.string "list" "random"
-        , UrlBuilder.int "rnlimit" count
-        , UrlBuilder.int "rnnamespace" 0
-        ]
-
-
-namedArticleUrl : Title -> String
-namedArticleUrl title =
-    wikipediaQueryUrl
-        [ UrlBuilder.string "prop" "revisions|links"
-        , UrlBuilder.string "titles" title
-        , UrlBuilder.int "redirects" 1
-        , UrlBuilder.int "formatversion" 2
-        , UrlBuilder.string "rvprop" "content"
-        , UrlBuilder.string "rvslots" "main"
-        , UrlBuilder.int "plnamespace" 0
-        , UrlBuilder.string "pllimit" "max"
-        ]
-
-
-wikipediaQueryUrl : List QueryParameter -> String
-wikipediaQueryUrl params =
+wikipediaQueryUrl : List QueryParameter -> Url
+wikipediaQueryUrl customParams =
     let
         baseParams =
-            [ UrlBuilder.string "action" "query"
-            , UrlBuilder.string "format" "json"
-            , UrlBuilder.string "origin" "*"
+            [ Url.string "action" "query"
+            , Url.string "format" "json"
+            , Url.string "origin" "*"
             ]
     in
-    UrlBuilder.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] (baseParams ++ params)
+    Url.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] (baseParams ++ customParams)
+
+
+type alias Url =
+    String
 
 
 
--- DECODERS
+-- ARTICLE DECODERS
 
 
-namedArticleDecoder : Decoder ArticleResult
-namedArticleDecoder =
-    at [ "query", "pages", "0" ]
-        (oneOf
-            [ map Ok fullArticleDecoder
-            , map Err invalidArticleDecoder
-            , map Err missingArticleDecoder
-            ]
-        )
-
-
-randomArticlesDecoder : Decoder (List (Article Preview))
-randomArticlesDecoder =
-    at [ "query", "random" ] (list previewArticleDecoder)
-
-
-previewArticleDecoder : Decoder (Article Preview)
-previewArticleDecoder =
+previewDecoder : Decoder (Article Preview)
+previewDecoder =
     succeed Article
         |> required "title" string
         |> hardcoded Preview
 
 
-fullArticleDecoder : Decoder (Article Full)
-fullArticleDecoder =
+fullDecoder : Decoder (Article Full)
+fullDecoder =
     succeed Article
         |> required "title" string
         |> custom (map Full bodyDecoder)
@@ -242,16 +261,4 @@ bodyDecoder : Decoder Body
 bodyDecoder =
     succeed Body
         |> requiredAt [ "revisions", "0", "slots", "main", "content" ] string
-        |> required "links" (list previewArticleDecoder)
-
-
-invalidArticleDecoder : Decoder ArticleError
-invalidArticleDecoder =
-    field "invalid" bool
-        |> Decode.andThen (always <| Decode.succeed InvalidTitle)
-
-
-missingArticleDecoder : Decoder ArticleError
-missingArticleDecoder =
-    field "missing" bool
-        |> Decode.andThen (always <| Decode.succeed ArticleNotFound)
+        |> required "links" (list previewDecoder)

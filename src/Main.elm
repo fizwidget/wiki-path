@@ -2,10 +2,10 @@ module Main exposing (main)
 
 import Article exposing (Article, Full)
 import Browser exposing (Document)
+import Cmd.Extra exposing (withNoCmd)
 import Css exposing (..)
-import Css.Media as Media exposing (withMedia)
-import Html
-import Html.Styled as StyledHtml exposing (Html, div, h1, text, toUnstyled)
+import Css.Media as Media
+import Html.Styled as Html exposing (Html, div, h1, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Page.Finished as Finished
 import Page.Pathfinding as Pathfinding
@@ -37,33 +37,33 @@ update msg model =
     case ( msg, model ) of
         ( SetupMsg subMsg, SetupModel subModel ) ->
             Setup.update subMsg subModel
-                |> handleSetupUpdate
+                |> onSetupUpdate
 
         ( PathfindingMsg subMsg, PathfindingModel subModel ) ->
             Pathfinding.update subMsg subModel
-                |> handlePathfindingUpdate
+                |> onPathfindingUpdate
 
         ( FinishedMsg subMsg, FinishedModel subModel ) ->
             Finished.update subMsg subModel
-                |> handleFinishedUpdate
+                |> onFinishedUpdate
 
         ( _, _ ) ->
             ( model, Cmd.none )
 
 
-handleSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
-handleSetupUpdate updateResult =
+onSetupUpdate : Setup.UpdateResult -> ( Model, Cmd Msg )
+onSetupUpdate updateResult =
     case updateResult of
         Setup.InProgress ( model, cmd ) ->
             inSetupPage ( model, cmd )
 
         Setup.Complete source destination ->
             Pathfinding.init source destination
-                |> handlePathfindingUpdate
+                |> onPathfindingUpdate
 
 
-handlePathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
-handlePathfindingUpdate updateResult =
+onPathfindingUpdate : Pathfinding.UpdateResult -> ( Model, Cmd Msg )
+onPathfindingUpdate updateResult =
     case updateResult of
         Pathfinding.InProgress ( model, cmd ) ->
             inPathfindingPage ( model, cmd )
@@ -74,22 +74,22 @@ handlePathfindingUpdate updateResult =
 
         Pathfinding.Complete path ->
             Finished.initWithPath path
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
         Pathfinding.PathNotFound source destination ->
             Finished.initWithPathNotFoundError (Article.preview source) (Article.preview destination)
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
         Pathfinding.TooManyRequests source destination ->
             Finished.initWithTooManyRequestsError (Article.preview source) (Article.preview destination)
-                |> noCmd
+                |> withNoCmd
                 |> inFinishedPage
 
 
-handleFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
-handleFinishedUpdate (Finished.BackToSetup source destination) =
+onFinishedUpdate : Finished.UpdateResult -> ( Model, Cmd Msg )
+onFinishedUpdate (Finished.BackToSetup source destination) =
     Setup.initWithArticles (Article.preview source) (Article.preview destination)
         |> inSetupPage
 
@@ -114,19 +114,14 @@ inPage toModel toMsg ( subModel, subCmd ) =
     ( toModel subModel, Cmd.map toMsg subCmd )
 
 
-noCmd : model -> ( model, Cmd msg )
-noCmd model =
-    ( model, Cmd.none )
-
-
 
 -- VIEW
 
 
-document : Model -> Document Msg
-document model =
+view : Model -> Document Msg
+view model =
     { title = title model
-    , body = [ view model |> toUnstyled ]
+    , body = [ Html.toUnstyled (body model) ]
     }
 
 
@@ -143,8 +138,8 @@ title model =
             "WikiPath - Done!"
 
 
-view : Model -> Html Msg
-view model =
+body : Model -> Html Msg
+body model =
     div
         [ css
             [ fontSize (px 24)
@@ -166,7 +161,7 @@ viewHeading =
             fontSize (px 80)
 
         mobileFontStyle =
-            withMedia
+            Media.withMedia
                 [ Media.all [ Media.maxWidth (px 420) ] ]
                 [ fontSize (vw 20) ]
     in
@@ -189,15 +184,15 @@ viewModel model =
     case model of
         SetupModel subModel ->
             Setup.view subModel
-                |> StyledHtml.map SetupMsg
+                |> Html.map SetupMsg
 
         PathfindingModel subModel ->
             Pathfinding.view subModel
-                |> StyledHtml.map PathfindingMsg
+                |> Html.map PathfindingMsg
 
         FinishedModel subModel ->
             Finished.view subModel
-                |> StyledHtml.map FinishedMsg
+                |> Html.map FinishedMsg
 
 
 
@@ -207,8 +202,8 @@ viewModel model =
 main : Program () Model Msg
 main =
     Browser.document
-        { init = \_ -> inSetupPage Setup.init
-        , view = document
+        { init = always (inSetupPage Setup.init)
+        , view = view
         , update = update
         , subscriptions = always Sub.none
         }

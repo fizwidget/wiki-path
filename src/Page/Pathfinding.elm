@@ -68,7 +68,7 @@ initialModel source destination =
     { source = source
     , destination = destination
     , paths = PriorityQueue.empty Path.priority
-    , visitedArticles = OrderedSet.singleton (Article.getTitle source)
+    , visitedArticles = OrderedSet.singleton (Article.title source)
     , errors = []
     , pendingRequests = 0
     , totalRequests = 0
@@ -135,8 +135,7 @@ processLinks : Path -> Article Full -> Model -> Model
 processLinks pathToArticle article model =
     let
         newPaths =
-            article
-                |> Article.getLinks
+            Article.links article
                 |> List.filter (isCandidate model.visitedArticles)
                 |> List.map (extendPath model.destination pathToArticle)
                 |> discardLowPriorities
@@ -233,7 +232,7 @@ isCandidate : OrderedSet String -> Article Preview -> Bool
 isCandidate visitedArticles article =
     let
         title =
-            Article.getTitle article
+            Article.title article
 
         hasMinimumLength =
             String.length title > 1
@@ -264,7 +263,7 @@ isCandidate visitedArticles article =
 markVisited : OrderedSet String -> List Path -> OrderedSet String
 markVisited visitedArticles paths =
     paths
-        |> List.map (Path.end >> Article.getTitle)
+        |> List.map (Path.end >> Article.title)
         |> List.foldl OrderedSet.insert visitedArticles
 
 
@@ -289,8 +288,8 @@ calculatePriority currentPath current destination =
 heuristic : Article Full -> Article Preview -> Int
 heuristic destination current =
     countOccurences
-        (Article.getTitle current)
-        (Article.getContent destination)
+        (Article.title current)
+        (Article.content destination)
 
 
 countOccurences : String -> String -> Int
@@ -334,8 +333,8 @@ discardLowPriorities paths =
 fetchFull : (ArticleResult -> msg) -> Article Preview -> Cmd msg
 fetchFull toMsg articlePreview =
     articlePreview
-        |> Article.getTitle
-        |> Article.fetchNamed
+        |> Article.title
+        |> Article.fetchByTitle
         |> Http.send (toArticleResult >> toMsg)
 
 
@@ -390,7 +389,7 @@ viewWarnings totalRequests destination =
             if Article.isDisambiguation destination then
                 "The destination is a disambiguation page, so I might not be able to find it! 😅"
 
-            else if Article.getLength destination < 3000 then
+            else if Article.length destination < 3000 then
                 "The destination article is very short, so it might take a while to find! 😅"
 
             else if totalRequests > totalRequestsLimit // 2 then
