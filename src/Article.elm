@@ -57,16 +57,20 @@ type alias Wikitext =
     String
 
 
+type alias Url =
+    String
+
+
 
 -- INFO
 
 
 title : Article a -> String
-title (Article value _) =
-    value
+title (Article articleTitle _) =
+    articleTitle
 
 
-content : Article Full -> String
+content : Article Full -> Wikitext
 content (Article _ (Full body)) =
     body.content
 
@@ -84,10 +88,10 @@ length =
 isDisambiguation : Article Full -> Bool
 isDisambiguation article =
     let
-        contains text =
+        isInArticleContent text =
             String.contains text (content article)
     in
-    List.any contains
+    List.any isInArticleContent
         [ "disambiguation}}"
         , "{{Disambiguation"
         , "{{disambig}}"
@@ -96,8 +100,8 @@ isDisambiguation article =
 
 
 preview : Article a -> Article Preview
-preview (Article value _) =
-    Article value Preview
+preview (Article articleTitle _) =
+    Article articleTitle Preview
 
 
 equals : Article a -> Article b -> Bool
@@ -116,7 +120,7 @@ viewAsLink article =
         [ text (title article) ]
 
 
-toUrl : Article a -> String
+toUrl : Article a -> Url
 toUrl article =
     "https://en.wikipedia.org/wiki/" ++ title article
 
@@ -233,10 +237,6 @@ wikipediaQueryUrl customParams =
             ]
     in
     Url.crossOrigin "https://en.wikipedia.org" [ "w", "api.php" ] (baseParams ++ customParams)
-
-
-type alias Url =
-    String
 
 
 
